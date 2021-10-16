@@ -1,4 +1,5 @@
 const Quiz = require('../../models/Quiz');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
   Query: {
@@ -24,7 +25,7 @@ module.exports = {
     },
   },
   Mutation: {
-    async createQuiz(_, { quizInput: { title, questions } }) {
+    async createQuiz(_, { quizInput: { title, questions, description } }) {
       if (title.trim() === '') {
         throw new Error('Quiz title cannot be blank');
       }
@@ -34,9 +35,13 @@ module.exports = {
           throw new Error('A question cannot be blank');
         }
         let answerMatch = false;
-        if (question.answer.trim() === '') {
-          throw new Error('An answer cannot be blank');
-        }
+
+        question.answer.forEach(answer => {
+          if (answer.trim() === '') {
+            throw new Error('An answer cannot be blank');
+          }
+        })
+
         if (question.answerChoices.length <= 1) {
           throw new Error('A question must have at least two choices');
         }
@@ -44,9 +49,13 @@ module.exports = {
           if (choice.trim() === '') {
             throw new Error('An answer choice cannot be blank');
           }
-          if (choice.trim() === question.answer.trim()) {
-            answerMatch = true;
-          }
+
+          question.answer.forEach(answer => {
+            if (choice.trim() === answer.trim()) {
+              answerMatch = true;
+            }
+          })
+
         });
         if (!answerMatch) {
           throw new Error(
@@ -55,9 +64,15 @@ module.exports = {
         }
       });
 
+      const _id = new ObjectId();
+
+      const numQuestions = questions.length;
+
       const newQuiz = new Quiz({
+        _id,
         title,
         questions,
+        numQuestions
       });
 
       const quiz = await newQuiz.save();

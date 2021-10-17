@@ -1,6 +1,4 @@
 import React from 'react';
-import { useQuery } from '@apollo/client';
-import * as queries from './cache/queries';
 import { ChakraProvider } from "@chakra-ui/react"
 import {
     BrowserRouter as Router,
@@ -12,21 +10,7 @@ import Homepage from './pages/HomePage';
 import QuizTakingPage from './pages/QuizTakingPage';
 
 function App() {
-    const {
-        loading,
-        error,
-        data: { getQuizzes: quizzes } = {},
-    } = useQuery(queries.FETCH_QUIZ_QUERY);
 
-    if (loading) {
-        return 'Loading';
-    }
-    
-    // if (error) {
-    //     return `Error! ${error}`;
-    // }
-
-    console.log(quizzes);
     return (
         <ChakraProvider>
             <Router>

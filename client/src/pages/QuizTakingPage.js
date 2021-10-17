@@ -1,8 +1,21 @@
 import { Box, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
+import { useQuery } from '@apollo/client';
+import * as queries from '../cache/queries';
 
 export default function QuizTakingPage( {} ) {
-	let question = "1. What is the song that plays at Whomp's Fortress?"
-    let choices = ["Choice 1", "Choice 2", "Choice 3", "Choice 4"]
+
+	let quiz = null;
+	const {data, loading} = useQuery(queries.GET_QUIZ, { variables: {quizId:"615ca7d3e65ac5f801f4e85e"} });
+
+	if(loading){
+		return <div></div>;
+	}
+	if(data){
+		quiz = data.getQuiz;
+	}
+	
+	let question = quiz.questions[0].question;
+    let choices = quiz.questions[0].answerChoices;
 	let questions = []
 	for (let i = 0; i < 20; i++)
 		questions.push("Question" + i+1)
@@ -18,7 +31,7 @@ export default function QuizTakingPage( {} ) {
 					{/* QUIZ TITLE */}
 					<Center>
 						<Text fontSize="30">
-							Nintendo Music
+							{quiz.title}
 						</Text>
 					</Center>
 

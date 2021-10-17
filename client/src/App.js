@@ -1,13 +1,15 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import * as queries from './cache/queries';
+import { ChakraProvider } from "@chakra-ui/react"
 import {
-    BrowserRouter,
+    BrowserRouter as Router,
     Switch,
     Route,
-    Redirect,
-    Router,
+    Redirect
 } from 'react-router-dom';
+import Homepage from './pages/HomePage';
+import QuizTakingPage from './pages/QuizTakingPage';
 
 function App() {
     const {
@@ -19,13 +21,22 @@ function App() {
     if (loading) {
         return 'Loading';
     }
-
-    if (error) {
-        return `Error! ${error}`;
-    }
+    
+    // if (error) {
+    //     return `Error! ${error}`;
+    // }
 
     console.log(quizzes);
-    return <div>Welcome to Trivia Tree</div>;
+    return (
+        <ChakraProvider>
+            <Router>
+                <Switch>
+                    <Route exact path='/' component={Homepage}/>
+                    <Route path='/quiztakingpage' component={QuizTakingPage}/>
+                </Switch>
+            </Router>
+        </ChakraProvider>
+    );
 }
 
 export default App;

@@ -1,7 +1,7 @@
 const { model, Schema, ObjectId } = require('mongoose');
-const Item = require('./item').schema;
-const User = require('./user').schema;
-const Quiz = require('./quiz').schema;
+const Item = require('./Item').schema;
+const User = require('./User').schema;
+const Quiz = require('./Quiz').schema;
 
 const playlistSchema = new Schema(
     {
@@ -23,7 +23,7 @@ const platformSchema = new Schema(
             required: true
         },
         user_id: {
-            type: ObjectId, 
+            type: ObjectId,
             required: true
         },
         name: {
@@ -60,5 +60,5 @@ const platformSchema = new Schema(
 
 
 
-const User = model('Platform', platformSchema);
+const Platform = model('Platform', platformSchema);
 module.exports = Platform;

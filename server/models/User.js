@@ -1,7 +1,7 @@
 const { model, Schema, ObjectId } = require('mongoose');
-const Item = require('./item').schema;
-const Platform = require('./platform').schema;
-const Quiz = require('./quiz').schema;
+const Item = require('./Item').schema;
+const Platform = require('./Platform').schema;
+const Quiz = require('./Quiz').schema;
 
 
 //current have not added badges or notifications, we should talk about how we will handle these 

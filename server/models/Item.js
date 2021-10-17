@@ -22,7 +22,7 @@ const itemSchema = new Schema(
             required: true
         },
         weeklySpecial: {
-            boolean: true
+            type: Boolean
         }
     },
     { timestamps: true }
@@ -30,5 +30,5 @@ const itemSchema = new Schema(
 
 
 
-const User = model('Item', itemSchema);
+const Item = model('Item', itemSchema);
 module.exports = Item;

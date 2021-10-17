@@ -99,8 +99,6 @@ const quizSchema = new Schema(
     { timestamps: true }
 );
 
-
-
 const Quiz = model('Quiz', quizSchema);
 module.exports = Quiz;
 

@@ -1,7 +1,7 @@
-const quizzesResolvers = require('./quizzes');
-const itemsResolvers = require('./items');
-const platformsResolvers = require('./platforms');
+const quizzesResolvers = require('./quizzes-resolvers');
+const itemsResolvers = require('./items-resolvers');
+const platformsResolvers = require('./platforms-resolvers');
 const usersResolvers = require('./users');
-const quizAttemptsResolvers = require('./quizattempts');
+const quizAttemptsResolvers = require('./quizattempts-resolvers');
 
 module.exports = [quizzesResolvers, itemsResolvers, platformsResolvers, usersResolvers, quizAttemptsResolvers];

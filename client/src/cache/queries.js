@@ -24,6 +24,7 @@ export const GET_QUIZ = gql`
                 answerChoices
                 answer
             }
+            numQuestions
 		}
 	}
 `;

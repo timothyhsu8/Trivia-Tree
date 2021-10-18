@@ -2,6 +2,7 @@ import { Box, Flex, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui
 
 export default function AccountPage() {
     let user = "User1849021"
+    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
     let banner_src = "https://cdnb.artstation.com/p/assets/images/images/027/468/579/4k/kan-liu-666k-chilling-time.jpg?1591633242"
     let quiz_sections = ["Featured Quizzes", "Featured Platforms"]
     let bio = "This is a biography test. Testing out the biography text wrapping and the look of the displayed text within the biography element. Actual\
@@ -26,10 +27,17 @@ export default function AccountPage() {
                         </Grid>
 
                         {/* BANNER */}
-                        <Box bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.10), rgba(30, 30, 30, 0.75)), url('" + banner_src +  "')"} 
+                        <Box
+                            bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" + banner_src +  "')"} 
                             bgSize="cover" 
                             bgPosition="center"
-                            borderRadius="10"></Box>
+                            borderRadius="10">
+                                {/* PROFILE PICTURE AND NAME */}
+                                <Flex direction="row" top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
+                                    <Image w="15%"src={pfp_src} borderRadius="150"></Image>
+                                    <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
+                                </Flex>
+                        </Box>
                     </Grid>
 
                     {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
@@ -51,8 +59,7 @@ export default function AccountPage() {
                         {/* BIOGRAPHY */}
                         <Box bgColor="gray.200" borderRadius="10">
                             <Text pl="3%" fontSize="1.5vw">Biography</Text>
-                            <Text pl="3%" pr="3%" fontSize="0.9vw"> This is a biography test. Testing out the biography text wrapping and the look of the displayed text within the biography element. Actual
-                            biography will go here and will go here.</Text>
+                            <Text pl="3%" pr="3%" fontSize="0.9vw"> {bio} </Text>
                         </Box>
                     </Grid>
                 </Box>

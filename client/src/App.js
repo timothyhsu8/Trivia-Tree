@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Homepage from './pages/HomePage';
 import QuizTakingPage from './pages/QuizTakingPage';
+import AccountPage from './pages/AccountPage';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
                 <Switch>
                     <Route exact path='/' component={Homepage}/>
                     <Route path='/quiztakingpage' component={QuizTakingPage}/>
+                    <Route path='/accountpage' component={AccountPage}/>
                 </Switch>
             </Router>
         </ChakraProvider>

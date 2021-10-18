@@ -33,14 +33,14 @@ export default function QuizTakingPage( {} ) {
 
 					{/* QUIZ TITLE */}
 					<Center>
-						<Text fontSize="30">
+						<Text fontSize="2vw">
 							{quiz.title}
 						</Text>
 					</Center>
 
 					{/* QUIZ AUTHOR */}
 					<Center>
-						<Text fontSize="20">
+						<Text fontSize="1vw">
 							MarioGamer100
 						</Text>
 					</Center>
@@ -53,7 +53,7 @@ export default function QuizTakingPage( {} ) {
 					<Grid w="100%" templateColumns="1fr 1fr">
 						{questions.map((item, index)=>{
 							return (
-								<Button bgColor="gray.200"> 
+								<Button bgColor="gray.200" fontSize="0.9vw"> 
 									{index+1} 
 								</Button>
 								)
@@ -65,7 +65,7 @@ export default function QuizTakingPage( {} ) {
 				{/* MAIN PAGE */}
 				<Box>
 					{/* QUESTION */}
-					<Text pt="50" fontSize="50">
+					<Text pt="50" fontSize="3vw">
 						<Center>
 							{question}
 						</Center>
@@ -75,7 +75,7 @@ export default function QuizTakingPage( {} ) {
 					<VStack pt="30" spacing="6">
 						{choices.map((item, index)=>{
 							return (
-							<Button w="60%" h="10vh" bgColor="gray.600" fontSize="28" textColor="white"> 
+							<Button w="60%" h="10vh" bgColor="gray.600" fontSize="1.5vw" textColor="white"> 
 								{choices[index]} 
 							</Button>
 							)
@@ -84,7 +84,7 @@ export default function QuizTakingPage( {} ) {
 					
 					{/* NEXT QUESTION BUTTON */}
 					<Center pt="20">
-						<Button w="20%" h="7vh" bgColor="purple.800" fontSize="21" textColor="white">
+						<Button w="20%" h="7vh" bgColor="purple.800" fontSize="1.3vw" textColor="white">
 							Next Question
 						</Button>
 					</Center>

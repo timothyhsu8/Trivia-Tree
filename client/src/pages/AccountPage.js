@@ -9,7 +9,7 @@ export default function AccountPage() {
         biography will go here and will go here."
 
     return (
-        <Box>
+        <Box data-testid="main-component">
             <Grid templateColumns="1fr 6fr 1fr">
                 <Box w="100%" h="100vh"></Box>
                 

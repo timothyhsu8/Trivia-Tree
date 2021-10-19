@@ -24,7 +24,7 @@ export default function QuizTakingPage( {} ) {
 		questions.push("Question" + i+1)
 
     return (
-		<Box>
+		<Box data-testid="main-component">
 			<Grid templateColumns="1fr 6fr">
 				{/* SIDEBAR */}
 				<Box h="100vh" bgColor="gray.200">

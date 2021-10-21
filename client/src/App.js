@@ -9,6 +9,7 @@ import {
 import Homepage from './pages/HomePage';
 import QuizTakingPage from './pages/QuizTakingPage';
 import AccountPage from './pages/AccountPage';
+import PostQuizPage from './pages/PostQuizPage';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
                     <Route exact path='/' component={Homepage}/>
                     <Route path='/quiztakingpage' component={QuizTakingPage}/>
                     <Route path='/accountpage' component={AccountPage}/>
+                    <Route path='/postquizpage' component={PostQuizPage}/>
                 </Switch>
             </Router>
         </ChakraProvider>

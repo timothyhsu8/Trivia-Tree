@@ -1,0 +1,133 @@
+/*For loading screen*/
+.answer{
+  visibility: hidden;
+}
+
+.quizIconCentered {  
+    padding: 2%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%; 
+}
+.quizIconPadding{
+  padding-top: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.quizIconTitle{ /*Big Image in Top Left*/
+  display: inline-block;
+  position: relative;
+  width:150px;
+  height:150px;
+  overflow: hidden;
+}
+/*For loading screen*/
+.center{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.centercenter{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  margin-top:175px;
+}
+
+.creator{
+  font-size: 30px;
+  font-weight: bold;
+}
+.creatorName{
+  font-size: 30px;
+}
+
+/*Top Right Button*/
+.center.button.blue{
+  padding-top: 5px;
+  font-size:20px;
+  font-family:monospace;
+  color:white;
+}
+
+/*Bottom Button*/
+.center.button.white{
+  padding-top: 5px;
+  font-size:20px;
+  font-family:monospace;
+  color:white;
+}
+/*Bottom Button*/
+.center.button.black{
+  padding-top: 5px;
+  font-size:20px;
+  font-family:monospace;
+}
+/*Main Title*/
+.maintitle {
+    padding-top: 30px;
+    color:black;
+    font-family:monospace;
+    font-size:50px;
+}
+/*Leaderboard Text*/
+.leaderboard_text{
+    font-family:monospace;
+}
+.answer_text{
+  margin-top: 8px;
+  font-size:20px;
+}
+
+/*Horizontal White Line*/
+hr{
+  border-bottom: solid black;
+  width: 900px;
+  margin-right: 50px;
+}
+/*Stack across*/
+.containerAcross {
+    display: flex; /* or inline-flex */
+    flex-direction: row;
+  }
+/*Stack down for leaderboard elements*/
+  .containerDown {
+    display: flex; /* or inline-flex */
+    flex-direction: column;
+  }
+/*LeaderboardTitle*/
+  .leaderboard_title{ 
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    font-size:30px;
+    font-family:monospace;
+  }
+
+  .heart{
+    margin-top: 45px;
+    margin-left: 20px;
+    width: 50px;
+    cursor: pointer;
+  }
+  .round_image2{
+    margin-top: 10px;
+    margin-right: 10px;
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+  .round_image{
+    display: inline-block;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 50%;
+    
+  }

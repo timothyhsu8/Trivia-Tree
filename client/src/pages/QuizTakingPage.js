@@ -1,11 +1,13 @@
 import { Box, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
+import * as mutations from '../cache/mutations'
 
 export default function QuizTakingPage( {} ) {
 
 	let quiz = null;
 	const {data, loading, error} = useQuery(queries.GET_QUIZ, { variables: {quizId:"616be915d990fe64da8f392e"} });
+	const [createQuiz, { data2, loading2, error2 }] = useMutation(mutations.CREATE_QUIZ);	// *JUST FOR TESTING, REMOVE THIS AFTER BUILD 1 REVIEW
 
 	if(loading){
 		return <div></div>;
@@ -86,6 +88,12 @@ export default function QuizTakingPage( {} ) {
 					<Center pt="20">
 						<Button w="20%" h="7vh" bgColor="purple.800" fontSize="1.3vw" textColor="white">
 							Next Question
+						</Button>
+					</Center>
+
+					<Center pt="20">
+						<Button w="20%" h="7vh" onClick={() => {createQuiz()}} bgColor="purple.800" fontSize="1.3vw" textColor="white">
+							Create Quiz (For Testing)
 						</Button>
 					</Center>
 				</Box>

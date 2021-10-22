@@ -20,10 +20,10 @@ export default function AccountPage() {
                     <Grid templateRows="1fr 4fr" h="40vh">
                         {/* HEADER BUTTONS */}
                         <Grid w="100%" templateColumns="1fr 1fr 1fr 1fr"> 
-                            <Button height="100%" fontSize="1vw" bgColor="white"> {user} </Button>
-                            <Button height="100%" fontSize="1vw" bgColor="white"> Platforms </Button>
-                            <Button height="100%" fontSize="1vw" bgColor="white"> Quizzes </Button>
-                            <Button height="100%" fontSize="1vw" bgColor="white"> Badges </Button>
+                            <Button height="100%" fontSize="1.3vw" bgColor="white"> {user} </Button>
+                            <Button height="100%" fontSize="1.3vw" bgColor="white"> Platforms </Button>
+                            <Button height="100%" fontSize="1.3vw" bgColor="white"> Quizzes </Button>
+                            <Button height="100%" fontSize="1.3vw" bgColor="white"> Badges </Button>
                         </Grid>
 
                         {/* BANNER */}
@@ -49,7 +49,7 @@ export default function AccountPage() {
                                 {quiz_sections.map((name, index) => {
                                     return(
                                         <Box key={index} w="100%" h="30vh" bgColor="gray.200" borderRadius="10">
-                                            <Text pl="1.5%" fontSize="1.5vw">{name}</Text>
+                                            <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="medium">{name}</Text>
                                         </Box>
                                     )
                                 })}
@@ -58,8 +58,8 @@ export default function AccountPage() {
 
                         {/* BIOGRAPHY */}
                         <Box bgColor="gray.200" borderRadius="10">
-                            <Text pl="3%" fontSize="1.5vw">Biography</Text>
-                            <Text pl="3%" pr="3%" fontSize="0.9vw"> {bio} </Text>
+                            <Text pl="4%" pt="2%" fontSize="1.5vw" fontWeight="medium"> Biography </Text>
+                            <Text pl="4%" pr="4%" pt="3%" fontSize="0.9vw"> {bio} </Text>
                         </Box>
                     </Grid>
                 </Box>

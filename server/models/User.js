@@ -1,91 +1,99 @@
-const { model, Schema, ObjectId } = require('mongoose');
-const Item = require('./Item').schema;
-const Platform = require('./Platform').schema;
-const Quiz = require('./Quiz').schema;
+const { model, Schema } = require('mongoose');
 
-
-//current have not added badges or notifications, we should talk about how we will handle these 
+//current have not added badges or notifications, we should talk about how we will handle these
 const userSchema = new Schema(
     {
-        _id: {
-            type: ObjectId,
-            required: true
+        googleId: {
+            type: String,
+            required: true,
+        },
+        googleDisplayName: {
+            type: String,
+            required: true,
+        },
+        firstName: {
+            type: String,
+            required: true,
+        },
+        lastName: {
+            type: String,
+            required: true,
         },
         email: {
             type: String,
-            required: true
+            required: true,
         },
         displayName: {
             type: String,
-            required: true
+            required: true,
         },
         iconImage: {
-            type: String
+            type: String,
         },
         iconEffect: {
-            type: Item
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
         },
         bannerImage: {
-            type: String
+            type: String,
         },
         bannerEffect: {
-            type: Item
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
         },
         background: {
-            type: Item
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
         },
         bio: {
-            type: String
+            type: String,
         },
-        currency: { //eventually be required 
-            type: Number
+        currency: {
+            //eventually be required
+            type: Number,
         },
         ownedIconEffects: {
-            type: [Item]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
         },
         ownedBannerEffects: {
-            type: [Item]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
         },
         ownedBackgrounds: {
-            type: [Item]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
         },
         quizzesMade: {
-            type: [Quiz]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
         },
         quizzesTaken: {
-            type: [Quiz]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
         },
         platformsMade: {
-            type: [Platform]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Platform' }],
         },
         following: {
-            type: [Platform]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Platform' }],
         },
         featuredQuizzes: {
-            type: [Quiz]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
         },
         featuredPlatforms: {
-            type: [Platform]
+            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
         },
         verified: {
             type: Boolean,
-            default: false
+            default: false,
         },
         admin: {
-            type: Boolean, 
-            default: false
+            type: Boolean,
+            default: false,
         },
         darkMode: {
             type: Boolean,
-            default: false
-        }
-
+            default: false,
+        },
     },
     { timestamps: true }
 );
 
-
-
 const User = model('User', userSchema);
 module.exports = User;
-

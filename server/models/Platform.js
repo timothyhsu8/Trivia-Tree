@@ -1,64 +1,57 @@
-const { model, Schema, ObjectId } = require('mongoose');
-const Item = require('./Item').schema;
-const User = require('./User').schema;
-const Quiz = require('./Quiz').schema;
+const { model, Schema } = require('mongoose');
 
-const playlistSchema = new Schema(
-    {
-        name: {
-            type: String,
-            required: true
-        },
-        quizzes: {
-            type: [Quiz],
-            required: true
-        }
-    }
-)
+const playlistSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    quizzes: {
+        type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
+        required: true,
+    },
+});
 
 const platformSchema = new Schema(
     {
-        _id: {
-            type: ObjectId,
-            required: true
-        },
-        user_id: {
-            type: ObjectId,
-            required: true
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
         },
         name: {
             type: String,
-            required: true
+            required: true,
         },
         iconImage: {
-            type: String
+            type: String,
         },
         iconEffect: {
-            type: Item
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
         },
         bannerImage: {
-            type: String
+            type: String,
         },
         bannerEffect: {
-            type: Item
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
         },
         background: {
-            type: Item
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
         },
         followers: {
-            type: [User]
+            type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         },
         tags: {
-            type: [String]
+            type: [String],
         },
         playlists: {
-            type: [playlistSchema]
-        }
+            type: [playlistSchema],
+        },
     },
     { timestamps: true }
 );
-
-
 
 const Platform = model('Platform', platformSchema);
 module.exports = Platform;

@@ -1,34 +1,29 @@
-const { model, Schema, ObjectId } = require('mongoose');
+const { model, Schema } = require('mongoose');
 
 const itemSchema = new Schema(
     {
-        _id: {
-            type: ObjectId,
-            required: true
-        },
         category: {
             type: String,
-            required: true
+            required: true,
         },
         name: {
             type: String,
-            required: true
+            required: true,
         },
-        image: { //another image type is string for now
-            type: String
+        image: {
+            //another image type is string for now
+            type: String,
         },
         price: {
             type: Number,
-            required: true
+            required: true,
         },
         weeklySpecial: {
-            type: Boolean
-        }
+            type: Boolean,
+        },
     },
     { timestamps: true }
 );
-
-
 
 const Item = model('Item', itemSchema);
 module.exports = Item;

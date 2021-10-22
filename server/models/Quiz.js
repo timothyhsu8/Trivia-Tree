@@ -1,104 +1,103 @@
-const { model, Schema, ObjectId } = require('mongoose');
+const { model, Schema } = require('mongoose');
 
-const questionSchema = new Schema( //seperated from quiz schema just to add readability 
-    {
-        question: {
-            type: String,
-            required: true
-        },
-        answerChoices: {
-            type: [String],
-            required: true
-        },
-        answer: {
-            type: [String], //answer is an array because questiontypes 2 and 3 will have more than one answer 
-            required: true
-        },
-        questionType: {
-            type: Number, //There will be three options {1 = Multiple Choice 2 = Select All That Apply 3 = Fill in Blank}
-            default: 1
-        }
-    }
-);
+const questionSchema = new Schema({
+    //seperated from quiz schema just to add readability
+    question: {
+        type: String,
+        required: true,
+    },
+    answerChoices: {
+        type: [String],
+        required: true,
+    },
+    answer: {
+        type: [String], //answer is an array because questiontypes 2 and 3 will have more than one answer
+        required: true,
+    },
+    questionType: {
+        type: Number, //There will be three options {1 = Multiple Choice 2 = Select All That Apply 3 = Fill in Blank}
+        default: 1,
+    },
+});
 
-const commentSchema = new Schema(
-    {
-        user_id: { //every comment is tied to a user
-            type: ObjectId,
-            required: true
-        },
-        comment: {
-            type: String,
-            required: true
-        }
-    }
-)
+const commentSchema = new Schema({
+    user: {
+        //every comment is tied to a user
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    comment: {
+        type: String,
+        required: true,
+    },
+});
 
 const quizSchema = new Schema(
     {
-        _id: {
-            type: ObjectId,
-            required: true
+        user: {
+            //eventually userId will be required!
+            type: Schema.Types.ObjectId,
+            ref: 'User',
         },
-        user_id: { //eventually userId will be required!  
-            type: ObjectId
-        },
-        platform_id: { //not sure if this will also be required maybe some quizzes dont have a platform? 
-            type: ObjectId
+        platform: {
+            //not sure if this will also be required maybe some quizzes dont have a platform?
+            type: Schema.Types.ObjectId,
+            ref: 'Platform',
         },
         title: {
             type: String,
-            required: true
+            required: true,
         },
         questions: {
             type: [questionSchema],
-            required: true
+            required: true,
         },
         numQuestions: {
             type: Number,
-            required: true
+            required: true,
         },
         description: {
-            type: String
+            type: String,
         },
         categories: {
-            type: [String]
+            type: [String],
         },
         tags: {
-            type: [String]
+            type: [String],
         },
-        quizTimer: { //still unsure about this and questiontimer, should one not be set if the other is set? 
-            type: Number
+        quizTimer: {
+            //still unsure about this and questiontimer, should one not be set if the other is set?
+            type: Number,
         },
         questionTimer: {
-            type: Number
+            type: Number,
         },
         quizShuffled: {
-            type: Boolean
+            type: Boolean,
         },
         quizInstant: {
-            type: Boolean
+            type: Boolean,
         },
         rating: {
-            type: Number
+            type: Number,
         },
         averageScore: {
-            type: Number
+            type: Number,
         },
         medianScore: {
-            type: Number
+            type: Number,
         },
         comments: {
-            type: [commentSchema]
+            type: [commentSchema],
         },
-        icon: { //quiz image still not sure what type this should be
-            type: String
-        }
-
+        icon: {
+            //quiz image still not sure what type this should be
+            type: String,
+        },
     },
     { timestamps: true }
 );
 
 const Quiz = model('Quiz', quizSchema);
 module.exports = Quiz;
-

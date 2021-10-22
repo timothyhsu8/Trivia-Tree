@@ -7,8 +7,12 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const morgan = require('morgan');
 const xssClean = require('xss-clean');
+const passport = require('passport');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const path = require('path');
 require('dotenv').config();
+require('./auth/passport');
 
 const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers');
@@ -30,6 +34,17 @@ const corsPolicy = async (req, res, next) => {
 app.options('*', cors());
 app.use(corsPolicy);
 
+app.use(
+    session({
+        secret: 'randomkey',
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: process.env.DATABASE_URL,
+        }),
+    })
+);
+
 const serverOptions = (app) => {
     app.use(helmet());
     app.use(express.json({ limit: '10kb' }));
@@ -38,10 +53,18 @@ const serverOptions = (app) => {
     app.use(xssClean());
     app.use(morgan('dev'));
     app.use(cookieParser());
+    app.use(passport.initialize());
+    app.use(passport.session());
 };
 
 // middleware application is configured onto express
 serverOptions(app);
+
+//routes
+app.use('/auth', require('./routes/auth'));
+app.use('/getuser', (req, res) => {
+    res.send(req.user);
+});
 
 const server = new ApolloServer({
     typeDefs: typeDefs,
@@ -72,8 +95,10 @@ async function startServer() {
     }
 
     mongoose
-        .connect(process.env.DATABASE_URL, { useNewUrlParser: true })
-        .then(() => {
+        .connect(process.env.DATABASE_URL, {
+            useNewUrlParser: true,
+        })
+        .then((m) => {
             console.log('MongoDB Connected');
             return app.listen({ port: PORT });
         })

@@ -12,6 +12,9 @@ import AccountPage from './pages/AccountPage';
 import PostQuizPage from './pages/PostQuizPage';
 import PreQuizPage from './pages/PreQuizPage';
 import { AuthProvider } from './context/auth';
+import Quizzes from './pages/Quizzes';
+import CreateQuiz from './pages/CreateQuiz';
+import Quiz from './pages/Quiz';
 
 function App() {
     return (
@@ -20,6 +23,13 @@ function App() {
                 <Router>
                     <Switch>
                         <Route exact path='/' component={Homepage} />
+                        <Route exact path='/quizzes' component={Quizzes} />
+                        <Route exact path='/quiz/:quizId' component={Quiz} />
+                        <Route
+                            exact
+                            path='/createQuiz'
+                            component={CreateQuiz}
+                        />
                         <Route
                             path='/quiztakingpage'
                             component={QuizTakingPage}

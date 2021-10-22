@@ -23,6 +23,7 @@ module.exports = gql`
     }
 
     type Question {
+        _id: ID!
         question: String!
         answerChoices: [String!]!
         answer: [String!]!
@@ -31,7 +32,7 @@ module.exports = gql`
 
     type Comment {
         user_id: ID!
-        comment: String! 
+        comment: String!
     }
 
     input QuizInput {
@@ -48,7 +49,7 @@ module.exports = gql`
 
     input CommentInput {
         user_id: ID!
-        comment: String! 
+        comment: String!
     }
 
     extend type Query {
@@ -57,5 +58,6 @@ module.exports = gql`
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz
+        deleteQuiz(quizId: ID!): String!
     }
 `;

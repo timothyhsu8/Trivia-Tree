@@ -2,6 +2,7 @@ import { React, useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Center, Spinner, Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 function Quizzes(props) {
     const {
@@ -36,6 +37,7 @@ function Quizzes(props) {
 
     return (
         <div>
+            <Navbar />
             <div style={{ display: 'flex' }}>
                 <div style={{ textAlign: 'left', width: '33.33333%' }}>
                     <Link

@@ -1,4 +1,5 @@
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
+import Navbar from "../components/Navbar"
 
 export default function AccountPage() {
     let user = "User1849021"
@@ -10,6 +11,7 @@ export default function AccountPage() {
 
     return (
         <Box data-testid="main-component">
+            <Navbar />
             <Grid templateColumns="1fr 6fr 1fr">
                 <Box w="100%" h="100vh"></Box>
                 
@@ -17,13 +19,13 @@ export default function AccountPage() {
                 <Box w="100%" h="100vh">
                     
                     {/* HEADER AND BANNER */}
-                    <Grid templateRows="1fr 4fr" h="40vh">
+                    <Grid templateRows="1fr 4fr" h="35vh">
                         {/* HEADER BUTTONS */}
                         <Grid w="100%" templateColumns="1fr 1fr 1fr 1fr"> 
-                            <Button height="100%" fontSize="1.3vw" bgColor="white"> {user} </Button>
-                            <Button height="100%" fontSize="1.3vw" bgColor="white"> Platforms </Button>
-                            <Button height="100%" fontSize="1.3vw" bgColor="white"> Quizzes </Button>
-                            <Button height="100%" fontSize="1.3vw" bgColor="white"> Badges </Button>
+                            <Button height="100%" fontSize="1.2vw" bgColor="white"> {user} </Button>
+                            <Button height="100%" fontSize="1.2vw" bgColor="white"> Platforms </Button>
+                            <Button height="100%" fontSize="1.2vw" bgColor="white"> Quizzes </Button>
+                            <Button height="100%" fontSize="1.2vw" bgColor="white"> Badges </Button>
                         </Grid>
 
                         {/* BANNER */}

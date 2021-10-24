@@ -3,6 +3,7 @@ import { config } from '../util/constants';
 import { AuthContext } from '../context/auth';
 import { Box, Heading, Center, VStack } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 export default function Homepage() {
     const { user } = useContext(AuthContext);
@@ -12,7 +13,8 @@ export default function Homepage() {
     }
 
     return (
-        <div>
+        <Box>
+            <Navbar />
             <Center marginTop='30px'>
                 {user !== 'NoUser' ? (
                     <div>
@@ -60,6 +62,6 @@ export default function Homepage() {
                     </Link>
                 </VStack>
             </div>
-        </div>
+        </Box>
     );
 }

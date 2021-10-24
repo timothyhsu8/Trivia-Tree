@@ -10,6 +10,7 @@ import {
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
+import Navbar from '../components/Navbar';
 
 export default function QuizTakingPage({}) {
     let quiz = null;
@@ -38,6 +39,7 @@ export default function QuizTakingPage({}) {
 
     return (
         <Box data-testid='main-component'>
+            <Navbar />
             <Grid templateColumns='1fr 6fr'>
                 {/* SIDEBAR */}
                 <Box h='100vh' bgColor='gray.200'>

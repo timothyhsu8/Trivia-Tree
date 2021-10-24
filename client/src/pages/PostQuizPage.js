@@ -19,6 +19,7 @@ import {
 } from 'react-router-dom';
 import PostQuizAnswersCard from './PostQuizAnswersCard';
 import { subscribe } from 'graphql';
+import Navbar from '../components/Navbar';
 
 export default function PostQuizPage() {
     function mainPage() {
@@ -93,6 +94,7 @@ export default function PostQuizPage() {
     return (
         /*Go to line 145 for answers page*/
         <Box height='100%'>
+            <Navbar />
             <Box>
                 {' '}
                 {/* Title and such*/}

@@ -25,9 +25,13 @@ export default function Navbar() {
                         })}
                     </Select>
                     <Input h="45px" fontSize="17px" borderRadius="0px" placeholder="Search for a quiz..." bgColor="white"/>
-                    <Button h="45px" borderRadius="0px 5px 5px 0px" bgColor="yellow.500">
-                        <Icon as={SearchIcon} boxSize="6" />
-                    </Button>
+                    
+                    {/* SEARCH BUTTON */}
+                    <Link to="/searchresultspage">
+                        <Button h="45px" borderRadius="0px 5px 5px 0px" bgColor="yellow.500">
+                            <Icon as={SearchIcon} boxSize="6" />
+                        </Button>
+                    </Link>
                 </Grid>
                 
                 {/* RIGHT SIDE */}

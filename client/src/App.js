@@ -15,6 +15,7 @@ import { AuthProvider } from './context/auth';
 import Quizzes from './pages/Quizzes';
 import CreateQuiz from './pages/CreateQuiz';
 import Quiz from './pages/Quiz';
+import SearchResultsPage from './pages/SearchResultsPage'
 
 function App() {
     return (
@@ -36,7 +37,8 @@ function App() {
                         />
                         <Route path='/accountpage' component={AccountPage} />
                         <Route path='/postquizpage' component={PostQuizPage} />
-                        <Route path='/prequizpage' component={PreQuizPage} />
+                        <Route path='/prequizpage' component={PreQuizPage} />\
+                        <Route path='/searchresultspage' component={SearchResultsPage} />
                     </Switch>
                 </Router>
             </AuthProvider>

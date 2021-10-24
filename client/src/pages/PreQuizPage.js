@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
 import * as queries from '../cache/queries';
+import Navbar from '../components/Navbar';
 
 export default function QuizTakingPage({}) {
     let quiz = null;
@@ -26,5 +27,10 @@ export default function QuizTakingPage({}) {
         console.log(error);
     }
 
-    return <Box>{quiz.title}</Box>;
+    return ( 
+        <Box>
+            <Navbar />
+            {quiz.title}
+        </Box>
+    )
 }

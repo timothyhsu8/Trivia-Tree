@@ -19,7 +19,7 @@ export default function PreQuizPage({}) {
             <Navbar /> 
    
 
-            <Grid h="845px" templateRows="repeat(6, 1fr)" templateColumns="repeat(6, 1fr)" px="20px" py="20px"> 
+            <Grid h="845px" templateRows="repeat(6, 1fr)" templateColumns="repeat(6, 1fr)" px="20px" py="20px" bgColor="beige"> 
 
                 {/* Title and Image */}
                 <GridItem rowSpan={2} colSpan={6} borderBottom="1px" bgColor="beige">

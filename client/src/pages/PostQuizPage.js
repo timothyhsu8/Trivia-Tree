@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Grid, Image  } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import bg from '../images/homebg.png';
 import '../styles/postpage.css';
@@ -91,19 +91,19 @@ export default function PostQuizPage() {
     if (error) {
         return `Error! ${error}`;
     }
+
+    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj";
     return (
         /*Go to line 145 for answers page*/
         <Box height='100%'>
             <Navbar />
-            <Box>
+            <Box p="20px">
                 {' '}
                 {/* Title and such*/}
                 <Box className='containerAcross'>
-                    <Box className='quizIconPadding'>
-                        <img className='quizIconTitle' alt='Moon' src={moon} />
-                    </Box>
+                <Image w="200px" h="200px" src={pfp_src} objectFit="cover" borderRadius="15%" border="solid"></Image>
                     <Box className='containerDown'>
-                        <Box>
+                        <Box left="20px" position="relative">
                             <h1 className='maintitle'>Nintendo Music Page </h1>
                         </Box>
                         <Box className='containerAcross'>

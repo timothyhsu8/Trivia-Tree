@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
     Box,
     Center,
@@ -15,6 +16,8 @@ import Navbar from '../components/Navbar';
 export default function QuizTakingPage({}) {
     let quiz = null;
 
+    const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
+
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: '617a191e44a08bd08c08d405' },
     });
@@ -27,15 +30,20 @@ export default function QuizTakingPage({}) {
         quiz = data.getQuiz;
     }
 
-    if (error) {
-        console.log(error);
-    }
-
-    let question = quiz.questions[0].question;
-    let choices = quiz.questions[0].answerChoices;
+    let question = quiz.questions[currentQuestionNumber-1].question;
+    let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questions = [];
     for (let i = 0; i < quiz.numQuestions; i++)
         questions.push('Question' + i + 1);
+
+    function getNextQuestion() {
+        setCurrentQuestionNumber(currentQuestionNumber+1)
+    }
+
+    function changeQuestionNumber(index) {
+        setCurrentQuestionNumber(index)
+    }
+    
 
     return (
         <Box data-testid='main-component'>
@@ -64,7 +72,7 @@ export default function QuizTakingPage({}) {
                     <Grid w='100%' templateColumns='1fr 1fr'>
                         {questions.map((item, index) => {
                             return (
-                                <Button bgColor='gray.200' fontSize='0.9vw'>
+                                <Button bgColor='gray.200' fontSize='0.9vw' onClick={() => {setCurrentQuestionNumber(index+1)}}>
                                     {index + 1}
                                 </Button>
                             );
@@ -76,7 +84,7 @@ export default function QuizTakingPage({}) {
                 <Box>
                     {/* QUESTION */}
                     <Text pt='50' fontSize='3vw'>
-                        <Center>{question}</Center>
+                        <Center>{currentQuestionNumber}.  {question}</Center>
                     </Text>
 
                     {/* ANSWER CHOICES */}
@@ -104,6 +112,7 @@ export default function QuizTakingPage({}) {
                             bgColor='purple.800'
                             fontSize='1.3vw'
                             textColor='white'
+                            onClick={getNextQuestion}
                         >
                             Next Question
                         </Button>

@@ -16,6 +16,8 @@ import Navbar from '../components/Navbar';
 export default function QuizTakingPage({}) {
     let quiz = null;
 
+    const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
+
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
 
     const [userAnswers, setUserAnswers] = useState(() => []);
@@ -29,9 +31,6 @@ export default function QuizTakingPage({}) {
         });
     }
 
-    const submitQuiz = async () => {
-       console.log(userAnswers);
-    }
 
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: '617a191e44a08bd08c08d405' },
@@ -50,6 +49,21 @@ export default function QuizTakingPage({}) {
     let questionNumber = [];
     for (let i = 0; i < quiz.numQuestions; i++)
         questionNumber.push('Question' + i + 1);
+
+
+    let quizID = quiz._id; 
+
+    const submitQuiz = async () => {
+        console.log(userAnswers);
+        const { loading, error, data } = await SubmitQuiz({ variables: {
+            quizAttemptInput: { quiz_id: quizID, answerChoices: userAnswers },
+        } });
+
+        if(error){
+            console.log(error)
+        }
+            
+    }
 
     return (
         <Box data-testid='main-component'>

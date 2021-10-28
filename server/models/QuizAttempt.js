@@ -4,8 +4,7 @@ const quizAttemptSchema = new Schema(
     {
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+            ref: 'User'
         },
         quiz: {
             type: Schema.Types.ObjectId,
@@ -14,7 +13,6 @@ const quizAttemptSchema = new Schema(
         },
         elapsedTime: {
             type: Number,
-            required: true,
         },
         score: {
             type: Number,

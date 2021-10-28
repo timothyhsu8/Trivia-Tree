@@ -20,6 +20,8 @@ module.exports = gql`
         medianScore: Int
         comments: [Comment!]
         icon: String
+        numFavorites: Int
+        numAttempts: Int
     }
 
     type Question {

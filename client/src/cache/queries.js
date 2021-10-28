@@ -25,6 +25,8 @@ export const GET_QUIZ = gql`
                 answer
             }
             numQuestions
+            numAttempts
+            numFavorites
 		}
 	}
 `;

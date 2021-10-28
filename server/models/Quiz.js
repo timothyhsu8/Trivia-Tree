@@ -95,6 +95,12 @@ const quizSchema = new Schema(
             //quiz image still not sure what type this should be
             type: String,
         },
+        numFavorites: {
+            type: String,
+        },
+        numAttempts: {
+            type: String
+        }
     },
     { timestamps: true }
 );

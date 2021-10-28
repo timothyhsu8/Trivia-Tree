@@ -14,19 +14,19 @@ import Navbar from '../components/Navbar';
 
 export default function QuizTakingPage({}) {
     let quiz = null;
+
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId: '615ca7d3e65ac5f801f4e85e' },
+        variables: { quizId: '617a191e44a08bd08c08d405' },
     });
-    const [createQuiz, { data2, loading2, error2 }] = useMutation(
-        mutations.CREATE_QUIZ
-    ); // *JUST FOR TESTING, REMOVE THIS AFTER BUILD 1 REVIEW
 
     if (loading) {
         return <div></div>;
     }
+    
     if (data) {
         quiz = data.getQuiz;
     }
+
     if (error) {
         console.log(error);
     }
@@ -44,7 +44,7 @@ export default function QuizTakingPage({}) {
                 {/* SIDEBAR */}
                 <Box h='100vh' bgColor='gray.200'>
                     {/* QUIZ ICON */}
-                    <Image src='https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj' />
+                    <Image src='https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj' borderRadius="50%" p="20px"/>
 
                     {/* QUIZ TITLE */}
                     <Center>
@@ -109,20 +109,6 @@ export default function QuizTakingPage({}) {
                         </Button>
                     </Center>
 
-                    <Center pt='20'>
-                        <Button
-                            w='20%'
-                            h='7vh'
-                            onClick={() => {
-                                createQuiz();
-                            }}
-                            bgColor='purple.800'
-                            fontSize='1.3vw'
-                            textColor='white'
-                        >
-                            Create Quiz (For Testing)
-                        </Button>
-                    </Center>
                 </Box>
             </Grid>
         </Box>

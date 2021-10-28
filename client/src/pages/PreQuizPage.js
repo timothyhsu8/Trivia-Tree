@@ -19,10 +19,10 @@ export default function PreQuizPage({}) {
             <Navbar /> 
    
 
-            <Grid h="845px" templateRows="repeat(6, 1fr)" templateColumns="repeat(6, 1fr)" px="20px" py="20px" bgColor="beige"> 
+            <Grid h="845px" templateRows="repeat(6, 1fr)" templateColumns="repeat(6, 1fr)" px="20px" py="20px" bgColor="white" paddingTop="10px"> 
 
                 {/* Title and Image */}
-                <GridItem rowSpan={2} colSpan={6} borderBottom="1px" bgColor="beige">
+                <GridItem rowSpan={2} colSpan={6} borderBottom="1px">
                     <Flex direction="row" top="50%" left="2%" transform="translateY(-45%)" position="relative"> 
                             <Image w="200px" h="200px" src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image>
                             <Text top="56%" position="absolute" left="13%" fontSize="4vw" as="b" >{quizTitle}</Text>
@@ -31,12 +31,12 @@ export default function PreQuizPage({}) {
                 </GridItem>
 
                 {/* Description */}
-                <GridItem rowStart={3} colSpan={4} borderBottom="1px" bgColor="beige">
+                <GridItem rowStart={3} colSpan={4} borderBottom="1px">
                     <Text top="30px" left="30px" position="relative" fontSize="20">{quizDescription}</Text>
                 </GridItem>
 
                 {/* Settings */}
-                <GridItem rowStart={4} rowSpan={3} colSpan={4} bgColor="beige">
+                <GridItem rowStart={4} rowSpan={3} colSpan={4}>
                     <Grid templateRows="repeat(2, 1fr)" gap={12} top="70px" position="relative">
                         <Flex direction="row">
                             <Icon as={MdTimer} w="75px" h="75px" left="30px" position="relative"/> 
@@ -58,7 +58,7 @@ export default function PreQuizPage({}) {
                 </GridItem>
 
                 {/* Other Info */}
-                <GridItem rowStart={3} rowSpan={4} colSpan={2}borderLeft="1px" bgColor="beige">
+                <GridItem rowStart={3} rowSpan={4} colSpan={2}borderLeft="1px">
                     <Flex direction="column" position="relative" top="5%" left="3%">
                         <Flex direction="row" top="5%" left="3%" position="relative"> 
                                 <Image w="100px" h="100px" src={mario} objectFit="cover" borderRadius="50%" border="solid"></Image>

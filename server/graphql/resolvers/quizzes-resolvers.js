@@ -68,12 +68,16 @@ module.exports = {
             const _id = new ObjectId();
 
             let numQuestions = questions.length;
+            let numFavorites = 0;
+            let numAttempts = 0;
 
             const newQuiz = new Quiz({
                 _id,
                 title,
                 questions,
                 numQuestions,
+                numFavorites,
+                numAttempts
             });
 
             const quiz = await newQuiz.save();

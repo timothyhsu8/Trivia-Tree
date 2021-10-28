@@ -21,7 +21,7 @@ const quizAttemptSchema = new Schema(
             required: true,
         },
         answerChoices: {
-            type: [[String]], //array of answer choices(answerchoice itself can be an array for question types 2 and 3)
+            type: [[String]], //array of answer choices(answerchoice itself can be an array for question types 2)
             required: true,
         },
         questions: {

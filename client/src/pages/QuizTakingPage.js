@@ -20,6 +20,19 @@ export default function QuizTakingPage({}) {
 
     const [userAnswers, setUserAnswers] = useState(() => []);
 
+    function updateUserAnswers(currentQuestionNumber, choice) {
+        setUserAnswers((prevAnswers) => {
+            const newAnswers = [...prevAnswers];
+            newAnswers[currentQuestionNumber-1] = choice;
+            console.log(newAnswers);
+            return newAnswers;
+        });
+    }
+
+    const submitQuiz = async () => {
+       console.log(userAnswers);
+    }
+
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: '617a191e44a08bd08c08d405' },
     });
@@ -82,14 +95,26 @@ export default function QuizTakingPage({}) {
 
                     {/* ANSWER CHOICES */}
                     <VStack pt='30' spacing='6'>
-                        {choices.map((item, index) => {
+                        {choices.map((choice, index) => {
                             return (
                                 <Button
                                     w='60%'
                                     h='10vh'
-                                    bgColor='gray.600'
+                                    bgColor={() => {
+                                        if (
+                                            userAnswers[currentQuestionNumber-1] == choice
+                                        ) {
+                                            return 'black';
+                                        } else {
+                                            return 'gray.500';
+                                        }
+                                    }}
                                     fontSize='1.5vw'
                                     textColor='white'
+                                    onClick={() => {
+                                            updateUserAnswers(currentQuestionNumber, choice);
+                                    }}
+                                    _hover={{ bg: "black" }}
                                 >
                                     {choices[index]}
                                 </Button>
@@ -98,18 +123,35 @@ export default function QuizTakingPage({}) {
                     </VStack>
 
                     {/* NEXT QUESTION BUTTON */}
-                    <Center pt='20'>
+                    {
+                        currentQuestionNumber == quiz.numQuestions ? 
+                        <Center pt='20'>
+                        <Button
+                            w='20%'
+                            h='7vh'
+                            bgColor='red'
+                            fontSize='1.3vw'
+                            textColor='white'
+                            onClick={submitQuiz}
+                        >
+                            Submit Quiz
+                        </Button>
+                        </Center> 
+                        :
+                        <Center pt='20'>
                         <Button
                             w='20%'
                             h='7vh'
                             bgColor='purple.800'
                             fontSize='1.3vw'
                             textColor='white'
-                            onClick={() => {setCurrentQuestionNumber(currentQuestionNumber++)}}
+                            onClick={() => {setCurrentQuestionNumber(currentQuestionNumber+1)}}
                         >
                             Next Question
                         </Button>
-                    </Center>
+                        </Center> 
+                    }
+
 
                 </Box>
             </Grid>

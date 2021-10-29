@@ -184,7 +184,7 @@ export default function PostQuizPage() {
                                         <Box
                                             width={["48vw","48vw","48vw","37vw"]}
                                             mt='50px' 
-                                            h='40vh'
+                                            h='320px'
                                             bg='gray'
                                             borderLeftRadius='25px'
                                         > {/*h=3.5vw, w=200vw, h=24.5vw */}
@@ -196,7 +196,7 @@ export default function PostQuizPage() {
                                             
                                             mt='50px'
                                             width={["38vw","38vw","38vw","28vw"]}
-                                            h='40vh'
+                                            h='320px'
                                             bg='#D3D3D3'
                                             borderRightRadius='25px'
                                         >

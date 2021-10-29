@@ -18,6 +18,7 @@ import Quiz from './pages/Quiz';
 import SearchResultsPage from './pages/SearchResultsPage';
 import LoginPage from './pages/LoginPage';
 import CreateQuizPage from './pages/CreateQuizPage';
+import CategoryPage from './pages/CategoryPage';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
                             path='/quiztakingpage'
                             component={QuizTakingPage}
                         />
+                        <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage' component={AccountPage} />
                         <Route path='/postquizpage/:quizAttemptId' component={PostQuizPage} />
                         <Route path='/prequizpage' component={PreQuizPage} />\

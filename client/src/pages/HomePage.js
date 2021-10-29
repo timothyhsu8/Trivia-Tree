@@ -59,6 +59,9 @@ export default function Homepage() {
                     <Link style={{ fontSize: '25px' }} to='/accountpage'>
                         Account Page
                     </Link>
+                    <Link style={{ fontSize: '25px' }} to='/categoryPage'>
+                        Category Page
+                    </Link>
                     <Link style={{ fontSize: '25px' }} to='/postquizpage'>
                         Post Quiz Page
                     </Link>

@@ -15,22 +15,30 @@ import { AuthProvider } from './context/auth';
 import Quizzes from './pages/Quizzes';
 import CreateQuiz from './pages/CreateQuiz';
 import Quiz from './pages/Quiz';
-import SearchResultsPage from './pages/SearchResultsPage'
+import SearchResultsPage from './pages/SearchResultsPage';
 import LoginPage from './pages/LoginPage';
+import CreateQuizPage from './pages/CreateQuizPage';
+import Navbar from './components/Navbar';
 
 function App() {
     return (
         <ChakraProvider>
             <AuthProvider>
                 <Router>
+                    <Navbar/>
                     <Switch>
                         <Route exact path='/' component={Homepage} />
                         <Route exact path='/quizzes' component={Quizzes} />
                         <Route exact path='/quiz/:quizId' component={Quiz} />
-                        <Route
+                        {/* <Route
                             exact
                             path='/createQuiz'
                             component={CreateQuiz}
+                        /> */}
+                        <Route
+                            exact
+                            path='/createQuiz'
+                            component={CreateQuizPage}
                         />
                         <Route
                             path='/quiztakingpage'
@@ -39,7 +47,10 @@ function App() {
                         <Route path='/accountpage' component={AccountPage} />
                         <Route path='/postquizpage' component={PostQuizPage} />
                         <Route path='/prequizpage' component={PreQuizPage} />\
-                        <Route path='/searchresultspage' component={SearchResultsPage} />
+                        <Route
+                            path='/searchresultspage'
+                            component={SearchResultsPage}
+                        />
                         <Route path='/loginpage' component={LoginPage}></Route>
                     </Switch>
                 </Router>

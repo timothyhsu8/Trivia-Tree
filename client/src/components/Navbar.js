@@ -20,8 +20,8 @@ export default function Navbar() {
                 {/* SEARCH BAR */}
                 <Grid h="50px" templateColumns="3fr 12fr 1fr"> 
                     <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white"> 
-                        {categories.map((category) => {
-                            return <option>{category}</option>
+                        {categories.map((category, index) => {
+                            return <option key={index}>{category}</option>
                         })}
                     </Select>
                     <Input h="45px" fontSize="17px" borderRadius="0px" placeholder="Search for a quiz..." bgColor="white"/>

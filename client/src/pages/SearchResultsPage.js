@@ -18,7 +18,6 @@ export default function SearchResultsPage() {
 
     return (
         <Box>
-            <Navbar />
             <Grid templateColumns="1fr 6fr">
                 {/* FILTERS */}
                 <VStack pt="5vh">

@@ -5,7 +5,6 @@ import treeicon from '../images/triviatree_icon.png'
 export default function LoginPage({}) {
     return (
         <Box>
-            <Navbar />
             <Grid templateColumns="2fr 3fr">
 
                 {/* LEFT SIDE OF PAGE */}

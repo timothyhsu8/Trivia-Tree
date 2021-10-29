@@ -1,0 +1,59 @@
+.container {
+    height: calc(100vh - 55px);
+    gap: 5px;
+    width: auto;
+    display: grid;
+    grid-template: 2fr 6fr 0.5fr / 0.2fr 3fr 1fr;
+    grid-template-areas:
+        'leftSideSpacer title-description platform-icon'
+        'leftSideSpacer question sidebar'
+        'footer footer footer';
+}
+
+.leftSideSpacer {
+    grid-area: leftSideSpacer;
+}
+
+.title-description {
+    grid-area: title-description;
+    display: flex;
+    flex-direction: column;
+}
+
+.platform-icon {
+    background-color: #e2e8f0;
+    grid-area: platform-icon;
+    display: flex;
+    flex-direction: column;
+}
+
+.question {
+    grid-area: question;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 40px;
+}
+
+.sidebar {
+    background-color: #e2e8f0;
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    margin-right: 15px;
+}
+
+.footer {
+    grid-area: footer;
+    display: flex;
+    flex-direction: column;
+}
+
+.trashCan:hover {
+    cursor: pointer;
+    color: red;
+}
+
+.timer:focus {
+    outline: none;
+}

@@ -62,7 +62,6 @@ export default function QuizTakingPage({}) {
 
     return (
         <Box data-testid='main-component'>
-            <Navbar />
             <Grid templateColumns='1fr 6fr'>
                 {/* SIDEBAR */}
                 <Box h='100vh' bgColor='gray.200'>

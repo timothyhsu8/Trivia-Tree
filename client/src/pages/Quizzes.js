@@ -37,7 +37,6 @@ function Quizzes(props) {
 
     return (
         <div>
-            <Navbar />
             <div style={{ display: 'flex' }}>
                 <div style={{ textAlign: 'left', width: '33.33333%' }}>
                     <Link

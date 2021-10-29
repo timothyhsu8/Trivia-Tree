@@ -11,7 +11,6 @@ export default function AccountPage() {
 
     return (
         <Box data-testid="main-component">
-            <Navbar />
             <Grid templateColumns="1fr 6fr 1fr">
                 <Box w="100%" h="100vh"></Box>
                 

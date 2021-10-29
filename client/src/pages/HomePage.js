@@ -14,7 +14,6 @@ export default function Homepage() {
 
     return (
         <Box>
-            <Navbar />
             <Center marginTop='30px'>
                 {user !== 'NoUser' ? (
                     <div>

@@ -80,7 +80,6 @@ export default function PostQuizPage() {
     if (loading) {
         return(
             <Box height="auto">
-                <Navbar /> 
                 <h1 className="maintitle">"Loading..."</h1>
                 <Box className="quizIconCentered" w="50%" h="50%">
                             <img alt="Moon" src={moon} />
@@ -100,7 +99,6 @@ export default function PostQuizPage() {
     return(
         /*Go to line 145 for answers page*/
         <Box> 
-            <Navbar />
             <Box h="50px"></Box>
             <Grid>
                 

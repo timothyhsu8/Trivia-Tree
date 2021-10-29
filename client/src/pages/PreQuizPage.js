@@ -16,7 +16,6 @@ export default function PreQuizPage({}) {
 
     return ( 
         <Box>
-            <Navbar /> 
    
 
             <Grid h="845px" templateRows="repeat(6, 1fr)" templateColumns="repeat(6, 1fr)" px="20px" py="20px" bgColor="white" paddingTop="10px"> 

@@ -17,29 +17,28 @@ export default function AccountPage() {
                 {/* MAIN CONTENT */}
                 <Box w="100%" h="100vh">
                     
-                    {/* HEADER AND BANNER */}
-                    <Grid templateRows="1fr 4fr" h="35vh">
-                        {/* HEADER BUTTONS */}
-                        <Grid w="100%" templateColumns="1fr 1fr 1fr 1fr"> 
-                            <Button height="100%" fontSize="1.2vw" bgColor="white"> {user} </Button>
-                            <Button height="100%" fontSize="1.2vw" bgColor="white"> Platforms </Button>
-                            <Button height="100%" fontSize="1.2vw" bgColor="white"> Quizzes </Button>
-                            <Button height="100%" fontSize="1.2vw" bgColor="white"> Badges </Button>
-                        </Grid>
-
-                        {/* BANNER */}
-                        <Box
-                            bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" + banner_src +  "')"} 
-                            bgSize="cover" 
-                            bgPosition="center"
-                            borderRadius="10">
-                                {/* PROFILE PICTURE AND NAME */}
-                                <Flex direction="row" top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
-                                    <Image w="14.5%" src={pfp_src} objectFit="cover" borderRadius="50%"></Image>
-                                    <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
-                                </Flex>
-                        </Box>
+                    {/* HEADER BUTTONS */}
+                    <Grid w="100%" h="7vh" templateColumns="1fr 1fr 1fr 1fr"> 
+                        <Button height="100%" fontSize="1.2vw" bgColor="white"> {user} </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white"> Platforms </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white"> Quizzes </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white"> Badges </Button>
                     </Grid>
+
+                    {/* BANNER */}
+                    <Box
+                        h="28vh"
+                        bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" + banner_src +  "')"} 
+                        bgSize="cover" 
+                        bgPosition="center"
+                        borderRadius="10">
+                            
+                            {/* PROFILE PICTURE AND NAME */}
+                            <Flex direction="row" top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
+                                <Image w="14.5%" src={pfp_src} objectFit="cover" borderRadius="50%"></Image>
+                                <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
+                            </Flex>
+                    </Box>
 
                     {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
                     <Grid pt="1%" templateColumns="3fr 1fr">

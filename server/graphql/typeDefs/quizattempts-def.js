@@ -16,6 +16,9 @@ module.exports = gql`
         answerChoices:  [[String!]!]!
     }
 
+    extend type Query {
+        getQuizAttempt(_id: ID!): QuizAttempt
+    }
 
     extend type Mutation {
         submitQuiz(quizAttemptInput: QuizAttemptInput!): QuizAttempt

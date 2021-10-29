@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function Navbar() {
 
-    let categories = ["All Quizzes", "Other"]
-
+    let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
     let user = "User1849021"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
 
@@ -20,8 +19,8 @@ export default function Navbar() {
                 {/* SEARCH BAR */}
                 <Grid h="50px" templateColumns="3fr 12fr 1fr"> 
                     <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white"> 
-                        {categories.map((category) => {
-                            return <option>{category}</option>
+                        {categories.map((category, index) => {
+                            return <option key={index}> {category} </option>
                         })}
                     </Select>
                     <Input h="45px" fontSize="17px" borderRadius="0px" placeholder="Search for a quiz..." bgColor="white"/>
@@ -44,20 +43,6 @@ export default function Navbar() {
                     </Link>
                     
                     <Box w="5%"/>
-
-                    {/* DROPDOWN MENU */}
-                    <Menu>  
-                        <MenuButton as={HamburgerIcon} boxSize="6" color="white" _hover={{cursor:"pointer"}}> dasfs</MenuButton>
-                        <MenuList>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Create Quiz </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Create Platform </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Quiz Manager </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Platform Manager </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Settings </MenuItem>
-                        </MenuList>
-                    </Menu>
-
-                    <Box w="3%"/>
                     
                     {/* USER NAME */}
                     <Link to='/accountpage'> 
@@ -68,6 +53,20 @@ export default function Navbar() {
                     <Link to='/accountpage'> 
                         <Image w="45px" src={pfp_src} borderRadius="150" border="2px solid white" /> 
                     </Link>
+                    <Box w="1%"/>
+
+                     {/* DROPDOWN MENU */}
+                     <Menu>  
+                        <MenuButton as={HamburgerIcon} boxSize="6" color="white" _hover={{cursor:"pointer"}}> dasfs</MenuButton>
+                        <MenuList>
+                            <MenuItem fontSize="18px" fontWeight="medium"> Create Quiz      </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium"> Create Platform  </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium"> Quiz Manager     </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium"> Platform Manager </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium"> Settings         </MenuItem>
+                        </MenuList>
+                    </Menu>
+                    <Box w="1%"/>
                 </HStack>
             </Grid>
         </Box>

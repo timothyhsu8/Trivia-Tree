@@ -23,6 +23,7 @@ export const GET_QUIZ = gql`
                 question
                 answerChoices
                 answer
+                questionType
             }
             numQuestions
             numAttempts

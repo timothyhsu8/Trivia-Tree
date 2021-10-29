@@ -65,13 +65,49 @@ export default function QuizTakingPage({}) {
         
     }
 
-    function updateUserAnswers(currentQuestionNumber, choice) {
-        setUserAnswers((prevAnswers) => {
-            const newAnswers = [...prevAnswers];
-            newAnswers[currentQuestionNumber-1] = choice;
-            console.log(newAnswers);
-            return newAnswers;
-        });
+    function updateUserAnswers(question_num, choice, questionType) {
+        question_num = question_num - 1
+        const newAnswers = [...userAnswers];
+
+        // If question type is select one answer
+        if (questionType === 1){
+            newAnswers[question_num] = choice;
+            setUserAnswers(newAnswers)
+        }
+
+        // If question type is select multiple answers
+        else if (questionType === 2){
+            // Create array to carry multiple answers
+            if (newAnswers[question_num] === undefined)
+                newAnswers[question_num] = [];
+            
+            // If answer was selected, remove it from the array
+            let index = newAnswers[question_num].indexOf(choice);
+            if (index !== -1)
+                newAnswers[question_num].splice(index, 1);
+
+            else newAnswers[question_num].push(choice);
+
+            // console.log(newAnswers);
+            setUserAnswers(newAnswers);
+        }
+    }
+
+    // Determines the color of the answer buttons
+    function getAnswerColor(questionType, currentQuestionNumber, choice) {
+        // If question type is select one answer
+        if (questionType === 1){
+            return userAnswers[currentQuestionNumber-1] === choice ? "blue.500" : "gray.500"
+        }
+
+        // If question type is select multiple answers
+        else if (questionType === 2){
+            // Array hasn't been created yet, set color to gray
+            if (userAnswers[currentQuestionNumber-1] === undefined)
+                return "gray.500"
+
+            return userAnswers[currentQuestionNumber-1].includes(choice) ? "blue.500" : "gray.500"
+        }
     }
 
     return (
@@ -102,13 +138,14 @@ export default function QuizTakingPage({}) {
                         {questionNumber.map((item, index) => {
                             return (
                                 <Button 
+                                    key = {index}
                                     bgColor= { index+1 === currentQuestionNumber ? 'blue.400' : 'gray.200' }
                                     borderRadius="0" 
                                     fontSize='0.9vw' 
                                     onClick={() => {setCurrentQuestionNumber(index+1)}}
                                     _hover={{ bgColor: index+1 === currentQuestionNumber ? 'blue.400' : 'gray.300'}}
                                 >
-                                    <Text color={ index+1 === currentQuestionNumber ? 'white' : 'gray.600' }>
+                                    <Text key = {index} color={ index+1 === currentQuestionNumber ? 'white' : 'gray.600' }>
                                         {index + 1}
                                     </Text>
                                 </Button>
@@ -131,12 +168,13 @@ export default function QuizTakingPage({}) {
                         {choices.map((choice, index) => {
                             return (
                                 <Button
+                                    key={index}
                                     w='60%'
                                     h='10vh'
-                                    bgColor = { userAnswers[currentQuestionNumber - 1] == choice ? "blue.500" : "gray.500" }
+                                    bgColor = {getAnswerColor(quiz.questions[currentQuestionNumber-1].questionType, currentQuestionNumber, choice)}
                                     fontSize='1.5vw'
                                     textColor='white'
-                                    onClick={() => { updateUserAnswers(currentQuestionNumber, choice) }}
+                                    onClick={() => { updateUserAnswers(currentQuestionNumber, choice, quiz.questions[currentQuestionNumber-1].questionType) }}
                                     _hover={{ bg: "blue.500" }}
                                 >
                                     {choices[index]}

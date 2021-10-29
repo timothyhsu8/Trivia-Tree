@@ -8,7 +8,8 @@ import Navbar from '../components/Navbar';
 export default function Homepage() {
     const { user } = useContext(AuthContext);
 
-    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj";
+    let pfp_src =
+        'https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj';
 
     if (!user) {
         return null;
@@ -49,6 +50,9 @@ export default function Homepage() {
                     <Link style={{ fontSize: '25px' }} to='/quizzes'>
                         Quizzes with CRUD
                     </Link>
+                    <Link style={{ fontSize: '25px' }} to='/createQuiz'>
+                        Create Quiz Page
+                    </Link>
                     <Link style={{ fontSize: '25px' }} to='/quiztakingpage'>
                         Quiz Taking Page
                     </Link>
@@ -65,7 +69,14 @@ export default function Homepage() {
                         Login Page
                     </Link>
                     <Link to='/prequizpage'>
-                    <Image marginTop="30px" width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%"></Image>
+                        <Image
+                            marginTop='30px'
+                            width={['100px', '100px', '100px', '200px']}
+                            height={['100px', '100px', '100px', '200px']}
+                            src={pfp_src}
+                            objectFit='cover'
+                            borderRadius='10%'
+                        ></Image>
                     </Link>
                 </VStack>
             </div>

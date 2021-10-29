@@ -2,11 +2,14 @@ const { model, Schema } = require('mongoose');
 
 const quizAttemptSchema = new Schema(
     {
-        user: {
+        _id: {
+            type: Schema.Types.ObjectId,
+        },
+        user_id: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        quiz: {
+        quiz_id: {
             type: Schema.Types.ObjectId,
             ref: 'Quiz',
             required: true,

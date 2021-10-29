@@ -60,6 +60,9 @@ export default function Homepage() {
                     <Link style={{ fontSize: '25px' }} to='/prequizpage'>
                         Pre Quiz Page
                     </Link>
+                    <Link style={{ fontSize: '25px' }} to='/loginpage'>
+                        Login Page
+                    </Link>
                 </VStack>
             </div>
         </Box>

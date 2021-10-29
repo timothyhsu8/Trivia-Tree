@@ -16,6 +16,7 @@ import Quizzes from './pages/Quizzes';
 import CreateQuiz from './pages/CreateQuiz';
 import Quiz from './pages/Quiz';
 import SearchResultsPage from './pages/SearchResultsPage'
+import LoginPage from './pages/LoginPage';
 
 function App() {
     return (
@@ -39,6 +40,7 @@ function App() {
                         <Route path='/postquizpage' component={PostQuizPage} />
                         <Route path='/prequizpage' component={PreQuizPage} />\
                         <Route path='/searchresultspage' component={SearchResultsPage} />
+                        <Route path='/loginpage' component={LoginPage}></Route>
                     </Switch>
                 </Router>
             </AuthProvider>

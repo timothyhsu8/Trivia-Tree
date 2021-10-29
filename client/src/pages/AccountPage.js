@@ -36,7 +36,7 @@ export default function AccountPage() {
                             borderRadius="10">
                                 {/* PROFILE PICTURE AND NAME */}
                                 <Flex direction="row" top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
-                                    <Image w="200px" h="200px" src={pfp_src} objectFit="cover" borderRadius="50%"></Image>
+                                    <Image w="14.5%" src={pfp_src} objectFit="cover" borderRadius="50%"></Image>
                                     <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
                                 </Flex>
                         </Box>

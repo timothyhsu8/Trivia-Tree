@@ -17,20 +17,8 @@ export default function QuizTakingPage({}) {
     let quiz = null;
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
-
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
-
     const [userAnswers, setUserAnswers] = useState(() => []);
-
-    function updateUserAnswers(currentQuestionNumber, choice) {
-        setUserAnswers((prevAnswers) => {
-            const newAnswers = [...prevAnswers];
-            newAnswers[currentQuestionNumber-1] = choice;
-            console.log(newAnswers);
-            return newAnswers;
-        });
-    }
-
 
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: '617a191e44a08bd08c08d405' },
@@ -44,14 +32,13 @@ export default function QuizTakingPage({}) {
         quiz = data.getQuiz;
     }
 
+    let quizID = quiz._id;
+    let quizicon = "https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj"
     let question = quiz.questions[currentQuestionNumber-1].question;
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
     for (let i = 0; i < quiz.numQuestions; i++)
         questionNumber.push('Question' + i + 1);
-
-
-    let quizID = quiz._id; 
 
     const submitQuiz = async () => {
         console.log(userAnswers);
@@ -61,8 +48,16 @@ export default function QuizTakingPage({}) {
 
         if(error){
             console.log(error)
-        }
-            
+        }       
+    }
+
+    function updateUserAnswers(currentQuestionNumber, choice) {
+        setUserAnswers((prevAnswers) => {
+            const newAnswers = [...prevAnswers];
+            newAnswers[currentQuestionNumber-1] = choice;
+            console.log(newAnswers);
+            return newAnswers;
+        });
     }
 
     return (
@@ -72,7 +67,7 @@ export default function QuizTakingPage({}) {
                 {/* SIDEBAR */}
                 <Box h='100vh' bgColor='gray.200'>
                     {/* QUIZ ICON */}
-                    <Image src='https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj' borderRadius="50%" p="20px"/>
+                    <Image src={quizicon} borderRadius="50%" p="20px"/>
 
                     {/* QUIZ TITLE */}
                     <Center>
@@ -92,8 +87,16 @@ export default function QuizTakingPage({}) {
                     <Grid w='100%' templateColumns='1fr 1fr'>
                         {questionNumber.map((item, index) => {
                             return (
-                                <Button bgColor='gray.200' fontSize='0.9vw' onClick={() => {setCurrentQuestionNumber(index+1)}}>
-                                    {index + 1}
+                                <Button 
+                                    bgColor= { index+1 === currentQuestionNumber ? 'blue.400' : 'gray.200' }
+                                    borderRadius="0" 
+                                    fontSize='0.9vw' 
+                                    onClick={() => {setCurrentQuestionNumber(index+1)}}
+                                    _hover={{ bgColor: index+1 === currentQuestionNumber ? 'blue.400' : 'gray.300'}}
+                                >
+                                    <Text color={ index+1 === currentQuestionNumber ? 'white' : 'gray.600' }>
+                                        {index + 1}
+                                    </Text>
                                 </Button>
                             );
                         })}
@@ -103,9 +106,11 @@ export default function QuizTakingPage({}) {
                 {/* MAIN PAGE */}
                 <Box>
                     {/* QUESTION */}
-                    <Text pt='50' fontSize='3vw'>
-                        <Center>{currentQuestionNumber}.  {question}</Center>
-                    </Text>
+                    <Center>
+                        <Text pt='50' fontSize='3vw'>
+                            {currentQuestionNumber}.  {question}
+                        </Text>
+                    </Center>
 
                     {/* ANSWER CHOICES */}
                     <VStack pt='30' spacing='6'>
@@ -114,21 +119,11 @@ export default function QuizTakingPage({}) {
                                 <Button
                                     w='60%'
                                     h='10vh'
-                                    bgColor={() => {
-                                        if (
-                                            userAnswers[currentQuestionNumber-1] == choice
-                                        ) {
-                                            return 'black';
-                                        } else {
-                                            return 'gray.500';
-                                        }
-                                    }}
+                                    bgColor = { userAnswers[currentQuestionNumber - 1] == choice ? "blue.500" : "gray.500" }
                                     fontSize='1.5vw'
                                     textColor='white'
-                                    onClick={() => {
-                                            updateUserAnswers(currentQuestionNumber, choice);
-                                    }}
-                                    _hover={{ bg: "black" }}
+                                    onClick={() => { updateUserAnswers(currentQuestionNumber, choice) }}
+                                    _hover={{ bg: "blue.500" }}
                                 >
                                     {choices[index]}
                                 </Button>
@@ -143,10 +138,11 @@ export default function QuizTakingPage({}) {
                         <Button
                             w='20%'
                             h='7vh'
-                            bgColor='red'
+                            bgColor='red.500'
                             fontSize='1.3vw'
                             textColor='white'
                             onClick={submitQuiz}
+                            _hover={{ bg: "red.600" }}
                         >
                             Submit Quiz
                         </Button>
@@ -156,10 +152,11 @@ export default function QuizTakingPage({}) {
                         <Button
                             w='20%'
                             h='7vh'
-                            bgColor='purple.800'
+                            bgColor='purple.600'
                             fontSize='1.3vw'
                             textColor='white'
                             onClick={() => {setCurrentQuestionNumber(currentQuestionNumber+1)}}
+                            _hover={{ bg: "purple.800" }}
                         >
                             Next Question
                         </Button>

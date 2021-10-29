@@ -20,3 +20,11 @@ export const CREATE_QUIZ = gql`
         }
     }
 `;
+
+export const SUBMIT_QUIZ = gql`
+    mutation ($quizAttemptInput: QuizAttemptInput!) {
+        submitQuiz(quizAttemptInput: $quizAttemptInput) {
+            score
+        }
+    }
+`;

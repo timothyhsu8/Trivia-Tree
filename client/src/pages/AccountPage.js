@@ -65,7 +65,7 @@ export default function AccountPage() {
                         </Box>
                     </Grid>
                 </Box>
-                <Box w="100%" h="100vh"></Box>
+
             </Grid>
         </Box>
     )

@@ -1,3 +1,25 @@
+@media only screen and (max-width: 62em) {
+  .fadeshow1 {
+      display: none;
+  }
+  .biggify{
+    width: 42vw;
+  }
+  .biggify2{
+    width: 55vw;
+  }
+  .smallify{
+    width: 0px;
+  }
+  .containerAcrossMe{
+    justify-content: center;
+  }
+  .creator{
+    font-weight: bold;
+  }
+
+}
+
 /*For loading screen*/
 .answer{
   visibility: hidden;
@@ -11,9 +33,9 @@
     width: 50%; 
 }
 .quizIconPadding{
-  padding-top: 40px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-top: 2.8vw;
+  padding-left: 0.4vw;
+  padding-right: 0.7vw;
 }
 .quizIconTitle{ /*Big Image in Top Left*/
   display: inline-block;
@@ -33,11 +55,18 @@
   display:flex;
   align-items: center;
   justify-content: center;
-  margin-top:175px;
+  margin-top:12.25vw;
 }
-
+.SecretSauce{
+  display:flex;
+  width: 100%;
+  padding: 10px;
+  margin: auto;
+}
 .creator{
-  font-size: 30px;
+  font-size: 64px;
+  line-height: 64px;
+
   font-weight: bold;
 }
 .creatorName{
@@ -74,6 +103,7 @@
 }
 /*Leaderboard Text*/
 .leaderboard_text{
+  font-size: 25px;
     font-family:monospace;
 }
 .answer_text{
@@ -84,11 +114,14 @@
 /*Horizontal White Line*/
 hr{
   border-bottom: solid black;
-  width: 900px;
-  margin-right: 50px;
+  width: 100%;
 }
 /*Stack across*/
 .containerAcross {
+    display: flex; /* or inline-flex */
+    flex-direction: row;
+  }
+  .containerAcrossMe {
     display: flex; /* or inline-flex */
     flex-direction: row;
   }
@@ -102,7 +135,7 @@ hr{
     display:flex;
     align-items: center;
     justify-content: center;
-    font-size:30px;
+    font-size:25px;
     font-family:monospace;
   }
 
@@ -114,7 +147,6 @@ hr{
   }
   .round_image2{
     margin-top: 10px;
-    margin-right: 10px;
     display: inline-block;
     position: relative;
     width: 64px;

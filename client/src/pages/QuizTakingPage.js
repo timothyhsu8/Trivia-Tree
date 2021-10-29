@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Center,
@@ -6,19 +6,24 @@ import {
     Grid,
     VStack,
     Button,
-    Image,
+    Image
 } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
 import Navbar from '../components/Navbar';
+import { Link } from 'react-router-dom';
+
 
 export default function QuizTakingPage({}) {
     let quiz = null;
+    let quizAttempt = null;
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
     const [userAnswers, setUserAnswers] = useState(() => []);
+    const [quizDone, setQuizDone] = useState(false);
+    const [quizAttemptID, setQuizAttemptID] = useState(0);
 
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: '617a191e44a08bd08c08d405' },
@@ -40,15 +45,24 @@ export default function QuizTakingPage({}) {
     for (let i = 0; i < quiz.numQuestions; i++)
         questionNumber.push('Question' + i + 1);
 
+
     const submitQuiz = async () => {
-        console.log(userAnswers);
-        const { loading, error, data } = await SubmitQuiz({ variables: {
+        const {loading, error, data} = await SubmitQuiz({ variables: {
             quizAttemptInput: { quiz_id: quizID, answerChoices: userAnswers },
         } });
 
+
+        if(data){
+            quizAttempt = data.submitQuiz;
+            setQuizAttemptID(quizAttempt._id);
+            setQuizDone(true);
+        }
+
         if(error){
             console.log(error)
-        }       
+        }
+
+        
     }
 
     function updateUserAnswers(currentQuestionNumber, choice) {
@@ -161,6 +175,26 @@ export default function QuizTakingPage({}) {
                             Next Question
                         </Button>
                         </Center> 
+                    }
+
+                    {
+                        !quizDone ? '':
+                        <Link to={'/postquizpage/' + quizAttemptID}>
+                            <Center>
+                                <Button
+                                top='20px'
+                                w='20%'
+                                h='7vh'
+                                bgColor='blue'
+                                fontSize='1.3vw'
+                                textColor='white'
+                                _hover={{ bg: "purple.800" }}
+                                >
+                                View Results
+                                </Button>
+                            </Center>
+                        </Link>
+
                     }
 
 

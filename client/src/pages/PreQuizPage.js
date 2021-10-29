@@ -70,8 +70,8 @@ export default function PreQuizPage({}) {
                         <Text fontSize="24" left="10px" top="30px" as="b" position="relative" >1234 Plays</Text>
                         <Text fontSize="24" left="10px" top="40px" as="b" position="relative">25 Favorites</Text>
         
-                        <Button colorScheme="blue" rightIcon={<BsFillPlayCircleFill/>} variant="solid" 
-                        position="relative" top="265px" right="10px" h="60px" fontSize="40px"> Start Quiz </Button>
+                        <Link to="/quiztakingpage"> <Button colorScheme="blue" rightIcon={<BsFillPlayCircleFill/>} variant="solid" 
+                        position="relative" top="265px" left="px" h="60px" fontSize="40px"> Start Quiz </Button></Link>
 
                     </Flex>
 

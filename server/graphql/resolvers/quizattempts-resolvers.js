@@ -4,6 +4,10 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
   Query: {
+    async getQuizAttempt(_, {_id}) {
+      const quizAttempt = await QuizAttempt.findById(_id);
+      return quizAttempt;
+    }
   },
   Mutation: {
     async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices } }) {
@@ -43,7 +47,7 @@ module.exports = {
 
       console.log(quizAttempt);
       
-      return; 
+      return quizAttempt; 
     }
   }
 };

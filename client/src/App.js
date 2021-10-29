@@ -37,7 +37,7 @@ function App() {
                             component={QuizTakingPage}
                         />
                         <Route path='/accountpage' component={AccountPage} />
-                        <Route path='/postquizpage' component={PostQuizPage} />
+                        <Route path='/postquizpage/:quizAttemptId' component={PostQuizPage} />
                         <Route path='/prequizpage' component={PreQuizPage} />\
                         <Route path='/searchresultspage' component={SearchResultsPage} />
                         <Route path='/loginpage' component={LoginPage}></Route>

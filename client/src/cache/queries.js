@@ -30,3 +30,12 @@ export const GET_QUIZ = gql`
 		}
 	}
 `;
+
+export const GET_QUIZ_ATTEMPT = gql`
+	query GetQuizAttempt($_id: ID!) {
+		getQuizAttempt(_id: $_id) {
+			_id
+            score
+		}
+	}
+`;

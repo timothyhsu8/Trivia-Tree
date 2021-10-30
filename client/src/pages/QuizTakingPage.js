@@ -38,11 +38,14 @@ export default function QuizTakingPage({}) {
         quiz = data.getQuiz;
     }
 
+
+
     let quizID = quiz._id;
     let quizicon = quizImage
     let question = quiz.questions[currentQuestionNumber-1].question;
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
+    let questionType = quiz.questions[currentQuestionNumber-1].questionType;
     for (let i = 0; i < quiz.numQuestions; i++)
         questionNumber.push('Question' + i + 1);
 
@@ -159,7 +162,7 @@ export default function QuizTakingPage({}) {
                     {/* QUESTION */}
                     <Center>
                         <Text pt='50' fontSize='3vw'>
-                            {currentQuestionNumber}.  {question}
+                        {questionType == 2 ? "Select All That Apply: " + question : question}
                         </Text>
                     </Center>
 

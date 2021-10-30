@@ -29,7 +29,7 @@ function CreateQuizPage(props) {
     const [quizType, setQuizType] = useState('Standard');
     const [quizOrdering, setQuizOrdering] = useState('Ordered');
     const [timeType, setTimeType] = useState('Quiz');
-    const [quizTimer, setQuizTimer] = useState('00:00:00');
+    const [quizTimer, setQuizTimer] = useState('10:00:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
 
     function updateQuestion(event, index) {

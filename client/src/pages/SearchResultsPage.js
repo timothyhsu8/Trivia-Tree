@@ -3,6 +3,7 @@ import { StarIcon } from '@chakra-ui/icons'
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_QUIZZES } from "../cache/queries";
+import quizImage from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
 
 export default function SearchResultsPage() {
@@ -14,7 +15,7 @@ export default function SearchResultsPage() {
     // Placeholder data for the quiz info we don't have in the database yet
     let quiz_description = "Do you know these Celeste songs? Take this quiz to find out!!"
     let quiz_rating = 5
-    let quiz_icon_src = "https://assets.nintendo.com/image/upload/f_auto,q_auto,w_960,h_540/Nintendo%20Switch/Games/Third%20Party/Celeste/Video/posters/Celeste_Launch_Trailer"
+    let quiz_icon_src = quizImage;
     let quiz_platform = "Celeste"
     let quiz_creator = "CelesteGamer200"
 
@@ -63,7 +64,7 @@ export default function SearchResultsPage() {
         return (
         quizzes.map((quiz, index) => {
             return( 
-            <Link to="/prequizpage" key={index}>
+            <Link to={'/prequizpage/' + quiz._id} key={index}>
                 <Grid 
                     h="15vh" 
                     top="50%" 

@@ -20,6 +20,7 @@ export const GET_QUIZ = gql`
                 answer
                 questionType
             }
+            description
             numQuestions
             numAttempts
             numFavorites

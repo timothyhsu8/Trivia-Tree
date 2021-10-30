@@ -105,7 +105,7 @@ function CreateQuizPage(props) {
     function handleCreateQuiz() {
         createQuiz({
             variables: {
-                quizInput: { title: title, questions: quizQuestions },
+                quizInput: { title: title, questions: quizQuestions, description: description },
             },
         });
     }

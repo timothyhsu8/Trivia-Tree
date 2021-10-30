@@ -13,6 +13,14 @@ module.exports = {
     async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices } }) {
 
       const quiz = await Quiz.findById(quiz_id);
+
+      console.log(quiz);
+
+      quiz.numAttempts = quiz.numAttempts + 1; 
+      quiz.save();
+
+      console.log(quiz);
+
       let questions = quiz.questions
 
       let answers = [];
@@ -44,8 +52,6 @@ module.exports = {
       });
 
       const quizAttempt = await newQuizAttempt.save();
-
-      console.log(quizAttempt);
       
       return quizAttempt; 
     }

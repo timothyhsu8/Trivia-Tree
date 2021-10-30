@@ -48,7 +48,7 @@ function App() {
                         <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage' component={AccountPage} />
                         <Route path='/postquizpage/:quizAttemptId' component={PostQuizPage} />
-                        <Route path='/prequizpage' component={PreQuizPage} />\
+                        <Route path='/prequizpage/:quizId' component={PreQuizPage} />\
                         <Route
                             path='/searchresultspage'
                             component={SearchResultsPage}

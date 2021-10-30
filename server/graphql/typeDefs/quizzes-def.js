@@ -40,6 +40,7 @@ module.exports = gql`
     input QuizInput {
         title: String!
         questions: [QuestionInput!]!
+        description: String
     }
 
     input QuestionInput {

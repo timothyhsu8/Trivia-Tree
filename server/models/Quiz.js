@@ -96,10 +96,10 @@ const quizSchema = new Schema(
             type: String,
         },
         numFavorites: {
-            type: String,
+            type: Number,
         },
         numAttempts: {
-            type: String
+            type: Number
         }
     },
     { timestamps: true }

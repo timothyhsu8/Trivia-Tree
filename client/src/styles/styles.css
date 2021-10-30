@@ -1,6 +1,6 @@
 /* GENERAL STYLES THAT CAN BE APPLIED TO ALL PAGES */
 
-/* SQUARE IMAGES */
+/* Allows for dynamically sized square images */
 .squareimage_container {
     position: relative;
 }
@@ -15,4 +15,13 @@
     position: absolute;
     height:100%;
     top: 0
+}
+
+/* Prevents element from being dragged/highlighted */
+.disable-select {
+    user-select: none; /* supported by Chrome and Opera */
+   -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+   -moz-user-select: none; /* Firefox */
+   -ms-user-select: none; /* Internet Explorer/Edge */
 }

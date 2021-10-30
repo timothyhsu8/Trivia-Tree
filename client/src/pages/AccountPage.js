@@ -1,5 +1,4 @@
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
-import Navbar from "../components/Navbar"
 
 export default function AccountPage() {
     let user = "User1849021"

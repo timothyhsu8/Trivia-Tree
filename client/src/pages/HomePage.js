@@ -3,7 +3,6 @@ import { config } from '../util/constants';
 import { AuthContext } from '../context/auth';
 import { Box, Heading, Center, VStack, Image } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 
 export default function Homepage() {
     const { user } = useContext(AuthContext);

@@ -2,7 +2,6 @@ import { React, useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Center, Spinner, Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 
 function Quizzes(props) {
     const {

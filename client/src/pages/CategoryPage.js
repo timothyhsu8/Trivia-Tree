@@ -20,7 +20,6 @@ import {
 } from 'react-router-dom';
 import PostQuizAnswersCard from './PostQuizAnswersCard';
 import { subscribe } from 'graphql';
-import Navbar from '../components/Navbar';
 
 export default function CategoryPage() {
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj";
@@ -56,7 +55,6 @@ export default function CategoryPage() {
     if (loading) {
         return(
             <Box height="auto">
-                <Navbar /> 
                 <h1 className="maintitle">"Loading..."</h1>
                 <Box className="quizIconCentered" w="50%" h="50%">
                             <img alt="Moon" src={moon} />

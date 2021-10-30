@@ -10,22 +10,38 @@ export default function Navbar() {
     let user = "User1849021"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
 
+    // Allows search to work when 'Enter' key is pressed
     const handleKeyPress = e => {
         if(e.charCode === 13)
             search()
     }
 
+    // Takes user to the search results page
     function search() {
-        history.push('/searchresultspage')
+        history.push({
+            pathname: '/searchresultspage',
+            state: {  // location state
+              search: search_text, 
+            },
+          }); 
     }
 
     return(
         <Box w="100%" h="55px" bgColor="red.900">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="9%">
-                {/* ICON */}
-                <Text pos="relative" left="2%" color="white" fontSize="30"> 
-                    <Link to='/'> Trivia Tree </Link> 
-                </Text>
+                {/* RETURN TO HOMEPAGE */}
+                <Box>
+                    <Text 
+                        onClick={() => history.push('/')}
+                        display="inline-block"
+                        _hover={{cursor:"pointer", opacity:"80%"}} 
+                        pos="relative" 
+                        left="2%" 
+                        color="white" 
+                        fontSize="30"> 
+                        Trivia Tree 
+                    </Text>
+                </Box>
 
                 {/* SEARCH */}
                 <Grid h="50px" templateColumns="3fr 12fr 1fr"> 

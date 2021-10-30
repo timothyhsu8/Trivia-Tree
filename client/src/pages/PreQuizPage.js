@@ -1,5 +1,4 @@
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem,Icon, Spacer} from "@chakra-ui/react"
-import Navbar from "../components/Navbar"
 import { useQuery } from '@apollo/client';
 import { Link, Redirect } from 'react-router-dom';
 import mario from '../images/mario.jpeg';

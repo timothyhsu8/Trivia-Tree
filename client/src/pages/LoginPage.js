@@ -1,5 +1,4 @@
 import { Box, Grid, Text, Image, Center } from '@chakra-ui/react';
-import Navbar from '../components/Navbar';
 import treeicon from '../images/triviatree_icon.png'
 
 export default function LoginPage({}) {

@@ -1,15 +1,10 @@
 import { gql } from '@apollo/client';
 
-export const FETCH_QUIZ_QUERY = gql`
-    query Query {
+export const GET_QUIZZES = gql`
+    {
         getQuizzes {
-            id
+            _id
             title
-            questions {
-                question
-                answerChoices
-                answer
-            }
         }
     }
 `;

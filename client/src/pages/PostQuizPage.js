@@ -20,7 +20,6 @@ import {
 } from 'react-router-dom';
 import PostQuizAnswersCard from './PostQuizAnswersCard';
 import { subscribe } from 'graphql';
-import Navbar from '../components/Navbar';
 
 export default function PostQuizPage() {
     let quizTitle = "Nintendo Music Quiz";

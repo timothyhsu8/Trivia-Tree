@@ -11,7 +11,6 @@ import {
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
-import Navbar from '../components/Navbar';
 import { Link } from 'react-router-dom';
 
 

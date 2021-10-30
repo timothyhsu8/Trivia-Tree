@@ -3,6 +3,7 @@ import { StarIcon } from '@chakra-ui/icons'
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_QUIZZES } from "../cache/queries";
+import '../styles/styles.css'
 
 export default function SearchResultsPage() {
 
@@ -13,6 +14,7 @@ export default function SearchResultsPage() {
     // Placeholder data for the quiz info we don't have in the database yet
     let quiz_description = "Do you know these Celeste songs? Take this quiz to find out!!"
     let quiz_rating = 5
+    let quiz_icon_src = "https://assets.nintendo.com/image/upload/f_auto,q_auto,w_960,h_540/Nintendo%20Switch/Games/Third%20Party/Celeste/Video/posters/Celeste_Launch_Trailer"
     let quiz_platform = "Celeste"
     let quiz_creator = "CelesteGamer200"
 
@@ -62,11 +64,26 @@ export default function SearchResultsPage() {
         quizzes.map((quiz, index) => {
             return( 
             <Link to="/prequizpage" key={index}>
-                <Grid h="15vh" top="50%" templateColumns="2fr 9fr 1fr 2fr 3fr" borderBottom="1px" borderColor="gray.300" dipslay="flex" alignItems="center" _hover={{bgColor:"gray.200", cursor:"pointer"}}>
+                <Grid 
+                    h="15vh" 
+                    top="50%" 
+                    templateColumns="2fr 9fr 1fr 2fr 3fr" 
+                    borderBottom="1px" 
+                    borderColor="gray.300" 
+                    dipslay="flex" 
+                    alignItems="center" 
+                    _hover={{bgColor:"gray.200", 
+                    cursor:"pointer", 
+                    transition:"background-color 0.2s linear"}} 
+                    transition="background-color 0.1s linear"
+                >
                 
                     {/* QUIZ ICON */}
                     <Center>
-                        <Image w="115px" h="115px" top="50%" borderRadius="25" objectFit="cover" src="https://assets.nintendo.com/image/upload/f_auto,q_auto,w_960,h_540/Nintendo%20Switch/Games/Third%20Party/Celeste/Video/posters/Celeste_Launch_Trailer"/>
+                        <Box className='squareimage_container' w="60%"> 
+                            <Image className="squareimage" src={quiz_icon_src} alt="Profile Picture" objectFit="cover" borderRadius="23%"></Image>
+                        </Box>
+                        {/* <Image w="115px" h="115px" top="50%" borderRadius="25" objectFit="cover" src="https://assets.nintendo.com/image/upload/f_auto,q_auto,w_960,h_540/Nintendo%20Switch/Games/Third%20Party/Celeste/Video/posters/Celeste_Launch_Trailer"/> */}
                     </Center>
 
                     {/* QUIZ TITLE AND DESCRIPTION */}

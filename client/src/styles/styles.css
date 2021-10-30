@@ -1,0 +1,18 @@
+/* GENERAL STYLES THAT CAN BE APPLIED TO ALL PAGES */
+
+/* SQUARE IMAGES */
+.squareimage_container {
+    position: relative;
+}
+  
+.squareimage_container:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.squareimage {
+    position: absolute;
+    height:100%;
+    top: 0
+}

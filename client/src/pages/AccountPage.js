@@ -1,7 +1,10 @@
-import { Box, Flex, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
+import '../styles/styles.css'
+
 
 export default function AccountPage() {
     let user = "User1849021"
+    let user_title = "Gamer / Quiz Taker"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
     let banner_src = "https://cdnb.artstation.com/p/assets/images/images/027/468/579/4k/kan-liu-666k-chilling-time.jpg?1591633242"
     let quiz_sections = ["Featured Quizzes", "Featured Platforms"]
@@ -27,16 +30,21 @@ export default function AccountPage() {
                     {/* BANNER */}
                     <Box
                         h="28vh"
+                        pos="relative"
                         bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" + banner_src +  "')"} 
                         bgSize="cover" 
                         bgPosition="center"
-                        borderRadius="10">
-                            
-                            {/* PROFILE PICTURE AND NAME */}
-                            <Flex direction="row" top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
-                                <Image w="14.5%" src={pfp_src} objectFit="cover" borderRadius="50%"></Image>
-                                <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
-                            </Flex>
+                        borderRadius="10"
+                    >       
+                        {/* PROFILE PICTURE AND NAME */}
+                        <Box top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
+                            <Box className='squareimage_container' w="14%"> 
+                                <Image className="squareimage" src={pfp_src} alt="Profile Picture" objectFit="cover" borderRadius="50%"></Image>
+                            </Box>
+                        
+                            <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
+                            <Text pos="absolute" bottom="8%" left="16.2%" fontSize="2.1vw" fontWeight="thin"> Gamer / Quiz Taker </Text>
+                        </Box>
                     </Box>
 
                     {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}

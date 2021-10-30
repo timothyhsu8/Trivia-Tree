@@ -177,7 +177,7 @@ export default function PostQuizPage() {
                                     <div className="containerDown">
                                         <Box h="30px"></Box>
                                         <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px'>
-                                            <Link to="/prequizpage" className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
+                                            <Link to={'/prequizpage/' + quiz._id} className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
                                         </Box>
                                     </div>
                                 </div>

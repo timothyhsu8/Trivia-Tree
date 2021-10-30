@@ -33,8 +33,8 @@ export default function Navbar() {
                 {/* RETURN TO HOMEPAGE */}
                 <Box>
                     <Text 
+                        className="disable-select"
                         onClick={() => history.push('/')}
-                        
                         display="inline-block"
                         _hover={{cursor:"pointer", opacity:"80%", transition:"opacity 0.2s linear"}} 
                         transition="opacity 0.2s linear"

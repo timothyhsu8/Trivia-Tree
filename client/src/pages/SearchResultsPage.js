@@ -84,7 +84,6 @@ export default function SearchResultsPage() {
                         <Box className='squareimage_container' w="60%"> 
                             <Image className="squareimage" src={quiz_icon_src} alt="Profile Picture" objectFit="cover" borderRadius="23%"></Image>
                         </Box>
-                        {/* <Image w="115px" h="115px" top="50%" borderRadius="25" objectFit="cover" src="https://assets.nintendo.com/image/upload/f_auto,q_auto,w_960,h_540/Nintendo%20Switch/Games/Third%20Party/Celeste/Video/posters/Celeste_Launch_Trailer"/> */}
                     </Center>
 
                     {/* QUIZ TITLE AND DESCRIPTION */}

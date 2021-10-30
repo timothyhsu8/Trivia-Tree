@@ -23,7 +23,6 @@ export default function PreQuizPage({}) {
     
     if (data) {
         quiz = data.getQuiz;
-        console.log(quiz);
     }
 
 
@@ -90,7 +89,7 @@ export default function PreQuizPage({}) {
                         <Text fontSize="24" left="10px" top="30px" as="b" position="relative" >{numAttempts} Plays</Text>
                         <Text fontSize="24" left="10px" top="40px" as="b" position="relative">{numFavorites} Favorites</Text>
         
-                        <Link to="/quiztakingpage"> <Button colorScheme="blue" rightIcon={<BsFillPlayCircleFill/>} variant="solid" 
+                        <Link to={'/quiztakingpage/' + quiz._id}> <Button colorScheme="blue" rightIcon={<BsFillPlayCircleFill/>} variant="solid" 
                         position="relative" top="265px" left="px" h="60px" fontSize="40px"> Start Quiz </Button></Link>
 
                     </Flex>

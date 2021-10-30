@@ -42,12 +42,12 @@ function App() {
                             component={CreateQuizPage}
                         />
                         <Route
-                            path='/quiztakingpage'
+                            path='/quiztakingpage/:quizId'
                             component={QuizTakingPage}
                         />
                         <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage' component={AccountPage} />
-                        <Route path='/postquizpage/:quizAttemptId' component={PostQuizPage} />
+                        <Route path='/postquizpage/:quizId/:quizAttemptId' component={PostQuizPage} />
                         <Route path='/prequizpage/:quizId' component={PreQuizPage} />\
                         <Route
                             path='/searchresultspage'

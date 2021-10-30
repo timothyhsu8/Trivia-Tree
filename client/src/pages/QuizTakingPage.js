@@ -11,10 +11,12 @@ import {
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import quizImage from '../images/defaultquiz.jpeg';
 
 
 export default function QuizTakingPage({}) {
+    let { quizId } = useParams();
     let quiz = null;
     let quizAttempt = null;
 
@@ -25,7 +27,7 @@ export default function QuizTakingPage({}) {
     const [quizAttemptID, setQuizAttemptID] = useState(0);
 
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId: '617a191e44a08bd08c08d405' },
+        variables: { quizId: quizId },
     });
 
     if (loading) {
@@ -37,7 +39,7 @@ export default function QuizTakingPage({}) {
     }
 
     let quizID = quiz._id;
-    let quizicon = "https://yt3.ggpht.com/ytc/AKedOLQ2xNBI8aO1I9etug8WnhQ-WPhnVEyNgj6cFVPfNw=s900-c-k-c0x00ffffff-no-rj"
+    let quizicon = quizImage
     let question = quiz.questions[currentQuestionNumber-1].question;
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
@@ -124,7 +126,7 @@ export default function QuizTakingPage({}) {
 
                     {/* QUIZ AUTHOR */}
                     <Center>
-                        <Text fontSize='1vw'>MarioGamer100</Text>
+                        <Text fontSize='1vw'>No User Found</Text>
                     </Center>
 
                     <Center>
@@ -215,7 +217,7 @@ export default function QuizTakingPage({}) {
 
                     {
                         !quizDone ? '':
-                        <Link to={'/postquizpage/' + quizAttemptID}>
+                        <Link to={'/postquizpage/' + quizID + '/' + quizAttemptID}>
                             <Center>
                                 <Button
                                 top='20px'

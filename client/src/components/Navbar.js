@@ -1,12 +1,23 @@
 import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 export default function Navbar() {
 
+    let history = useHistory();
+    let search_text = ""
     let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
     let user = "User1849021"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
+
+    const handleKeyPress = e => {
+        if(e.charCode === 13)
+            search()
+    }
+
+    function search() {
+        history.push('/searchresultspage')
+    }
 
     return(
         <Box w="100%" h="55px" bgColor="red.900">
@@ -16,21 +27,28 @@ export default function Navbar() {
                     <Link to='/'> Trivia Tree </Link> 
                 </Text>
 
-                {/* SEARCH BAR */}
+                {/* SEARCH */}
                 <Grid h="50px" templateColumns="3fr 12fr 1fr"> 
+                    {/* SEARCH CATEGORIES */}
                     <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white"> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>
                         })}
                     </Select>
-                    <Input h="45px" fontSize="17px" borderRadius="0px" placeholder="Search for a quiz..." bgColor="white"/>
+                    
+                    {/* SEARCH BAR */}
+                    <Input h="45px" onKeyPress={handleKeyPress} 
+                        onChange={(e) => { search_text = e.target.value }} 
+                        fontSize="17px" 
+                        borderRadius="0px" 
+                        placeholder="Search for a quiz..." 
+                        bgColor="white"
+                    />
                     
                     {/* SEARCH BUTTON */}
-                    <Link to="/searchresultspage">
-                        <Button h="45px" borderRadius="0px 5px 5px 0px" bgColor="yellow.500">
-                            <Icon as={SearchIcon} boxSize="6" />
-                        </Button>
-                    </Link>
+                    <Button h="45px" borderRadius="0px 5px 5px 0px" bgColor="yellow.500" onClick={search}>
+                        <Icon as={SearchIcon} boxSize="6" />
+                    </Button>
                 </Grid>
                 
                 {/* RIGHT SIDE */}

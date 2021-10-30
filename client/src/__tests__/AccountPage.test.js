@@ -9,3 +9,10 @@ test('should render account page', () => {
     const main_component = screen.getByTestId('main-component')
     expect(main_component).toBeInTheDocument();
 })
+
+test('should display correct username', () => {
+    let username = 'User1849021'
+    render(<AccountPage/>)
+    const main_component = screen.getByTestId('main-component')
+    expect(main_component).toHaveTextContent(username);
+})

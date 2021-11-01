@@ -1,4 +1,7 @@
-import { Box, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@chakra-ui/react"
+import { useQuery } from '@apollo/client';
+import { GET_QUIZZES } from "../cache/queries";
+import QuizCard from "../components/QuizCard";
 import '../styles/styles.css'
 
 
@@ -10,6 +13,37 @@ export default function AccountPage() {
     let quiz_sections = ["Featured Quizzes", "Featured Platforms"]
     let bio = "This is a biography test. Testing out the biography text wrapping and the look of the displayed text within the biography element. Actual\
         biography will go here and will go here."
+
+    // Fetch quiz data from the backend
+    const {
+        loading,
+        error,
+        data: { getQuizzes: quiz_data } = {},
+    } = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' });
+
+    // Loading Screen
+    if (loading) {
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
+    }
+
+    // Error Screen
+    if (error) {
+        return (
+            <Center>
+                <Text fontSize="3vw" fontWeight="thin"> Sorry, something went wrong </Text>
+            </Center>
+        );
+    }
+
+    // FOR TESTING: Many Quizzes
+    // let quiz_test = []
+    // let quiz_copy = quiz_data[0]
+    // for (let i = 0; i < 20; i++)
+    //     quiz_test.push(quiz_copy)
 
     return (
         <Box data-testid="main-component">
@@ -43,7 +77,7 @@ export default function AccountPage() {
                             </Box>
                         
                             <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
-                            <Text pos="absolute" bottom="8%" left="16.2%" fontSize="2.1vw" fontWeight="thin"> Gamer / Quiz Taker </Text>
+                            <Text pos="absolute" bottom="8%" left="16.2%" fontSize="2.1vw" fontWeight="thin"> {user_title} </Text>
                         </Box>
                     </Box>
 
@@ -55,8 +89,22 @@ export default function AccountPage() {
                             <VStack spacing="1.5vh">
                                 {quiz_sections.map((name, index) => {
                                     return(
-                                        <Box key={index} w="100%" h="30vh" bgColor="gray.200" borderRadius="10">
-                                            <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="medium">{name}</Text>
+                                        <Box key={index} w="100%" bgColor="gray.200" borderRadius="10" overflowX="auto">
+                                            <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">{name}</Text>
+                                            {/* QUIZZES */}
+                                            <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
+                                                {quiz_data.map((quiz, key) => {
+                                                    return <QuizCard 
+                                                        quiz={quiz} 
+                                                        width="13%" 
+                                                        title_fontsize="1.0vw" 
+                                                        author_fontsize="1.2vw" 
+                                                        include_author={false}
+                                                        char_limit={35}  
+                                                        key={key}
+                                                        />
+                                                })}
+                                            </Flex>
                                         </Box>
                                     )
                                 })}

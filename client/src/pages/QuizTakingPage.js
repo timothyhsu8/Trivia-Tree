@@ -19,6 +19,7 @@ export default function QuizTakingPage({}) {
     let { quizId } = useParams();
     let quiz = null;
     let quizAttempt = null;
+    let numQuestions = null; 
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -34,10 +35,19 @@ export default function QuizTakingPage({}) {
             const interval = setInterval(() => {
                     setQuizTimer(quizTimer => quizTimer - 1);
             }, 1000);
-            return () => clearInterval(interval);
+            if(quizTimer == 0)
+                return () => clearInterval(interval);
         }
     }, []);
     
+    useEffect(() => {
+        for(let i = 0; i < quiz.numQuestions; i++){
+            let newAnswers = [...userAnswers];
+            newAnswers[i] = '';
+            setUserAnswers(newAnswers)
+        }
+    }, [numQuestions]);
+
     useEffect(() => {
         const timeStringDisplay = convertSecondsToString(quizTimer);
         console.log(timeStringDisplay)
@@ -49,7 +59,7 @@ export default function QuizTakingPage({}) {
 
     }, [quizTimer]);
 
-    const { data, loading, error } = useQuery(queries.GET_QUIZ, {
+    const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: quizId },
     });
 
@@ -77,6 +87,7 @@ export default function QuizTakingPage({}) {
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
     let questionType = quiz.questions[currentQuestionNumber-1].questionType;
+    numQuestions = quiz.numQuestions;
 
 
     for (let i = 0; i < quiz.numQuestions; i++)

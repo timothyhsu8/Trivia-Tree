@@ -33,6 +33,7 @@ export default function PreQuizPage({}) {
     let numQuestions = quiz.numQuestions; 
     let numAttempts = quiz.numAttempts;
     let numFavorites = quiz.numFavorites; 
+    let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
 
     return ( 
         <Box>
@@ -51,7 +52,7 @@ export default function PreQuizPage({}) {
 
                 {/* Description */}
                 <GridItem rowStart={3} colSpan={4} borderBottom="1px">
-                    <Text top="30px" left="30px" position="relative" fontSize="20">{quizDescription}</Text>
+                    <Text top="30px" left="30px" position="relative" fontSize="24" as="b">{quizDescription}</Text>
                 </GridItem>
 
                 {/* Settings */}
@@ -59,7 +60,7 @@ export default function PreQuizPage({}) {
                     <Grid templateRows="repeat(2, 1fr)" gap={12} top="70px" position="relative">
                         <Flex direction="row">
                             <Icon as={MdTimer} w="75px" h="75px" left="30px" position="relative"/> 
-                            <Text fontSize="40" as="b" left="40px" top="8px" position="relative">No Timer</Text>
+                            <Text fontSize="40" as="b" left="40px" top="8px" position="relative">{quizTimer}</Text>
                             <Spacer/>
                             <Icon as={BsShuffle} w="75px" h="75px" right="500px" position="relative"/> 
                             <Text fontSize="40" as="b" right="120px" top="8px" position="absolute"> Ordered Questions </Text>

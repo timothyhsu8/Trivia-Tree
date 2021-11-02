@@ -21,6 +21,7 @@ export const GET_QUIZ = gql`
                 questionType
             }
             description
+            quizTimer
             numQuestions
             numAttempts
             numFavorites

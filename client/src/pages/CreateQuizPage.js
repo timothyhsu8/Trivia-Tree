@@ -153,6 +153,7 @@ function CreateQuizPage(props) {
                     title: title,
                     questions: quizQuestions,
                     description: description,
+                    quizTimer: quizTimer,
                 },
             },
         });

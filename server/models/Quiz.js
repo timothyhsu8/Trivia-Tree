@@ -68,10 +68,10 @@ const quizSchema = new Schema(
         },
         quizTimer: {
             //still unsure about this and questiontimer, should one not be set if the other is set?
-            type: Number,
+            type: String,
         },
         questionTimer: {
-            type: Number,
+            type: String,
         },
         quizShuffled: {
             type: Boolean,

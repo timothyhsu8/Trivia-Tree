@@ -11,8 +11,8 @@ module.exports = gql`
         description: String
         categories: [String]
         tags: [String]
-        quizTimer: Int
-        questionTimer: Int
+        quizTimer: String
+        questionTimer: String
         quizShuffled: Boolean
         quizInstant: Boolean
         rating: Int
@@ -41,6 +41,7 @@ module.exports = gql`
         title: String!
         questions: [QuestionInput!]!
         description: String
+        quizTimer: String
     }
 
     input QuestionInput {

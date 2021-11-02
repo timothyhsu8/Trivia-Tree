@@ -49,7 +49,7 @@ export default function Navbar() {
                 {/* SEARCH */}
                 <Grid h="50px" pos="relative" top="3%" templateColumns="3fr 12fr 1fr"> 
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white"> 
+                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}}> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>
                         })}
@@ -62,6 +62,7 @@ export default function Navbar() {
                         borderRadius="0px" 
                         placeholder="Search for a quiz..." 
                         bgColor="white"
+                        _focus={{boxShadow:"none"}}
                     />
                     
                     {/* SEARCH BUTTON */}
@@ -71,6 +72,7 @@ export default function Navbar() {
                         borderRadius="0px 5px 5px 0px" 
                         bgColor="yellow.500" 
                         onClick={search}
+                        _focus={{boxShadow:"none"}}
                     >
                         <Icon as={SearchIcon} boxSize="6" />
                     </Button>

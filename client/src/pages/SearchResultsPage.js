@@ -124,7 +124,7 @@ export default function SearchResultsPage() {
                     <Box w="75%" h="0.15vh" bgColor="gray.300"/>
 
                     <Text fontSize="20px"> Difficulties </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
                         <option> All Difficulties </option>
                         <option> Easy </option>
                         <option> Intermediate </option>
@@ -133,14 +133,14 @@ export default function SearchResultsPage() {
                     </Select>
 
                     <Text fontSize="20px"> Quiz Types </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
                         <option> All Quiz Types </option>
                         <option> Standard </option>
                         <option> Instant </option>
                     </Select>
 
                     <Text fontSize="20px"> Timers </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
                         <option> Any Time Limit </option>
                         <option> Standard </option>
                         <option> Instant </option>

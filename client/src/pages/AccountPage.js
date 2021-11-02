@@ -2,10 +2,12 @@ import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@
 import { useQuery } from '@apollo/client';
 import { GET_QUIZZES } from "../cache/queries";
 import QuizCard from "../components/QuizCard";
+import { useState } from 'react';
 import '../styles/styles.css'
 
-
 export default function AccountPage() {
+    const [page, setPage] = useState('user')
+
     let user = "User1849021"
     let user_title = "Gamer / Quiz Taker"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
@@ -40,27 +42,26 @@ export default function AccountPage() {
     }
 
     // FOR TESTING: Many Quizzes
-    // let quiz_test = []
-    // let quiz_copy = quiz_data[0]
-    // for (let i = 0; i < 20; i++)
-    //     quiz_test.push(quiz_copy)
+    let quiz_test = []
+    let quiz_copy = quiz_data[0]
+    for (let i = 0; i < 20; i++)
+        quiz_test.push(quiz_copy)
 
-    return (
-        <Box data-testid="main-component">
-            <Grid templateColumns="1fr 6fr 1fr">
-                <Box w="100%" h="100vh"></Box>
-                
-                {/* MAIN CONTENT */}
-                <Box w="100%" h="100vh">
-                    
-                    {/* HEADER BUTTONS */}
-                    <Grid w="100%" h="7vh" templateColumns="1fr 1fr 1fr 1fr"> 
-                        <Button height="100%" fontSize="1.2vw" bgColor="white"> {user} </Button>
-                        <Button height="100%" fontSize="1.2vw" bgColor="white"> Platforms </Button>
-                        <Button height="100%" fontSize="1.2vw" bgColor="white"> Quizzes </Button>
-                        <Button height="100%" fontSize="1.2vw" bgColor="white"> Badges </Button>
-                    </Grid>
+    function renderPage() {
+        if (page === 'user') 
+            return renderUser()
+        if (page === 'platforms') 
+            return renderPlatforms()
+        if (page === 'quizzes') 
+            return renderQuizzes()
+        if (page === 'badges') 
+            return renderBadges()
+    }
 
+    // Render User
+    function renderUser() {
+        return(
+                <Box>  
                     {/* BANNER */}
                     <Box
                         h="28vh"
@@ -83,7 +84,7 @@ export default function AccountPage() {
 
                     {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
                     <Grid pt="1%" templateColumns="3fr 1fr">
-
+                        
                         {/* FEATURED QUIZZES/PLATFORMS */}
                         <Box w="98.5%" h="60vh" borderRadius="10">
                             <VStack spacing="1.5vh">
@@ -118,8 +119,93 @@ export default function AccountPage() {
                         </Box>
                     </Grid>
                 </Box>
+            )
+    }
 
+    // Render Platforms
+    function renderPlatforms(){
+        return (
+            <Box bgColor="gray.200" borderRadius="10">
+                <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">All Platforms</Text>
+                <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap">
+                    {quiz_test.map((quiz, key) => {
+                        return <QuizCard 
+                            quiz={quiz} 
+                            width="10%" 
+                            title_fontsize="1.0vw" 
+                            author_fontsize="1.2vw" 
+                            include_author={false}
+                            char_limit={35}  
+                            key={key}
+                            />
+                    })}
+                </Flex>
+            </Box>
+        )
+    }
+
+    // Render Quizzes
+    function renderQuizzes(){
+        return (
+            <Box bgColor="gray.200" borderRadius="10">
+                <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">All Quizzes</Text>
+                <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap">
+                    {quiz_test.map((quiz, key) => {
+                        return <QuizCard 
+                            quiz={quiz} 
+                            width="10%" 
+                            title_fontsize="1.0vw" 
+                            author_fontsize="1.2vw" 
+                            include_author={false}
+                            char_limit={35}  
+                            key={key}
+                            />
+                    })}
+                </Flex>
+            </Box>
+        )
+    }
+
+    // Render Badges
+    function renderBadges(){
+        return (
+            <Box bgColor="gray.200" borderRadius="10">
+                <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">All Badges</Text>
+                <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap">
+                    {quiz_test.map((quiz, key) => {
+                        return <QuizCard 
+                            quiz={quiz} 
+                            width="10%" 
+                            title_fontsize="1.0vw" 
+                            author_fontsize="1.2vw" 
+                            include_author={false}
+                            char_limit={35}  
+                            key={key}
+                            />
+                    })}
+                </Flex>
+            </Box>
+        )
+    }
+
+    return (
+        <Box data-testid="main-component">
+            <Grid templateColumns="1fr 6fr 1fr">
+                <Box w="100%"></Box>
+                
+                {/* MAIN CONTENT */}
+                <Box w="100%">
+                    {/* HEADER BUTTONS */}
+                    <Grid w="100%" h="7vh" templateColumns="1fr 1fr 1fr 1fr"> 
+                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'user' ? "blue" : "black" } onClick={() => setPage('user')} _focus={{boxShadow:"none"}}> {user} </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'platforms' ? "blue" : "black" } onClick={() => setPage('platforms')} _focus={{boxShadow:"none"}}> Platforms </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'quizzes' ? "blue" : "black" } onClick={() => setPage('quizzes')} _focus={{boxShadow:"none"}}> Quizzes </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'badges' ? "blue" : "black" } onClick={() => setPage('badges')} _focus={{boxShadow:"none"}}> Badges </Button>
+                    </Grid>
+                    {renderPage()}
+                </Box>
             </Grid>
+            {/* {renderPage()} */}
         </Box>
     )
 }

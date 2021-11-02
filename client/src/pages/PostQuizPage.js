@@ -177,7 +177,7 @@ export default function PostQuizPage() {
                                                        
                                     {/*used a little absolute positioning */}
                                     <div className="containerDown">
-                                        <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="530px" top="25px">
+                                        <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="500px" top="25px">
                                             <Link to={'/prequizpage/' + quiz._id} className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
                                         </Box>
                                     </div>
@@ -276,7 +276,7 @@ export default function PostQuizPage() {
                                 </h1>
                             </Box>{/*w=2vw, w=16vw, h=3.5vw */}
                             {/*w=2vw, w=16vw, h=31.5vw */}
-                            <Box w='28vw' h='500px' bg='#D3D3D3'>
+                            <Box w='28vw' h='450px' bg='#D3D3D3'>
                                 {' '}
                                 {/*bg='#D3D3D3' leaderboards*/}
                                 <LeaderboardCard

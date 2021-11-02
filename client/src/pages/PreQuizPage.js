@@ -45,8 +45,8 @@ export default function PreQuizPage({}) {
                 <GridItem rowSpan={2} colSpan={6} borderBottom="1px">
                     <Flex direction="row" top="50%" left="2%" transform="translateY(-45%)" position="relative"> 
                             <Image w="200px" h="200px" src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image>
-                            <Text top="56%" position="absolute" left="13%" fontSize="4vw" as="b" >{quizTitle}</Text>
-                            <Icon as={BsHeart} w="50px" h="50px" position="absolute" left = "53%" top="74%"/>
+                            <Text fontSize="4vw" as="b" transform="translateY(55%)" paddingLeft="20px">{quizTitle}</Text>
+                            <Image as={BsHeart} w="50px" h="50px" transform="translateY(290%)" marginLeft="30px"/>
                     </Flex>
                 </GridItem>
 

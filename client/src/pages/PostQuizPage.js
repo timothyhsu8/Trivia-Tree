@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import bg from '../images/homebg.png';
+import userImage from '../images/default.png';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
 import heart from '../images/heart.jpeg';
@@ -145,7 +146,7 @@ export default function PostQuizPage() {
                 {/* MAIN CONTENT */}
                 <Box>
                     {/* HEADER AND BANNER */}
-                    <Grid h={["100px","100px","100px","200px"]} >
+                    <Grid>
                         {/* BANNER */}
                         <Box
                             bgSize="cover" 
@@ -153,15 +154,18 @@ export default function PostQuizPage() {
                             borderRadius="10">
                                 {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
                                 <div className="SecretSauce"> 
-                                    <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%"></Image> 
-                                    <Box className="containerDown">  
-                                    <Box width={["200px","200px","200px","300px"]}>  
-                                    <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]}  fontSize={["20px","20px","20px","30px"]}>{quizTitle}</Text>     
-                                    </Box>
-                                    <Box>  
-                                    <Text className="title" lineHeight={["0px","0px","0px","0px"]} pt={["0px","0px","0px","0px"]} pb={["0px","0px","0px","0px"]} fontSize={["20px","20px","20px","30px"]}>Creator:</Text>     
-                                    </Box>
-                                    <Text className="creatorName" lineHeight={["35px","35px","35px","60px"]} fontSize={["20px","20px","20px","30px"]}>{user}</Text>
+                                    <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
+                                    <Box className="containerDown" paddingLeft="30px">  
+                                        <Box width={["200px","200px","200px","800px"]}>  
+                                        <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="4vw">{quizTitle}</Text>     
+                                        </Box>
+                                        <Flex direction="row" position="relative" paddingTop="20px">
+                                            <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
+                                            <Flex direction="column" position="relative"> 
+                                                <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
+                                                <Text fontSize="24" left="10px" top="15px" position="relative">{user}</Text>
+                                            </Flex>
+                                        </Flex>
                                     </Box>
                                     <Box w="2vw"></Box>
                                     { subbed ? 

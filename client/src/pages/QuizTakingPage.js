@@ -41,14 +41,6 @@ export default function QuizTakingPage({}) {
     }, []);
     
     useEffect(() => {
-        for(let i = 0; i < quiz.numQuestions; i++){
-            let newAnswers = [...userAnswers];
-            newAnswers[i] = '';
-            setUserAnswers(newAnswers)
-        }
-    }, [numQuestions]);
-
-    useEffect(() => {
         const timeStringDisplay = convertSecondsToString(quizTimer);
         console.log(timeStringDisplay)
         setQuizTimerDisplay(timeStringDisplay)
@@ -95,8 +87,13 @@ export default function QuizTakingPage({}) {
 
 
     const submitQuiz = async () => {
+        let newAnswers = [...userAnswers];
+        for(let i = 0; i < quiz.numQuestions; i++){
+            if(newAnswers[i] == undefined)
+                newAnswers[i] = '';
+        }
         const {loading, error, data} = await SubmitQuiz({ variables: {
-            quizAttemptInput: { quiz_id: quizID, answerChoices: userAnswers },
+            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers },
         } });
 
 

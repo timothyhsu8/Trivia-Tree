@@ -25,7 +25,7 @@ module.exports = {
         },
     },
     Mutation: {
-        async createQuiz(_, { quizInput: { title, questions, description } }) {
+        async createQuiz(_, { quizInput: { title, questions, description, quizTimer } }) {
             if (title.trim() === '') {
                 throw new Error('Quiz title cannot be blank');
             }
@@ -76,6 +76,7 @@ module.exports = {
                 title,
                 questions,
                 description,
+                quizTimer,
                 numQuestions,
                 numFavorites,
                 numAttempts

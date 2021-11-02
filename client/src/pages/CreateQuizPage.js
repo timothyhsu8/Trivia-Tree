@@ -29,8 +29,8 @@ function CreateQuizPage(props) {
     const [quizType, setQuizType] = useState('Standard');
     const [quizOrdering, setQuizOrdering] = useState('Ordered');
     const [timeType, setTimeType] = useState('Quiz');
-    const [quizTimer, setQuizTimer] = useState('10:00:00');
-    const [questionTimer, setQuestionTimer] = useState('00:00:00');
+    const [quizTimer, setQuizTimer] = useState('00:00');
+    const [questionTimer, setQuestionTimer] = useState('00:00');
 
     function updateQuestion(event, index) {
         const newQuestions = [...quizQuestions];
@@ -105,7 +105,7 @@ function CreateQuizPage(props) {
     function handleCreateQuiz() {
         createQuiz({
             variables: {
-                quizInput: { title: title, questions: quizQuestions, description: description },
+                quizInput: { title: title, questions: quizQuestions, description: description, quizTimer: quizTimer },
             },
         });
     }
@@ -470,7 +470,7 @@ function CreateQuizPage(props) {
                                 borderWidth: '2px',
                                 borderRadius: '10px',
                                 background: 'none',
-                                width: '25%',
+                                width: '35%',
                                 fontSize: '150%',
                                 textAlign: 'center',
                             }}
@@ -524,7 +524,7 @@ function CreateQuizPage(props) {
                                 borderWidth: '2px',
                                 borderRadius: '10px',
                                 background: 'none',
-                                width: '25%',
+                                width: '35%',
                                 fontSize: '150%',
                                 textAlign: 'center',
                             }}

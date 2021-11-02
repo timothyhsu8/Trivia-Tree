@@ -25,10 +25,35 @@ export default function QuizTakingPage({}) {
     const [userAnswers, setUserAnswers] = useState(() => []);
     const [quizDone, setQuizDone] = useState(false);
     const [quizAttemptID, setQuizAttemptID] = useState(0);
+    const [quizTimer, setQuizTimer] = useState(-1);
+    const [quizTimerDisplay, setQuizTimerDisplay] = useState("No Timer");
+    const [quizTimerPulled, setQuizTimerPulled] = useState(false);
+    
+    useEffect(() => {
+        if(quizTimer != -1){
+            const interval = setInterval(() => {
+                    setQuizTimer(quizTimer => quizTimer - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, []);
+    
+    useEffect(() => {
+        const timeStringDisplay = convertSecondsToString(quizTimer);
+        console.log(timeStringDisplay)
+        setQuizTimerDisplay(timeStringDisplay)
+
+        if(quizTimer == 0){
+            submitQuiz()
+        }
+
+    }, [quizTimer]);
 
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: quizId },
     });
+
+    
 
     if (loading) {
         return <div></div>;
@@ -36,9 +61,15 @@ export default function QuizTakingPage({}) {
     
     if (data) {
         quiz = data.getQuiz;
+        if(quiz.quizTimer != null){
+            if(!quizTimerPulled){
+                setQuizTimerDisplay(quiz.quizTimer);
+                let totalSeconds = convertTimeToSeconds(quiz.quizTimer);
+                setQuizTimer(totalSeconds)
+                setQuizTimerPulled(true); 
+            }
+        }
     }
-
-
 
     let quizID = quiz._id;
     let quizicon = quizImage
@@ -46,6 +77,8 @@ export default function QuizTakingPage({}) {
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
     let questionType = quiz.questions[currentQuestionNumber-1].questionType;
+
+
     for (let i = 0; i < quiz.numQuestions; i++)
         questionNumber.push('Question' + i + 1);
 
@@ -114,6 +147,43 @@ export default function QuizTakingPage({}) {
         }
     }
 
+    function convertTimeToSeconds(quizTimerString){
+        let numHours = parseInt(quizTimerString.slice(0,2))
+        let numMinutes = parseInt(quizTimerString.slice(3,5))
+        let numSeconds = parseInt(quizTimerString.slice(6,8))
+        
+        let totalSeconds = (numHours * 3600) + (numMinutes * 60) + (numSeconds);
+
+        return totalSeconds;
+    }
+
+    function convertSecondsToString(secs){
+        let hours = Math.floor(secs / (60 * 60));
+
+        let divisor_for_minutes = secs % (60 * 60);
+        let minutes = Math.floor(divisor_for_minutes / 60);
+    
+        let divisor_for_seconds = divisor_for_minutes % 60;
+        let seconds = Math.ceil(divisor_for_seconds);
+
+        hours = hours.toString();
+        minutes = minutes.toString();
+        seconds = seconds.toString();
+
+        if(hours.length == 1){
+            hours = '0' + hours; 
+        }
+
+        if(minutes.length == 1){
+            minutes = '0' + minutes; 
+        }
+        if(seconds.length == 1){
+            seconds = '0' + seconds; 
+        }
+
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
     return (
         <Box data-testid='main-component'>
             <Grid templateColumns='1fr 6fr'>
@@ -124,7 +194,7 @@ export default function QuizTakingPage({}) {
 
                     {/* QUIZ TITLE */}
                     <Center>
-                        <Text fontSize='2vw'>{quiz.title}</Text>
+                        <Text fontSize='2vw' textAlign='center'>{quiz.title}</Text>
                     </Center>
 
                     {/* QUIZ AUTHOR */}
@@ -133,7 +203,17 @@ export default function QuizTakingPage({}) {
                     </Center>
 
                     <Center>
-                        <Box w='95%' h='0.2vh' bgColor='gray.400' />
+                        <Box w='95%' h='1vh' />
+                    </Center>
+
+                    <Center>
+                        <Box w='70%' h='5vh' bgColor='gray.400' border="1px">
+                        <Text fontSize='1.5vw' textAlign='center'>{quizDone ? "Quiz Ended":quizTimerDisplay}</Text>
+                        </Box>
+                    </Center>
+
+                    <Center>
+                        <Box w='95%' h='1vh' />
                     </Center>
 
                     {/* QUESTION NUMBERS */}
@@ -162,7 +242,7 @@ export default function QuizTakingPage({}) {
                     {/* QUESTION */}
                     <Center>
                         <Text pt='50' fontSize='3vw'>
-                        {questionType == 2 ? "Select All That Apply: " + question : question}
+                        {questionType == 2 ?  question + " Select All That Apply": question}
                         </Text>
                     </Center>
 

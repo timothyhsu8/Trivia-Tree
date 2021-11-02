@@ -2,19 +2,29 @@ import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@
 import { useQuery } from '@apollo/client';
 import { GET_QUIZZES } from "../cache/queries";
 import QuizCard from "../components/QuizCard";
-import { useState } from 'react';
+import { AuthContext } from '../context/auth';
+import { useState, useContext } from 'react';
 import '../styles/styles.css'
 
 export default function AccountPage() {
+    const { user } = useContext(AuthContext);
     const [page, setPage] = useState('user')
 
-    let user = "User1849021"
+    let logged_in = false
+    let username = "User1849021"
     let user_title = "Gamer / Quiz Taker"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
     let banner_src = "https://cdnb.artstation.com/p/assets/images/images/027/468/579/4k/kan-liu-666k-chilling-time.jpg?1591633242"
     let quiz_sections = ["Featured Quizzes", "Featured Platforms"]
     let bio = "This is a biography test. Testing out the biography text wrapping and the look of the displayed text within the biography element. Actual\
         biography will go here and will go here."
+    
+    // Checks if user is logged in
+    if (user !== null && user !== "NoUser"){
+        logged_in = true
+        username = user.googleDisplayName
+        // pfp_src = user.iconImage
+    }
 
     // Fetch quiz data from the backend
     const {
@@ -77,7 +87,7 @@ export default function AccountPage() {
                                 <Image className="squareimage" src={pfp_src} alt="Profile Picture" objectFit="cover" borderRadius="50%"></Image>
                             </Box>
                         
-                            <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{user}</Text>
+                            <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{username}</Text>
                             <Text pos="absolute" bottom="8%" left="16.2%" fontSize="2.1vw" fontWeight="thin"> {user_title} </Text>
                         </Box>
                     </Box>
@@ -188,6 +198,11 @@ export default function AccountPage() {
         )
     }
 
+    if (!user) {
+        return null;
+    }
+
+
     return (
         <Box data-testid="main-component">
             <Grid templateColumns="1fr 6fr 1fr">
@@ -197,7 +212,7 @@ export default function AccountPage() {
                 <Box w="100%">
                     {/* HEADER BUTTONS */}
                     <Grid w="100%" h="7vh" templateColumns="1fr 1fr 1fr 1fr"> 
-                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'user' ? "blue" : "black" } onClick={() => setPage('user')} _focus={{boxShadow:"none"}}> {user} </Button>
+                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'user' ? "blue" : "black" } onClick={() => setPage('user')} _focus={{boxShadow:"none"}}> {username} </Button>
                         <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'platforms' ? "blue" : "black" } onClick={() => setPage('platforms')} _focus={{boxShadow:"none"}}> Platforms </Button>
                         <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'quizzes' ? "blue" : "black" } onClick={() => setPage('quizzes')} _focus={{boxShadow:"none"}}> Quizzes </Button>
                         <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'badges' ? "blue" : "black" } onClick={() => setPage('badges')} _focus={{boxShadow:"none"}}> Badges </Button>

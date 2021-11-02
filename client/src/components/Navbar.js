@@ -1,15 +1,27 @@
 import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
+import { AuthContext } from '../context/auth';
+import { useContext } from 'react';
 import '../styles/styles.css'
 
 export default function Navbar() {
+    const { user } = useContext(AuthContext);
 
     let history = useHistory();
+    let logged_in = false
     let search_text = ""
     let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
-    let user = "User1849021"
+    let username = "Guest"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
+
+    // Checks if user is logged in
+    if (user !== null && user !== "NoUser"){
+        logged_in = true
+        username = user.googleDisplayName
+        // pfp_src = user.iconImage
+    }
 
     // Allows search to work when 'Enter' key is pressed
     const handleKeyPress = e => {
@@ -25,6 +37,14 @@ export default function Navbar() {
               search: search_text, 
             },
         }); 
+    }
+
+    // Conditional rendering of logout button in the dropdown menu
+    function renderLogout() {
+        if (logged_in === false)
+            return
+
+        return <MenuItem fontSize="18px" fontWeight="medium"> Logout </MenuItem>
     }
 
     return(
@@ -89,13 +109,13 @@ export default function Navbar() {
                     <Box w="5%"/>
                     
                     {/* USER NAME */}
-                    <Link to='/accountpage'> 
-                        <Text fontSize="18px" color="white" fontWeight="medium"> {user} </Text> 
+                    <Link to={logged_in === true ? "accountpage" : "loginpage"}> 
+                        <Text fontSize="18px" color="white" fontWeight="medium"> {username} </Text> 
                     </Link>
                     
                     {/* PROFILE PICTURE */}
                     <Box className='squareimage_container' w="8%"> 
-                        <Link to='/accountpage'> 
+                        <Link to={logged_in === true ? "accountpage" : "loginpage"}> 
                             <Image className="squareimage" src={pfp_src} alt="Profile Picture" objectFit="cover" border="2px solid white" borderRadius="50%"></Image>
                         </Link>
                     </Box>
@@ -106,11 +126,20 @@ export default function Navbar() {
                      <Menu>  
                         <MenuButton as={HamburgerIcon} boxSize="6" color="white" _hover={{cursor:"pointer"}}> dasfs</MenuButton>
                         <MenuList>
-                            <Link to='/createQuiz'><MenuItem fontSize="18px" fontWeight="medium"> Create Quiz      </MenuItem></Link>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Create Platform  </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Quiz Manager     </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Platform Manager </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium"> Settings         </MenuItem>
+                            <Link to='/createQuiz'><MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Create Quiz      </MenuItem></Link>
+                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Create Platform  </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Quiz Manager     </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Platform Manager </MenuItem>
+                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Settings         </MenuItem>
+                            
+                            {/* Logout Button */}
+                            {logged_in === true ? (
+                                <a href={`${config.API_URL}/auth/logout`}>
+                                    <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Logout </MenuItem>
+                                </a>
+                            ) : (
+                                null
+                            )}
                         </MenuList>
                     </Menu>
                     <Box w="1%"/>

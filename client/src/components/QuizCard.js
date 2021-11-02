@@ -1,4 +1,4 @@
-import { Box, Text, Image, VStack } from '@chakra-ui/react';
+import { Box, Text, Image, VStack, Tooltip } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
@@ -24,9 +24,11 @@ export default function QuizCard( props ) {
         if (include_author !== true) return
 
         return (
-            <Text className="disable-select" fontSize={author_fontsize} textAlign="center" textColor="purple.500">
-                Quiz Author
-            </Text>
+            <Tooltip label="Quiz Author" openDelay={300}>
+                <Text className="disable-select" fontSize={author_fontsize} textAlign="center" textColor="purple.500">
+                    Quiz Author
+                </Text>
+            </Tooltip>
         )
     }
 
@@ -39,15 +41,18 @@ export default function QuizCard( props ) {
             spacing="2%" 
             borderRadius="4%" 
             _hover={{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
+            _active={{opacity:"80%",  transition:"opacity 0.15s linear"}}
             transition="background-color 0.1s linear"
             onClick={() => history.push('/prequizpage/' + quiz_data._id)}
         >
             <Box className='squareimage_container' w="100%"> 
                 <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
             </Box>
-            <Text fontSize={title_fontsize} textAlign="center" fontWeight="medium" wordBreak="break-word">
-                {quiz_title}
-            </Text>
+            <Tooltip label={quiz_data.title} openDelay={350}>
+                <Text fontSize={title_fontsize} textAlign="center" fontWeight="medium" wordBreak="break-word">
+                    {quiz_title}
+                </Text>
+            </Tooltip>
             {renderAuthor()}
         </VStack>
     )

@@ -1,5 +1,6 @@
-import { Box, Grid, Text, Image, Center } from '@chakra-ui/react';
+import { Box, Grid, Text, Image, Center, Button } from '@chakra-ui/react';
 import treeicon from '../images/triviatree_icon.png'
+import { config } from '../util/constants';
 
 export default function LoginPage({}) {
     return (
@@ -28,7 +29,12 @@ export default function LoginPage({}) {
                             </Text>
                         </Box>
 
-                        <Box w="55%" h="7vh" mt="4%" border="1px solid" borderColor="gray.300" borderRadius="5"></Box>
+                        {/* Login Button */}
+                        <a href={`${config.API_URL}/auth/google`}>
+                            <Button w="55%" h="7vh" mt="6%" fontSize="1.1vw" border="1px solid" borderColor="gray.300" borderRadius="10" _focus={{boxShadow:"none"}}>
+                                Login with Google
+                            </Button>
+                        </a>
                     </Box>
                 </Box>
 

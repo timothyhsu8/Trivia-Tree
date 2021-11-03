@@ -28,6 +28,10 @@ const quizAttemptSchema = new Schema(
         questions: {
             type: [String],
         },
+        numCorrect: {
+            type: Number,
+            required: true
+        }
     },
     { timestamps: true }
 );

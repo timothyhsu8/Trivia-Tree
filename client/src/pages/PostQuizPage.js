@@ -81,19 +81,7 @@ export default function PostQuizPage() {
     });
 
     if (loading) {
-        return(
-            <Box height="auto">
-                <h1 className="maintitle">"Loading..."</h1>
-                <Box className="quizIconCentered" w="50%" h="50%">
-                            <img alt="Moon" src={moon} />
-                </Box>
-                <h1 className="center button white">"Here's a picuture of the moon while you wait!"</h1>
-                <Box h="200px">
-                </Box>
-            </Box>
-            
-       //Displays a loading screen while it waits
-        );
+        return <div></div>;
     }
 
     if(data){
@@ -135,7 +123,7 @@ export default function PostQuizPage() {
                                     <Box className="containerDown" paddingLeft="30px">  
                                         <Box width={["200px","200px","200px","800px"]}>
                                         <Flex direction="row" position="relative">  
-                                            <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="4vw">{quizTitle}</Text> 
+                                            <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="2.5vw">{quizTitle}</Text> 
                                             { subbed ? 
                                             <Image width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
                                             : 

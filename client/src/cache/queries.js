@@ -49,6 +49,7 @@ export const GET_QUIZ_ATTEMPT = gql`
                 numFavorites
             }
             score
+            numCorrect
 		}
 	}
 `;

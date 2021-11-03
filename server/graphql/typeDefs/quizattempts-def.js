@@ -9,6 +9,7 @@ module.exports = gql`
         score: Int!
         answerChoices: [[String!]!]!
         questions: [String!]!
+        numCorrect: Int!
     }
 
     input QuizAttemptInput {

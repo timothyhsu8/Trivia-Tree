@@ -43,7 +43,8 @@ module.exports = {
         quiz,
         score, 
         answerChoices,
-        questions
+        questions,
+        numCorrect:questionsCorrect
       });
 
       const quizAttempt = await newQuizAttempt.save();

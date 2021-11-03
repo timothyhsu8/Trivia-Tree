@@ -5,18 +5,18 @@ const ObjectId = require('mongoose').Types.ObjectId;
 module.exports = {
   Query: {
     async getQuizAttempt(_, {_id}) {
-      const quizAttempt = await QuizAttempt.findById(_id);
+      const quizAttempt = await QuizAttempt.findById(_id).populate('quiz').exec();
       return quizAttempt;
     }
   },
   Mutation: {
-    async submitQuiz(_, { quizAttemptInput: { quiz, answerChoices } }) {
+    async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices } }) {
 
-      const quizObject = await Quiz.findById(quiz);
-      quizObject.numAttempts = quiz.numAttempts + 1; 
-      quizObject.save();
+      const quiz = await Quiz.findById(quiz_id);
+      quiz.numAttempts = quiz.numAttempts + 1; 
+      quiz.save();
 
-      let questions = quizObject.questions
+      let questions = quiz.questions
 
       let answers = [];
 
@@ -33,20 +33,22 @@ module.exports = {
       }
 
 
-      let score = Math.round(questionsCorrect/quizObject.numQuestions * 100); 
+      let score = Math.round(questionsCorrect/quiz.numQuestions * 100); 
 
       const _id = new ObjectId();
 
 
       const newQuizAttempt = new QuizAttempt({
         _id,
-        quiz:quizObject,
+        quiz,
         score, 
         answerChoices,
         questions
       });
 
       const quizAttempt = await newQuizAttempt.save();
+
+      console.log(quizAttempt)
       
       return quizAttempt; 
     }

@@ -76,12 +76,8 @@ export default function PostQuizPage() {
     let quizAttempt = null; 
     let quiz = null; 
 
-    const {data, loading} = useQuery(queries.GET_QUIZ_ATTEMPT, {
+    const {data, error, loading} = useQuery(queries.GET_QUIZ_ATTEMPT, {
         variables: { _id: quizAttemptId },
-    });
-
-    const {data:data1, loading1 } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId: quizId },
     });
 
     if (loading) {
@@ -99,31 +95,12 @@ export default function PostQuizPage() {
        //Displays a loading screen while it waits
         );
     }
-    if (loading1) {
-        return(
-            <Box height="auto">
-                <h1 className="maintitle">"Loading..."</h1>
-                <Box className="quizIconCentered" w="50%" h="50%">
-                            <img alt="Moon" src={moon} />
-                </Box>
-                <h1 className="center button white">"Here's a picuture of the moon while you wait!"</h1>
-                <Box h="200px">
-                </Box>
-            </Box>
-            
-       //Displays a loading screen while it waits
-        );
-    }
 
     if(data){
         quizAttempt = data.getQuizAttempt
+        quiz = quizAttempt.quiz
         quizScore = quizAttempt.score;
         console.log(quizAttempt);
-    }
-
-    if(data1){
-        quiz = data1.getQuiz;
-        console.log(quiz);
     }
 
     let quizTitle = quiz.title;

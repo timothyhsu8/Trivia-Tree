@@ -12,7 +12,7 @@ module.exports = gql`
     }
 
     input QuizAttemptInput {
-        quiz: ID!
+        quiz_id: ID!
         answerChoices: [[String!]!]!
     }
 

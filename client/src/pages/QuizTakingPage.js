@@ -97,7 +97,7 @@ export default function QuizTakingPage({}) {
                 newAnswers[i] = '';
         }
         const {loading, error, data} = await SubmitQuiz({ variables: {
-            quizAttemptInput: { quiz: quizID, answerChoices: newAnswers },
+            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers },
         } });
 
 

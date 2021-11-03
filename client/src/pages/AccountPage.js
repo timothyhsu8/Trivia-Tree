@@ -83,33 +83,33 @@ export default function AccountPage() {
                     >       
                         {/* PROFILE PICTURE AND NAME */}
                         <Box top="50%" left="2%" transform="translateY(-50%)" position="relative"> 
-                            <Box className='squareimage_container' w="14%"> 
+                            <Box className='squareimage_container' w="12%"> 
                                 <Image className="squareimage" src={pfp_src} alt="Profile Picture" objectFit="cover" borderRadius="50%"></Image>
                             </Box>
                         
-                            <Text pos="absolute" bottom="30%" left="16%" fontSize="3vw" as="b" >{username}</Text>
-                            <Text pos="absolute" bottom="8%" left="16.2%" fontSize="2.1vw" fontWeight="thin"> {user_title} </Text>
+                            <Text pos="absolute" bottom="30%" left="14%" fontSize="2.5vw" as="b" >{username}</Text>
+                            <Text pos="absolute" bottom="8%" left="14.2%" fontSize="1.6vw" fontWeight="thin"> {user_title} </Text>
                         </Box>
                     </Box>
 
                     {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
-                    <Grid pt="1%" templateColumns="3fr 1fr">
-                        
+                    <Grid pt="1%" templateColumns="4fr 1fr">
+
                         {/* FEATURED QUIZZES/PLATFORMS */}
-                        <Box w="98.5%" h="60vh" borderRadius="10">
+                        <Box w="98.5%" borderRadius="10">
                             <VStack spacing="1.5vh">
                                 {quiz_sections.map((name, index) => {
                                     return(
                                         <Box key={index} w="100%" bgColor="gray.200" borderRadius="10" overflowX="auto">
-                                            <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">{name}</Text>
+                                            <Text pl="1.5%" pt="1%" fontSize="1.2vw" fontWeight="medium">{name}</Text>
+
                                             {/* QUIZZES */}
                                             <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
                                                 {quiz_data.map((quiz, key) => {
                                                     return <QuizCard 
                                                         quiz={quiz} 
                                                         width="13%" 
-                                                        title_fontsize="1.0vw" 
-                                                        author_fontsize="1.2vw" 
+                                                        title_fontsize="0.8vw" 
                                                         include_author={false}
                                                         char_limit={35}  
                                                         key={key}
@@ -124,8 +124,8 @@ export default function AccountPage() {
 
                         {/* BIOGRAPHY */}
                         <Box bgColor="gray.200" borderRadius="10">
-                            <Text pl="4%" pt="2%" fontSize="1.5vw" fontWeight="medium"> Biography </Text>
-                            <Text pl="4%" pr="4%" pt="3%" fontSize="0.9vw"> {bio} </Text>
+                            <Text pl="4%" pt="2%" fontSize="1.0vw" fontWeight="medium"> Biography </Text>
+                            <Text pl="4%" pr="4%" pt="3%" fontSize="0.8vw"> {bio} </Text>
                         </Box>
                     </Grid>
                 </Box>
@@ -136,14 +136,13 @@ export default function AccountPage() {
     function renderPlatforms(){
         return (
             <Box bgColor="gray.200" borderRadius="10">
-                <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">All Platforms</Text>
+                <Text pl="1.5%" pt="1%" fontSize="1.2vw" fontWeight="bold">All Platforms</Text>
                 <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap">
                     {quiz_test.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
                             width="10%" 
-                            title_fontsize="1.0vw" 
-                            author_fontsize="1.2vw" 
+                            title_fontsize="0.8vw" 
                             include_author={false}
                             char_limit={35}  
                             key={key}
@@ -158,14 +157,13 @@ export default function AccountPage() {
     function renderQuizzes(){
         return (
             <Box bgColor="gray.200" borderRadius="10">
-                <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">All Quizzes</Text>
+                <Text pl="1.5%" pt="1%" fontSize="1.2vw" fontWeight="bold">All Quizzes</Text>
                 <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap">
                     {quiz_test.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
                             width="10%" 
-                            title_fontsize="1.0vw" 
-                            author_fontsize="1.2vw" 
+                            title_fontsize="0.8vw" 
                             include_author={false}
                             char_limit={35}  
                             key={key}
@@ -180,14 +178,13 @@ export default function AccountPage() {
     function renderBadges(){
         return (
             <Box bgColor="gray.200" borderRadius="10">
-                <Text pl="1.5%" pt="1%" fontSize="1.5vw" fontWeight="bold">All Badges</Text>
+                <Text pl="1.5%" pt="1%" fontSize="1.2vw" fontWeight="bold">All Badges</Text>
                 <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap">
                     {quiz_test.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
                             width="10%" 
-                            title_fontsize="1.0vw" 
-                            author_fontsize="1.2vw" 
+                            title_fontsize="0.8vw" 
                             include_author={false}
                             char_limit={35}  
                             key={key}
@@ -211,11 +208,11 @@ export default function AccountPage() {
                 {/* MAIN CONTENT */}
                 <Box w="100%">
                     {/* HEADER BUTTONS */}
-                    <Grid w="100%" h="7vh" templateColumns="1fr 1fr 1fr 1fr"> 
-                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'user' ? "blue" : "black" } onClick={() => setPage('user')} _focus={{boxShadow:"none"}}> {username} </Button>
-                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'platforms' ? "blue" : "black" } onClick={() => setPage('platforms')} _focus={{boxShadow:"none"}}> Platforms </Button>
-                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'quizzes' ? "blue" : "black" } onClick={() => setPage('quizzes')} _focus={{boxShadow:"none"}}> Quizzes </Button>
-                        <Button height="100%" fontSize="1.2vw" bgColor="white" textColor={ page === 'badges' ? "blue" : "black" } onClick={() => setPage('badges')} _focus={{boxShadow:"none"}}> Badges </Button>
+                    <Grid w="100%" h="6vh" templateColumns="1fr 1fr 1fr 1fr"> 
+                        <Button height="100%" fontSize="1.0vw" bgColor="white" textColor={ page === 'user' ? "blue" : "black" } onClick={() => setPage('user')} _focus={{boxShadow:"none"}}> {username} </Button>
+                        <Button height="100%" fontSize="1.0vw" bgColor="white" textColor={ page === 'platforms' ? "blue" : "black" } onClick={() => setPage('platforms')} _focus={{boxShadow:"none"}}> Platforms </Button>
+                        <Button height="100%" fontSize="1.0vw" bgColor="white" textColor={ page === 'quizzes' ? "blue" : "black" } onClick={() => setPage('quizzes')} _focus={{boxShadow:"none"}}> Quizzes </Button>
+                        <Button height="100%" fontSize="1.0vw" bgColor="white" textColor={ page === 'badges' ? "blue" : "black" } onClick={() => setPage('badges')} _focus={{boxShadow:"none"}}> Badges </Button>
                     </Grid>
                     {renderPage()}
                 </Box>

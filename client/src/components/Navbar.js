@@ -40,6 +40,28 @@ export default function Navbar() {
         });
     }
 
+    function goToAccountPage() {
+        if (logged_in){
+            history.push({
+                pathname: '/accountpage',
+                state: {
+                    // location state
+                    search: search_text,
+                },
+            });
+        }
+
+        else {
+            history.push({
+                pathname: '/loginpage',
+                state: {
+                    // location state
+                    search: search_text,
+                },
+            });
+        }
+    }
+
     // Conditional rendering of logout button in the dropdown menu
     function renderLogout() {
         if (logged_in === false)
@@ -122,22 +144,18 @@ export default function Navbar() {
                     <Spacer />
 
                     <Link to="/shoppingpage"> 
-                            <Icon as={BsShopWindow} color="white"></Icon>
+                        <Icon as={BsShopWindow} color="white"></Icon>
                     </Link>
                     
                     <Spacer />
 
 
                     {/* USER NAME */}
-                    <Link to={logged_in === true ? "accountpage" : "loginpage"}> 
-                        <Text fontSize="18px" color="white" fontWeight="medium"> {username} </Text> 
-                    </Link>
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="18px" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
 
                     {/* PROFILE PICTURE */}
                     <Box className='squareimage_container' w="8%"> 
-                        <Link to={logged_in === true ? "accountpage" : "loginpage"}> 
-                            <Image className="squareimage" src={pfp_src} alt="Profile Picture" objectFit="cover" border="2px solid white" borderRadius="50%"></Image>
-                        </Link>
+                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} alt="Profile Picture" objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
                     </Box>
 
                     <Box w='1%' />

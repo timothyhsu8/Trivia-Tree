@@ -66,7 +66,7 @@ export default function SearchResultsPage() {
             return( 
             <Link to={'/prequizpage/' + quiz._id} key={index}>
                 <Grid 
-                    h="15vh" 
+                    h="12vh" 
                     top="50%" 
                     templateColumns="2fr 9fr 1fr 2fr 3fr" 
                     borderBottom="1px" 
@@ -81,33 +81,33 @@ export default function SearchResultsPage() {
                 
                     {/* QUIZ ICON */}
                     <Center>
-                        <Box className='squareimage_container' w="60%"> 
+                        <Box className='squareimage_container' w="48%"> 
                             <Image className="squareimage" src={quiz_icon_src} alt="Profile Picture" objectFit="cover" borderRadius="23%"></Image>
                         </Box>
                     </Center>
 
                     {/* QUIZ TITLE AND DESCRIPTION */}
                     <Grid templateRows="1fr 1fr">
-                        <Text fontSize="3.1vh" fontWeight="medium"> {quiz.title} </Text>
-                        <Text fontSize="2.2vh"> {quiz_description} </Text>
+                        <Text fontSize="2.4vh" fontWeight="medium"> {quiz.title} </Text>
+                        <Text fontSize="1.8vh"> {quiz_description} </Text>
                     </Grid>
 
                     {/* RATING */}
                     <Center>
-                        <Text fontSize="2.3vh" fontWeight="thin">
-                            <Icon as={StarIcon} boxSize="6" color="yellow.500"/>
+                        <Text fontSize="2.0vh" fontWeight="thin">
+                            <Icon as={StarIcon} boxSize="5" color="yellow.500"/>
                             &nbsp;{quiz_rating}
                         </Text>
                     </Center>
 
                     {/* PLATFORM */}
                     <Center>
-                        <Text top="50%" fontSize="2.1vh" color="blue.500" > {quiz_platform} </Text> 
+                        <Text top="50%" fontSize="1.8vh" color="blue.500" > {quiz_platform} </Text> 
                     </Center>
 
                     {/* CREATOR */}
                     <Center>
-                        <Text top="50%" fontSize="2.1vh"> {quiz_creator} </Text> 
+                        <Text top="50%" fontSize="1.8vh"> {quiz_creator} </Text> 
                     </Center>
                 </Grid>
             </Link>
@@ -120,10 +120,10 @@ export default function SearchResultsPage() {
             <Grid templateColumns="1fr 6fr">
                 {/* FILTERS */}
                 <VStack pt="5vh">
-                    <Text fontSize="30px" fontWeight="medium" >Filters</Text>
+                    <Text fontSize="1.5vw" fontWeight="medium" >Filters</Text>
                     <Box w="75%" h="0.15vh" bgColor="gray.300"/>
 
-                    <Text fontSize="20px"> Difficulties </Text>
+                    <Text fontSize="0.9vw"> Difficulties </Text>
                     <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
                         <option> All Difficulties </option>
                         <option> Easy </option>
@@ -132,14 +132,14 @@ export default function SearchResultsPage() {
                         <option> Expert </option>
                     </Select>
 
-                    <Text fontSize="20px"> Quiz Types </Text>
+                    <Text fontSize="0.9vw"> Quiz Types </Text>
                     <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
                         <option> All Quiz Types </option>
                         <option> Standard </option>
                         <option> Instant </option>
                     </Select>
 
-                    <Text fontSize="20px"> Timers </Text>
+                    <Text fontSize="0.9vw"> Timers </Text>
                     <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
                         <option> Any Time Limit </option>
                         <option> Standard </option>
@@ -149,7 +149,7 @@ export default function SearchResultsPage() {
 
                 {/* SEARCH RESULTS */}
                 <Box pt="2vh">
-                    <Text fontSize="4.1vh" fontWeight="light"> {search_text} </Text>
+                    <Text fontSize="3.4vh" fontWeight="light"> {search_text} </Text>
                     <Box w="100%" h="0.2vh" bgColor="gray.300"> </Box>
 
                     {/* ALL SEARCH RESULTS */}

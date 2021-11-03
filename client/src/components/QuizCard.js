@@ -25,8 +25,18 @@ export default function QuizCard( props ) {
         if (include_author !== true) return
 
         return (
-            <Tooltip label="Quiz Author" openDelay={300}>
-                <Text className="disable-select" fontSize={author_fontsize} textAlign="center" textColor="purple.500">
+            <Tooltip label={author} openDelay={300}>
+                <Text 
+                    className="disable-select" 
+                    fontSize={author_fontsize} 
+                    textAlign="center" 
+                    textColor="purple.500"
+                    _hover={{textColor:"blue.400", cursor:"pointer"}}
+                    onClick={(event) => {
+                        history.push('/accountpage/')
+                        event.stopPropagation()
+                    }}
+                    >
                     {author}
                 </Text>
             </Tooltip>
@@ -42,11 +52,11 @@ export default function QuizCard( props ) {
             spacing="2%" 
             borderRadius="4%" 
             _hover={{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
-            _active={{opacity:"80%",  transition:"opacity 0.15s linear"}}
+            _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
             transition="background-color 0.1s linear"
             onClick={() => history.push('/prequizpage/' + quiz_data._id)}
         >
-            <Box className='squareimage_container' w="100%"> 
+            <Box className='squareimage_container' w="75%"> 
                 <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
             </Box>
             <Tooltip label={quiz_data.title} openDelay={350}>

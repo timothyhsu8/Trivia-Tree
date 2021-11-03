@@ -25,7 +25,14 @@ export const SUBMIT_QUIZ = gql`
     mutation ($quizAttemptInput: QuizAttemptInput!) {
         submitQuiz(quizAttemptInput: $quizAttemptInput) {
             _id
-            quiz_id
+            quiz{
+                title
+                questions {
+                    answer
+                    answerChoices
+                    question
+                }
+            }
             score
         }
     }

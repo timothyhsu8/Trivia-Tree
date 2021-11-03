@@ -10,13 +10,13 @@ module.exports = {
     }
   },
   Mutation: {
-    async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices } }) {
+    async submitQuiz(_, { quizAttemptInput: { quiz, answerChoices } }) {
 
-      const quiz = await Quiz.findById(quiz_id);
-      quiz.numAttempts = quiz.numAttempts + 1; 
-      quiz.save();
+      const quizObject = await Quiz.findById(quiz);
+      quizObject.numAttempts = quiz.numAttempts + 1; 
+      quizObject.save();
 
-      let questions = quiz.questions
+      let questions = quizObject.questions
 
       let answers = [];
 
@@ -33,14 +33,14 @@ module.exports = {
       }
 
 
-      let score = Math.round(questionsCorrect/quiz.numQuestions * 100); 
+      let score = Math.round(questionsCorrect/quizObject.numQuestions * 100); 
 
       const _id = new ObjectId();
 
 
       const newQuizAttempt = new QuizAttempt({
         _id,
-        quiz_id,
+        quiz:quizObject,
         score, 
         answerChoices,
         questions

@@ -42,9 +42,6 @@ export const GET_QUIZ_ATTEMPT = gql`
             quiz {
                 _id
                 title
-                user {
-                    displayName
-                }
                 questions {
                     question
                     answerChoices

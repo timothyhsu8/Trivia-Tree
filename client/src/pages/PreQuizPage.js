@@ -53,7 +53,7 @@ export default function PreQuizPage({}) {
 
                 {/* Description */}
                 <GridItem rowStart={3} colSpan={4} borderBottom="1px">
-                    <Text top="30px" left="30px" position="relative" fontSize="24" as="b">{quizDescription}</Text>
+                    <Text top="30px" left="20px" position="relative" fontSize="24" as="b">{quizDescription}</Text>
                 </GridItem>
 
                 {/* Settings */}

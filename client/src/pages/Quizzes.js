@@ -8,10 +8,27 @@ function Quizzes(props) {
         loading,
         error,
         data: { getQuizzes: quizzes } = {},
-    } = useQuery(FETCH_QUIZZES_QUERY, { fetchPolicy: 'cache-and-network' });
+    } = useQuery(FETCH_QUIZZES_QUERY);
 
     const [deleteQuiz] = useMutation(DELETE_QUIZ, {
-        refetchQueries: [FETCH_QUIZZES_QUERY],
+        update(proxy, result) {
+            const data = proxy.readQuery({
+                query: FETCH_QUIZZES_QUERY,
+            });
+            let newGetQuizzes = [...data.getQuizzes];
+            newGetQuizzes = newGetQuizzes.filter(
+                (quiz) => quiz._id !== result.data.deleteQuiz._id
+            );
+            proxy.writeQuery({
+                query: FETCH_QUIZZES_QUERY,
+                data: {
+                    getQuizzes: newGetQuizzes,
+                },
+            });
+        },
+        onError(err) {
+            console.log(err);
+        },
     });
 
     function handleDeleteQuiz(quizId) {
@@ -96,7 +113,9 @@ const FETCH_QUIZZES_QUERY = gql`
 
 const DELETE_QUIZ = gql`
     mutation ($quizId: ID!) {
-        deleteQuiz(quizId: $quizId)
+        deleteQuiz(quizId: $quizId) {
+            _id
+        }
     }
 `;
 

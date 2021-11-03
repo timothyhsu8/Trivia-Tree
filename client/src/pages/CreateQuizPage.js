@@ -20,9 +20,9 @@ import { RiArrowRightSLine } from 'react-icons/ri';
 import TimeField from 'react-simple-timefield';
 import '../styles/CreateQuizPage.css';
 
-let currentId = 0;
-
 function CreateQuizPage(props) {
+    let currentId = 0;
+
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [quizQuestions, setQuizQuestions] = useState([
@@ -146,12 +146,15 @@ function CreateQuizPage(props) {
     });
 
     function handleCreateQuiz() {
-        quizQuestions.forEach((e) => delete e.id);
+        let modifiedQuizQuestions = quizQuestions.map((question) => {
+            return { ...question };
+        });
+        modifiedQuizQuestions.forEach((question) => delete question.id);
         createQuiz({
             variables: {
                 quizInput: {
                     title: title,
-                    questions: quizQuestions,
+                    questions: modifiedQuizQuestions,
                     description: description,
                     quizTimer: quizTimer,
                 },

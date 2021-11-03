@@ -5,11 +5,11 @@ const quizAttemptSchema = new Schema(
         _id: {
             type: Schema.Types.ObjectId,
         },
-        user_id: {
+        user: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
         },
-        quiz_id: {
+        quiz: {
             type: Schema.Types.ObjectId,
             ref: 'Quiz',
             required: true,

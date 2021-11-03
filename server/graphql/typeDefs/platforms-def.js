@@ -3,7 +3,7 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
     type Platform {
         _id: ID!
-        user_id: ID!
+        user: User
         name: String!
         iconImage: String
         iconEffect: Item
@@ -15,9 +15,8 @@ module.exports = gql`
         playlists: [Playlist]
     }
 
-    type Playlist { 
+    type Playlist {
         name: String!
         quizzes: [Quiz]
     }
-
 `;

@@ -3,8 +3,8 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
     type QuizAttempt {
         _id: ID!
-        user_id: ID
-        quiz_id: ID!
+        user: User
+        quiz: Quiz
         elapsedTime: Int
         score: Int!
         answerChoices: [[String!]!]!
@@ -12,8 +12,8 @@ module.exports = gql`
     }
 
     input QuizAttemptInput {
-        quiz_id: ID!
-        answerChoices:  [[String!]!]!
+        quiz: ID!
+        answerChoices: [[String!]!]!
     }
 
     extend type Query {
@@ -23,5 +23,4 @@ module.exports = gql`
     extend type Mutation {
         submitQuiz(quizAttemptInput: QuizAttemptInput!): QuizAttempt
     }
-
 `;

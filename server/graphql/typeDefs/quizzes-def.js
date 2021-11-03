@@ -3,8 +3,8 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
     type Quiz {
         _id: ID!
-        user_id: ID
-        platform_id: ID
+        user: User
+        platform: Platform
         title: String!
         questions: [Question!]!
         numQuestions: Int!
@@ -33,7 +33,7 @@ module.exports = gql`
     }
 
     type Comment {
-        user_id: ID!
+        user: User
         comment: String!
     }
 
@@ -52,7 +52,7 @@ module.exports = gql`
     }
 
     input CommentInput {
-        user_id: ID!
+        user: ID!
         comment: String!
     }
 
@@ -62,6 +62,6 @@ module.exports = gql`
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz
-        deleteQuiz(quizId: ID!): String!
+        deleteQuiz(quizId: ID!): Quiz
     }
 `;

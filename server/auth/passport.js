@@ -11,7 +11,7 @@ passport.use(
             proxy: true,
         },
         async (accessToken, refreshToken, profile, done) => {
-            const newUser = {
+            const newUser = new User({
                 googleId: profile.id,
                 displayName: profile.displayName,
                 googleDisplayName: profile.displayName,
@@ -19,7 +19,7 @@ passport.use(
                 lastName: profile.name.familyName,
                 email: profile.emails[0].value,
                 iconImage: profile.photos[0].value,
-            };
+            });
 
             try {
                 let user = await User.findOne({ googleId: profile.id });
@@ -27,7 +27,7 @@ passport.use(
                 if (user) {
                     done(null, user);
                 } else {
-                    user = await User.create(newUser);
+                    user = await newUser.save();
                     done(null, user);
                 }
             } catch (err) {
@@ -38,7 +38,7 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
 });
 
 passport.deserializeUser((id, done) => {

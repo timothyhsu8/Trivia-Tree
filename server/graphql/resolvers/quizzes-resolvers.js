@@ -5,7 +5,7 @@ module.exports = {
     Query: {
         async getQuizzes() {
             try {
-                const quizzes = await Quiz.find();
+                const quizzes = await Quiz.find().populate('user').exec();
                 return quizzes;
             } catch (err) {
                 throw new Error(err);
@@ -13,7 +13,9 @@ module.exports = {
         },
         async getQuiz(_, { quizId }) {
             try {
-                const quiz = await Quiz.findById(quizId);
+                const quiz = await Quiz.findById(quizId)
+                    .populate('user')
+                    .exec();
                 if (quiz) {
                     return quiz;
                 } else {
@@ -25,7 +27,11 @@ module.exports = {
         },
     },
     Mutation: {
-        async createQuiz(_, { quizInput: { title, questions, description, quizTimer } }) {
+        async createQuiz(
+            _,
+            { quizInput: { title, questions, description, quizTimer } },
+            context
+        ) {
             if (title.trim() === '') {
                 throw new Error('Quiz title cannot be blank');
             }
@@ -65,32 +71,33 @@ module.exports = {
                 }
             });
 
-            const _id = new ObjectId();
-
             let numQuestions = questions.length;
             let numFavorites = 0;
             let numAttempts = 0;
 
             const newQuiz = new Quiz({
-                _id,
+                user: context.req.user._id,
                 title,
                 questions,
                 description,
                 quizTimer,
                 numQuestions,
                 numFavorites,
-                numAttempts
+                numAttempts,
             });
 
             const quiz = await newQuiz.save();
 
             return quiz;
         },
-        async deleteQuiz(_, { quizId }) {
+        async deleteQuiz(_, { quizId }, context) {
             try {
                 const quiz = await Quiz.findById(quizId);
+                if (!quiz.user.equals(context.req.user._id)) {
+                    throw new Error('You are not the creator of this quiz');
+                }
                 await quiz.delete();
-                return 'Quiz deleted successfully';
+                return quiz;
             } catch (err) {
                 throw new Error(err);
             }

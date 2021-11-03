@@ -11,7 +11,7 @@ import {
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 
 
@@ -20,6 +20,8 @@ export default function QuizTakingPage({}) {
     let quiz = null;
     let quizAttempt = null;
     let numQuestions = null; 
+
+    let history = useHistory();
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -41,6 +43,8 @@ export default function QuizTakingPage({}) {
     }, []);
     
     useEffect(() => {
+        if(quizTimer == -1)
+            return;
         const timeStringDisplay = convertSecondsToString(quizTimer);
         console.log(timeStringDisplay)
         setQuizTimerDisplay(timeStringDisplay)
@@ -101,6 +105,9 @@ export default function QuizTakingPage({}) {
             quizAttempt = data.submitQuiz;
             setQuizAttemptID(quizAttempt._id);
             setQuizDone(true);
+            history.push({
+                pathname: '/postquizpage/' + quizID + '/' + quizAttempt._id
+            });
         }
 
         if(error){
@@ -306,7 +313,7 @@ export default function QuizTakingPage({}) {
                         </Center> 
                     }
 
-                    {
+                    {/* {
                         !quizDone ? '':
                         <Link to={'/postquizpage/' + quizID + '/' + quizAttemptID}>
                             <Center>
@@ -324,7 +331,7 @@ export default function QuizTakingPage({}) {
                             </Center>
                         </Link>
 
-                    }
+                    } */}
 
 
                 </Box>

@@ -156,10 +156,17 @@ export default function PostQuizPage() {
                                 <div className="SecretSauce"> 
                                     <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
                                     <Box className="containerDown" paddingLeft="30px">  
-                                        <Box width={["200px","200px","200px","800px"]}>  
-                                        <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="4vw">{quizTitle}</Text>     
+                                        <Box width={["200px","200px","200px","800px"]}>
+                                        <Flex direction="row" position="relative">  
+                                            <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="4vw">{quizTitle}</Text> 
+                                            { subbed ? 
+                                            <Image width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
+                                            : 
+                                            <Image w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" marginLeft="20px" transform="translateY(-35%)" onClick={onClickSubscribe}></Image>
+                                            }
+                                        </Flex>    
                                         </Box>
-                                        <Flex direction="row" position="relative" paddingTop="20px">
+                                        <Flex direction="row" position="relative">
                                             <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
                                             <Flex direction="column" position="relative"> 
                                                 <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
@@ -167,20 +174,10 @@ export default function PostQuizPage() {
                                             </Flex>
                                         </Flex>
                                     </Box>
-                                    <Box w="2vw"></Box>
-                                    { subbed ? 
-                                        <Image width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
-                                    : 
-                                    <Image w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" onClick={onClickSubscribe}></Image>
-                                    }
-                                    
-                                    <Box w={["0vw","31vw","41vw","40vw"]}></Box>
-                                    
-                                    
+                                                       
                                     {/*used a little absolute positioning */}
                                     <div className="containerDown">
-                                        <Box h="30px"></Box>
-                                        <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px'>
+                                        <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="500px" top="25px">
                                             <Link to={'/prequizpage/' + quiz._id} className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
                                         </Box>
                                     </div>
@@ -192,43 +189,41 @@ export default function PostQuizPage() {
             </Grid>
 
 
-                                    {/*Part II: Main Body*/}
+            {/*Part II: Main Body*/}
                 <div className="SecretSauce">
                 <Box className='containerDown'>
                     {' '}
                     {/* Can move everything down a little*/}
                     <Box className='containerAcross'>
                         <Box className='containerDown'>
-                            <Box>
+                            <Box borderBottom='1px'>
                                 {' '}
                                 {/* for horizontal line*/}
                                 <br></br>
-                                <hr />
                                 <br></br>
                             </Box>
 
-                            {showResults ? (
+                            {showResults ? 
                                 <Box className='results'>
-                                    <Box className='containerAcross'>
+                                    <Box className='containerAcross' paddingTop="35px">
                                         {/*Statbox Part I and II*/}
                                         <Box
                                             width={["48vw","48vw","48vw","37vw"]}
-                                            mt='50px' 
-                                            h='320px'
-                                            bg='gray'
-                                            borderLeftRadius='25px'
+                                            h='370px'
+                                            bg='dimgray'
+                                            borderLeftRadius='20px'
+                                            border="solid"
                                         > {/*h=3.5vw, w=200vw, h=24.5vw */}
                                             {' '}
                                             {/* Gradebox */}
                                             <Text className='center' fontSize="50px" as='b' top="150px" position="relative">You scored {quizScore}%</Text>
                                         </Box>
                                         <Box
-                                            
-                                            mt='50px'
                                             width={["38vw","38vw","38vw","28vw"]}
-                                            h='320px'
+                                            h='370px'
                                             bg='#D3D3D3'
-                                            borderRightRadius='25px'
+                                            borderRightRadius='20px'
+                                            border="solid"
                                         >
                                             {' '}
                                             <h2 className='centercenter'>
@@ -237,11 +232,9 @@ export default function PostQuizPage() {
                                     </Box>
                                     <Box h={["50px"]}></Box>
                                 </Box>
-                            ) : null}
-
-                            {showAnswers ? (
-                                <Box className='answers'>
-                                    <Box className='containerDown'>
+                             : 
+                                <Box paddingTop="150px">
+                                    <Box className='answerbox' position='relative' bottom="100px">
                                         <PostQuizAnswersCard
                                             correct={true}
                                             place={1}
@@ -260,6 +253,7 @@ export default function PostQuizPage() {
                                             name={bleh[0]}
                                             score={score[0]}
                                         ></PostQuizAnswersCard>
+                                        
                                         <PostQuizAnswersCard
                                             correct={true}
                                             place={1}
@@ -267,19 +261,18 @@ export default function PostQuizPage() {
                                             score={score[0]}
                                         ></PostQuizAnswersCard>
                                     </Box>
-                                    <Box h='50px'></Box>
                                 </Box>
-                            ) : null}
+                            }
                         </Box>
-                        <Box w="3vw"></Box>
+                        
                         <div className="fadeshow1">
-                        <Box className='containerDown'>
+                        <Box className='containerDown' paddingLeft="70px" transform="translateY(5%)">
                             {/* Statbox */}
-                            <Box w='28vw' h='50px' bg='gray'>
+                            <Box w='28vw' h='50px' bg='black' color="white" lineHeight="2" borderTopRadius="20%">
                                 {' '}
                                 {/* leaderboards Heading*/}
                                 <h1 className='leaderboard_title'>
-                                    Quiz Leaderboards
+                                    Quiz Leaderboard
                                 </h1>
                             </Box>{/*w=2vw, w=16vw, h=3.5vw */}
                             {/*w=2vw, w=16vw, h=31.5vw */}
@@ -348,7 +341,7 @@ export default function PostQuizPage() {
                         <Box
                             w='200px'
                             h='40px'
-                            bg='gray'
+                            bg={showResults ? 'grey': '#D3D3D3'}
                             borderRadius='5px'
                         >
                             {/* for horizontal line*/}
@@ -365,7 +358,7 @@ export default function PostQuizPage() {
                             ml='5px'
                             w='200px'
                             h='40px'
-                            bg='#D3D3D3'
+                            bg={showResults ? '#D3D3D3': 'grey'}
                             borderRadius='5px'
                         >
                             {' '}

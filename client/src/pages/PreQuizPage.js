@@ -27,6 +27,7 @@ export default function PreQuizPage({}) {
 
 
     let quizTitle = quiz.title;
+    let quizAuthor = quiz.user.displayName; 
     let quizDescription = quiz.description;
     let user = "No User Found";
     let pfp_src = quizImage;
@@ -84,7 +85,7 @@ export default function PreQuizPage({}) {
                                 <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
                                 <Flex direction="column" position="relative"> 
                                     <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
-                                    <Text fontSize="24" left="10px" top="15px" position="relative">{user}</Text>
+                                    <Text fontSize="24" left="10px" top="15px" position="relative">{quizAuthor}</Text>
                                 </Flex>
                         </Flex>
                         <Text fontSize="24" left="10px" top="30px" as="b" position="relative" >{numAttempts} Plays</Text>

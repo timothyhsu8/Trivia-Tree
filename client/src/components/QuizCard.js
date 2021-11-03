@@ -13,6 +13,7 @@ export default function QuizCard( props ) {
     let author_fontsize = props.author_fontsize
     let include_author = props.include_author
     let char_limit = props.char_limit
+    let author = quiz_data.user.displayName
 
     let icon_src = quizImage
     // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
@@ -26,7 +27,7 @@ export default function QuizCard( props ) {
         return (
             <Tooltip label="Quiz Author" openDelay={300}>
                 <Text className="disable-select" fontSize={author_fontsize} textAlign="center" textColor="purple.500">
-                    Quiz Author
+                    {author}
                 </Text>
             </Tooltip>
         )

@@ -5,6 +5,9 @@ export const GET_QUIZZES = gql`
         getQuizzes {
             _id
             title
+            user {
+                displayName
+            }
         }
     }
 `;
@@ -14,6 +17,9 @@ export const GET_QUIZ = gql`
 		getQuiz(quizId: $quizId) {
 			_id
             title
+            user {
+                displayName
+            }
             questions {
                 question
                 answerChoices
@@ -36,6 +42,9 @@ export const GET_QUIZ_ATTEMPT = gql`
             quiz {
                 _id
                 title
+                user {
+                    displayName
+                }
                 questions {
                     question
                     answerChoices

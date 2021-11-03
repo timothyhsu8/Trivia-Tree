@@ -341,7 +341,7 @@ export default function PostQuizPage() {
                         <Box
                             w='200px'
                             h='40px'
-                            bg='gray'
+                            bg={showResults ? 'grey': '#D3D3D3'}
                             borderRadius='5px'
                         >
                             {/* for horizontal line*/}
@@ -358,7 +358,7 @@ export default function PostQuizPage() {
                             ml='5px'
                             w='200px'
                             h='40px'
-                            bg='#D3D3D3'
+                            bg={showResults ? '#D3D3D3': 'grey'}
                             borderRadius='5px'
                         >
                             {' '}

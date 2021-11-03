@@ -19,6 +19,7 @@ import SearchResultsPage from './pages/SearchResultsPage';
 import LoginPage from './pages/LoginPage';
 import CreateQuizPage from './pages/CreateQuizPage';
 import CategoryPage from './pages/CategoryPage';
+import ShoppingPage from './pages/ShoppingPage';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
                             component={SearchResultsPage}
                         />
                         <Route path='/loginpage' component={LoginPage}></Route>
+                        <Route path='/shoppingpage' component={ShoppingPage}></Route>
                     </Switch>
                 </Router>
             </AuthProvider>

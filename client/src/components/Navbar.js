@@ -1,5 +1,6 @@
 import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
+import {BsShopWindow} from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
@@ -119,7 +120,13 @@ export default function Navbar() {
                         </Text>
                     </Link>
                     <Spacer />
-                    <Box w='5%' />
+
+                    <Link to="/shoppingpage"> 
+                            <Icon as={BsShopWindow} color="white"></Icon>
+                    </Link>
+                    
+                    <Spacer />
+
 
                     {/* USER NAME */}
                     <Link to={logged_in === true ? "accountpage" : "loginpage"}> 

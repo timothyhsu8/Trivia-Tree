@@ -22,6 +22,7 @@ export default function PostQuizPage() {
     let attemptNumber = null; 
     let numCorrect = null; 
     let creator = null; 
+    let leaderboard = null;
 
     let { quizId, quizAttemptId } = useParams();
     let leaderboard_entries = [ 'alpha', 'vita', 'gamma', 'thelta', 'epsilon', 'zita', 'ita', 'thita', 'iota', 'kappa']
@@ -68,7 +69,15 @@ export default function PostQuizPage() {
         variables: { _id: quizAttemptId },
     });
 
+    const {data:data1, error:error1, loading:loading1} = useQuery(queries.GET_LEADERBOARD, {
+        variables: { quiz_id: quizId },
+    });
+
     if (loading) {
+        return <div></div>;
+    }
+
+    if (loading1) {
         return <div></div>;
     }
 
@@ -85,6 +94,11 @@ export default function PostQuizPage() {
         attemptNumber = quizAttempt.attemptNumber; 
         numCorrect = quizAttempt.numCorrect;
         creator = quiz.user.displayName
+        console.log(quizAttempt)
+    }
+
+    if (data1) {
+        leaderboard = data1.getLeaderboard
     }
 
     let quizTitle = quiz.title;
@@ -249,14 +263,13 @@ export default function PostQuizPage() {
                                 </h1>
                             </Box>{/*w=2vw, w=16vw, h=3.5vw */}
                             {/*w=2vw, w=16vw, h=31.5vw */}
-                            <Box w='28vw' bg='#D3D3D3' borderBottomRadius="2%">
-                                {leaderboard_entries.map((name, index) => {
+                            <Box w='28vw' bg='#D3D3D3' borderBottomRadius="2%" h='600px' paddingTop="20px">
+                                {leaderboard.map((entry, index) => {
                                     return (
                                         <LeaderboardCard 
                                             place={index+1}
-                                            name={name}
-                                            image={moon}
-                                            score={5}
+                                            entry={entry}
+                                            image={userImage}
                                         />    
                                     )
                                 })}

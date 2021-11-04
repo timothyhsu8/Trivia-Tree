@@ -39,6 +39,9 @@ export const GET_QUIZ_ATTEMPT = gql`
 	query GetQuizAttempt($_id: ID!) {
 		getQuizAttempt(_id: $_id) {
             _id
+            user {
+                displayName
+            }
             quiz {
                 _id
                 user {
@@ -63,6 +66,18 @@ export const GET_QUIZ_ATTEMPT = gql`
             questions
             elapsedTime
             attemptNumber
+		}
+	}
+`;
+
+export const GET_LEADERBOARD = gql`
+	query GetLeaderboard($quiz_id: ID!) {
+		getLeaderboard(quiz_id: $quiz_id) {
+            _id
+            user {
+                displayName
+            }
+            score
 		}
 	}
 `;

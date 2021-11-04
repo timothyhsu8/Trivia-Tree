@@ -5,13 +5,14 @@ import '../styles/postpage.css';
 
 export default function LeaderboardEntryCard(props) {
     /*Edit the mt/mb to change the spacing between elements */
+    console.log(props.entry)
     return ( 
             <Box ml="15px" mr="26px" mt="5px" mb="18px" display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
-                    <h2 className="leaderboard_text">{props.place}.  <img src={props.image} alt="pfp" className="round_image"/>  {props.name} </h2>
+                    <Text className="leaderboard_text">{props.place}.  <img src={props.image} alt="pfp" className="round_image"/>  {props.entry.user.displayName} </Text>
                 </Box>
                 <Text>
-                    <h2 className="leaderboard_text">{props.score}</h2>
+                    <Text className="leaderboard_text">{props.entry.score}</Text>
                 </Text>
             </Box>
     )

@@ -6,8 +6,15 @@ const ObjectId = require('mongoose').Types.ObjectId;
 module.exports = {
   Query: {
     async getQuizAttempt(_, {_id}) {
-      const quizAttempt = await QuizAttempt.findById(_id).populate({path:'quiz', populate:{path:'user'}}).exec()
+      const quizAttempt = await QuizAttempt.findById(_id).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).exec()
       return quizAttempt;
+    },
+
+    async getLeaderboard(_, {quiz_id}) {
+      const quiz = await Quiz.findById(quiz_id).exec();
+      const quizAttempts = await QuizAttempt.find({quiz:quiz, attemptNumber:1}).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).sort( { score: -1 } ).limit(10)
+
+      return quizAttempts;
     }
   },
   Mutation: {

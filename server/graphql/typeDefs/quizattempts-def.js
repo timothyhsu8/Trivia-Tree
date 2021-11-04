@@ -22,6 +22,7 @@ module.exports = gql`
 
     extend type Query {
         getQuizAttempt(_id: ID!): QuizAttempt
+        getLeaderboard(quiz_id: ID!): [QuizAttempt]
     }
 
     extend type Mutation {

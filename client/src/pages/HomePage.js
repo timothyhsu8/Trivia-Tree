@@ -54,8 +54,9 @@ export default function Homepage() {
                         return (
                             <Box>
                                 <Text 
+                                    className="disable-select"
                                     fontSize="1.1vw" 
-                                    textColor={section === currentSection ? "gray.800" : "gray.400" }
+                                    textColor={section === currentSection ? "gray.900" : "gray.400" }
                                     textAlign="center"
                                     _hover={{ cursor:"pointer", textColor:"gray.600", transition:"0.15s linear" }}
                                     transition="0.1s linear"
@@ -63,7 +64,7 @@ export default function Homepage() {
                                 >
                                     {section}
                                 </Text>
-                                <Box h="0.2vh" mt="3%" bgColor={section === currentSection ? "blue.400" : "gray.400" } />
+                                <Box h="0.2vh" mt="3%" bgColor={section === currentSection ? "blue.500" : "gray.400" }  transition="0.15s linear"/>
                             </Box>
                         )
                     })}

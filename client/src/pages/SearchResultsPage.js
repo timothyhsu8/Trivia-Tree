@@ -56,7 +56,7 @@ export default function SearchResultsPage() {
         if (quizzes.length === 0)
             return (
                 <Center mt="1%">
-                    <Text fontSize="3vw" fontWeight="thin">No quizzes found for "{search}"</Text>
+                    <Text fontSize="2vw" fontWeight="thin">No quizzes found for "{search}"</Text>
                 </Center>
             )
 

@@ -1,4 +1,4 @@
-import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem,Icon, Spacer} from "@chakra-ui/react"
+import { Box, Flex, HStack, Text, Grid, VStack, Button, Image, GridItem,Icon, Spacer} from "@chakra-ui/react"
 import { useQuery } from '@apollo/client';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import userImage from '../images/default.png';
@@ -11,7 +11,8 @@ import * as queries from '../cache/queries';
 export default function PreQuizPage({}) {
     let { quizId } = useParams();
     let quiz = null;
-
+    let iconSize = "50px"
+    let iconTextSize = "30px"
 
     const { data, loading, error } = useQuery(queries.GET_QUIZ, {
         variables: { quizId:quizId },
@@ -25,7 +26,6 @@ export default function PreQuizPage({}) {
         quiz = data.getQuiz;
     }
 
-
     let quizTitle = quiz.title;
     let quizAuthor = quiz.user.displayName; 
     let quizDescription = quiz.description;
@@ -38,64 +38,65 @@ export default function PreQuizPage({}) {
 
     return ( 
         <Box>
-   
-
-            <Grid h="845px" templateRows="repeat(6, 1fr)" templateColumns="repeat(6, 1fr)" px="20px" py="20px" bgColor="white" paddingTop="10px"> 
+            <Grid h="845px" templateRows="repeat(6, 1fr)"  pl="2%" pr="2%" bgColor="white" paddingTop="10px"> 
 
                 {/* Title and Image */}
-                <GridItem rowSpan={2} colSpan={6} borderBottom="1px">
+                <GridItem rowSpan={2} colSpan={6} borderBottom="2px" borderColor="gray.400">
                     <Flex direction="row" top="50%" left="2%" transform="translateY(-45%)" position="relative"> 
-                            <Image w="200px" h="200px" src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image>
-                            <Text fontSize="4vw" as="b" transform="translateY(55%)" paddingLeft="20px">{quizTitle}</Text>
-                            <Image as={BsHeart} w="50px" h="50px" transform="translateY(290%)" marginLeft="30px"/>
+                        <Image w="175px" h="175px" src={pfp_src} objectFit="cover" borderRadius="10%"></Image>
+                        <Text fontSize="2.7vw" as="b" transform="translateY(57%)" paddingLeft="20px">{quizTitle}</Text>
+                        <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}/>
                     </Flex>
                 </GridItem>
 
                 {/* Description */}
-                <GridItem rowStart={3} colSpan={4} borderBottom="1px">
-                    <Text top="30px" left="20px" position="relative" fontSize="24" as="b">{quizDescription}</Text>
+                <GridItem rowStart={3} colSpan={4} borderBottom="2px" borderColor="gray.400">
+                    <Text top="20px" left="20px" position="relative" fontSize="22"> {quizDescription} </Text>
                 </GridItem>
 
                 {/* Settings */}
                 <GridItem rowStart={4} rowSpan={3} colSpan={4}>
-                    <Grid templateRows="repeat(2, 1fr)" gap={12} top="70px" position="relative">
-                        <Flex direction="row">
-                            <Icon as={MdTimer} w="75px" h="75px" left="30px" position="relative"/> 
-                            <Text fontSize="40" as="b" left="40px" top="8px" position="relative">{quizTimer}</Text>
-                            <Spacer/>
-                            <Icon as={BsShuffle} w="75px" h="75px" right="500px" position="relative"/> 
-                            <Text fontSize="40" as="b" right="120px" top="8px" position="absolute"> Ordered Questions </Text>
-                        </Flex>
+                    <Grid pt="7%" pl="5%" templateColumns="1fr 1fr" >
+                        <HStack>
+                            <Icon as={MdTimer} w={iconSize} h={iconSize} position="relative"/> 
+                            <Text fontSize={iconTextSize} as="b"> {quizTimer}</Text>
+                        </HStack>
                         
-                        <Flex direction="row">
-                            <Icon as={BsQuestionLg} w="75px" h="75px" left="30px" position="relative"/>
-                            <Text fontSize="40" as="b" left="40px" top="8px" position="relative">{numQuestions} Questions</Text> 
-                            <Spacer/>
-                            <Icon as={IoRibbonSharp} w="75px" h="75px" right="500px" position="relative"/> 
-                            <Text fontSize="40" as="b" right="210px" top="135px" position="absolute"> Standard Quiz </Text>
-                        </Flex>
+                        <HStack>
+                            <Icon as={BsShuffle} w={iconSize} h={iconSize} position="relative"/> 
+                            <Text fontSize={iconTextSize} as="b"> Ordered Questions </Text>
+                        </HStack>
+                    </Grid>
 
+                    <Grid pt="4%" pl="5%" templateColumns="1fr 1fr">
+                        <HStack>
+                            <Icon as={BsQuestionLg} w={iconSize} h={iconSize} position="relative"/> 
+                            <Text fontSize={iconTextSize} as="b"> {numQuestions} Questions </Text>
+                        </HStack>
+                        
+                        <HStack>
+                            <Icon as={IoRibbonSharp} w={iconSize} h={iconSize} position="relative"/> 
+                            <Text fontSize={iconTextSize} as="b"> Standard Quiz </Text>
+                        </HStack>
                     </Grid>
                 </GridItem>
 
                 {/* Other Info */}
-                <GridItem rowStart={3} rowSpan={4} colSpan={2}borderLeft="1px">
+                <GridItem rowStart={3} rowSpan={4} colSpan={2} borderLeft="2px" borderColor="gray.400">
                     <Flex direction="column" position="relative" top="5%" left="3%">
                         <Flex direction="row" top="5%" left="3%" position="relative"> 
-                                <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
+                                <Image w="70px" h="70px" src={userImage} objectFit="cover" borderRadius="50%"></Image>
                                 <Flex direction="column" position="relative"> 
-                                    <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
-                                    <Text fontSize="24" left="10px" top="15px" position="relative">{quizAuthor}</Text>
+                                    <Text fontSize="24" as="b" left="10px" top="10px" position="relative" >Creator</Text>
+                                    <Text fontSize="21" left="10px" top="7px" position="relative">{quizAuthor}</Text>
                                 </Flex>
                         </Flex>
-                        <Text fontSize="24" left="10px" top="30px" as="b" position="relative" >{numAttempts} Plays</Text>
-                        <Text fontSize="24" left="10px" top="40px" as="b" position="relative">{numFavorites} Favorites</Text>
+                        <Text fontSize="24" left="10px" top="30px" position="relative" >{numAttempts} Plays</Text>
+                        <Text fontSize="24" left="10px" top="40px" position="relative">{numFavorites} Favorites</Text>
         
                         <Link to={'/quiztakingpage/' + quiz._id}> <Button colorScheme="blue" rightIcon={<BsFillPlayCircleFill/>} variant="solid" 
-                        position="relative" top="265px" left="px" h="60px" fontSize="40px"> Start Quiz </Button></Link>
-
+                        position="relative" top="265px" left="px" h="60px" fontSize="25px"> Start Quiz </Button></Link>
                     </Flex>
-
                 </GridItem>
             </Grid>
 

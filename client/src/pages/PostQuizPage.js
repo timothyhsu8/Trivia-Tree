@@ -2,33 +2,22 @@ import React from 'react';
 import { useState } from 'react';
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
-import bg from '../images/homebg.png';
 import userImage from '../images/default.png';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
-import heart from '../images/heart.jpeg';
 import quizImage from '../images/defaultquiz.jpeg';
 import LeaderboardCard from './LeaderboardEntryCard';
-import PostQuizAnswers from './PostQuizAnswersCard';
 import { useQuery } from '@apollo/client';
 import * as queries from '../cache/queries';
-import {
-    BrowserRouter,
-    Switch,
-    Route,
-    Redirect,
-    Router,
-    useParams
-} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import PostQuizAnswersCard from './PostQuizAnswersCard';
-import { subscribe } from 'graphql';
 
 export default function PostQuizPage() {
     let quizScore = null; 
     let elapsedTime = null;
 
     let { quizId, quizAttemptId } = useParams();
-
+    let leaderboard_entries = [ 'alpha', 'vita', 'gamma', 'thelta', 'epsilon', 'zita', 'ita', 'thita']
 
     function mainPage() {
         return;
@@ -48,16 +37,7 @@ export default function PostQuizPage() {
         'ita',
         'thita',
     ]);
-    const [score, changeScore] = useState([
-        '5',
-        '5',
-        '4',
-        '4',
-        '3',
-        '3',
-        '2',
-        '2',
-    ]);
+    
     const [showResults, setShowResults] = React.useState(true);
     const onClickResults = () => {
         setShowResults(true);
@@ -110,59 +90,53 @@ export default function PostQuizPage() {
 
     return(
         /*Go to line 145 for answers page*/
-        <Box> 
-            <Box h="50px"></Box>
-            <Grid>
-                
-                {/* MAIN CONTENT */}
-                <Box>
-                    {/* HEADER AND BANNER */}
-                    <Grid>
-                        {/* BANNER */}
-                        <Box
-                            bgSize="cover" 
-                            bgPosition="center"
-                            borderRadius="10">
-                                {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
-                                <div className="SecretSauce"> 
-                                    <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
-                                    <Box className="containerDown" paddingLeft="30px">  
-                                        <Box width={["200px","200px","200px","800px"]}>
-                                        <Flex direction="row" position="relative">  
-                                            <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="2.5vw">{quizTitle}</Text> 
-                                            { subbed ? 
-                                            <Image width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
-                                            : 
-                                            <Image w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" marginLeft="20px" transform="translateY(-35%)" onClick={onClickSubscribe}></Image>
-                                            }
-                                        </Flex>    
-                                        </Box>
-                                        <Flex direction="row" position="relative">
-                                            <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
-                                            <Flex direction="column" position="relative"> 
-                                                <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
-                                                <Text fontSize="24" left="10px" top="15px" position="relative">None</Text>
-                                            </Flex>
-                                        </Flex>
-                                    </Box>
-                                                       
-                                    {/*used a little absolute positioning */}
-                                    <div className="containerDown">
-                                        <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="500px" top="25px">
-                                            <Link to={'/prequizpage/' + quiz._id} className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
-                                        </Box>
-                                    </div>
-                                </div>
+        <Box>    
+            {/* HEADER/BANNER */}
+            <Box mt="50px">
+                {/* BANNER */}
+                <Box
+                    bgSize="cover" 
+                    bgPosition="center"
+                    borderRadius="10"
+                >
+                    {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
+                    <div className="SecretSauce"> 
+                        <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
+                        <Box className="containerDown" paddingLeft="30px">  
+                            <Box width={["200px","200px","200px","800px"]}>
+                            <Flex direction="row" position="relative">  
+                                <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="2.5vw">{quizTitle}</Text> 
+                                { subbed ? 
+                                <Image width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
+                                : 
+                                <Image w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" marginLeft="20px" transform="translateY(-35%)" onClick={onClickSubscribe}></Image>
+                                }
+                            </Flex>    
+                            </Box>
+                            <Flex direction="row" position="relative">
+                                <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
+                                <Flex direction="column" position="relative"> 
+                                    <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
+                                    <Text fontSize="24" left="10px" top="15px" position="relative">None</Text>
+                                </Flex>
+                            </Flex>
                         </Box>
-                    </Grid>
-
-                </Box>
-            </Grid>
+                                            
+                        {/*used a little absolute positioning */}
+                        <div className="containerDown">
+                            <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="500px" top="25px">
+                                <Link to={'/prequizpage/' + quiz._id} className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
+                            </Box>
+                        </div>
+                    </div>
+            </Box>
+            </Box>
+           
 
 
             {/*Part II: Main Body*/}
                 <div className="SecretSauce">
-                <Box className='containerDown'>
+                <Box className='containerDown' >
                     {' '}
                     {/* Can move everything down a little*/}
                     <Box className='containerAcross'>
@@ -207,26 +181,29 @@ export default function PostQuizPage() {
                                 <Box paddingTop="150px">
                                     <Box className='answerbox' position='relative' bottom="100px">
                                         <PostQuizAnswersCard
-
+                                            correct={true}
+                                            place={1}
+                                            name={bleh[0]}
+                                            score={5}
                                         ></PostQuizAnswersCard>
                                         <PostQuizAnswersCard
                                             correct={false}
                                             place={1}
                                             name={bleh[0]}
-                                            score={score[0]}
+                                            score={5}
                                         ></PostQuizAnswersCard>
                                         <PostQuizAnswersCard
                                             correct={false}
                                             place={1}
                                             name={bleh[0]}
-                                            score={score[0]}
+                                            score={5}
                                         ></PostQuizAnswersCard>
                                         
                                         <PostQuizAnswersCard
                                             correct={true}
                                             place={1}
                                             name={bleh[0]}
-                                            score={score[0]}
+                                            score={5}
                                         ></PostQuizAnswersCard>
                                     </Box>
                                 </Box>
@@ -234,67 +211,27 @@ export default function PostQuizPage() {
                         </Box>
                         
                         <div className="fadeshow1">
-                        <Box className='containerDown' paddingLeft="70px" transform="translateY(5%)">
+                        <Box pos="absolute" className='containerDown' paddingLeft="70px" transform="translateY(-15%)">
                             {/* Statbox */}
-                            <Box w='28vw' h='50px' bg='black' color="white" lineHeight="2" borderTopRadius="20%">
+                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" borderTopRadius="20%">
                                 {' '}
                                 {/* leaderboards Heading*/}
                                 <h1 className='leaderboard_title'>
-                                    Quiz Leaderboard
+                                    Leaderboard
                                 </h1>
                             </Box>{/*w=2vw, w=16vw, h=3.5vw */}
                             {/*w=2vw, w=16vw, h=31.5vw */}
-                            <Box w='28vw' h='450px' bg='#D3D3D3'>
-                                {' '}
-                                {/*bg='#D3D3D3' leaderboards*/}
-                                <LeaderboardCard
-                                    place={1}
-                                    name={bleh[0]}
-                                    image={moon}
-                                    score={score[0]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={2}
-                                    name={bleh[1]}
-                                    image={moon}
-                                    score={score[1]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={3}
-                                    name={bleh[2]}
-                                    image={moon}
-                                    score={score[2]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={4}
-                                    name={bleh[3]}
-                                    image={moon}
-                                    score={score[3]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={5}
-                                    name={bleh[4]}
-                                    image={moon}
-                                    score={score[4]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={6}
-                                    name={bleh[5]}
-                                    image={moon}
-                                    score={score[5]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={7}
-                                    name={bleh[6]}
-                                    image={moon}
-                                    score={score[6]}
-                                ></LeaderboardCard>
-                                <LeaderboardCard
-                                    place={8}
-                                    name={bleh[7]}
-                                    image={moon}
-                                    score={score[7]}
-                                ></LeaderboardCard>
+                            <Box w='28vw' bg='#D3D3D3' borderBottomRadius="2%">
+                                {leaderboard_entries.map((name, index) => {
+                                    return (
+                                        <LeaderboardCard 
+                                            place={index+1}
+                                            name={name}
+                                            image={moon}
+                                            score={5}
+                                        />    
+                                    )
+                                })}
                             </Box>
                         </Box>
                         </div>

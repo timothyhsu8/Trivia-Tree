@@ -1,6 +1,8 @@
-import { Box, Text, Image, VStack, Tooltip } from '@chakra-ui/react';
+import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
+import { ViewIcon } from '@chakra-ui/icons'
+import { BsHeart } from "react-icons/bs"
 import '../styles/styles.css'
 
 export default function QuizCard( props ) {
@@ -21,28 +23,7 @@ export default function QuizCard( props ) {
     if (quiz_title.length > char_limit)
         quiz_title = quiz_title.slice(0, char_limit) + "..."
 
-    function renderAuthor() {
-        if (include_author !== true) return
-
-        return (
-            <Tooltip label={author} openDelay={300}>
-                <Text 
-                    className="disable-select" 
-                    fontSize={author_fontsize} 
-                    textAlign="center" 
-                    textColor="purple.500"
-                    _hover={{textColor:"blue.400", cursor:"pointer"}}
-                    onClick={(event) => {
-                        history.push('/accountpage/')
-                        event.stopPropagation()
-                    }}
-                    >
-                    {author}
-                </Text>
-            </Tooltip>
-        )
-    }
-
+    console.log(quiz_data)
     return (
         <VStack 
             className="disable-select"
@@ -59,12 +40,46 @@ export default function QuizCard( props ) {
             <Box className='squareimage_container' w="75%"> 
                 <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
             </Box>
+
+            {/* QUIZ TITLE */}
             <Tooltip label={quiz_data.title} openDelay={350}>
                 <Text fontSize={title_fontsize} textAlign="center" fontWeight="medium" wordBreak="break-word">
                     {quiz_title}
                 </Text>
             </Tooltip>
-            {renderAuthor()}
+
+            {/* QUIZ AUTHOR */}
+            {
+                include_author !== true ? null :
+                <Tooltip label={author} openDelay={300}>
+                    <Text 
+                        className="disable-select" 
+                        fontSize={author_fontsize} 
+                        textAlign="center" 
+                        textColor="purple.500"
+                        _hover={{textColor:"blue.400", cursor:"pointer"}}
+                        onClick={(event) => {
+                            history.push('/accountpage/')
+                            event.stopPropagation()
+                        }}
+                        >
+                        {author}
+                    </Text>
+                </Tooltip>
+            }
+
+            {/* QUIZ VIEWS/PLAYS */}
+            <Grid w="100%" templateColumns="1fr 1fr"> 
+                <HStack spacing="0">
+                    <Icon boxSize="50%" as={ViewIcon} pos="relative" top="3%"/>
+                    <Text fontSize="0.8vw"> 200 </Text>
+                </HStack>
+                
+                <HStack spacing="0">
+                    <Icon as={BsHeart} boxSize="45%" pos="relative" left="10%" top="6%"/>
+                    <Text fontSize="0.8vw" pos="relative" left="8%"> 200 </Text>
+                </HStack>
+            </Grid>
         </VStack>
     )
 }

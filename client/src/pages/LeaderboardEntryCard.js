@@ -10,9 +10,9 @@ export default function LeaderboardEntryCard(props) {
                 <Box>
                     <h2 className="leaderboard_text">{props.place}.  <img src={props.image} alt="pfp" className="round_image"/>  {props.name} </h2>
                 </Box>
-                <Box>
+                <Text>
                     <h2 className="leaderboard_text">{props.score}</h2>
-                </Box>
+                </Text>
             </Box>
     )
 }

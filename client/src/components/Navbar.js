@@ -16,6 +16,8 @@ export default function Navbar() {
     let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
     let username = "Guest"
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
+    let menu_bg_hover = "blue.500"
+    let menu_text_hover = "white"
 
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
@@ -172,16 +174,16 @@ export default function Navbar() {
                             dasfs
                         </MenuButton>
                         <MenuList>
-                            <Link to='/createQuiz'><MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Create Quiz      </MenuItem></Link>
-                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Create Platform  </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Quiz Manager     </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Platform Manager </MenuItem>
-                            <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Settings         </MenuItem>
+                            <Link to='/createQuiz'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz      </MenuItem></Link>
+                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
+                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
+                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
+                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem>
                             
                             {/* Logout Button */}
                             {logged_in === true ? (
                                 <a href={`${config.API_URL}/auth/logout`}>
-                                    <MenuItem fontSize="18px" fontWeight="medium" _hover={{bgColor:"blue.100"}}> Logout </MenuItem>
+                                    <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
                                 </a>
                             ) : (
                                 null

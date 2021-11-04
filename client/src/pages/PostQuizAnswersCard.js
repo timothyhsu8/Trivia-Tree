@@ -29,13 +29,13 @@ export default function PostQuizAnswersCard(props) {
             }
             
             <Box ml="15px" w="100%" mb="26px" display="flex" alignItems="center" justifyContent="space-between" className="containerDown">
-                <Box width={["80vw","80vw","80vw","61.2vw"]} h="45px" bg={color} border="solid">  {/* Gradebox */}
+                <Box width={["80vw","80vw","80vw","61.2vw"]} h="45px" bg={color} border="1px">  {/* Gradebox */}
                     <h2 className="answer_text">{props.place}.   {props.name} </h2>
                 </Box>
 
 
                 { showDetails ? 
-                <Box width={["80vw","80vw","80vw","61.2vw"]} h="200px" bg='#D3D3D3' borderRight="solid" borderLeft="solid" borderBottom="solid">  {/* Gradebox */}
+                <Box width={["80vw","80vw","80vw","61.2vw"]} h="200px" bg='#D3D3D3' borderRight="1px" borderLeft="1px" borderBottom="1px">  {/* Gradebox */}
                     <h2 className="answer_text">{props.place}.   {props.name} </h2>
                 </Box>
                 : null}

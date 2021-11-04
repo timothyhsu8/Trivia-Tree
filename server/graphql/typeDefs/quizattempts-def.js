@@ -10,10 +10,12 @@ module.exports = gql`
         answerChoices: [[String!]!]!
         questions: [String!]!
         numCorrect: Int!
+        attemptNumber: Int
     }
 
     input QuizAttemptInput {
         quiz_id: ID!
+        user_id: ID
         answerChoices: [[String!]!]!
         elapsedTime: String
     }

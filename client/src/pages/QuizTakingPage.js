@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import {
     Box,
     Center,
@@ -13,14 +13,19 @@ import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
+import { AuthContext } from '../context/auth';
+
 
 
 export default function QuizTakingPage({}) {
     let { quizId } = useParams();
+    const { user } = useContext(AuthContext);
     let quiz = null;
     let quizAttempt = null;
     let numQuestions = null; 
     let history = useHistory();
+
+    console.log(user)
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -101,8 +106,13 @@ export default function QuizTakingPage({}) {
             if(newAnswers[i] == undefined)
                 newAnswers[i] = '';
         }
+
+        let user_id = null; 
+        if(user !== 'NoUser'){
+            user_id = user._id
+        }
         const {loading, error, data} = await SubmitQuiz({ variables: {
-            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers, elapsedTime },
+            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers, elapsedTime, user_id: user_id},
         } });
 
 

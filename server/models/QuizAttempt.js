@@ -31,6 +31,9 @@ const quizAttemptSchema = new Schema(
         numCorrect: {
             type: Number,
             required: true
+        },
+        attemptNumber: {
+            type: Number
         }
     },
     { timestamps: true }

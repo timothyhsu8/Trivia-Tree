@@ -41,6 +41,9 @@ export const GET_QUIZ_ATTEMPT = gql`
             _id
             quiz {
                 _id
+                user {
+                    displayName
+                }
                 title
                 questions {
                     question
@@ -59,6 +62,7 @@ export const GET_QUIZ_ATTEMPT = gql`
             answerChoices
             questions
             elapsedTime
+            attemptNumber
 		}
 	}
 `;

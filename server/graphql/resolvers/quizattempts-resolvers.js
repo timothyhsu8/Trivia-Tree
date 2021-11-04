@@ -1,18 +1,20 @@
 const QuizAttempt = require('../../models/QuizAttempt');
 const Quiz = require('../../models/Quiz');
+const User = require('../../models/User');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
   Query: {
     async getQuizAttempt(_, {_id}) {
-      const quizAttempt = await QuizAttempt.findById(_id).populate('quiz').exec();
+      const quizAttempt = await QuizAttempt.findById(_id).populate({path:'quiz', populate:{path:'user'}}).exec()
       return quizAttempt;
     }
   },
   Mutation: {
-    async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices, elapsedTime } }) {
+    async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices, elapsedTime, user_id } }) {
 
-      const quiz = await Quiz.findById(quiz_id);
+      
+      const quiz = await Quiz.findById(quiz_id).exec();
       quiz.numAttempts = quiz.numAttempts + 1; 
       quiz.save();
 
@@ -37,20 +39,29 @@ module.exports = {
 
       const _id = new ObjectId();
 
+      let user = null; 
+      let attemptNumber;
+
+      if(user_id != null){
+        user = await User.findById(user_id);
+        const quizAttempts = await QuizAttempt.find({quiz:quiz, user:user})
+        attemptNumber = quizAttempts.length + 1; 
+      }
+
 
       const newQuizAttempt = new QuizAttempt({
         _id,
+        user,
         quiz,
         elapsedTime,
         score, 
         answerChoices,
         questions,
-        numCorrect:questionsCorrect
+        numCorrect:questionsCorrect,
+        attemptNumber
       });
 
       const quizAttempt = await newQuizAttempt.save();
-
-      console.log(quizAttempt)
       
       return quizAttempt; 
     }

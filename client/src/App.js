@@ -11,6 +11,7 @@ import QuizTakingPage from './pages/QuizTakingPage';
 import AccountPage from './pages/AccountPage';
 import PostQuizPage from './pages/PostQuizPage';
 import PreQuizPage from './pages/PreQuizPage';
+import SettingsPage from './pages/SettingsPage';
 import { AuthProvider } from './context/auth';
 import Quizzes from './pages/Quizzes';
 import CreateQuiz from './pages/CreateQuiz';
@@ -47,6 +48,7 @@ function App() {
                             path='/quiztakingpage/:quizId'
                             component={QuizTakingPage}
                         />
+                        <Route path='/settingspage' component={SettingsPage} />
                         <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage' component={AccountPage} />
                         <Route path='/platformpage' component={PlatformPage} />

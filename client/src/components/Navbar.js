@@ -187,7 +187,7 @@ export default function Navbar() {
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
-                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem>
+                            <Link to='/settingspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
                             
                             {/* Logout Button */}
                             {logged_in === true ? (

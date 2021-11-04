@@ -56,6 +56,9 @@ export const GET_QUIZ_ATTEMPT = gql`
             }
             score
             numCorrect
+            answerChoices
+            questions
+            elapsedTime
 		}
 	}
 `;

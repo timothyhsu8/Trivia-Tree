@@ -25,6 +25,7 @@ import { subscribe } from 'graphql';
 
 export default function PostQuizPage() {
     let quizScore = null; 
+    let elapsedTime = null;
 
     let { quizId, quizAttemptId } = useParams();
 
@@ -92,7 +93,7 @@ export default function PostQuizPage() {
         quizAttempt = data.getQuizAttempt
         quiz = quizAttempt.quiz
         quizScore = quizAttempt.score;
-        console.log(quizAttempt);
+        elapsedTime = quizAttempt.elapsedTime;
     }
 
     let quizTitle = quiz.title;
@@ -206,10 +207,7 @@ export default function PostQuizPage() {
                                 <Box paddingTop="150px">
                                     <Box className='answerbox' position='relative' bottom="100px">
                                         <PostQuizAnswersCard
-                                            correct={true}
-                                            place={1}
-                                            name={bleh[0]}
-                                            score={score[0]}
+
                                         ></PostQuizAnswersCard>
                                         <PostQuizAnswersCard
                                             correct={false}

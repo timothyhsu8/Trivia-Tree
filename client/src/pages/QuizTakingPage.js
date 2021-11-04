@@ -20,12 +20,12 @@ export default function QuizTakingPage({}) {
     let quiz = null;
     let quizAttempt = null;
     let numQuestions = null; 
-
     let history = useHistory();
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
     const [userAnswers, setUserAnswers] = useState(() => []);
+    const [totalTime, setTotalTime] = useState(0);
     const [quizDone, setQuizDone] = useState(false);
     const [quizAttemptID, setQuizAttemptID] = useState(0);
     const [quizTimer, setQuizTimer] = useState(-1);
@@ -91,13 +91,18 @@ export default function QuizTakingPage({}) {
 
 
     const submitQuiz = async () => {
+        console.log(totalTime)
+        console.log(quizTimer)
+        let elapsedTimeTemp = totalTime - quizTimer;
+        console.log(elapsedTimeTemp)
+        let elapsedTime = convertSecondsToString(elapsedTimeTemp)
         let newAnswers = [...userAnswers];
         for(let i = 0; i < quiz.numQuestions; i++){
             if(newAnswers[i] == undefined)
                 newAnswers[i] = '';
         }
         const {loading, error, data} = await SubmitQuiz({ variables: {
-            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers },
+            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers, elapsedTime },
         } });
 
 
@@ -168,6 +173,7 @@ export default function QuizTakingPage({}) {
         let numSeconds = parseInt(quizTimerString.slice(6,8))
         
         let totalSeconds = (numHours * 3600) + (numMinutes * 60) + (numSeconds);
+        setTotalTime(totalSeconds);
 
         return totalSeconds;
     }

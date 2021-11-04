@@ -5,7 +5,7 @@ module.exports = gql`
         _id: ID!
         user: User
         quiz: Quiz
-        elapsedTime: Int
+        elapsedTime: String
         score: Int!
         answerChoices: [[String!]!]!
         questions: [String!]!
@@ -15,6 +15,7 @@ module.exports = gql`
     input QuizAttemptInput {
         quiz_id: ID!
         answerChoices: [[String!]!]!
+        elapsedTime: String
     }
 
     extend type Query {

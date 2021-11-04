@@ -15,7 +15,7 @@ const quizAttemptSchema = new Schema(
             required: true,
         },
         elapsedTime: {
-            type: Number,
+            type: String,
         },
         score: {
             type: Number,

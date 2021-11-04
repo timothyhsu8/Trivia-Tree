@@ -10,7 +10,7 @@ module.exports = {
     }
   },
   Mutation: {
-    async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices } }) {
+    async submitQuiz(_, { quizAttemptInput: { quiz_id, answerChoices, elapsedTime } }) {
 
       const quiz = await Quiz.findById(quiz_id);
       quiz.numAttempts = quiz.numAttempts + 1; 
@@ -41,6 +41,7 @@ module.exports = {
       const newQuizAttempt = new QuizAttempt({
         _id,
         quiz,
+        elapsedTime,
         score, 
         answerChoices,
         questions,

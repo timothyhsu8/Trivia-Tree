@@ -11,6 +11,7 @@ module.exports = gql`
         questions: [String!]!
         numCorrect: Int!
         attemptNumber: Int
+        coinsEarned: Int
     }
 
     input QuizAttemptInput {

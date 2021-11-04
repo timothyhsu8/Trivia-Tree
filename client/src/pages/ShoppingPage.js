@@ -1,8 +1,14 @@
 import { Box, Grid, Text, Image, Center, Button, GridItem } from '@chakra-ui/react';
 import treeicon from '../images/triviatree_icon.png'
 import { config } from '../util/constants';
+import { AuthContext } from '../context/auth';
+import React, { useState, useEffect, useContext} from 'react';
 
 export default function ShoppingPage() {
+    const { user } = useContext(AuthContext);
+
+    let coins = user.currency;
+
     return (
         <Box>
             <Grid h="845px" templateRows="repeat(10, 1fr)" px="20px" py="20px" bgColor="white" paddingTop="10px">

@@ -25,6 +25,7 @@ export default function PostQuizPage() {
     let leaderboard = null;
     let questions = null;
     let answerChoices = null; 
+    let coinsEarned = null;
 
     let { quizId, quizAttemptId } = useParams();
     let leaderboard_entries = [ 'alpha', 'vita', 'gamma', 'thelta', 'epsilon', 'zita', 'ita', 'thita', 'iota', 'kappa']
@@ -105,6 +106,7 @@ export default function PostQuizPage() {
         numCorrect = quizAttempt.numCorrect;
         creator = quiz.user.displayName;
         answerChoices = quizAttempt.answerChoices;
+        coinsEarned = quizAttempt.coinsEarned;
         console.log(quizAttempt)
         console.log(answerChoices)
     }
@@ -230,7 +232,7 @@ export default function PostQuizPage() {
 
                                             <Flex direction="row">
                                                 <Image src={coin} h="100px" w="100px" position="relative" left="50px" top="35px"></Image>
-                                                <Text fontSize="28px" position="relative" left="70px" top="65px">No Coins Given</Text>
+                                                <Text fontSize="28px" position="relative" left="70px" top="65px">{coinsEarned == 0 ? 'No Coins Given' : coinsEarned}</Text>
                                             </Flex>
 
                                         </Box>

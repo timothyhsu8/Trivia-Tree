@@ -51,6 +51,7 @@ const userSchema = new Schema(
         currency: {
             //eventually be required
             type: Number,
+            default: 0
         },
         ownedIconEffects: {
             type: [{ type: Schema.Types.ObjectId, ref: 'Item' }],

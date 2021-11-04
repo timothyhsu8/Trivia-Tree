@@ -1,10 +1,11 @@
-import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react"
+import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import {BsShopWindow} from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
+import coin from '../images/coin.png';
 import '../styles/styles.css'
 
 export default function Navbar() {
@@ -18,11 +19,13 @@ export default function Navbar() {
     let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
     let menu_bg_hover = "blue.500"
     let menu_text_hover = "white"
+    let currency = 0;
 
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
         username = user.googleDisplayName
+        currency = user.currency
         // pfp_src = user.iconImage
     }
 
@@ -145,6 +148,7 @@ export default function Navbar() {
                     </Link>
                     <Spacer />
 
+
                     <Link to="/shoppingpage"> 
                         <Icon as={BsShopWindow} color="white"></Icon>
                     </Link>
@@ -159,6 +163,11 @@ export default function Navbar() {
                     <Box className='squareimage_container' w="8%"> 
                         <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} alt="Profile Picture" objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
                     </Box>
+
+                    <Flex direction="row">
+                        <Image src={coin} h="20px" w="20px" position="relative" top="3px"></Image>
+                        <Text fontSize="16px" position="relative" color="white" left="6px" top="1px">{currency}</Text>
+                    </Flex>
 
                     <Box w='1%' />
 

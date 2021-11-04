@@ -66,6 +66,7 @@ export const GET_QUIZ_ATTEMPT = gql`
             questions
             elapsedTime
             attemptNumber
+            coinsEarned
 		}
 	}
 `;

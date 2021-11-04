@@ -34,6 +34,9 @@ const quizAttemptSchema = new Schema(
         },
         attemptNumber: {
             type: Number
+        },
+        coinsEarned: {
+            type: Number
         }
     },
     { timestamps: true }

@@ -27,6 +27,8 @@ module.exports = {
 
       let questions = quiz.questions
 
+      let coinsEarned = 0; 
+
       let answers = [];
 
       for(let i = 0; i < questions.length; i++){
@@ -53,6 +55,14 @@ module.exports = {
         user = await User.findById(user_id);
         const quizAttempts = await QuizAttempt.find({quiz:quiz, user:user})
         attemptNumber = quizAttempts.length + 1; 
+
+        if(attemptNumber == 1){
+          coinsEarned = questionsCorrect * 10;
+          user.currency += coinsEarned;
+          user.save();
+          console.log(user)
+          console.log(user.currency)
+        }
       }
 
 
@@ -65,7 +75,8 @@ module.exports = {
         answerChoices,
         questions,
         numCorrect:questionsCorrect,
-        attemptNumber
+        attemptNumber,
+        coinsEarned
       });
 
       const quizAttempt = await newQuizAttempt.save();

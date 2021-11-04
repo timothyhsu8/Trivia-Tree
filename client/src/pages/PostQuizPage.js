@@ -23,6 +23,8 @@ export default function PostQuizPage() {
     let numCorrect = null; 
     let creator = null; 
     let leaderboard = null;
+    let questions = null;
+    let answerChoices = null; 
 
     let { quizId, quizAttemptId } = useParams();
     let leaderboard_entries = [ 'alpha', 'vita', 'gamma', 'thelta', 'epsilon', 'zita', 'ita', 'thita', 'iota', 'kappa']
@@ -73,11 +75,19 @@ export default function PostQuizPage() {
         variables: { quiz_id: quizId },
     });
 
+    const {data:data2, error:error2, loading:loading2} = useQuery(queries.GET_QUIZ, {
+        variables: { quizId: quizId },
+    });
+
     if (loading) {
         return <div></div>;
     }
 
     if (loading1) {
+        return <div></div>;
+    }
+
+    if (loading2) {
         return <div></div>;
     }
 
@@ -93,12 +103,20 @@ export default function PostQuizPage() {
         elapsedTime = convertTimeStringForDisplay(elapsedTime)
         attemptNumber = quizAttempt.attemptNumber; 
         numCorrect = quizAttempt.numCorrect;
-        creator = quiz.user.displayName
+        creator = quiz.user.displayName;
+        answerChoices = quizAttempt.answerChoices;
         console.log(quizAttempt)
+        console.log(answerChoices)
     }
 
     if (data1) {
         leaderboard = data1.getLeaderboard
+    }
+
+    if (data2) {
+        questions = data2.getQuiz.questions
+        console.log(questions)
+
     }
 
     let quizTitle = quiz.title;
@@ -222,31 +240,15 @@ export default function PostQuizPage() {
                              : 
                                 <Box paddingTop="150px">
                                     <Box className='answerbox' position='relative' bottom="100px">
-                                        <PostQuizAnswersCard
-                                            correct={true}
-                                            place={1}
-                                            name={bleh[0]}
-                                            score={5}
-                                        ></PostQuizAnswersCard>
-                                        <PostQuizAnswersCard
-                                            correct={false}
-                                            place={1}
-                                            name={bleh[0]}
-                                            score={5}
-                                        ></PostQuizAnswersCard>
-                                        <PostQuizAnswersCard
-                                            correct={false}
-                                            place={1}
-                                            name={bleh[0]}
-                                            score={5}
-                                        ></PostQuizAnswersCard>
-                                        
-                                        <PostQuizAnswersCard
-                                            correct={true}
-                                            place={1}
-                                            name={bleh[0]}
-                                            score={5}
-                                        ></PostQuizAnswersCard>
+                                        {questions.map((question, index) => {
+                                        return (
+                                            <PostQuizAnswersCard
+                                                place={index+1}
+                                                question={question}
+                                                answer={answerChoices[index]}
+                                            />    
+                                        )
+                                        })}
                                     </Box>
                                 </Box>
                             }

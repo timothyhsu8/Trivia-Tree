@@ -10,10 +10,17 @@ export default function PostQuizAnswersCard(props) {
 
     const [showDetails, setShowDetails] = React.useState(false)
     const onClickDetails = () => {setShowDetails(!showDetails);}
-    var color = '#DB7769'
-    if(props.correct){
-        color = '#90CC7B'
+    var color = 'green'
+
+    let question = props.question
+    let questionTitle = props.question.question
+    let answer = question.answer 
+    for(let i = 0; i < answer.length; i++){
+        if(answer[i] != props.answer[i])
+            color = "red"
     }
+    
+
     /*Edit the mt/mb to change the spacing between elements */
     return ( 
         <Box className="containerAcross">
@@ -30,13 +37,14 @@ export default function PostQuizAnswersCard(props) {
             
             <Box ml="15px" w="100%" mb="26px" display="flex" alignItems="center" justifyContent="space-between" className="containerDown">
                 <Box width={["80vw","80vw","80vw","61.2vw"]} h="45px" bg={color} border="1px">  {/* Gradebox */}
-                    <h2 className="answer_text">{props.place}.   {props.name} </h2>
+                    <Text color="white" pt="4px" className="answer_text">{props.place}.   {questionTitle} </Text>
                 </Box>
 
 
                 { showDetails ? 
-                <Box width={["80vw","80vw","80vw","61.2vw"]} h="200px" bg='#D3D3D3' borderRight="1px" borderLeft="1px" borderBottom="1px">  {/* Gradebox */}
-                    <h2 className="answer_text">{props.place}.   {props.name} </h2>
+                <Box width={["80vw","80vw","80vw","61.2vw"]} h="100px" bg='#D3D3D3' borderRight="1px" borderLeft="1px" borderBottom="1px">  {/* Gradebox */}
+                    <Text color={color} pt="4px" className="answer_text">Your Answer:  {props.answer}</Text>
+                    <Text pt="4px" className="answer_text">Correct Answer: {answer}</Text>
                 </Box>
                 : null}
 

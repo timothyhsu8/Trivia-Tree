@@ -5,7 +5,6 @@ import '../styles/postpage.css';
 
 export default function LeaderboardEntryCard(props) {
     /*Edit the mt/mb to change the spacing between elements */
-    console.log(props.entry)
     return ( 
             <Box ml="15px" mr="26px" mt="5px" mb="18px" display="flex" alignItems="center" justifyContent="space-between">
                 <Box>

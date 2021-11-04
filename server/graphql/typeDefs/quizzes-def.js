@@ -62,6 +62,7 @@ module.exports = gql`
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz
+        createQuizApollo(quizInput: QuizInput!): Quiz
         deleteQuiz(quizId: ID!): Quiz
     }
 `;

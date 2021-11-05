@@ -17,6 +17,8 @@ export default function QuizCard( props ) {
     let char_limit = props.char_limit
     let author = quiz_data.user.displayName
     let icon_src = quiz_data.icon == null ? quizImage : quiz_data.icon
+    let numAttempts = quiz_data.numAttempts
+    let numFavorites = quiz_data.numFavorites
 
     // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
     
@@ -38,7 +40,7 @@ export default function QuizCard( props ) {
             onClick={() => history.push('/prequizpage/' + quiz_data._id)}
         >
             <Box className='squareimage_container' w="75%"> 
-                <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
+                <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%" border="1px"></Image>
             </Box>
 
             {/* QUIZ TITLE */}
@@ -72,12 +74,12 @@ export default function QuizCard( props ) {
             <Grid w="100%" templateColumns="1fr 1fr"> 
                 <HStack spacing="0">
                     <Icon boxSize="50%" as={ViewIcon} pos="relative" top="3%"/>
-                    <Text fontSize="0.8vw"> 200 </Text>
+                    <Text fontSize="0.8vw"> {numAttempts} </Text>
                 </HStack>
                 
                 <HStack spacing="0">
                     <Icon as={BsHeart} boxSize="45%" pos="relative" left="10%" top="6%"/>
-                    <Text fontSize="0.8vw" pos="relative" left="8%"> 200 </Text>
+                    <Text fontSize="0.8vw" pos="relative" left="8%"> {numFavorites} </Text>
                 </HStack>
             </Grid>
         </VStack>

@@ -62,55 +62,56 @@ export default function SearchResultsPage() {
 
         // Show quizzes that matched user's search
         return (
-        quizzes.map((quiz, index) => {
-            return( 
-            <Link to={'/prequizpage/' + quiz._id} key={index}>
-                <Grid 
-                    h="12vh" 
-                    top="50%" 
-                    templateColumns="2fr 9fr 1fr 2fr 3fr" 
-                    borderBottom="1px" 
-                    borderColor="gray.300" 
-                    dipslay="flex" 
-                    alignItems="center" 
-                    _hover={{bgColor:"gray.200", 
-                    cursor:"pointer", 
-                    transition:"background-color 0.2s linear"}} 
-                    transition="background-color 0.1s linear"
-                >
-                
-                    {/* QUIZ ICON */}
-                    <Center>
-                        <Box className='squareimage_container' w="48%"> 
-                            <Image className="squareimage" src={quiz_icon_src} alt="Profile Picture" objectFit="cover" borderRadius="23%"></Image>
-                        </Box>
-                    </Center>
+            quizzes.map((quiz, index) => {
+                console.log(quiz)
+                return( 
+                    <Link to={'/prequizpage/' + quiz._id} key={index}>
+                        <Grid 
+                            h="12vh" 
+                            top="50%" 
+                            templateColumns="2fr 9fr 1fr 2fr 3fr" 
+                            borderBottom="1px" 
+                            borderColor="gray.300" 
+                            dipslay="flex" 
+                            alignItems="center" 
+                            _hover={{bgColor:"gray.200", 
+                            cursor:"pointer", 
+                            transition:"background-color 0.2s linear"}} 
+                            transition="background-color 0.1s linear"
+                        >
+                    
+                        {/* QUIZ ICON */}
+                        <Center>
+                            <Box className='squareimage_container' w="48%"> 
+                                <Image className="squareimage" src={quiz_icon_src} alt="Profile Picture" objectFit="cover" borderRadius="23%"></Image>
+                            </Box>
+                        </Center>
 
-                    {/* QUIZ TITLE AND DESCRIPTION */}
-                    <Grid templateRows="1fr 1fr">
-                        <Text fontSize="2.4vh" fontWeight="medium"> {quiz.title} </Text>
-                        <Text fontSize="1.8vh"> {quiz_description} </Text>
+                        {/* QUIZ TITLE AND DESCRIPTION */}
+                        <Grid templateRows="1fr 1fr">
+                            <Text fontSize="2.4vh" fontWeight="medium"> {quiz.title} </Text>
+                            <Text fontSize="1.8vh"> {quiz_description} </Text>
+                        </Grid>
+
+                        {/* RATING */}
+                        <Center>
+                            <Text fontSize="2.0vh" fontWeight="thin">
+                                <Icon as={StarIcon} boxSize="5" color="yellow.500"/>
+                                &nbsp;{quiz_rating}
+                            </Text>
+                        </Center>
+
+                        {/* PLATFORM */}
+                        <Center>
+                            <Text top="50%" fontSize="1.8vh" color="blue.500" > {quiz_platform} </Text> 
+                        </Center>
+
+                        {/* CREATOR */}
+                        <Center>
+                            <Text top="50%" fontSize="1.8vh"> {quiz_creator} </Text> 
+                        </Center>
                     </Grid>
-
-                    {/* RATING */}
-                    <Center>
-                        <Text fontSize="2.0vh" fontWeight="thin">
-                            <Icon as={StarIcon} boxSize="5" color="yellow.500"/>
-                            &nbsp;{quiz_rating}
-                        </Text>
-                    </Center>
-
-                    {/* PLATFORM */}
-                    <Center>
-                        <Text top="50%" fontSize="1.8vh" color="blue.500" > {quiz_platform} </Text> 
-                    </Center>
-
-                    {/* CREATOR */}
-                    <Center>
-                        <Text top="50%" fontSize="1.8vh"> {quiz_creator} </Text> 
-                    </Center>
-                </Grid>
-            </Link>
+                </Link>
             )})
         )
     }

@@ -1,6 +1,6 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@chakra-ui/react"
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES } from "../cache/queries";
+import { GET_QUIZZES, GET_PLATFORMS } from "../cache/queries";
 import QuizCard from "../components/QuizCard";
 import { useState } from 'react';
 import '../styles/styles.css'
@@ -11,16 +11,16 @@ export default function PlatformPage() {
     const [page, setPage] = useState('platform')
 
     const quiz_sections = ["Best Quizzes", "Most Played Quizzes", "Geography"]
-    let icon_src = "https://pbs.twimg.com/profile_images/1444935701926191109/ozzShYNH_400x400.jpg"
-    let banner_src = "https://cdnb.artstation.com/p/assets/images/images/033/698/651/4k/kan-liu-666k-xiaoluxiangsmall.jpg?1610351893"
+    let icon_src = "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg"
+    let banner_src = "https://www.commonapp.org/static/0581e02788013cdfe4ba0076e17c37a8/suny-stony-brook-university_346.jpg"
 
     // Fetch quiz data from the backend
-    const {
-        loading,
-        error,
-        data: { getQuizzes: quiz_data } = {},
-    } = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' });
+    const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
+    const platforms = useQuery(GET_PLATFORMS, { fetchPolicy: 'cache-and-network' })
 
+    const loading = quizzes.loading || platforms.loading
+    const error = quizzes.error || platforms.error
+    
     // Loading Screen
     if (loading) {
         return (
@@ -38,6 +38,9 @@ export default function PlatformPage() {
             </Center>
         );
     }
+
+    const quiz_data = quizzes.data.getQuizzes
+    const platform_data = platforms.data.getPlatforms
 
     return (
         <Box>
@@ -62,11 +65,11 @@ export default function PlatformPage() {
                         borderRadius="10"
                     >
                         {/* PLATFORM ICON / NAME / FOLLOWERS */}
-                        <VStack pos="relative" right="41%" top="45%" spacing="-1">
+                        <VStack pos="relative" right="41%" top="50%" spacing="-1">
                             <Box className='squareimage_container' w="11%"> 
                                 <Image className="squareimage" src={icon_src} alt="Profile Picture" objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
                             </Box>
-                            <Text fontSize="1.4vw" fontWeight="medium">Platform Name</Text>
+                            <Text fontSize="1.4vw" fontWeight="medium"> {platform_data[0].name} </Text>
                             <Text fontSize="1vw"> 1200 Followers </Text>
                         </VStack>
                     </Box>
@@ -112,7 +115,7 @@ export default function PlatformPage() {
                     <Box mt="7%">
                         {quiz_sections.map((section, key) => {
                             return (
-                                <Box w="100%" borderRadius="10" overflowX="auto">
+                                <Box w="100%" borderRadius="10" overflowX="auto" key={key}>
                                     <Text pl="1.5%" pt="1%" fontSize="1.2vw" fontWeight="medium"> {section} </Text>
                                     {/* FEATURED QUIZZES */}
                                     <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >

@@ -82,3 +82,12 @@ export const GET_LEADERBOARD = gql`
 		}
 	}
 `;
+
+export const GET_PLATFORMS = gql`
+    {
+        getPlatforms {
+            _id
+            name
+        }
+    }
+`;

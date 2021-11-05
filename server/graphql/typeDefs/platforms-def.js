@@ -15,8 +15,20 @@ module.exports = gql`
         playlists: [Playlist]
     }
 
+    input PlatformInput {
+        name: String!
+    }
+
     type Playlist {
         name: String!
         quizzes: [Quiz]
+    }
+
+    extend type Query {
+        getPlatforms: [Platform]
+    }
+
+    extend type Mutation {
+        createPlatform(platformInput: PlatformInput!): Platform
     }
 `;

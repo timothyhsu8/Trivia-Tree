@@ -1,5 +1,6 @@
 const Quiz = require('../../models/Quiz');
 const ObjectId = require('mongoose').Types.ObjectId;
+const cloudinary = require('cloudinary').v2;
 
 module.exports = {
     Query: {
@@ -29,7 +30,19 @@ module.exports = {
     Mutation: {
         async createQuiz(
             _,
-            { quizInput: { title, questions, description, quizTimer } },
+            {
+                quizInput: {
+                    title,
+                    questions,
+                    description,
+                    icon,
+                    isTimerForQuiz,
+                    quizTimer,
+                    questionTimer,
+                    quizShuffled,
+                    quizInstant,
+                },
+            },
             context
         ) {
             if (title.trim() === '') {
@@ -44,7 +57,7 @@ module.exports = {
 
                 question.answer.forEach((answer) => {
                     if (answer.trim() === '') {
-                        throw new Error('An answer cannot be blank');
+                        throw new Error('Each question must have an answer');
                     }
                 });
 
@@ -69,7 +82,29 @@ module.exports = {
                         'A question must have an answer choice that matches the answer'
                     );
                 }
+
+                if (
+                    new Set(question.answerChoices).size !==
+                    question.answerChoices.length
+                ) {
+                    throw new Error(
+                        'A question cannot have answer choices that are the same'
+                    );
+                }
             });
+
+            let imageUrl;
+            if (icon === 'No Image') {
+                imageUrl =
+                    'https://www.atlantawatershed.org/wp-content/uploads/2017/06/default-placeholder.png';
+            } else {
+                await cloudinary.uploader.upload(icon, (error, result) => {
+                    if (error) {
+                        throw new Error('Could not upload image');
+                    }
+                    imageUrl = result.secure_url;
+                });
+            }
 
             let numQuestions = questions.length;
             let numFavorites = 0;
@@ -80,7 +115,12 @@ module.exports = {
                 title,
                 questions,
                 description,
+                icon: imageUrl,
+                isTimerForQuiz,
                 quizTimer,
+                questionTimer,
+                quizShuffled,
+                quizInstant,
                 numQuestions,
                 numFavorites,
                 numAttempts,
@@ -138,7 +178,7 @@ module.exports = {
             let numFavorites = 0;
             let numAttempts = 0;
 
-            let tamzidID = "6172d9fed71c6185f410226f"
+            let tamzidID = '6172d9fed71c6185f410226f';
 
             const newQuiz = new Quiz({
                 user: tamzidID,
@@ -152,6 +192,114 @@ module.exports = {
             });
 
             const quiz = await newQuiz.save();
+
+            return quiz;
+        },
+        async updateQuiz(
+            _,
+            {
+                quizInput: {
+                    quizId,
+                    title,
+                    questions,
+                    description,
+                    icon,
+                    isTimerForQuiz,
+                    quizTimer,
+                    questionTimer,
+                    quizShuffled,
+                    quizInstant,
+                },
+            },
+            context
+        ) {
+            let quiz = await Quiz.findById(quizId);
+            if (!quiz.user.equals(context.req.user._id)) {
+                throw new Error('You are not the creator of this quiz');
+            }
+
+            if (title.trim() === '') {
+                throw new Error('Quiz title cannot be blank');
+            }
+
+            const valid = questions.forEach((question) => {
+                if (question.question.trim() === '') {
+                    throw new Error('A question cannot be blank');
+                }
+                let answerMatch = false;
+
+                question.answer.forEach((answer) => {
+                    if (answer.trim() === '') {
+                        throw new Error('Each question must have an answer');
+                    }
+                });
+
+                if (question.answerChoices.length <= 1) {
+                    throw new Error(
+                        'A question must have at least two choices'
+                    );
+                }
+                question.answerChoices.forEach((choice) => {
+                    if (choice.trim() === '') {
+                        throw new Error('An answer choice cannot be blank');
+                    }
+
+                    question.answer.forEach((answer) => {
+                        if (choice.trim() === answer.trim()) {
+                            answerMatch = true;
+                        }
+                    });
+                });
+                if (!answerMatch) {
+                    throw new Error(
+                        'A question must have an answer choice that matches the answer'
+                    );
+                }
+
+                if (
+                    new Set(question.answerChoices).size !==
+                    question.answerChoices.length
+                ) {
+                    throw new Error(
+                        'A question cannot have answer choices that are the same'
+                    );
+                }
+            });
+
+            let imageUrl;
+            if (icon === 'No Image') {
+                imageUrl =
+                    'https://www.atlantawatershed.org/wp-content/uploads/2017/06/default-placeholder.png';
+            } else {
+                await cloudinary.uploader.upload(icon, (error, result) => {
+                    if (error) {
+                        throw new Error('Could not upload image');
+                    }
+                    imageUrl = result.secure_url;
+                });
+            }
+
+            let numQuestions = questions.length;
+            let numFavorites = 0;
+            let numAttempts = 0;
+
+            const updates = {
+                user: context.req.user._id,
+                title,
+                questions,
+                description,
+                icon: imageUrl,
+                isTimerForQuiz,
+                quizTimer,
+                questionTimer,
+                quizShuffled,
+                quizInstant,
+                numQuestions,
+                numFavorites,
+                numAttempts,
+            };
+
+            quiz = await Quiz.findByIdAndUpdate(quizId, updates, { new: true });
 
             return quiz;
         },

@@ -14,7 +14,6 @@ import PreQuizPage from './pages/PreQuizPage';
 import SettingsPage from './pages/SettingsPage';
 import { AuthProvider } from './context/auth';
 import Quizzes from './pages/Quizzes';
-import CreateQuiz from './pages/CreateQuiz';
 import Quiz from './pages/Quiz';
 import SearchResultsPage from './pages/SearchResultsPage';
 import LoginPage from './pages/LoginPage';
@@ -23,26 +22,27 @@ import CategoryPage from './pages/CategoryPage';
 import ShoppingPage from './pages/ShoppingPage';
 import Navbar from './components/Navbar';
 import PlatformPage from './pages/PlatformPage';
+import EditQuizPage from './pages/EditQuizPage';
 
 function App() {
     return (
         <ChakraProvider>
             <AuthProvider>
                 <Router>
-                    <Navbar/>
+                    <Navbar />
                     <Switch>
                         <Route exact path='/' component={Homepage} />
                         <Route exact path='/quizzes' component={Quizzes} />
                         <Route exact path='/quiz/:quizId' component={Quiz} />
-                        {/* <Route
-                            exact
-                            path='/createQuiz'
-                            component={CreateQuiz}
-                        /> */}
                         <Route
                             exact
                             path='/createQuiz'
                             component={CreateQuizPage}
+                        />
+                        <Route
+                            exact
+                            path='/editQuiz/:quizId'
+                            component={EditQuizPage}
                         />
                         <Route
                             path='/quiztakingpage/:quizId'
@@ -52,14 +52,24 @@ function App() {
                         <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage' component={AccountPage} />
                         <Route path='/platformpage' component={PlatformPage} />
-                        <Route path='/postquizpage/:quizId/:quizAttemptId' component={PostQuizPage} />
-                        <Route path='/prequizpage/:quizId' component={PreQuizPage} />\
+                        <Route
+                            path='/postquizpage/:quizId/:quizAttemptId'
+                            component={PostQuizPage}
+                        />
+                        <Route
+                            path='/prequizpage/:quizId'
+                            component={PreQuizPage}
+                        />
+                        \
                         <Route
                             path='/searchresultspage'
                             component={SearchResultsPage}
                         />
                         <Route path='/loginpage' component={LoginPage}></Route>
-                        <Route path='/shoppingpage' component={ShoppingPage}></Route>
+                        <Route
+                            path='/shoppingpage'
+                            component={ShoppingPage}
+                        ></Route>
                     </Switch>
                 </Router>
             </AuthProvider>

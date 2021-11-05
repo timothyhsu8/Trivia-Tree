@@ -16,8 +16,8 @@ export default function QuizCard( props ) {
     let include_author = props.include_author
     let char_limit = props.char_limit
     let author = quiz_data.user.displayName
+    let icon_src = quiz_data.icon == null ? quizImage : quiz_data.icon
 
-    let icon_src = quizImage
     // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
     
     if (quiz_title.length > char_limit)

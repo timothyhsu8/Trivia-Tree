@@ -30,11 +30,11 @@ export default function PreQuizPage({}) {
     let quizAuthor = quiz.user.displayName; 
     let quizDescription = quiz.description;
     let user = "No User Found";
-    let pfp_src = quizImage;
     let numQuestions = quiz.numQuestions; 
     let numAttempts = quiz.numAttempts;
     let numFavorites = quiz.numFavorites; 
     let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
+    let icon_src = quiz.icon == null ? quizImage : quiz.icon
 
     return ( 
         <Box>
@@ -43,7 +43,7 @@ export default function PreQuizPage({}) {
                 {/* Title and Image */}
                 <GridItem rowSpan={2} colSpan={6} borderBottom="2px" borderColor="gray.400">
                     <Flex direction="row" top="50%" left="2%" transform="translateY(-45%)" position="relative"> 
-                        <Image w="175px" h="175px" src={pfp_src} objectFit="cover" borderRadius="10%"></Image>
+                        <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%"></Image>
                         <Text fontSize="2.7vw" as="b" transform="translateY(57%)" paddingLeft="20px">{quizTitle}</Text>
                         <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}/>
                     </Flex>

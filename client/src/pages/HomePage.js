@@ -45,6 +45,8 @@ export default function Homepage() {
         return null;
     }
 
+    console.log(quiz_data)
+
     return (
         <Box>
             {/* HEADER */}

@@ -8,6 +8,10 @@ export const GET_QUIZZES = gql`
             user {
                 displayName
             }
+            icon
+            quizTimer
+            numAttempts
+            numFavorites
         }
     }
 `;
@@ -26,6 +30,7 @@ export const GET_QUIZ = gql`
                 answer
                 questionType
             }
+            icon
             description
             quizTimer
             numQuestions

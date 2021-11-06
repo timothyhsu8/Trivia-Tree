@@ -122,8 +122,8 @@ export default function PlatformPage() {
                                         {quiz_data.map((quiz, key) => {
                                             return <QuizCard 
                                                 quiz={quiz} 
-                                                width="9%" 
-                                                title_fontsize="0.8vw" 
+                                                width="8%" 
+                                                title_fontsize="0.7vw" 
                                                 include_author={false}
                                                 char_limit={35}  
                                                 key={key}

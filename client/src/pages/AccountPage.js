@@ -108,8 +108,8 @@ export default function AccountPage() {
                                                 {quiz_data.map((quiz, key) => {
                                                     return <QuizCard 
                                                         quiz={quiz} 
-                                                        width="13%" 
-                                                        title_fontsize="0.8vw" 
+                                                        width="11%" 
+                                                        title_fontsize="0.75vw" 
                                                         include_author={false}
                                                         char_limit={35}  
                                                         key={key}

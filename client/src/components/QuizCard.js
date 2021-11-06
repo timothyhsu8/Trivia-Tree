@@ -25,7 +25,6 @@ export default function QuizCard( props ) {
     if (quiz_title.length > char_limit)
         quiz_title = quiz_title.slice(0, char_limit) + "..."
 
-    console.log(quiz_data)
     return (
         <VStack 
             className="disable-select"
@@ -40,7 +39,7 @@ export default function QuizCard( props ) {
             onClick={() => history.push('/prequizpage/' + quiz_data._id)}
         >
             <Box className='squareimage_container' w="75%"> 
-                <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%" border="1px"></Image>
+                <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
             </Box>
 
             {/* QUIZ TITLE */}

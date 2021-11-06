@@ -8,6 +8,7 @@ import { useHistory, Link } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import QuizCard from '../components/QuizCard';
 import '../styles/styles.css'
+import PlatformCard from '../components/PlatformCard';
 
 export default function Homepage() {
     let icon_src = quizImage
@@ -22,6 +23,8 @@ export default function Homepage() {
         error,
         data: { getQuizzes: quiz_data } = {},
     } = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' });
+
+    const platform_data = ["Stony Brook", "", "", "", "", "", ""]
 
     // Loading Screen
     if (loading) {
@@ -45,8 +48,6 @@ export default function Homepage() {
         return null;
     }
 
-    console.log(quiz_data)
-
     return (
         <Box>
             {/* HEADER */}
@@ -57,7 +58,7 @@ export default function Homepage() {
                             <Box>
                                 <Text 
                                     className="disable-select"
-                                    fontSize="1.1vw" 
+                                    fontSize="125%" 
                                     textColor={section === currentSection ? "gray.900" : "gray.400" }
                                     textAlign="center"
                                     _hover={{ cursor:"pointer", textColor:"gray.600", transition:"0.15s linear" }}
@@ -73,24 +74,40 @@ export default function Homepage() {
                 </Grid>
             </Center>
 
-            {/* CONTENT */}
+            {/* QUIZZES */}
             <Box mt="1%" ml="2%" mr="2%">
-                {/* <Text fontSize="2.0vw" fontWeight="medium"> All Quizzes </Text> */}
+                <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
                 {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
-                <Flex mt="1%" spacing="3%" display="flex" flexWrap="wrap" >
+                <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                     {quiz_data.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
-                            width="9%" 
-                            title_fontsize="1.0vw" 
-                            author_fontsize="0.85vw" 
+                            width="140px" 
+                            title_fontsize="100%" 
+                            author_fontsize="90%" 
                             include_author={true}
                             char_limit={30} 
                             key={key}/>
                     })}
                 </Flex>
             </Box>
+            <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
             
+            {/* PLATFORMS */}
+            <Box mt="1%" ml="2%" mr="2%">
+                <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Platforms </Text>
+                {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
+                <Flex mt="0.5%" ml="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                    {platform_data.map((quiz, key) => {
+                        return <PlatformCard 
+                            width="265px"
+                            img_height="75px"
+                            char_limit={44} 
+                        />
+                    })}
+                </Flex>
+            </Box>
+
             <Center marginTop='70vh'>
                 {user !== 'NoUser' ? (
                     <div>

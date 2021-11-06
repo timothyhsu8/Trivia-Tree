@@ -76,29 +76,27 @@ export default function Navbar() {
     }
 
     return(
-        <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900">
+        <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900" overflow="hidden">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
                 {/* RETURN TO HOMEPAGE */}
-                <Box>
-                    <Text
-                        className='disable-select'
-                        onClick={() => history.push('/')}
-                        display='inline-block'
-                        _hover={{
-                            cursor: 'pointer',
-                            opacity: '80%',
-                            transition: 'opacity 0.2s linear',
-                        }}
-                        transition='opacity 0.2s linear'
-                        pos='relative'
-                        left='2%'
-                        color='white'
-                        fontSize='30'
-                    >
-                        Trivia Tree
-                    </Text>
-                </Box>
-
+                <Text
+                    className='disable-select'
+                    onClick={() => history.push('/')}
+                    display='inline-block'
+                    _hover={{
+                        cursor: 'pointer',
+                        opacity: '80%',
+                        transition: 'opacity 0.2s linear',
+                    }}
+                    transition='opacity 0.2s linear'
+                    pos='relative'
+                    left='2%'
+                    color='white'
+                    fontSize='200%'
+                >
+                    Trivia Tree
+                </Text>
+                
                 {/* SEARCH */}
                 <Grid
                     h='50px'
@@ -107,7 +105,7 @@ export default function Navbar() {
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}}> 
+                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>;
                         })}
@@ -137,17 +135,15 @@ export default function Navbar() {
                 </Grid>
 
                 {/* RIGHT SIDE */}
-                <HStack>
+                <HStack overflow="hidden">
                     <Box w='5%' />
                     {/* CATEGORIES */}
                     <Link to='/categorypage'>
-                        <Text fontSize='18px' color='white' fontWeight='medium'>
-                            {' '}
-                            Categories{' '}
+                        <Text className="disable-select" fontSize='105%' color='white' fontWeight='medium'>
+                            Categories
                         </Text>
                     </Link>
                     <Spacer />
-
 
                     <Link to="/shoppingpage"> 
                         <Icon as={BsShopWindow} color="white"></Icon>
@@ -155,9 +151,8 @@ export default function Navbar() {
                     
                     <Spacer />
 
-
                     {/* USER NAME */}
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="18px" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
 
                     {/* PROFILE PICTURE */}
                     <Box className='squareimage_container' w="8%"> 

@@ -28,7 +28,8 @@ export default function QuizCard( props ) {
     return (
         <VStack 
             className="disable-select"
-            w={width} 
+            w={width}
+            minW="80px" 
             padding="0.5%" 
             margin="0.5%" 
             spacing="2%" 
@@ -73,12 +74,12 @@ export default function QuizCard( props ) {
             <Grid w="100%" templateColumns="1fr 1fr"> 
                 <HStack spacing="0">
                     <Icon boxSize="50%" as={ViewIcon} pos="relative" top="3%"/>
-                    <Text fontSize="0.8vw"> {numAttempts} </Text>
+                    <Text fontSize="90%"> {numAttempts} </Text>
                 </HStack>
                 
                 <HStack spacing="0">
                     <Icon as={BsHeart} boxSize="45%" pos="relative" left="10%" top="6%"/>
-                    <Text fontSize="0.8vw" pos="relative" left="8%"> {numFavorites} </Text>
+                    <Text fontSize="90%" pos="relative" left="8%"> {numFavorites} </Text>
                 </HStack>
             </Grid>
         </VStack>

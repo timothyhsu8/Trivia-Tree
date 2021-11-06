@@ -52,7 +52,7 @@ export default function Homepage() {
         <Box>
             {/* HEADER */}
             <Center>
-                <Grid w="90%" mt="1%" templateColumns="1fr 1fr 1fr 1fr 1fr"> 
+                <Grid w="90%" minW="800px" mt="1%" templateColumns="1fr 1fr 1fr 1fr 1fr"> 
                     {sections.map((section) => {
                         return (
                             <Box>
@@ -82,7 +82,7 @@ export default function Homepage() {
                     {quiz_data.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
-                            width="140px" 
+                            width="7.7%" 
                             title_fontsize="100%" 
                             author_fontsize="90%" 
                             include_author={true}
@@ -100,7 +100,8 @@ export default function Homepage() {
                 <Flex mt="0.5%" ml="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                     {platform_data.map((quiz, key) => {
                         return <PlatformCard 
-                            width="265px"
+                            width="14%"
+                            minWidth="200px"
                             img_height="75px"
                             char_limit={44} 
                         />

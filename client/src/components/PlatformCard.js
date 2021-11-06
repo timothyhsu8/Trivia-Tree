@@ -7,6 +7,7 @@ export default function PlatformCard( props ) {
 
     let platform_name = "Stony Brook"
     const width = props.width
+    const minWidth = props.minWidth
     const img_height = props.img_height
     const char_limit = props.char_limit
 
@@ -19,6 +20,7 @@ export default function PlatformCard( props ) {
     return (
         <Box 
             w={width}
+            minWidth={minWidth}
             margin="1%"
             _hover={{cursor:"pointer", opacity:"0.8", transition:"0.15s linear"}}
             _active={{opacity:"0.6"}}

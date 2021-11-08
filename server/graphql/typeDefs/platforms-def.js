@@ -16,7 +16,12 @@ module.exports = gql`
     }
 
     input PlatformInput {
+        platformId: ID
         name: String!
+        iconImage: String
+        bannerImage: String
+        background: String
+        tags: [String]
     }
 
     type Playlist {

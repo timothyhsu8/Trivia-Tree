@@ -12,7 +12,7 @@ export default function PlatformCard( props ) {
     const char_limit = props.char_limit
 
     const icon_src = "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg"
-    const banner_src = "https://www.commonapp.org/static/0581e02788013cdfe4ba0076e17c37a8/suny-stony-brook-university_346.jpg"
+    const banner_src = "https://3nwec1qd4zy21zftr339bla3-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/2013AG16.457-1800x947.jpg"
    
     if (platform_name.length > char_limit)
         platform_name = platform_name.slice(0, char_limit) + "..."
@@ -32,6 +32,7 @@ export default function PlatformCard( props ) {
                 <Box
                     w="100%"
                     h="100px"
+                    bgColor="gray.300"
                     bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.20), rgba(255, 255, 255, 0.45)), url('" + banner_src +  "')"} 
                     bgSize="cover" 
                     bgPosition="center"

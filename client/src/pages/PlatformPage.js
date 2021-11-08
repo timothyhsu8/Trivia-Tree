@@ -12,7 +12,7 @@ export default function PlatformPage() {
 
     const quiz_sections = ["Best Quizzes", "Most Played Quizzes", "Geography"]
     let icon_src = "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg"
-    let banner_src = "https://www.commonapp.org/static/0581e02788013cdfe4ba0076e17c37a8/suny-stony-brook-university_346.jpg"
+    let banner_src = "https://3nwec1qd4zy21zftr339bla3-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/2013AG16.457-1800x947.jpg"
 
     // Fetch quiz data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
@@ -60,6 +60,7 @@ export default function PlatformPage() {
                         h="27vh"
                         minH="200px"
                         pos="relative"
+                        bgColor="gray.300"
                         bgImage={"url('" + banner_src +  "')"} 
                         bgSize="cover" 
                         bgPosition="center"

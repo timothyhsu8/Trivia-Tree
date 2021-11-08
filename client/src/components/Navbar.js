@@ -1,11 +1,12 @@
 import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import {BsShopWindow} from "react-icons/bs"
+import { BsShopWindow } from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
 import coin from '../images/coin.png';
+import { useMutation, gql } from '@apollo/client';
 import '../styles/styles.css'
 
 export default function Navbar() {
@@ -20,6 +21,30 @@ export default function Navbar() {
     let menu_bg_hover = "blue.500"
     let menu_text_hover = "white"
     let currency = 0;
+
+
+    const [createPlatform] = useMutation(CREATE_PLATFORM, {
+        update() {
+            history.push('/');
+        },
+        onError(err) {
+            console.log(err);
+        },
+    });
+
+    function handleCreatePlatform() {
+        createPlatform({
+            variables: {
+                platformInput: {
+                    name: "Untitled Platform",
+                    iconImage: "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg",
+                    bannerImage: "https://3nwec1qd4zy21zftr339bla3-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/2013AG16.457-1800x947.jpg",
+                    background: "white",
+                    tags: "Stony Brook",
+                },
+            },
+        });
+    }
 
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
@@ -76,7 +101,7 @@ export default function Navbar() {
     }
 
     return(
-        <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900" overflow="hidden">
+        <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
                 {/* RETURN TO HOMEPAGE */}
                 <Text
@@ -179,7 +204,7 @@ export default function Navbar() {
                         </MenuButton>
                         <MenuList>
                             <Link to='/createQuiz'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz      </MenuItem></Link>
-                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
+                            <MenuItem onClick={() => handleCreatePlatform()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
                             <Link to='/settingspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
@@ -200,3 +225,12 @@ export default function Navbar() {
         </Box>
     );
 }
+
+const CREATE_PLATFORM = gql`
+    mutation ($platformInput: PlatformInput!) {
+        createPlatform(platformInput: $platformInput) {
+            name
+            _id
+        }
+    }
+`;

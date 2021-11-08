@@ -36,11 +36,11 @@ export default function Navbar() {
         createPlatform({
             variables: {
                 platformInput: {
-                    name: "Untitled Platform",
-                    iconImage: "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg",
-                    bannerImage: "https://3nwec1qd4zy21zftr339bla3-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/2013AG16.457-1800x947.jpg",
+                    name: "Programming",
+                    iconImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg",
+                    bannerImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/what-is-coding.png",
                     background: "white",
-                    tags: "Stony Brook",
+                    tags: ["Programming"]
                 },
             },
         });

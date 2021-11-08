@@ -51,7 +51,7 @@ function App() {
                         <Route path='/settingspage' component={SettingsPage} />
                         <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage' component={AccountPage} />
-                        <Route path='/platformpage' component={PlatformPage} />
+                        <Route path='/platformpage/:platformId' component={PlatformPage} />
                         <Route
                             path='/postquizpage/:quizId/:quizAttemptId'
                             component={PostQuizPage}

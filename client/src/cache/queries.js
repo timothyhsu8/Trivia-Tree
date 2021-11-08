@@ -93,6 +93,29 @@ export const GET_PLATFORMS = gql`
         getPlatforms {
             _id
             name
-        }
+            iconImage
+            bannerImage
+            background
+            tags
+            followers {
+                displayName
+            }
+          }
     }
+`;
+
+export const GET_PLATFORM = gql`
+	query getPlatform($platformId: ID!) {
+		getPlatform(platformId: $platformId) {
+            _id
+            name
+            iconImage
+            bannerImage
+            background
+            followers {
+              displayName
+            }
+            tags
+        }
+	}
 `;

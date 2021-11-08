@@ -1,19 +1,18 @@
 import { Box, Flex, Text, Image, VStack, Tooltip, HStack, Icon, Grid } from '@chakra-ui/react'
+import defaultIcon from '../images/defaultquiz.jpeg';
 import { useHistory } from 'react-router-dom';
 import '../styles/styles.css'
 
 export default function PlatformCard( props ) {
     let history = useHistory();
 
-    let platform_name = "Stony Brook"
+    const platform = props.platform
     const width = props.width
     const minWidth = props.minWidth
     const img_height = props.img_height
     const char_limit = props.char_limit
-
-    const icon_src = "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg"
-    const banner_src = "https://3nwec1qd4zy21zftr339bla3-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/2013AG16.457-1800x947.jpg"
    
+    let platform_name = platform.name
     if (platform_name.length > char_limit)
         platform_name = platform_name.slice(0, char_limit) + "..."
 
@@ -25,7 +24,7 @@ export default function PlatformCard( props ) {
             _hover={{cursor:"pointer", opacity:"0.8", transition:"0.15s linear"}}
             _active={{opacity:"0.6"}}
             transition="0.10s linear"
-            onClick={() => history.push('/platformpage/')}
+            onClick={() => history.push('/platformpage/' + platform._id)}
         >
             <Flex flexDirection="column">
                 {/* MAIN IMAGE */}
@@ -33,7 +32,7 @@ export default function PlatformCard( props ) {
                     w="100%"
                     h="100px"
                     bgColor="gray.300"
-                    bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.20), rgba(255, 255, 255, 0.45)), url('" + banner_src +  "')"} 
+                    bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.20), rgba(255, 255, 255, 0.45)), url('" + platform.bannerImage +  "')"} 
                     bgSize="cover" 
                     bgPosition="center"
                     borderTopRadius="10"
@@ -49,12 +48,15 @@ export default function PlatformCard( props ) {
                     {/* PLATFORM NAME / ICON */}
                     <Flex className="disable-select" w="100%" direction="row" position="absolute" top="8%" ml="3%">
                         {/* PLATFORM ICON */}
-                        <Image w="50px" h="50px" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="50%" border="2px solid white"></Image>
-                       
+                        {/* <Image w="50px" h="50px" src={platform.iconImage} objectFit="cover" borderRadius="50%" border="2px solid white"></Image> */}
+                        <Box className='squareimage_container' w="25%"> 
+                            <Image className="squareimage" src={platform.iconImage} fallbackSrc={defaultIcon} objectFit="cover" borderRadius="50%" border="2px solid white"></Image>
+                        </Box>
+
                         <Flex w="100%" direction="column" ml="3%" paddingRight="4%">
                             {/* PLATFORM NAME */}
                             <Text fontSize="110%" textColor="white" fontWeight="medium" lineHeight="120%" paddingRight=""> {platform_name} </Text>
-                            <Text pos="relative" mt="1%" bottom="4%" fontSize="100%" textColor="white" fontWeight="thin"> 1200 Followers </Text>
+                            <Text pos="relative" mt="1%" bottom="4%" fontSize="100%" textColor="white" fontWeight="thin"> {platform.followers.length} Followers </Text>
                         </Flex>
                     </Flex>
                 </Box>

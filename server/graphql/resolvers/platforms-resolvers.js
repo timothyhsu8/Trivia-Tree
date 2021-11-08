@@ -12,6 +12,21 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
+
+        async getPlatform(_, { platformId }) {
+            try {
+                const platform = await Platform.findById(platformId)
+                    // .populate('user')
+                    // .exec();
+                if (platform) {
+                    return platform;
+                } else {
+                    throw new Error('Platform not found');
+                }
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
 	},
 
 	Mutation: {
@@ -53,6 +68,19 @@ module.exports = {
             const platform = await newPlatform.save();
 
             return platform;
+        },
+
+        async deletePlatform(_, { platformId }, context) {
+            try {
+                const platform = await Platform.findById(platformId);
+                // if (!platform.user.equals(context.req.user._id)) {
+                //     throw new Error('You are not the creator of this platform');
+                // }
+                await platform.delete();
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
         }
 	}
 };

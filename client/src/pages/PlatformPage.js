@@ -1,25 +1,26 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@chakra-ui/react"
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES, GET_PLATFORMS } from "../cache/queries";
+import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
+import { useParams } from 'react-router-dom';
 import QuizCard from "../components/QuizCard";
 import { useState } from 'react';
+import defaultIcon from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
 
-export default function PlatformPage() {
+export default function PlatformPage({}) {
+    let { platformId } = useParams();
 
     const [following, setFollowing] = useState(false)
     const [page, setPage] = useState('platform')
 
     const quiz_sections = ["Best Quizzes", "Most Played Quizzes", "Geography"]
-    let icon_src = "https://i.pinimg.com/originals/89/23/39/89233942fb503391dca979161884019c.jpg"
-    let banner_src = "https://3nwec1qd4zy21zftr339bla3-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/2013AG16.457-1800x947.jpg"
 
     // Fetch quiz data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
-    const platforms = useQuery(GET_PLATFORMS, { fetchPolicy: 'cache-and-network' })
+    const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId} })
 
-    const loading = quizzes.loading || platforms.loading
-    const error = quizzes.error || platforms.error
+    const loading = quizzes.loading || platform.loading
+    const error = quizzes.error || platform.error
     
     // Loading Screen
     if (loading) {
@@ -40,7 +41,7 @@ export default function PlatformPage() {
     }
 
     const quiz_data = quizzes.data.getQuizzes
-    const platform_data = platforms.data.getPlatforms
+    const platform_data = platform.data.getPlatform
 
     return (
         <Box>
@@ -61,7 +62,7 @@ export default function PlatformPage() {
                         minH="200px"
                         pos="relative"
                         bgColor="gray.300"
-                        bgImage={"url('" + banner_src +  "')"} 
+                        bgImage={"url('" + platform_data.bannerImage +  "')"} 
                         bgSize="cover" 
                         bgPosition="center"
                         borderRadius="10"
@@ -69,10 +70,10 @@ export default function PlatformPage() {
                         {/* PLATFORM ICON / NAME / FOLLOWERS */}
                         <VStack pos="relative" right="41%" top="50%" spacing="-1">
                             <Box className='squareimage_container' w="11%" minW="75px" minH="75px"> 
-                                <Image className="squareimage" src={icon_src} alt="Profile Picture" objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
+                                <Image className="squareimage" src={platform_data.iconImage} fallbackSrc={defaultIcon} objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
                             </Box>
-                            <Text fontSize="160%" fontWeight="medium"> {platform_data[0].name} </Text>
-                            <Text fontSize="110%"> 1200 Followers </Text>
+                            <Text fontSize="160%" fontWeight="medium"> {platform_data.name} </Text>
+                            <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
                         </VStack>
                     </Box>
 
@@ -126,8 +127,8 @@ export default function PlatformPage() {
                                         {quiz_data.map((quiz, key) => {
                                             return <QuizCard 
                                                 quiz={quiz} 
-                                                width="8%"
-                                                title_fontsize="95%" 
+                                                width="7.5%"
+                                                title_fontsize="92%" 
                                                 include_author={false}
                                                 char_limit={35}  
                                                 key={key}

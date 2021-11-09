@@ -6,9 +6,10 @@ import bg from '../images/homebg.png';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
 import heart from '../images/heart.jpeg';
-import LeaderboardCard from './LeaderboardEntryCard';
-import RowCard from './RowCard';
-import PostQuizAnswers from './PostQuizAnswersCard';
+import LeaderboardCard from '../components/LeaderboardEntryCard';
+import RowCard from '../components/RowCard';
+import PostQuizAnswers from '../components/PostQuizAnswersCard';
+import PostQuizAnswersCard from '../components/PostQuizAnswersCard';
 import { useQuery } from '@apollo/client';
 import * as queries from '../cache/queries';
 import {
@@ -18,7 +19,6 @@ import {
     Redirect,
     Router,
 } from 'react-router-dom';
-import PostQuizAnswersCard from './PostQuizAnswersCard';
 import { subscribe } from 'graphql';
 
 export default function CategoryPage() {

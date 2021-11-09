@@ -8,13 +8,13 @@ import moon from '../images/moon.jpg';
 import quizicon from '../images/quizicon.png';
 import coin from '../images/coin.png';
 import quizImage from '../images/defaultquiz.jpeg';
-import LeaderboardCard from './LeaderboardEntryCard';
+import LeaderboardCard from '../components/LeaderboardEntryCard';
 import {IoMdClock} from "react-icons/io"
 import {BsStarFill} from "react-icons/bs"
 import { useQuery } from '@apollo/client';
 import * as queries from '../cache/queries';
 import { useParams } from 'react-router-dom';
-import PostQuizAnswersCard from './PostQuizAnswersCard';
+import PostQuizAnswersCard from '../components/PostQuizAnswersCard';
 
 export default function PostQuizPage() {
     let quizScore = null; 

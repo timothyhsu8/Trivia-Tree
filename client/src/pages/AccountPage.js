@@ -3,7 +3,8 @@ import { useQuery } from '@apollo/client';
 import { GET_QUIZZES } from "../cache/queries";
 import QuizCard from "../components/QuizCard";
 import { AuthContext } from '../context/auth';
-import { useState, useContext } from 'react';
+import { useState, useContext, createRef } from 'react';
+import React from 'react';
 import '../styles/styles.css'
 
 export default function AccountPage() {
@@ -13,12 +14,42 @@ export default function AccountPage() {
     let logged_in = false
     let username = "User1849021"
     let user_title = "Gamer / Quiz Taker"
-    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
-    let banner_src = "https://cdnb.artstation.com/p/assets/images/images/027/468/579/4k/kan-liu-666k-chilling-time.jpg?1591633242"
+    //let pfp_src = 
+    //let banner_src = 
     let quiz_sections = ["Featured Quizzes", "Featured Platforms"]
     let bio = "This is a biography test. Testing out the biography text wrapping and the look of the displayed text within the biography element. Actual\
         biography will go here and will go here."
     
+
+    //New stuff for updating this page, I don't know how to send to DB so it just console logs
+    const [isUpdating, toggleUpdating] = React.useState(false);
+    const editPage = () => {
+        toggleUpdating(!isUpdating);
+    };
+    function updatePFP(event) {
+        if (event.target.files && event.target.files[0]) {
+            let img = event.target.files[0];
+            setPFP(URL.createObjectURL(img));
+        }
+    }
+    const [pfp_src, setPFP] = useState("https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"); //String path
+
+    function updateBanner(event) {
+        if (event.target.files && event.target.files[0]) {
+            let img = event.target.files[0];
+            setBanner(URL.createObjectURL(img));
+        }
+    }
+    const [banner_src, setBanner] = useState("https://cdnb.artstation.com/p/assets/images/images/027/468/579/4k/kan-liu-666k-chilling-time.jpg?1591633242"); //String path
+    const hiddenImageInput = createRef(null);
+    const savePage = () => {
+        console.log(banner_src)
+        console.log(pfp_src)
+    };
+    //End of new code, please change savePage if anyone knows how
+
+
+
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
@@ -90,8 +121,52 @@ export default function AccountPage() {
                             <Text pos="absolute" bottom="30%" left="14%" fontSize="2.5vw" as="b" >{username}</Text>
                             <Text pos="absolute" bottom="8%" left="14.2%" fontSize="1.6vw" fontWeight="thin"> {user_title} </Text>
                         </Box>
-                    </Box>
 
+
+                    {/*Quick Stuff for changing PFP and Banner*/}
+                    { isUpdating ? 
+                        <div>
+                            <Button
+                            _focus={{ outline: 'none' }}
+                            borderColor='black'
+                            border='solid'
+                            borderWidth='2px'
+                            pos="absolute" bottom="4%" left="0%" 
+                            onClick={() => hiddenImageInput.current.click()}
+                            >
+                                <Text fontSize={["10px","10px","10px","20px"]} >Upload Profile Picture</Text>
+                                </Button>
+                                <input
+                                    type='file'
+                                    style={{ display: 'none' }}
+                                    ref={hiddenImageInput}
+                                    onChange={(event) => updatePFP(event)}
+                                />
+
+                                <Button
+                                    _focus={{ outline: 'none' }}
+                                    borderColor='black'
+                                    border='solid'
+                                    borderWidth='2px'
+                                    pos="absolute" bottom="4%" right="0%" 
+                                    onClick={() => hiddenImageInput.current.click()}
+                                >
+                                <Text fontSize={["10px","10px","10px","20px"]} >Upload Banner</Text>
+                            </Button>
+                            <input
+                                type='file'
+                                style={{ display: 'none' }}
+                                ref={hiddenImageInput}
+                                onChange={(event) => updateBanner(event)}
+                            />
+                        </div>
+                        :
+                        <h1></h1>
+                    }
+                       
+
+
+                    </Box>
                     {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
                     <Grid pt="1%" templateColumns="4fr 1fr">
 
@@ -128,7 +203,21 @@ export default function AccountPage() {
                             <Text pl="4%" pr="4%" pt="3%" fontSize="0.8vw"> {bio} </Text>
                         </Box>
                     </Grid>
+                    
+
+                    <Box h="100px"></Box>
+                    { isUpdating ? 
+                        <Box>
+                            <Button onClick={editPage}>Cancel Updates</Button>
+                            <Button onClick={savePage}>Save Updates</Button>
+                        </Box>
+                    :
+                    <div>
+                        <Button onClick={editPage}>Update Page</Button>
+                    </div>
+                    }
                 </Box>
+                
             )
     }
 
@@ -219,5 +308,6 @@ export default function AccountPage() {
             </Grid>
             {/* {renderPage()} */}
         </Box>
+        
     )
 }

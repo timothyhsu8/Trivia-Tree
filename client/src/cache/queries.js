@@ -119,3 +119,25 @@ export const GET_PLATFORM = gql`
         }
 	}
 `;
+
+export const GET_USERS = gql`
+    {
+        getUsers {
+            _id
+            displayName
+            iconImage
+            currency
+        }
+    }
+`;
+
+export const GET_USER = gql`
+	query GetUser($_id: ID!) {
+		getUser(_id: $_id) {
+			_id
+            displayName
+            iconImage
+            bio
+		}
+	}
+`;

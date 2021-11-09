@@ -24,5 +24,9 @@ module.exports = gql`
         admin: Boolean
         darkMode: Boolean
     }
+    extend type Query {
+        getUsers: [User]
+        getUser(_id: ID!): User
+    }
 
 `;

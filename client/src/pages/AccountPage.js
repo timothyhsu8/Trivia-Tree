@@ -1,6 +1,7 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@chakra-ui/react"
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES } from "../cache/queries";
+import { GET_QUIZZES, GET_USER } from "../cache/queries";
+import { Link, Redirect, useParams } from 'react-router-dom';
 import QuizCard from "../components/QuizCard";
 import { AuthContext } from '../context/auth';
 import { useState, useContext } from 'react';
@@ -9,20 +10,21 @@ import '../styles/styles.css'
 export default function AccountPage() {
     const { user } = useContext(AuthContext);
     const [page, setPage] = useState('user')
+    let { userId } = useParams();
+    let accountUser = null;
 
     let logged_in = false
-    let username = "User1849021"
+    let username = null;
     let user_title = "Gamer / Quiz Taker"
-    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
+    let pfp_src = null;
     let banner_src = "https://cdnb.artstation.com/p/assets/images/images/027/468/579/4k/kan-liu-666k-chilling-time.jpg?1591633242"
     let quiz_sections = ["Featured Quizzes", "Featured Platforms"]
-    let bio = "This is a biography test. Testing out the biography text wrapping and the look of the displayed text within the biography element. Actual\
-        biography will go here and will go here."
+    let bio = null;
     
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
-        username = user.googleDisplayName
+        //username = user.googleDisplayName
         // pfp_src = user.iconImage
     }
 
@@ -33,8 +35,21 @@ export default function AccountPage() {
         data: { getQuizzes: quiz_data } = {},
     } = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' });
 
+
+    const {data:data2, error:error2, loading:loading2} = useQuery(GET_USER, {
+        variables: { _id: userId },
+    });
+
     // Loading Screen
     if (loading) {
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
+    }
+
+    if (loading2) {
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -49,6 +64,13 @@ export default function AccountPage() {
                 <Text fontSize="3vw" fontWeight="thin"> Sorry, something went wrong </Text>
             </Center>
         );
+    }
+
+    if(data2) { 
+        accountUser = data2.getUser;
+        username = accountUser.displayName;
+        pfp_src = accountUser.iconImage; 
+        bio = accountUser.bio;
     }
 
     // FOR TESTING: Many Quizzes

@@ -23,6 +23,7 @@ import CategoryPage from './pages/CategoryPage';
 import ShoppingPage from './pages/ShoppingPage';
 import Navbar from './components/Navbar';
 import PlatformPage from './pages/PlatformPage';
+import RewardsPage from './pages/RewardPage';
 
 function App() {
     return (
@@ -60,6 +61,7 @@ function App() {
                         />
                         <Route path='/loginpage' component={LoginPage}></Route>
                         <Route path='/shoppingpage' component={ShoppingPage}></Route>
+                        <Route path='/rewardspage' component={RewardsPage}></Route>
                     </Switch>
                 </Router>
             </AuthProvider>

@@ -191,9 +191,12 @@ export default function Navbar() {
                             
                             {/* Logout Button */}
                             {logged_in === true ? (
+                                
                                 <a href={`${config.API_URL}/auth/logout`}>
+                                    <Link to='/rewardspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem></Link>
                                     <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
                                 </a>
+                                
                             ) : (
                                 null
                             )}

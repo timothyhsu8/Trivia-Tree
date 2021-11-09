@@ -92,6 +92,9 @@ const userSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        favoritedQuizzes: {
+            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
+        },
     },
     { timestamps: true }
 );

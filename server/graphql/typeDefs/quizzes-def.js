@@ -72,5 +72,6 @@ module.exports = gql`
         createQuizApollo(quizInput: QuizInput!): Quiz
         updateQuiz(quizInput: QuizInput!): Quiz
         deleteQuiz(quizId: ID!): Quiz
+        favoriteQuiz(quizId: ID! userId: ID!): Boolean
     }
 `;

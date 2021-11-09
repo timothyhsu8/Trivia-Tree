@@ -37,3 +37,9 @@ export const SUBMIT_QUIZ = gql`
         }
     }
 `;
+
+export const FAVORITE_QUIZ = gql`
+    mutation ($quizId: ID!, $userId: ID!) {
+        favoriteQuiz(quizId: $quizId, userId: $userId)
+    }
+`;

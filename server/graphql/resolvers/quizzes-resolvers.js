@@ -1,4 +1,5 @@
 const Quiz = require('../../models/Quiz');
+const User = require('../../models/User');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
@@ -315,5 +316,25 @@ module.exports = {
                 throw new Error(err);
             }
         },
+        async favoriteQuiz(_, { quizId, userId }) {
+            console.log(quizId)
+            console.log(userId)
+
+            const quiz = await Quiz.findById(quizId);
+
+
+            quiz.numFavorites = quiz.numFavorites + 1; 
+            quiz.save();
+
+            const user = await User.findById(userId);
+            const userFavQuizzes = user.favoritedQuizzes;
+            userFavQuizzes.push(quiz);
+            user.favoritedQuizzes = userFavQuizzes;
+            user.save();
+
+            console.log(user.favoritedQuizzes)
+
+            return true
+        }
     },
 };

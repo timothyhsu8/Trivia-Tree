@@ -11,6 +11,7 @@ module.exports = gql`
         description: String
         categories: [String]
         tags: [String]
+        isTimerForQuiz: Boolean
         quizTimer: String
         questionTimer: String
         quizShuffled: Boolean
@@ -38,10 +39,16 @@ module.exports = gql`
     }
 
     input QuizInput {
+        quizId: ID
         title: String!
         questions: [QuestionInput!]!
         description: String
+        icon: String
+        isTimerForQuiz: Boolean
         quizTimer: String
+        questionTimer: String
+        quizShuffled: Boolean
+        quizInstant: Boolean
     }
 
     input QuestionInput {
@@ -63,6 +70,8 @@ module.exports = gql`
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz
         createQuizApollo(quizInput: QuizInput!): Quiz
+        updateQuiz(quizInput: QuizInput!): Quiz
         deleteQuiz(quizId: ID!): Quiz
+        favoriteQuiz(quizId: ID! userId: ID!): Boolean
     }
 `;

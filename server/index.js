@@ -11,6 +11,7 @@ const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 require('./auth/passport');
 
@@ -36,7 +37,7 @@ app.use(corsPolicy);
 
 app.use(
     session({
-        secret: 'randomkey',
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({
@@ -47,7 +48,7 @@ app.use(
 
 const serverOptions = (app) => {
     app.use(helmet());
-    app.use(express.json({ limit: '10kb' }));
+    app.use(express.json({ limit: '5mb' }));
     app.use(express.urlencoded({ extended: false }));
     app.use(mongoSanitize());
     app.use(xssClean());
@@ -64,6 +65,13 @@ serverOptions(app);
 app.use('/auth', require('./routes/auth'));
 app.use('/getuser', (req, res) => {
     res.send(req.user);
+});
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
 });
 
 const server = new ApolloServer({

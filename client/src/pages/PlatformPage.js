@@ -1,26 +1,27 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@chakra-ui/react"
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES } from "../cache/queries";
+import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
+import { useParams } from 'react-router-dom';
 import QuizCard from "../components/QuizCard";
 import { useState } from 'react';
+import defaultIcon from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
 
-export default function PlatformPage() {
+export default function PlatformPage({}) {
+    let { platformId } = useParams();
 
     const [following, setFollowing] = useState(false)
     const [page, setPage] = useState('platform')
 
     const quiz_sections = ["Best Quizzes", "Most Played Quizzes", "Geography"]
-    let icon_src = "https://pbs.twimg.com/profile_images/1444935701926191109/ozzShYNH_400x400.jpg"
-    let banner_src = "https://cdnb.artstation.com/p/assets/images/images/033/698/651/4k/kan-liu-666k-xiaoluxiangsmall.jpg?1610351893"
 
     // Fetch quiz data from the backend
-    const {
-        loading,
-        error,
-        data: { getQuizzes: quiz_data } = {},
-    } = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' });
+    const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
+    const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId} })
 
+    const loading = quizzes.loading || platform.loading
+    const error = quizzes.error || platform.error
+    
     // Loading Screen
     if (loading) {
         return (
@@ -39,35 +40,40 @@ export default function PlatformPage() {
         );
     }
 
+    const quiz_data = quizzes.data.getQuizzes
+    const platform_data = platform.data.getPlatform
+
     return (
         <Box>
             <Grid templateColumns="1fr 20fr 1fr">
                 <Box/>
                 <Box>
                      {/* HEADER BUTTONS */}
-                     <Grid w="100%" h="6vh" templateColumns="1fr 1fr 1fr 1fr"> 
-                        <Button height="100%" fontSize="1.0vw" bgColor="white" textColor={ page === 'platform' ? "blue" : "black" } _focus={{boxShadow:"none"}}> Platform Name</Button>
-                        <Button height="100%" fontSize="1.0vw" bgColor="white" _focus={{boxShadow:"none"}}> Quizzes </Button>
-                        <Button height="100%" fontSize="1.0vw" bgColor="white" _focus={{boxShadow:"none"}}> Leaderboard </Button>
-                        <Button height="100%" fontSize="1.0vw" bgColor="white" _focus={{boxShadow:"none"}}> Badges </Button>
+                     <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr"> 
+                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'platform' ? "blue" : "black" } _focus={{boxShadow:"none"}}> Platform Name</Button>
+                        <Button height="100%" fontSize="115%" bgColor="white" _focus={{boxShadow:"none"}}> Quizzes </Button>
+                        <Button height="100%" fontSize="115%" bgColor="white" _focus={{boxShadow:"none"}}> Leaderboard </Button>
+                        <Button height="100%" fontSize="115%" bgColor="white" _focus={{boxShadow:"none"}}> Badges </Button>
                     </Grid>
 
                     {/* BANNER */}
                     <Box
                         h="27vh"
+                        minH="200px"
                         pos="relative"
-                        bgImage={"url('" + banner_src +  "')"} 
+                        bgColor="gray.300"
+                        bgImage={"url('" + platform_data.bannerImage +  "')"} 
                         bgSize="cover" 
                         bgPosition="center"
                         borderRadius="10"
                     >
                         {/* PLATFORM ICON / NAME / FOLLOWERS */}
-                        <VStack pos="relative" right="41%" top="45%" spacing="-1">
-                            <Box className='squareimage_container' w="11%"> 
-                                <Image className="squareimage" src={icon_src} alt="Profile Picture" objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
+                        <VStack pos="relative" right="41%" top="50%" spacing="-1">
+                            <Box className='squareimage_container' w="11%" minW="75px" minH="75px"> 
+                                <Image className="squareimage" src={platform_data.iconImage} fallbackSrc={defaultIcon} objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
                             </Box>
-                            <Text fontSize="1.4vw" fontWeight="medium">Platform Name</Text>
-                            <Text fontSize="1vw"> 1200 Followers </Text>
+                            <Text fontSize="160%" fontWeight="medium"> {platform_data.name} </Text>
+                            <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
                         </VStack>
                     </Box>
 
@@ -76,10 +82,11 @@ export default function PlatformPage() {
                         following ?
                             <Button 
                                 w="7%" 
-                                h="5vh" 
+                                minW="80px"
+                                h="50px" 
                                 mt="1%" 
                                 bgColor="red.600" 
-                                fontSize="0.9vw" 
+                                fontSize="120%" 
                                 color="white" 
                                 float="right"
                                 onClick={() => setFollowing(false)}
@@ -91,11 +98,12 @@ export default function PlatformPage() {
                             </Button>
                             :
                             <Button 
-                                w="6%" 
-                                h="5vh" 
+                                w="7%" 
+                                minW="80px"
+                                h="50px" 
                                 mt="1%" 
                                 bgColor="gray.800" 
-                                fontSize="0.9vw" 
+                                fontSize="120%" 
                                 color="white" 
                                 float="right"
                                 onClick={() => setFollowing(true)}
@@ -106,28 +114,28 @@ export default function PlatformPage() {
                                 Follow 
                             </Button>
                     }
-                    <Box pos="relative" top="11%" bgColor="gray.300" h="0.2vh" />
+                    <Box pos="relative" top="11%" bgColor="gray.300" h="0.1vh" />
 
                     {/* QUIZZES */}
                     <Box mt="7%">
                         {quiz_sections.map((section, key) => {
                             return (
-                                <Box w="100%" borderRadius="10" overflowX="auto">
-                                    <Text pl="1.5%" pt="1%" fontSize="1.2vw" fontWeight="medium"> {section} </Text>
+                                <Box w="100%" borderRadius="10" overflowX="auto" key={key}>
+                                    <Text pl="1.5%" pt="1%" fontSize="130%" fontWeight="medium"> {section} </Text>
                                     {/* FEATURED QUIZZES */}
                                     <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
                                         {quiz_data.map((quiz, key) => {
                                             return <QuizCard 
                                                 quiz={quiz} 
-                                                width="9%" 
-                                                title_fontsize="0.8vw" 
+                                                width="7.5%"
+                                                title_fontsize="92%" 
                                                 include_author={false}
                                                 char_limit={35}  
                                                 key={key}
                                                 />
                                         })}
                                     </Flex>
-                                    <Box bgColor="gray.300" h="0.2vh" />
+                                    <Box bgColor="gray.300" h="0.12vh" />
                                 </Box>
                         )})}
                     </Box>

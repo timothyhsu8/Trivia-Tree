@@ -37,7 +37,8 @@ const platformSchema = new Schema(
             ref: 'Item',
         },
         background: {
-            type: Schema.Types.ObjectId,
+            // type: Schema.Types.ObjectId,
+            type: String,
             ref: 'Item',
         },
         followers: {

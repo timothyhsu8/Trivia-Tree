@@ -16,18 +16,20 @@ export default function QuizCard( props ) {
     let include_author = props.include_author
     let char_limit = props.char_limit
     let author = quiz_data.user.displayName
+    let icon_src = quiz_data.icon == null ? quizImage : quiz_data.icon
+    let numAttempts = quiz_data.numAttempts
+    let numFavorites = quiz_data.numFavorites
 
-    let icon_src = quizImage
     // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
     
     if (quiz_title.length > char_limit)
         quiz_title = quiz_title.slice(0, char_limit) + "..."
 
-    console.log(quiz_data)
     return (
         <VStack 
             className="disable-select"
-            w={width} 
+            w={width}
+            minW="80px" 
             padding="0.5%" 
             margin="0.5%" 
             spacing="2%" 
@@ -72,12 +74,12 @@ export default function QuizCard( props ) {
             <Grid w="100%" templateColumns="1fr 1fr"> 
                 <HStack spacing="0">
                     <Icon boxSize="50%" as={ViewIcon} pos="relative" top="3%"/>
-                    <Text fontSize="0.8vw"> 200 </Text>
+                    <Text fontSize="90%"> {numAttempts} </Text>
                 </HStack>
                 
                 <HStack spacing="0">
                     <Icon as={BsHeart} boxSize="45%" pos="relative" left="10%" top="6%"/>
-                    <Text fontSize="0.8vw" pos="relative" left="8%"> 200 </Text>
+                    <Text fontSize="90%" pos="relative" left="8%"> {numFavorites} </Text>
                 </HStack>
             </Grid>
         </VStack>

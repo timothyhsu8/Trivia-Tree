@@ -1,11 +1,13 @@
 import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import {BsShopWindow} from "react-icons/bs"
+import { BsShopWindow } from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
 import coin from '../images/coin.png';
+import { useMutation, gql } from '@apollo/client';
+import guestImage from '../images/guest.png';
 import '../styles/styles.css'
 
 export default function Navbar() {
@@ -16,17 +18,41 @@ export default function Navbar() {
     let search_text = ""
     let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
     let username = "Guest"
-    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
+    let pfp_src = {guestImage}
     let menu_bg_hover = "blue.500"
     let menu_text_hover = "white"
     let currency = 0;
+
+
+    const [createPlatform] = useMutation(CREATE_PLATFORM, {
+        update() {
+            history.push('/');
+        },
+        onError(err) {
+            console.log(err);
+        },
+    });
+
+    function handleCreatePlatform() {
+        createPlatform({
+            variables: {
+                platformInput: {
+                    name: "Programming",
+                    iconImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg",
+                    bannerImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/what-is-coding.png",
+                    background: "white",
+                    tags: ["Programming"]
+                },
+            },
+        });
+    }
 
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
         username = user.googleDisplayName
         currency = user.currency
-        // pfp_src = user.iconImage
+        pfp_src = user.iconImage
     }
 
     // Allows search to work when 'Enter' key is pressed
@@ -48,7 +74,7 @@ export default function Navbar() {
     function goToAccountPage() {
         if (logged_in){
             history.push({
-                pathname: '/accountpage',
+                pathname: '/accountpage/' + user._id,
                 state: {
                     // location state
                     search: search_text,
@@ -79,26 +105,24 @@ export default function Navbar() {
         <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
                 {/* RETURN TO HOMEPAGE */}
-                <Box>
-                    <Text
-                        className='disable-select'
-                        onClick={() => history.push('/')}
-                        display='inline-block'
-                        _hover={{
-                            cursor: 'pointer',
-                            opacity: '80%',
-                            transition: 'opacity 0.2s linear',
-                        }}
-                        transition='opacity 0.2s linear'
-                        pos='relative'
-                        left='2%'
-                        color='white'
-                        fontSize='30'
-                    >
-                        Trivia Tree
-                    </Text>
-                </Box>
-
+                <Text
+                    className='disable-select'
+                    onClick={() => history.push('/')}
+                    display='inline-block'
+                    _hover={{
+                        cursor: 'pointer',
+                        opacity: '80%',
+                        transition: 'opacity 0.2s linear',
+                    }}
+                    transition='opacity 0.2s linear'
+                    pos='relative'
+                    left='2%'
+                    color='white'
+                    fontSize='200%'
+                >
+                    Trivia Tree
+                </Text>
+                
                 {/* SEARCH */}
                 <Grid
                     h='50px'
@@ -107,7 +131,7 @@ export default function Navbar() {
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}}> 
+                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>;
                         })}
@@ -137,17 +161,15 @@ export default function Navbar() {
                 </Grid>
 
                 {/* RIGHT SIDE */}
-                <HStack>
+                <HStack overflow="hidden">
                     <Box w='5%' />
                     {/* CATEGORIES */}
                     <Link to='/categorypage'>
-                        <Text fontSize='18px' color='white' fontWeight='medium'>
-                            {' '}
-                            Categories{' '}
+                        <Text className="disable-select" fontSize='105%' color='white' fontWeight='medium'>
+                            Categories
                         </Text>
                     </Link>
                     <Spacer />
-
 
                     <Link to="/shoppingpage"> 
                         <Icon as={BsShopWindow} color="white"></Icon>
@@ -155,13 +177,12 @@ export default function Navbar() {
                     
                     <Spacer />
 
-
                     {/* USER NAME */}
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="18px" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
 
                     {/* PROFILE PICTURE */}
                     <Box className='squareimage_container' w="8%"> 
-                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} alt="Profile Picture" objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
+                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
                     </Box>
 
                     <Flex direction="row">
@@ -184,7 +205,7 @@ export default function Navbar() {
                         </MenuButton>
                         <MenuList>
                             <Link to='/createQuiz'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz      </MenuItem></Link>
-                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
+                            <MenuItem onClick={() => handleCreatePlatform()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
                             <Link to='/settingspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
@@ -208,3 +229,12 @@ export default function Navbar() {
         </Box>
     );
 }
+
+const CREATE_PLATFORM = gql`
+    mutation ($platformInput: PlatformInput!) {
+        createPlatform(platformInput: $platformInput) {
+            name
+            _id
+        }
+    }
+`;

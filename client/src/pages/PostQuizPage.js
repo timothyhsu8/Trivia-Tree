@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
-import userImage from '../images/default.png';
+import userImage from '../images/guest.png';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
 import quizicon from '../images/quizicon.png';
@@ -26,6 +26,7 @@ export default function PostQuizPage() {
     let questions = null;
     let answerChoices = null; 
     let coinsEarned = null;
+    let icon_src = null; 
 
     let { quizId, quizAttemptId } = useParams();
     let leaderboard_entries = [ 'alpha', 'vita', 'gamma', 'thelta', 'epsilon', 'zita', 'ita', 'thita', 'iota', 'kappa']
@@ -117,6 +118,7 @@ export default function PostQuizPage() {
 
     if (data2) {
         questions = data2.getQuiz.questions
+        icon_src = data2.getQuiz.icon == null ? quizImage : data2.getQuiz.icon
         console.log(questions)
 
     }
@@ -141,7 +143,7 @@ export default function PostQuizPage() {
                 >
                     {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
                     <div className="SecretSauce"> 
-                        <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={pfp_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
+                        <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={icon_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
                         <Box className="containerDown" paddingLeft="30px">  
                             <Box width={["200px","200px","200px","800px"]}>
                             <Flex direction="row" position="relative">  

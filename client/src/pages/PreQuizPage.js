@@ -1,20 +1,37 @@
 import { Box, Flex, HStack, Text, Grid, VStack, Button, Image, GridItem,Icon, Spacer} from "@chakra-ui/react"
-import { useQuery } from '@apollo/client';
-import { Link, Redirect, useParams } from 'react-router-dom';
-import userImage from '../images/default.png';
+import { useQuery, useMutation} from '@apollo/client';
+import * as mutations from '../cache/mutations';
+import { useState, useContext } from 'react';
+import { Link, Redirect, useParams, useHistory } from 'react-router-dom';
+import userImage from '../images/guest.png';
 import quizImage from '../images/defaultquiz.jpeg';
 import {BsHeart, BsShuffle, BsQuestionLg, BsFillPlayCircleFill} from "react-icons/bs"
 import { MdTimer } from "react-icons/md";
 import { IoRibbonSharp } from "react-icons/io5";
 import * as queries from '../cache/queries';
+import { AuthContext } from '../context/auth';
 
 export default function PreQuizPage({}) {
+    const { user } = useContext(AuthContext);
+    let history = useHistory();
+
+    const [FavoriteQuiz] = useMutation(mutations.FAVORITE_QUIZ);
+
     let { quizId } = useParams();
     let quiz = null;
     let iconSize = "50px"
     let iconTextSize = "30px"
+    let quizFavorited = false; 
+    let logged_in = false
+    
+    // Checks if user is logged in
+    if (user !== null && user !== "NoUser"){
+        logged_in = true
+    }
 
-    const { data, loading, error } = useQuery(queries.GET_QUIZ, {
+    console.log(user)
+
+    const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
         variables: { quizId:quizId },
     });
 
@@ -29,12 +46,29 @@ export default function PreQuizPage({}) {
     let quizTitle = quiz.title;
     let quizAuthor = quiz.user.displayName; 
     let quizDescription = quiz.description;
-    let user = "No User Found";
-    let pfp_src = quizImage;
     let numQuestions = quiz.numQuestions; 
     let numAttempts = quiz.numAttempts;
     let numFavorites = quiz.numFavorites; 
     let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
+    let icon_src = quiz.icon == null ? quizImage : quiz.icon
+    
+    if (logged_in){
+        for(let i = 0; i < user.favoritedQuizzes.length; i++){
+            if(user.favoritedQuizzes[i] == quizId)
+                quizFavorited = true;
+        }
+    }
+
+    const favoriteQuiz = async () => {
+        if (logged_in){
+            console.log("favorite")
+            const {data} = await FavoriteQuiz({ variables: {quizId:quizId, userId: user._id}});
+            history.push({
+                pathname: '/prequizpage/' + quizId 
+            });
+            console.log(data);
+        }
+    }
 
     return ( 
         <Box>
@@ -43,9 +77,14 @@ export default function PreQuizPage({}) {
                 {/* Title and Image */}
                 <GridItem rowSpan={2} colSpan={6} borderBottom="2px" borderColor="gray.400">
                     <Flex direction="row" top="50%" left="2%" transform="translateY(-45%)" position="relative"> 
-                        <Image w="175px" h="175px" src={pfp_src} objectFit="cover" borderRadius="10%"></Image>
+                        <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%"></Image>
                         <Text fontSize="2.7vw" as="b" transform="translateY(57%)" paddingLeft="20px">{quizTitle}</Text>
-                        <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}/>
+                        {
+                            quizFavorited ? 
+                            <Image as={BsHeart} color="red" w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}/>
+                            : 
+                            <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }} onClick={favoriteQuiz}/>
+                        }
                     </Flex>
                 </GridItem>
 

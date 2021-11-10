@@ -1,9 +1,12 @@
-import { React, useState } from 'react';
+import { React, useState, useContext } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Center, Spinner, Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/auth';
 
 function Quizzes(props) {
+    const { user } = useContext(AuthContext);
+
     const {
         loading,
         error,
@@ -90,12 +93,24 @@ function Quizzes(props) {
                     >
                         {quiz.title}
                     </Link>
-                    <Button
-                        colorScheme='red'
-                        onClick={() => handleDeleteQuiz(quiz._id)}
-                    >
-                        Delete
-                    </Button>
+                    {user._id === quiz.user._id && (
+                        <Button
+                            colorScheme='red'
+                            onClick={() => handleDeleteQuiz(quiz._id)}
+                        >
+                            Delete
+                        </Button>
+                    )}
+                    {user._id === quiz.user._id && (
+                        <Button
+                            colorScheme='blue'
+                            onClick={() => {
+                                props.history.push(`/editQuiz/${quiz._id}`);
+                            }}
+                        >
+                            Edit
+                        </Button>
+                    )}
                 </Center>
             ))}
         </div>
@@ -107,6 +122,9 @@ const FETCH_QUIZZES_QUERY = gql`
         getQuizzes {
             _id
             title
+            user {
+                _id
+            }
         }
     }
 `;

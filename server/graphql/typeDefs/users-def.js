@@ -23,6 +23,11 @@ module.exports = gql`
         verified: Boolean
         admin: Boolean
         darkMode: Boolean
+        favoritedQuizzes: [Quiz]
+    }
+    extend type Query {
+        getUsers: [User]
+        getUser(_id: ID!): User
     }
 
 `;

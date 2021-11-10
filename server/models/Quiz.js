@@ -66,6 +66,9 @@ const quizSchema = new Schema(
         tags: {
             type: [String],
         },
+        isTimerForQuiz: {
+            type: Boolean,
+        },
         quizTimer: {
             //still unsure about this and questiontimer, should one not be set if the other is set?
             type: String,
@@ -99,8 +102,8 @@ const quizSchema = new Schema(
             type: Number,
         },
         numAttempts: {
-            type: Number
-        }
+            type: Number,
+        },
     },
     { timestamps: true }
 );

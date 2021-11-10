@@ -1,5 +1,5 @@
-import { React, useState, createRef } from 'react';
-import { useMutation, gql } from '@apollo/client';
+import { React, useState, useEffect, createRef, useContext } from 'react';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import {
     Input,
     Select,
@@ -16,12 +16,17 @@ import {
 import { BsTrash } from 'react-icons/bs';
 import { RiArrowRightSLine } from 'react-icons/ri';
 import TimeField from 'react-simple-timefield';
+import { AuthContext } from '../context/auth';
 import '../styles/CreateQuizPage.css';
 
 let currentId = 0;
 let img = 'No Image';
+let vertified = false;
 
-function CreateQuizPage(props) {
+function EditQuizPage(props) {
+    const quizId = props.match.params.quizId;
+    const { user } = useContext(AuthContext);
+
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [quizQuestions, setQuizQuestions] = useState([
@@ -33,9 +38,7 @@ function CreateQuizPage(props) {
             id: currentId++,
         },
     ]);
-    const [icon, setIcon] = useState(
-        'https://www.atlantawatershed.org/wp-content/uploads/2017/06/default-placeholder.png'
-    );
+    const [icon, setIcon] = useState('');
     const [quizType, setQuizType] = useState('Standard');
     const [quizOrdering, setQuizOrdering] = useState('Ordered');
     const [timeType, setTimeType] = useState('Quiz');
@@ -60,16 +63,16 @@ function CreateQuizPage(props) {
     }
 
     function updateTitle(event) {
-        setTitle(event.target.value.trim());
+        setTitle(event.target.value);
     }
 
     function updateDescription(event) {
-        setDescription(event.target.value.trim());
+        setDescription(event.target.value);
     }
 
     function updateQuestion(event, questionIndex) {
         const newQuestions = [...quizQuestions];
-        newQuestions[questionIndex].question = event.target.value.trim();
+        newQuestions[questionIndex].question = event.target.value;
         setQuizQuestions(newQuestions);
     }
 
@@ -77,13 +80,13 @@ function CreateQuizPage(props) {
         const newQuestions = [...quizQuestions];
         if (
             newQuestions[questionIndex].answerIndex === choiceIndex &&
-            event.target.value.trim() === ''
+            event.target.value === ''
         ) {
             newQuestions[questionIndex].answer = '';
             newQuestions[questionIndex].answerIndex = null;
         }
         newQuestions[questionIndex].answerChoices[choiceIndex] =
-            event.target.value.trim();
+            event.target.value;
         setQuizQuestions(newQuestions);
     }
 
@@ -148,29 +151,35 @@ function CreateQuizPage(props) {
         }
     }
 
-    const [createQuiz] = useMutation(CREATE_QUIZ, {
+    const [updateQuiz] = useMutation(UPDATE_QUIZ, {
         update() {
             props.history.push('/');
         },
         onError(err) {
-            console.log(err);
+            console.log(JSON.stringify(err, null, 2));
         },
     });
 
-    function handleCreateQuiz() {
+    function handleUpdateQuiz() {
         let modifiedQuizQuestions = quizQuestions.map((question) => {
             return { ...question };
         });
         modifiedQuizQuestions.forEach((question) => {
+            question.question = question.question.trim();
+            question.answerChoices.forEach((choice, index) => {
+                question.answerChoices[index] = choice.trim();
+            });
             delete question.id;
             delete question.answerIndex;
+            delete question.__typename;
         });
-        createQuiz({
+        updateQuiz({
             variables: {
                 quizInput: {
-                    title: title,
+                    quizId: quizId,
+                    title: title.trim(),
                     questions: modifiedQuizQuestions,
-                    description: description,
+                    description: description.trim(),
                     icon: img,
                     isTimerForQuiz: timeType === 'Quiz' ? true : false,
                     quizTimer: quizTimer,
@@ -180,6 +189,54 @@ function CreateQuizPage(props) {
                 },
             },
         });
+    }
+
+    const {
+        loading,
+        error,
+        data: { getQuiz: quiz } = {},
+    } = useQuery(FETCH_QUIZ_QUERY, {
+        fetchPolicy: 'network-only',
+        variables: {
+            quizId,
+        },
+    });
+
+    useEffect(() => {
+        if (quiz && user) {
+            if (user._id !== quiz.user._id) {
+                props.history.push('/');
+            }
+            setTitle(quiz.title);
+            setDescription(quiz.description);
+            let modifiedQuizQuestions = quiz.questions.map((question) => {
+                return JSON.parse(JSON.stringify(question));
+            });
+            modifiedQuizQuestions.forEach((question) => {
+                question.id = currentId++;
+                question.answerChoices.forEach((choice, index) => {
+                    if (choice === question.answer[0]) {
+                        question.answerIndex = index;
+                    }
+                });
+            });
+            setQuizQuestions(modifiedQuizQuestions);
+            img = quiz.icon;
+            setIcon(quiz.icon);
+            setQuizType(quiz.quizInstant ? 'Instant' : 'Standard');
+            setQuizOrdering(quiz.quizShuffled ? 'Shuffled' : 'Ordered');
+            setTimeType(quiz.isTimerForQuiz ? 'Quiz' : 'Question');
+            setQuizTimer(quiz.quizTimer);
+            setQuestionTimer(quiz.questionTimer);
+            vertified = true;
+        }
+    }, [quiz, user]);
+
+    if (loading || !vertified) {
+        return <div></div>;
+    }
+    if (error) {
+        return `Error! ${error}`;
     }
 
     return (
@@ -227,7 +284,8 @@ function CreateQuizPage(props) {
                 </div>
                 <div className='title-description'>
                     <Input
-                        onBlur={(event) => updateTitle(event)}
+                        value={title}
+                        onChange={(event) => updateTitle(event)}
                         placeholder='Enter Quiz Title'
                         variant='flushed'
                         borderColor='black'
@@ -239,7 +297,8 @@ function CreateQuizPage(props) {
                     />
                     <Text marginLeft='10px'>Quiz Title</Text>
                     <Textarea
-                        onBlur={(event) => updateDescription(event)}
+                        value={description}
+                        onChange={(event) => updateDescription(event)}
                         placeholder='Enter Quiz Description'
                         fontSize='100%'
                         height='fit-content'
@@ -285,7 +344,8 @@ function CreateQuizPage(props) {
                                 />
                             </div>
                             <Textarea
-                                onBlur={(event) =>
+                                value={quizQuestion.question}
+                                onChange={(event) =>
                                     updateQuestion(event, questionIndex)
                                 }
                                 placeholder='Enter Question'
@@ -335,7 +395,8 @@ function CreateQuizPage(props) {
                                                 }
                                             />
                                             <Input
-                                                onBlur={(event) =>
+                                                value={choice}
+                                                onChange={(event) =>
                                                     updateAnswerChoice(
                                                         event,
                                                         questionIndex,
@@ -694,22 +755,46 @@ function CreateQuizPage(props) {
                     size='md'
                     fontSize='160%'
                     _focus={{ outline: 'none' }}
-                    onClick={() => handleCreateQuiz()}
+                    onClick={() => handleUpdateQuiz()}
                 >
-                    Create Quiz
+                    Save Changes
                 </Button>
             </div>
         </div>
     );
 }
 
-const CREATE_QUIZ = gql`
+const FETCH_QUIZ_QUERY = gql`
+    query ($quizId: ID!) {
+        getQuiz(quizId: $quizId) {
+            _id
+            title
+            description
+            user {
+                _id
+            }
+            icon
+            quizInstant
+            quizShuffled
+            isTimerForQuiz
+            quizTimer
+            questionTimer
+            questions {
+                question
+                answer
+                answerChoices
+            }
+        }
+    }
+`;
+
+const UPDATE_QUIZ = gql`
     mutation ($quizInput: QuizInput!) {
-        createQuiz(quizInput: $quizInput) {
+        updateQuiz(quizInput: $quizInput) {
             title
             _id
         }
     }
 `;
 
-export default CreateQuizPage;
+export default EditQuizPage;

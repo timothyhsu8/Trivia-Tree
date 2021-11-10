@@ -8,6 +8,11 @@ export const GET_QUIZZES = gql`
             user {
                 displayName
             }
+            icon
+            description
+            quizTimer
+            numAttempts
+            numFavorites
         }
     }
 `;
@@ -26,6 +31,7 @@ export const GET_QUIZ = gql`
                 answer
                 questionType
             }
+            icon
             description
             quizTimer
             numQuestions
@@ -79,6 +85,60 @@ export const GET_LEADERBOARD = gql`
                 displayName
             }
             score
+		}
+	}
+`;
+
+export const GET_PLATFORMS = gql`
+    {
+        getPlatforms {
+            _id
+            name
+            iconImage
+            bannerImage
+            background
+            tags
+            followers {
+                displayName
+            }
+          }
+    }
+`;
+
+export const GET_PLATFORM = gql`
+	query getPlatform($platformId: ID!) {
+		getPlatform(platformId: $platformId) {
+            _id
+            name
+            iconImage
+            bannerImage
+            background
+            followers {
+              displayName
+            }
+            tags
+        }
+	}
+`;
+
+export const GET_USERS = gql`
+    {
+        getUsers {
+            _id
+            displayName
+            iconImage
+            currency
+        }
+    }
+`;
+
+export const GET_USER = gql`
+	query GetUser($_id: ID!) {
+		getUser(_id: $_id) {
+			_id
+            displayName
+            iconImage
+            bio
 		}
 	}
 `;

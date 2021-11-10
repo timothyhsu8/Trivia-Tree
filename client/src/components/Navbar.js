@@ -7,6 +7,7 @@ import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
 import coin from '../images/coin.png';
 import { useMutation, gql } from '@apollo/client';
+import guestImage from '../images/guest.png';
 import '../styles/styles.css'
 
 export default function Navbar() {
@@ -17,7 +18,7 @@ export default function Navbar() {
     let search_text = ""
     let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
     let username = "Guest"
-    let pfp_src = "https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj"
+    let pfp_src = {guestImage}
     let menu_bg_hover = "blue.500"
     let menu_text_hover = "white"
     let currency = 0;
@@ -51,7 +52,7 @@ export default function Navbar() {
         logged_in = true
         username = user.googleDisplayName
         currency = user.currency
-        // pfp_src = user.iconImage
+        pfp_src = user.iconImage
     }
 
     // Allows search to work when 'Enter' key is pressed
@@ -73,7 +74,7 @@ export default function Navbar() {
     function goToAccountPage() {
         if (logged_in){
             history.push({
-                pathname: '/accountpage',
+                pathname: '/accountpage/' + user._id,
                 state: {
                     // location state
                     search: search_text,
@@ -181,7 +182,7 @@ export default function Navbar() {
 
                     {/* PROFILE PICTURE */}
                     <Box className='squareimage_container' w="8%"> 
-                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} alt="Profile Picture" objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
+                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
                     </Box>
 
                     <Flex direction="row">

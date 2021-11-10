@@ -9,6 +9,7 @@ export const GET_QUIZZES = gql`
                 displayName
             }
             icon
+            description
             quizTimer
             numAttempts
             numFavorites

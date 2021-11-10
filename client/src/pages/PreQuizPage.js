@@ -3,7 +3,7 @@ import { useQuery, useMutation} from '@apollo/client';
 import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
 import { Link, Redirect, useParams, useHistory } from 'react-router-dom';
-import userImage from '../images/default.png';
+import userImage from '../images/guest.png';
 import quizImage from '../images/defaultquiz.jpeg';
 import {BsHeart, BsShuffle, BsQuestionLg, BsFillPlayCircleFill} from "react-icons/bs"
 import { MdTimer } from "react-icons/md";
@@ -22,7 +22,13 @@ export default function PreQuizPage({}) {
     let iconSize = "50px"
     let iconTextSize = "30px"
     let quizFavorited = false; 
+    let logged_in = false
     
+    // Checks if user is logged in
+    if (user !== null && user !== "NoUser"){
+        logged_in = true
+    }
+
     console.log(user)
 
     const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
@@ -45,18 +51,23 @@ export default function PreQuizPage({}) {
     let numFavorites = quiz.numFavorites; 
     let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
     let icon_src = quiz.icon == null ? quizImage : quiz.icon
-    for(let i = 0; i < user.favoritedQuizzes.length; i++){
-        if(user.favoritedQuizzes[i] == quizId)
-            quizFavorited = true;
+    
+    if (logged_in){
+        for(let i = 0; i < user.favoritedQuizzes.length; i++){
+            if(user.favoritedQuizzes[i] == quizId)
+                quizFavorited = true;
+        }
     }
 
     const favoriteQuiz = async () => {
-        console.log("favorite")
-        const {data} = await FavoriteQuiz({ variables: {quizId:quizId, userId: user._id}});
-        history.push({
-            pathname: '/prequizpage/' + quizId 
-        });
-        console.log(data);
+        if (logged_in){
+            console.log("favorite")
+            const {data} = await FavoriteQuiz({ variables: {quizId:quizId, userId: user._id}});
+            history.push({
+                pathname: '/prequizpage/' + quizId 
+            });
+            console.log(data);
+        }
     }
 
     return ( 

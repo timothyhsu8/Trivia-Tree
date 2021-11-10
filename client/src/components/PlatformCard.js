@@ -32,7 +32,7 @@ export default function PlatformCard( props ) {
                     w="100%"
                     h="100px"
                     bgColor="gray.300"
-                    bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.20), rgba(255, 255, 255, 0.45)), url('" + platform.bannerImage +  "')"} 
+                    bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.00), rgba(255, 255, 255, 0.25)), url('" + platform.bannerImage +  "')"} 
                     bgSize="cover" 
                     bgPosition="center"
                     borderTopRadius="10"
@@ -49,13 +49,13 @@ export default function PlatformCard( props ) {
                     <Flex className="disable-select" w="100%" direction="row" position="absolute" top="8%" ml="3%">
                         {/* PLATFORM ICON */}
                         {/* <Image w="50px" h="50px" src={platform.iconImage} objectFit="cover" borderRadius="50%" border="2px solid white"></Image> */}
-                        <Box className='squareimage_container' w="25%"> 
+                        <Box className='squareimage_container' w="25%" h="25%"> 
                             <Image className="squareimage" src={platform.iconImage} fallbackSrc={defaultIcon} objectFit="cover" borderRadius="50%" border="2px solid white"></Image>
                         </Box>
 
                         <Flex w="100%" direction="column" ml="3%" paddingRight="4%">
                             {/* PLATFORM NAME */}
-                            <Text fontSize="110%" textColor="white" fontWeight="medium" lineHeight="120%" paddingRight=""> {platform_name} </Text>
+                            <Text fontSize="110%" textColor="white" fontWeight="medium" lineHeight="120%" paddingRight=""> {platform.name} </Text>
                             <Text pos="relative" mt="1%" bottom="4%" fontSize="100%" textColor="white" fontWeight="thin"> {platform.followers.length} Followers </Text>
                         </Flex>
                     </Flex>

@@ -114,7 +114,7 @@ export default function PlatformPage({}) {
                                 Follow 
                             </Button>
                     }
-                    <Box pos="relative" top="11%" bgColor="gray.300" h="0.2vh" />
+                    <Box pos="relative" top="11%" bgColor="gray.300" h="0.1vh" />
 
                     {/* QUIZZES */}
                     <Box mt="7%">
@@ -135,7 +135,7 @@ export default function PlatformPage({}) {
                                                 />
                                         })}
                                     </Flex>
-                                    <Box bgColor="gray.300" h="0.2vh" />
+                                    <Box bgColor="gray.300" h="0.12vh" />
                                 </Box>
                         )})}
                     </Box>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
-import userImage from '../images/default.png';
+import userImage from '../images/guest.png';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
 import quizicon from '../images/quizicon.png';

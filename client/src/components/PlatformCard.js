@@ -53,7 +53,7 @@ export default function PlatformCard( props ) {
                             <Image className="squareimage" src={platform.iconImage} fallbackSrc={defaultIcon} objectFit="cover" borderRadius="50%" border="2px solid white"></Image>
                         </Box>
 
-                        <Flex w="100%" direction="column" ml="3%" paddingRight="4%">
+                        <Flex w="100%" direction="column" ml="3%" paddingRight="5%">
                             {/* PLATFORM NAME */}
                             <Text fontSize="110%" textColor="white" fontWeight="medium" lineHeight="120%" paddingRight=""> {platform.name} </Text>
                             <Text pos="relative" mt="1%" bottom="4%" fontSize="100%" textColor="white" fontWeight="thin"> {platform.followers.length} Followers </Text>

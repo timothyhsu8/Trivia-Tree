@@ -36,6 +36,7 @@ module.exports = gql`
 
     extend type Mutation {
         createPlatform(platformInput: PlatformInput!): Platform
+        updatePlatform(platformInput: PlatformInput!): Platform
         deletePlatform(platformId: ID!): Platform
     }
 `;

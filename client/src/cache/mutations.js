@@ -43,3 +43,12 @@ export const FAVORITE_QUIZ = gql`
         favoriteQuiz(quizId: $quizId, userId: $userId)
     }
 `;
+
+export const UPDATE_PLATFORM = gql`
+    mutation ($platformInput: PlatformInput!) {
+        updatePlatform(platformInput: $platformInput) {
+            name
+            _id
+        }
+    }
+`;

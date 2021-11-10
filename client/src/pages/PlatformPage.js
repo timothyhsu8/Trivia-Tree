@@ -1,9 +1,10 @@
-import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex } from "@chakra-ui/react"
-import { useQuery } from '@apollo/client';
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input } from "@chakra-ui/react"
+import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
+import { UPDATE_PLATFORM } from '../cache/mutations';
 import { useParams } from 'react-router-dom';
 import QuizCard from "../components/QuizCard";
-import { useState } from 'react';
+import { useState, createRef } from 'react';
 import defaultIcon from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
 
@@ -21,7 +22,83 @@ export default function PlatformPage({}) {
 
     const loading = quizzes.loading || platform.loading
     const error = quizzes.error || platform.error
+
+    // State Variables
+    let name = "Untitled Platform"
+    const [iconChanged, setIconChanged] = useState(false)
+    const [icon, setIcon] = useState(null);
+    const [bannerChanged, setBannerChanged] = useState(false)
+    const [banner, setBanner] = useState(null);
+
+    const hiddenIconInput = createRef(null);
+    const hiddenImageInput = createRef(null);
+
+    // Updater Functions
+    function updateName(newName){
+        name = newName
+    }
+
+    function updateIcon(event) {
+        if (
+            event.target.files &&
+            event.target.files[0] &&
+            event.target.files[0].type.split('/')[0] === 'image'
+        ) {
+            let img = event.target.files[0];
+            let fr = new FileReader();
+            fr.readAsDataURL(img);
+            fr.onload = () => {
+                img = fr.result;
+                setIcon(img);
+                setIconChanged(true)
+            };
+        }
+    }
+
+    function updateBanner(event) {
+        if (
+            event.target.files &&
+            event.target.files[0] &&
+            event.target.files[0].type.split('/')[0] === 'image'
+        ) {
+            let img = event.target.files[0];
+            let fr = new FileReader();
+            fr.readAsDataURL(img);
+            fr.onload = () => {
+                img = fr.result;
+                setBanner(img);
+                setBannerChanged(true)
+            };
+        }
+    }
+
+    const [updatePlatform] = useMutation(UPDATE_PLATFORM, {
+        update() {
+            // history.push('/');
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
+
+    // Send updated platform information to the database
+    function handleUpdatePlatform(){
+        let new_icon, new_banner
+        iconChanged ? ( new_icon = icon ) : ( new_icon = "NoChange" )
+        bannerChanged ? ( new_banner = banner ) : ( new_banner = "NoChange" )
     
+        updatePlatform({
+            variables: {
+                platformInput: {
+                    platformId: platformId,
+                    name: name.trim(),
+                    iconImage: new_icon,
+                    bannerImage: new_banner
+                },
+            },
+        })
+    }
+
     // Loading Screen
     if (loading) {
         return (
@@ -40,17 +117,42 @@ export default function PlatformPage({}) {
         );
     }
 
+    // Set variables 
     const quiz_data = quizzes.data.getQuizzes
     const platform_data = platform.data.getPlatform
 
+    if (icon === null){
+        setIcon(platform_data.iconImage)
+    }
+    if (banner === null){
+        setBanner(platform_data.bannerImage)
+    }
+
+    name = platform_data.name
+
     return (
         <Box>
+            {/* <Box padding="3%">
+                Platform Title <Input w="20%" defaultValue={name} onChange={(e) => updateName(e.target.value)} bgColor="white" /> <br /><br />
+
+                <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenIconInput} onChange={(event) => updateIcon(event)}/>
+                <Button _focus={{ outline: 'none' }} fontSize='100%' border='1px solid' borderColor="gray.300" onClick={() => hiddenIconInput.current.click()}>
+                    Upload Icon
+                </Button> <br /><br />
+
+                <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenImageInput} onChange={(event) => updateBanner(event)}/>
+                <Button _focus={{ outline: 'none' }} fontSize='100%' border='1px solid' borderColor="gray.300" onClick={() => hiddenImageInput.current.click()}>
+                    Upload Banner
+                </Button> <br /><br />
+                <Button onClick={() => handleUpdatePlatform()} bgColor="gray.800" textColor="white"> Save Changes </Button>
+            </Box> */}
+
             <Grid templateColumns="1fr 20fr 1fr">
                 <Box/>
                 <Box>
                      {/* HEADER BUTTONS */}
                      <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr"> 
-                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'platform' ? "blue" : "black" } _focus={{boxShadow:"none"}}> Platform Name</Button>
+                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'platform' ? "blue" : "black" } _focus={{boxShadow:"none"}}> {platform_data.name }</Button>
                         <Button height="100%" fontSize="115%" bgColor="white" _focus={{boxShadow:"none"}}> Quizzes </Button>
                         <Button height="100%" fontSize="115%" bgColor="white" _focus={{boxShadow:"none"}}> Leaderboard </Button>
                         <Button height="100%" fontSize="115%" bgColor="white" _focus={{boxShadow:"none"}}> Badges </Button>
@@ -62,19 +164,20 @@ export default function PlatformPage({}) {
                         minH="200px"
                         pos="relative"
                         bgColor="gray.300"
-                        bgImage={"url('" + platform_data.bannerImage +  "')"} 
+                        bgImage={"url('" + banner +  "')"} 
                         bgSize="cover" 
                         bgPosition="center"
                         borderRadius="10"
                     >
                         {/* PLATFORM ICON / NAME / FOLLOWERS */}
-                        <VStack pos="relative" right="41%" top="50%" spacing="-1">
-                            <Box className='squareimage_container' w="11%" minW="75px" minH="75px"> 
-                                <Image className="squareimage" src={platform_data.iconImage} fallbackSrc={defaultIcon} objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
+                        <VStack pos="relative" w="23%" top="50%" spacing="-1">
+                            <Box className='squareimage_container' w="50%" minW="75px" minH="75px"> 
+                                <Image className="squareimage" src={icon} objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
                             </Box>
-                            <Text fontSize="160%" fontWeight="medium"> {platform_data.name} </Text>
+                            <Text fontSize="160%" fontWeight="medium" textAlign="center"> {platform_data.name} </Text>
                             <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
                         </VStack>
+
                     </Box>
 
                     {/* FOLLOW BUTTON */}
@@ -114,10 +217,9 @@ export default function PlatformPage({}) {
                                 Follow 
                             </Button>
                     }
-                    <Box pos="relative" top="11%" bgColor="gray.300" h="0.1vh" />
 
                     {/* QUIZZES */}
-                    <Box mt="7%">
+                    <Box mt="9%" borderTop="0.2vh solid" borderColor="gray.300">
                         {quiz_sections.map((section, key) => {
                             return (
                                 <Box w="100%" borderRadius="10" overflowX="auto" key={key}>

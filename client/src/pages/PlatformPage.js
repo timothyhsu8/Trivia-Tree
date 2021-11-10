@@ -1,16 +1,18 @@
-import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM } from '../cache/mutations';
 import { useParams } from 'react-router-dom';
+import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
-import { useState, createRef } from 'react';
+import { useState, createRef, useContext } from 'react';
 import defaultIcon from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
 
 export default function PlatformPage({}) {
+    const { user } = useContext(AuthContext);
     let { platformId } = useParams();
-
+    
     const [following, setFollowing] = useState(false)
     const [page, setPage] = useState('platform')
 
@@ -24,14 +26,19 @@ export default function PlatformPage({}) {
     const error = quizzes.error || platform.error
 
     // State Variables
+    let is_owner = false
     let name = "Untitled Platform"
     const [iconChanged, setIconChanged] = useState(false)
     const [icon, setIcon] = useState(null);
     const [bannerChanged, setBannerChanged] = useState(false)
     const [banner, setBanner] = useState(null);
-
+    const [unsavedChanges, setUnsavedChanges] = useState(false)
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
+
+    // Previous state (for canceling changes)
+    const [prevIcon, setPrevIcon] = useState()
+    const [prevBanner, setPrevBanner] = useState()
 
     // Updater Functions
     function updateName(newName){
@@ -51,6 +58,7 @@ export default function PlatformPage({}) {
                 img = fr.result;
                 setIcon(img);
                 setIconChanged(true)
+                setUnsavedChanges(true)
             };
         }
     }
@@ -68,6 +76,7 @@ export default function PlatformPage({}) {
                 img = fr.result;
                 setBanner(img);
                 setBannerChanged(true)
+                setUnsavedChanges(true)
             };
         }
     }
@@ -82,7 +91,7 @@ export default function PlatformPage({}) {
     });
 
     // Send updated platform information to the database
-    function handleUpdatePlatform(){
+    function handleUpdatePlatform() {
         let new_icon, new_banner
         iconChanged ? ( new_icon = icon ) : ( new_icon = "NoChange" )
         bannerChanged ? ( new_banner = banner ) : ( new_banner = "NoChange" )
@@ -97,6 +106,21 @@ export default function PlatformPage({}) {
                 },
             },
         })
+
+        if (iconChanged)
+            setPrevIcon(new_icon)
+
+        if (bannerChanged)
+            setPrevBanner(new_banner)
+        
+        setUnsavedChanges(false)
+    }
+
+    // Cancel icon/banner/name update
+    function cancelChanges() {
+        setIcon(prevIcon)
+        setBanner(prevBanner)
+        setUnsavedChanges(false)
     }
 
     // Loading Screen
@@ -117,15 +141,22 @@ export default function PlatformPage({}) {
         );
     }
 
+    // Checks if user owns (TODO: Fix this, right now it just allows editing when it determines a user is logged in. Make this specific to platform owner)
+    if (user !== null && user !== "NoUser"){
+        is_owner = true
+    }
+
     // Set variables 
     const quiz_data = quizzes.data.getQuizzes
     const platform_data = platform.data.getPlatform
 
     if (icon === null){
         setIcon(platform_data.iconImage)
+        setPrevIcon(platform_data.iconImage)
     }
     if (banner === null){
         setBanner(platform_data.bannerImage)
+        setPrevBanner(platform_data.bannerImage)
     }
 
     name = platform_data.name
@@ -159,26 +190,70 @@ export default function PlatformPage({}) {
                     </Grid>
 
                     {/* BANNER */}
-                    <Box
-                        h="27vh"
-                        minH="200px"
-                        pos="relative"
-                        bgColor="gray.300"
-                        bgImage={"url('" + banner +  "')"} 
-                        bgSize="cover" 
-                        bgPosition="center"
-                        borderRadius="10"
-                    >
-                        {/* PLATFORM ICON / NAME / FOLLOWERS */}
-                        <VStack pos="relative" w="23%" top="50%" spacing="-1">
-                            <Box className='squareimage_container' w="50%" minW="75px" minH="75px"> 
-                                <Image className="squareimage" src={icon} objectFit="cover" border="3px solid white" borderRadius="50%"></Image>
-                            </Box>
-                            <Text fontSize="160%" fontWeight="medium" textAlign="center"> {platform_data.name} </Text>
-                            <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
-                        </VStack>
+                    <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenImageInput} onChange={(event) => updateBanner(event)}/> 
+                        {
+                            is_owner ? 
+                                <Tooltip label="Edit Platform Banner" placement="bottom" fontSize="100%" bgColor="gray.800">
+                                    <Box
+                                        h="27vh"
+                                        minH="200px"
+                                        pos="relative"
+                                        bgColor="gray.300"
+                                        bgImage={"url('" + banner +  "')"} 
+                                        bgSize="cover" 
+                                        bgPosition="center"
+                                        borderRadius="10"
+                                        onClick={() => hiddenImageInput.current.click()}
+                                        _hover={{cursor:"pointer", filter:"brightness(65%)", transition:"0.15s linear"}}
+                                        transition="0.15s linear"
+                                    /> 
+                                </Tooltip>
+                                : 
+                                <Box
+                                    h="27vh"
+                                    minH="200px"
+                                    pos="relative"
+                                    bgColor="gray.300"
+                                    bgImage={"url('" + banner +  "')"} 
+                                    bgSize="cover" 
+                                    bgPosition="center"
+                                    borderRadius="10"
+                                />
+                        }
 
-                    </Box>
+                    {/* PLATFORM ICON / NAME / FOLLOWERS */}
+                    <VStack pos="absolute" top="18%" w="23%" spacing="-1">
+                        <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenIconInput} onChange={(event) => updateIcon(event)}/> 
+                        {
+                            is_owner ? 
+                            <Tooltip label="Edit Platform Icon" placement="top" fontSize="100%" bgColor="gray.800">
+                                <Box className='squareimage_container' w="47%" minW="75px" minH="75px">
+                                    <Image 
+                                        className="squareimage" 
+                                        src={icon} 
+                                        objectFit="cover" 
+                                        border="3px solid white" 
+                                        borderRadius="50%" 
+                                        onClick={() => hiddenIconInput.current.click()}
+                                        _hover={{cursor:"pointer", filter:"brightness(65%)", transition:"0.15s linear"}}
+                                        transition="0.15s linear" 
+                                    />
+                                </Box>
+                            </Tooltip>
+                            :
+                            <Box className='squareimage_container' w="47%" minW="75px" minH="75px">
+                                <Image 
+                                    className="squareimage" 
+                                    src={icon} 
+                                    objectFit="cover" 
+                                    border="3px solid white" 
+                                    borderRadius="50%" 
+                                />
+                            </Box>
+                        }
+                        <Text fontSize="160%" fontWeight="medium" textAlign="center"> {platform_data.name} </Text>
+                        <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
+                    </VStack>
 
                     {/* FOLLOW BUTTON */}
                     {
@@ -243,6 +318,53 @@ export default function PlatformPage({}) {
                     </Box>
                 </Box>
             </Grid>
+
+            {/* FOOTER */}
+            {
+                unsavedChanges ? 
+                <Box w="100%" h="7vh" pos="fixed" bottom="0" bgColor="gray.200" borderTop="1px solid" borderColor="gray.300">
+                    <Center>
+                        <HStack position="absolute" top="50%" transform="translateY(-50%)">
+                            <Button 
+                                minW="100px"
+                                pl="35px" 
+                                pr="35px" 
+                                pt="25px"
+                                pb="25px"
+                                fontSize="125%"
+                                fontWeight="normal" 
+                                bgColor="red.600" 
+                                textColor="white"
+                                _hover={{bgColor:"red.500"}}
+                                _active={{bgColor:"red.400"}}
+                                _focus={{border:"none"}}
+                                onClick={() => cancelChanges()}
+                            > 
+                                Cancel
+                            </Button>
+
+                            <Button 
+                                minW="100px"
+                                pl="35px" 
+                                pr="35px" 
+                                pt="25px"
+                                pb="25px"
+                                fontSize="125%"
+                                fontWeight="normal" 
+                                bgColor="purple.600" 
+                                textColor="white"
+                                _hover={{bgColor:"purple.500"}}
+                                _active={{bgColor:"purple.400"}}
+                                _focus={{border:"none"}}
+                                onClick={() => handleUpdatePlatform()}
+                            > 
+                                Save Changes 
+                            </Button>
+                        </HStack>
+                    </Center>
+                </Box> : 
+                null
+            }
         </Box>
     )
 }

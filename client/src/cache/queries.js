@@ -144,6 +144,7 @@ export const GET_PLATFORM = gql`
               displayName
             }
             tags
+            description
         }
 	}
 `;

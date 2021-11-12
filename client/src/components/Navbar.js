@@ -37,7 +37,7 @@ export default function Navbar() {
         createPlatform({
             variables: {
                 platformInput: {
-                    name: "Programming",
+                    name: "Untitled Platform",
                     iconImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg",
                     bannerImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/what-is-coding.png",
                     background: "white",

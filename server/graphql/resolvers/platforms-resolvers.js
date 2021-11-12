@@ -61,6 +61,7 @@ module.exports = {
             let bannerEffect = null
             let followers = []
             let playlists = []
+            let description = ""
 
             const newPlatform = new Platform({
                 user: context.req.user._id,
@@ -72,7 +73,8 @@ module.exports = {
                 background,
                 followers: followers,
                 tags,
-                playlists: playlists
+                playlists: playlists,
+                description: description
             });
 
             const platform = await newPlatform.save();
@@ -86,7 +88,8 @@ module.exports = {
                     platformId,
                     name,
                     iconImage,
-                    bannerImage
+                    bannerImage,
+                    description
                 },
             },
             context
@@ -141,16 +144,20 @@ module.exports = {
                     });
                 }
             }
+            
+            if (description.length >= 250) {
+                throw new Error('Platform description cannot be greater than 250 characters');
+            }
 
             const updates = {
                 user: context.req.user._id,
                 name,
                 iconImage: imageUrl,
-                bannerImage: bannerUrl
+                bannerImage: bannerUrl,
+                description
             };
-
             platform = await Platform.findByIdAndUpdate(platformId, updates, { new: true });
-
+        
             return platform;
         },
 

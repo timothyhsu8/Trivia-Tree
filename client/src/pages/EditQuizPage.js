@@ -13,15 +13,16 @@ import {
     VStack,
     Box,
 } from '@chakra-ui/react';
-import { BsTrash } from 'react-icons/bs';
 import { RiArrowRightSLine } from 'react-icons/ri';
 import TimeField from 'react-simple-timefield';
 import { AuthContext } from '../context/auth';
+import { v4 as uuidv4 } from 'uuid';
 import '../styles/CreateQuizPage.css';
+import QuestionCreatorCard from '../components/QuestionCreatorCard';
 
-let currentId = 0;
-let img = 'No Image';
+let img = 'Same Image';
 let vertified = false;
+let refs = {};
 
 function EditQuizPage(props) {
     const quizId = props.match.params.quizId;
@@ -32,10 +33,13 @@ function EditQuizPage(props) {
     const [quizQuestions, setQuizQuestions] = useState([
         {
             question: '',
-            answerChoices: ['', '', '', ''],
+            answerChoices: [
+                { choice: '', id: uuidv4() },
+                { choice: '', id: uuidv4() },
+            ],
             answer: '',
-            answerIndex: null,
-            id: currentId++,
+            answerId: null,
+            id: uuidv4(),
         },
     ]);
     const [icon, setIcon] = useState('');
@@ -45,11 +49,6 @@ function EditQuizPage(props) {
     const [quizTimer, setQuizTimer] = useState('10:00:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
     const hiddenImageInput = createRef(null);
-
-    const refs = quizQuestions.reduce((acc, value) => {
-        acc[value.id] = createRef();
-        return acc;
-    }, {});
 
     function handleScrollAction(id) {
         let targetEle = refs[id].current;
@@ -70,69 +69,138 @@ function EditQuizPage(props) {
         setDescription(event.target.value);
     }
 
-    function updateQuestion(event, questionIndex) {
-        const newQuestions = [...quizQuestions];
-        newQuestions[questionIndex].question = event.target.value;
-        setQuizQuestions(newQuestions);
-    }
-
-    function updateAnswerChoice(event, questionIndex, choiceIndex) {
-        const newQuestions = [...quizQuestions];
-        if (
-            newQuestions[questionIndex].answerIndex === choiceIndex &&
-            event.target.value === ''
-        ) {
-            newQuestions[questionIndex].answer = '';
-            newQuestions[questionIndex].answerIndex = null;
-        }
-        newQuestions[questionIndex].answerChoices[choiceIndex] =
-            event.target.value;
-        setQuizQuestions(newQuestions);
-    }
-
-    function addAnswerChoice(questionIndex) {
-        const newQuestions = [...quizQuestions];
-        newQuestions[questionIndex].answerChoices.push('');
-        setQuizQuestions(newQuestions);
-    }
-
-    function removeAnswerChoice(questionIndex, choiceIndex) {
-        const newQuestions = [...quizQuestions];
-        if (newQuestions[questionIndex].answerIndex === choiceIndex) {
-            newQuestions[questionIndex].answer = '';
-            newQuestions[questionIndex].answerIndex = null;
-        }
-        newQuestions[questionIndex].answerChoices.splice(choiceIndex, 1);
-        setQuizQuestions(newQuestions);
-    }
-
-    function updateAnswer(index, choiceIndex, choice) {
-        if (choice.trim() !== '') {
-            const newQuestions = [...quizQuestions];
-            newQuestions[index].answer = choice;
-            newQuestions[index].answerIndex = choiceIndex;
-            setQuizQuestions(newQuestions);
-        }
+    function updateQuestion(value, questionId) {
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.map((quizQuestion) => {
+                if (quizQuestion.id === questionId) {
+                    return { ...quizQuestion, question: value };
+                } else {
+                    return quizQuestion;
+                }
+            })
+        );
     }
 
     function addQuestion() {
-        const newQuestions = [
-            ...quizQuestions,
+        let id = uuidv4();
+        refs[id] = createRef();
+        setQuizQuestions((prevQuizQuestions) => [
+            ...prevQuizQuestions,
             {
                 question: '',
-                answerChoices: ['', '', '', ''],
+                answerChoices: [
+                    { choice: '', id: uuidv4() },
+                    { choice: '', id: uuidv4() },
+                ],
                 answer: '',
-                answerIndex: null,
-                id: currentId++,
+                answerId: null,
+                id: id,
             },
-        ];
-        setQuizQuestions(newQuestions);
+        ]);
     }
 
-    function removeQuestion(index) {
-        const newQuestions = [...quizQuestions];
-        newQuestions.splice(index, 1);
-        setQuizQuestions(newQuestions);
+    function removeQuestion(questionId) {
+        delete refs[questionId];
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.filter(
+                (quizQuestion) => quizQuestion.id !== questionId
+            )
+        );
+    }
+
+    function updateAnswerChoice(value, questionId, choiceId) {
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.map((quizQuestion) => {
+                if (quizQuestion.id === questionId) {
+                    let tempQuestion;
+                    if (
+                        value.trim() === '' &&
+                        quizQuestion.answerId === choiceId
+                    ) {
+                        tempQuestion = {
+                            ...quizQuestion,
+                            answerId: null,
+                            answer: '',
+                        };
+                    } else {
+                        tempQuestion = { ...quizQuestion };
+                    }
+                    tempQuestion.answerChoices = tempQuestion.answerChoices.map(
+                        (answerChoice) => {
+                            if (answerChoice.id === choiceId) {
+                                return { ...answerChoice, choice: value };
+                            } else {
+                                return answerChoice;
+                            }
+                        }
+                    );
+                    return tempQuestion;
+                } else {
+                    return quizQuestion;
+                }
+            })
+        );
+    }
+
+    function addAnswerChoice(questionId) {
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.map((quizQuestion) => {
+                if (quizQuestion.id === questionId) {
+                    let tempQuestion = { ...quizQuestion };
+                    tempQuestion.answerChoices = [
+                        ...quizQuestion.answerChoices,
+                        { choice: '', id: uuidv4() },
+                    ];
+                    return tempQuestion;
+                } else {
+                    return quizQuestion;
+                }
+            })
+        );
+    }
+
+    function removeAnswerChoice(questionId, choiceId) {
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.map((quizQuestion) => {
+                if (quizQuestion.id === questionId) {
+                    let tempQuestion;
+                    if (quizQuestion.answerId === choiceId) {
+                        tempQuestion = {
+                            ...quizQuestion,
+                            answerId: null,
+                            answer: '',
+                        };
+                    } else {
+                        tempQuestion = { ...quizQuestion };
+                    }
+                    tempQuestion.answerChoices =
+                        tempQuestion.answerChoices.filter(
+                            (answerChoice) => answerChoice.id !== choiceId
+                        );
+                    return tempQuestion;
+                } else {
+                    return quizQuestion;
+                }
+            })
+        );
+    }
+
+    function updateAnswer(questionId, choiceId, choice) {
+        if (choice.trim() !== '') {
+            setQuizQuestions((prevQuizQuestions) =>
+                prevQuizQuestions.map((quizQuestion) => {
+                    if (quizQuestion.id === questionId) {
+                        return {
+                            ...quizQuestion,
+                            answer: choice,
+                            answerId: choiceId,
+                        };
+                    } else {
+                        return quizQuestion;
+                    }
+                })
+            );
+        }
     }
 
     function updateIcon(event) {
@@ -141,17 +209,23 @@ function EditQuizPage(props) {
             event.target.files[0] &&
             event.target.files[0].type.split('/')[0] === 'image'
         ) {
-            img = event.target.files[0];
+            let tempImg = event.target.files[0];
             let fr = new FileReader();
-            fr.readAsDataURL(img);
+            fr.readAsDataURL(tempImg);
             fr.onload = () => {
-                img = fr.result;
-                setIcon(img);
+                tempImg = fr.result;
+                img = 'New Image';
+                setIcon(tempImg);
             };
         }
     }
 
     const [updateQuiz] = useMutation(UPDATE_QUIZ, {
+        context: {
+            headers: {
+                imagetype: img,
+            },
+        },
         update() {
             props.history.push('/');
         },
@@ -165,14 +239,18 @@ function EditQuizPage(props) {
             return { ...question };
         });
         modifiedQuizQuestions.forEach((question) => {
-            question.question = question.question.trim();
-            question.answerChoices.forEach((choice, index) => {
-                question.answerChoices[index] = choice.trim();
-            });
+            // question.question = question.question.trim();
+            // question.answerChoices.forEach((choice, index) => {
+            //     question.answerChoices[index] = choice..trim();
+            // });
             delete question.id;
-            delete question.answerIndex;
+            delete question.answerId;
             delete question.__typename;
+            question.answerChoices = question.answerChoices.map((choice) => {
+                return choice.choice;
+            });
         });
+        console.log(modifiedQuizQuestions);
         updateQuiz({
             variables: {
                 quizInput: {
@@ -180,7 +258,7 @@ function EditQuizPage(props) {
                     title: title.trim(),
                     questions: modifiedQuizQuestions,
                     description: description.trim(),
-                    icon: img,
+                    icon: icon,
                     isTimerForQuiz: timeType === 'Quiz' ? true : false,
                     quizTimer: quizTimer,
                     questionTimer: questionTimer,
@@ -200,11 +278,15 @@ function EditQuizPage(props) {
         variables: {
             quizId,
         },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+            props.history.push('/');
+        },
     });
 
     useEffect(() => {
         if (quiz && user) {
-            if (user._id !== quiz.user._id) {
+            if (user === 'NoUser' || user._id !== quiz.user._id) {
                 props.history.push('/');
             }
             setTitle(quiz.title);
@@ -213,15 +295,23 @@ function EditQuizPage(props) {
                 return JSON.parse(JSON.stringify(question));
             });
             modifiedQuizQuestions.forEach((question) => {
-                question.id = currentId++;
-                question.answerChoices.forEach((choice, index) => {
-                    if (choice === question.answer[0]) {
-                        question.answerIndex = index;
+                let tempId = uuidv4();
+                question.id = tempId;
+                refs[tempId] = createRef();
+                question.answerChoices = question.answerChoices.map(
+                    (choice) => {
+                        tempId = uuidv4();
+                        if (choice === question.answer[0]) {
+                            question.answerId = tempId;
+                        }
+                        return {
+                            choice: choice,
+                            id: tempId,
+                        };
                     }
-                });
+                );
             });
             setQuizQuestions(modifiedQuizQuestions);
-            img = quiz.icon;
             setIcon(quiz.icon);
             setQuizType(quiz.quizInstant ? 'Instant' : 'Standard');
             setQuizOrdering(quiz.quizShuffled ? 'Shuffled' : 'Ordered');
@@ -232,11 +322,12 @@ function EditQuizPage(props) {
         }
     }, [quiz, user]);
 
-    if (loading || !vertified) {
+    if (error) {
         return <div></div>;
     }
-    if (error) {
-        return `Error! ${error}`;
+
+    if (loading || !vertified) {
+        return <div></div>;
     }
 
     return (
@@ -269,12 +360,8 @@ function EditQuizPage(props) {
                                     onClick={() => handleScrollAction(item.id)}
                                 >
                                     Question #{index + 1} -{' '}
-                                    {item.question
-                                        .trim()
-                                        .split(' ')
-                                        .splice(0, 8)
-                                        .join(' ')}
-                                    {item.question.trim().split(' ').length > 8
+                                    {item.question.trim().substr(0, 40)}
+                                    {item.question.trim().length > 40
                                         ? '...'
                                         : ''}
                                 </Text>
@@ -314,149 +401,18 @@ function EditQuizPage(props) {
                 </div>
                 <div className='question'>
                     {quizQuestions.map((quizQuestion, questionIndex) => (
-                        <div
-                            style={{
-                                marginTop:
-                                    questionIndex === 0 ? '30px' : '30px',
-                            }}
+                        <QuestionCreatorCard
                             key={quizQuestion.id}
-                            ref={refs[quizQuestion.id]}
-                        >
-                            <div>
-                                <Text
-                                    verticalAlign='middle'
-                                    display='inline'
-                                    fontSize='170%'
-                                >
-                                    Question #{questionIndex + 1}
-                                </Text>
-                                <BsTrash
-                                    className='trashCan'
-                                    style={{
-                                        display: 'inline',
-                                        verticalAlign: 'middle',
-                                        fontSize: '180%',
-                                        marginLeft: '20px',
-                                    }}
-                                    onClick={() =>
-                                        removeQuestion(questionIndex)
-                                    }
-                                />
-                            </div>
-                            <Textarea
-                                value={quizQuestion.question}
-                                onChange={(event) =>
-                                    updateQuestion(event, questionIndex)
-                                }
-                                placeholder='Enter Question'
-                                height='fit-content'
-                                overflow='auto'
-                                borderColor='black'
-                                borderWidth='3px'
-                                _focus={{ borderColor: 'black' }}
-                                _hover={{ borderColor: 'black' }}
-                                fontSize='160%'
-                                width='90%'
-                            />
-                            <div>
-                                {quizQuestion.answerChoices.map(
-                                    (choice, choiceIndex) => (
-                                        <HStack
-                                            style={{ marginTop: '20px' }}
-                                            key={
-                                                quizQuestion.id +
-                                                choiceIndex +
-                                                1
-                                            }
-                                        >
-                                            <Button
-                                                border='solid'
-                                                borderColor='black'
-                                                display='inline'
-                                                verticalAlign='middle'
-                                                marginLeft='20px'
-                                                marginRight='20px'
-                                                colorScheme='green'
-                                                background={
-                                                    quizQuestion.answerIndex ===
-                                                        choiceIndex &&
-                                                    choice.trim() !== ''
-                                                        ? 'rgba(124, 252, 0, 0.5)'
-                                                        : 'transparent'
-                                                }
-                                                size='xs'
-                                                _focus={{ outline: 'none' }}
-                                                onClick={() =>
-                                                    updateAnswer(
-                                                        questionIndex,
-                                                        choiceIndex,
-                                                        choice
-                                                    )
-                                                }
-                                            />
-                                            <Input
-                                                value={choice}
-                                                onChange={(event) =>
-                                                    updateAnswerChoice(
-                                                        event,
-                                                        questionIndex,
-                                                        choiceIndex
-                                                    )
-                                                }
-                                                backgroundColor={
-                                                    quizQuestion.answerIndex ===
-                                                        choiceIndex &&
-                                                    choice.trim() !== ''
-                                                        ? 'rgba(124, 252, 0, 0.5)'
-                                                        : 'transparent'
-                                                }
-                                                borderRadius='10px'
-                                                placeholder='Enter Answer Choice'
-                                                variant='flushed'
-                                                borderColor='black'
-                                                borderBottomWidth='3px'
-                                                _focus={{
-                                                    borderColor: 'black',
-                                                }}
-                                                fontSize='150%'
-                                                height='fit-content'
-                                                display='inline'
-                                                verticalAlign='middle'
-                                                width='80%'
-                                            />
-                                            <BsTrash
-                                                className='trashCan'
-                                                style={{
-                                                    display: 'inline',
-                                                    verticalAlign: 'middle',
-                                                    fontSize: '150%',
-                                                    marginLeft: '20px',
-                                                }}
-                                                onClick={() =>
-                                                    removeAnswerChoice(
-                                                        questionIndex,
-                                                        choiceIndex
-                                                    )
-                                                }
-                                            />
-                                        </HStack>
-                                    )
-                                )}
-                                <Button
-                                    _focus={{ outline: 'none' }}
-                                    marginLeft='70px'
-                                    marginTop='20px'
-                                    borderColor='black'
-                                    border='solid'
-                                    borderWidth='2px'
-                                    onClick={() =>
-                                        addAnswerChoice(questionIndex)
-                                    }
-                                >
-                                    Add Answer Choice
-                                </Button>
-                            </div>
-                        </div>
+                            quizQuestion={quizQuestion}
+                            questionIndex={questionIndex}
+                            updateQuestion={updateQuestion}
+                            removeQuestion={removeQuestion}
+                            updateAnswerChoice={updateAnswerChoice}
+                            addAnswerChoice={addAnswerChoice}
+                            removeAnswerChoice={removeAnswerChoice}
+                            updateAnswer={updateAnswer}
+                            questionRef={refs[quizQuestion.id]}
+                        />
                     ))}
                     <Center>
                         <Button

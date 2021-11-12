@@ -46,6 +46,9 @@ module.exports = {
             },
             context
         ) {
+            if (context.req.user === undefined) {
+                throw new Error('You must be logged in to create quizzes');
+            }
             if (title.trim() === '') {
                 throw new Error('Quiz title cannot be blank');
             }
@@ -94,8 +97,9 @@ module.exports = {
                 }
             });
 
+            let imageType = context.req.headers.imagetype;
             let imageUrl;
-            if (icon === 'No Image') {
+            if (imageType === 'Default Image') {
                 imageUrl =
                     'https://www.atlantawatershed.org/wp-content/uploads/2017/06/default-placeholder.png';
             } else {
@@ -214,7 +218,12 @@ module.exports = {
             },
             context
         ) {
-            let quiz = await Quiz.findById(quizId);
+            let quiz;
+            try {
+                quiz = await Quiz.findById(quizId);
+            } catch (err) {
+                throw new Error(err);
+            }
             if (!quiz.user.equals(context.req.user._id)) {
                 throw new Error('You are not the creator of this quiz');
             }
@@ -267,11 +276,9 @@ module.exports = {
                 }
             });
 
-            let imageUrl;
-            if (icon === 'No Image') {
-                imageUrl =
-                    'https://www.atlantawatershed.org/wp-content/uploads/2017/06/default-placeholder.png';
-            } else {
+            let imageType = context.req.headers.imagetype;
+            let imageUrl = icon;
+            if (imageType === 'New Image') {
                 await cloudinary.uploader.upload(icon, (error, result) => {
                     if (error) {
                         throw new Error('Could not upload image');
@@ -317,13 +324,12 @@ module.exports = {
             }
         },
         async favoriteQuiz(_, { quizId, userId }) {
-            console.log(quizId)
-            console.log(userId)
+            console.log(quizId);
+            console.log(userId);
 
             const quiz = await Quiz.findById(quizId);
 
-
-            quiz.numFavorites = quiz.numFavorites + 1; 
+            quiz.numFavorites = quiz.numFavorites + 1;
             quiz.save();
 
             const user = await User.findById(userId);
@@ -332,9 +338,9 @@ module.exports = {
             user.favoritedQuizzes = userFavQuizzes;
             user.save();
 
-            console.log(user.favoritedQuizzes)
+            console.log(user.favoritedQuizzes);
 
-            return true
-        }
+            return true;
+        },
     },
 };

@@ -4,7 +4,7 @@ import { BsShopWindow } from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import coin from '../images/coin.png';
 import { useMutation, gql } from '@apollo/client';
 import guestImage from '../images/guest.png';
@@ -12,17 +12,17 @@ import '../styles/styles.css'
 
 export default function Navbar() {
     const { user } = useContext(AuthContext);
+    const [searchType, setSearchType] = useState('All')
+    const [searchText, setSearchText] = useState("")
 
     let history = useHistory();
     let logged_in = false
-    let search_text = ""
-    let categories = ["All Quizzes", "Educational", "Entertainment", "Movies", "Sports", "TV", "Other"]
+    let categories = ["All", "Quizzes", "Platforms"]
     let username = "Guest"
     let pfp_src = {guestImage}
     let menu_bg_hover = "blue.500"
     let menu_text_hover = "white"
     let currency = 0;
-
 
     const [createPlatform] = useMutation(CREATE_PLATFORM, {
         update() {
@@ -66,7 +66,8 @@ export default function Navbar() {
             pathname: '/searchresultspage',
             state: {
                 // location state
-                search: search_text,
+                search: searchText,
+                searchType: searchType
             },
         });
     }
@@ -77,7 +78,7 @@ export default function Navbar() {
                 pathname: '/accountpage/' + user._id,
                 state: {
                     // location state
-                    search: search_text,
+                    search: searchText,
                 },
             });
         }
@@ -87,7 +88,7 @@ export default function Navbar() {
                 pathname: '/loginpage',
                 state: {
                     // location state
-                    search: search_text,
+                    search: searchText,
                 },
             });
         }
@@ -131,15 +132,15 @@ export default function Navbar() {
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
+                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
-                            return <option key={index}> {category} </option>;
+                            return <option key={index} on> {category} </option>;
                         })}
                     </Select>
 
                     {/* SEARCH BAR */}
                     <Input h="45px" onKeyPress={handleKeyPress} 
-                        onChange={(e) => { search_text = e.target.value }} 
+                        onChange={(e) => setSearchText(e.target.value)} 
                         fontSize="17px" 
                         borderRadius="0px" 
                         placeholder="Search for a quiz..." 

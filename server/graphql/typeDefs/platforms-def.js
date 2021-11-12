@@ -32,6 +32,7 @@ module.exports = gql`
     extend type Query {
         getPlatforms: [Platform]
         getPlatform(platformId: ID!): Platform
+        searchPlatforms(searchText: String!): [Platform]
     }
 
     extend type Mutation {

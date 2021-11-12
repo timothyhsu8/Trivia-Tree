@@ -27,6 +27,14 @@ module.exports = {
                 throw new Error(err);
             }
         },
+        async searchQuizzes(_, { searchText }) {
+            try {
+                const quizzes = await Quiz.find({title: { "$regex": searchText, "$options": "i"}}).populate('user').exec();
+                return quizzes;
+            } catch (err) {
+                throw new Error(err);
+            }
+        }
     },
     Mutation: {
         async createQuiz(

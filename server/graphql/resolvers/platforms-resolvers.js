@@ -28,6 +28,15 @@ module.exports = {
                 throw new Error(err);
             }
         },
+
+        async searchPlatforms(_, { searchText }) {
+            try {
+                const platforms = await Platform.find({name: { "$regex": searchText, "$options": "i"}})
+                return platforms;
+            } catch (err) {
+                throw new Error(err);
+            }
+        }
 	},
 
 	Mutation: {

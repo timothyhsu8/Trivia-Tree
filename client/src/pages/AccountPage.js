@@ -439,7 +439,7 @@ export default function AccountPage(props) {
                         </Box>
                     )
                 ) : null}
-            </Box>
+                </Box>
         );
     }
 

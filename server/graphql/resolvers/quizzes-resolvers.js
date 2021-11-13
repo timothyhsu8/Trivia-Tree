@@ -132,6 +132,9 @@ module.exports = {
             });
 
             const quiz = await newQuiz.save();
+            await User.findByIdAndUpdate(context.req.user._id, {
+                $push: { quizzesMade: quiz._id },
+            });
 
             return quiz;
         },
@@ -318,6 +321,12 @@ module.exports = {
                     throw new Error('You are not the creator of this quiz');
                 }
                 await quiz.delete();
+                await User.findByIdAndUpdate(context.req.user._id, {
+                    $pull: { quizzesMade: quiz._id },
+                    $pull: { featuredQuizzes: quiz._id },
+                    $pull: { favoritedQuizzes: quiz._id },
+                    $pull: { quizzesTaken: quiz._id },
+                });
                 return quiz;
             } catch (err) {
                 throw new Error(err);

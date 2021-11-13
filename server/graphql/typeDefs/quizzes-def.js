@@ -39,9 +39,9 @@ module.exports = gql`
     }
 
     input QuizInput {
-        quizId: ID
-        title: String!
-        questions: [QuestionInput!]!
+        quizId: ID!
+        title: String
+        questions: [QuestionInput]
         description: String
         icon: String
         isTimerForQuiz: Boolean
@@ -72,6 +72,6 @@ module.exports = gql`
         createQuizApollo(quizInput: QuizInput!): Quiz
         updateQuiz(quizInput: QuizInput!): Quiz
         deleteQuiz(quizId: ID!): Quiz
-        favoriteQuiz(quizId: ID! userId: ID!): Boolean
+        favoriteQuiz(quizId: ID!, userId: ID!): Boolean
     }
 `;

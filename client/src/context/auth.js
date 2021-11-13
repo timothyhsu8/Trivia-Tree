@@ -8,6 +8,7 @@ const AuthContext = createContext({
     user: null,
     login: (userData) => {},
     logout: () => {},
+    refreshUserData: () => {}
 });
 
 function authReducer(state, action) {
@@ -49,9 +50,16 @@ function AuthProvider(props) {
         dispatch({ type: 'LOGOUT' });
     }
 
+    function refreshUserData() {
+        fetch('/getuser')
+            .then((res) => res.json())
+            .then((data) => login(data))
+            .catch((data) => login('NoUser'));
+    }
+
     return (
         <AuthContext.Provider
-            value={{ user: state.user, login, logout }}
+            value={{ user: state.user, login, logout, refreshUserData }}
             {...props}
         />
     );

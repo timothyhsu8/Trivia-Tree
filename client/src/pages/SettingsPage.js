@@ -43,7 +43,7 @@ export default function SettingsPage() {
 
     /*
     const [updateSettings] = useMutation(UPDATE_SETTINGS, {
-        update() {
+        onCompleted() {
             props.history.push('/');
         },
         onError(err) {
@@ -93,7 +93,7 @@ export default function SettingsPage() {
 
 /*
     const [deleteAccount] = useMutation(DELETE_ACCOUNT, {
-        update() {
+        onCompleted() {
             props.history.push('/');
         },
         onError(err) {

@@ -10,6 +10,7 @@ module.exports = gql`
         bannerImage: String
         bannerEffect: Item
         background: String
+        title: String
         bio: String
         currency: Int
         ownedBannerEffects: [Item]
@@ -25,9 +26,19 @@ module.exports = gql`
         darkMode: Boolean
         favoritedQuizzes: [Quiz]
     }
+
+    input UserInput {
+        userId: ID!
+        iconImage: String
+        bannerImage: String
+        bio: String
+    }
+
     extend type Query {
         getUsers: [User]
         getUser(_id: ID!): User
     }
-
+    extend type Mutation {
+        updateUser(userInput: UserInput!): User
+    }
 `;

@@ -18,9 +18,9 @@ export const GET_QUIZZES = gql`
 `;
 
 export const GET_QUIZ = gql`
-	query GetQuiz($quizId: ID!) {
-		getQuiz(quizId: $quizId) {
-			_id
+    query GetQuiz($quizId: ID!) {
+        getQuiz(quizId: $quizId) {
+            _id
             title
             user {
                 displayName
@@ -37,13 +37,13 @@ export const GET_QUIZ = gql`
             numQuestions
             numAttempts
             numFavorites
-		}
-	}
+        }
+    }
 `;
 
 export const GET_QUIZ_ATTEMPT = gql`
-	query GetQuizAttempt($_id: ID!) {
-		getQuizAttempt(_id: $_id) {
+    query GetQuizAttempt($_id: ID!) {
+        getQuizAttempt(_id: $_id) {
             _id
             user {
                 displayName
@@ -73,20 +73,20 @@ export const GET_QUIZ_ATTEMPT = gql`
             elapsedTime
             attemptNumber
             coinsEarned
-		}
-	}
+        }
+    }
 `;
 
 export const GET_LEADERBOARD = gql`
-	query GetLeaderboard($quiz_id: ID!) {
-		getLeaderboard(quiz_id: $quiz_id) {
+    query GetLeaderboard($quiz_id: ID!) {
+        getLeaderboard(quiz_id: $quiz_id) {
             _id
             user {
                 displayName
             }
             score
-		}
-	}
+        }
+    }
 `;
 
 export const GET_PLATFORMS = gql`
@@ -101,24 +101,24 @@ export const GET_PLATFORMS = gql`
             followers {
                 displayName
             }
-          }
+        }
     }
 `;
 
 export const GET_PLATFORM = gql`
-	query getPlatform($platformId: ID!) {
-		getPlatform(platformId: $platformId) {
+    query getPlatform($platformId: ID!) {
+        getPlatform(platformId: $platformId) {
             _id
             name
             iconImage
             bannerImage
             background
             followers {
-              displayName
+                displayName
             }
             tags
         }
-	}
+    }
 `;
 
 export const GET_USERS = gql`
@@ -133,12 +133,52 @@ export const GET_USERS = gql`
 `;
 
 export const GET_USER = gql`
-	query GetUser($_id: ID!) {
-		getUser(_id: $_id) {
-			_id
+    query ($_id: ID!) {
+        getUser(_id: $_id) {
+            _id
             displayName
             iconImage
             bio
-		}
-	}
+            title
+            bannerImage
+            quizzesMade {
+                _id
+                title
+                numAttempts
+                numFavorites
+                icon
+                rating
+                user {
+                    displayName
+                }
+            }
+            platformsMade {
+                _id
+                iconImage
+                name
+                user {
+                    displayName
+                }
+            }
+            featuredQuizzes {
+                _id
+                title
+                numAttempts
+                numFavorites
+                icon
+                rating
+                user {
+                    displayName
+                }
+            }
+            featuredPlatforms {
+                _id
+                iconImage
+                name
+                user {
+                    displayName
+                }
+            }
+        }
+    }
 `;

@@ -21,13 +21,14 @@ import '../styles/CreateQuizPage.css';
 import QuestionCreatorCard from '../components/QuestionCreatorCard';
 
 let img = 'Same Image';
-let vertified = false;
 let refs = {};
+const hiddenImageInput = createRef(null);
 
 function EditQuizPage(props) {
     const quizId = props.match.params.quizId;
     const { user } = useContext(AuthContext);
 
+    const [setup, setSetUp] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [quizQuestions, setQuizQuestions] = useState([
@@ -48,7 +49,6 @@ function EditQuizPage(props) {
     const [timeType, setTimeType] = useState('Quiz');
     const [quizTimer, setQuizTimer] = useState('10:00:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
-    const hiddenImageInput = createRef(null);
 
     function handleScrollAction(id) {
         let targetEle = refs[id].current;
@@ -226,7 +226,7 @@ function EditQuizPage(props) {
                 imagetype: img,
             },
         },
-        update() {
+        onCompleted() {
             props.history.push('/');
         },
         onError(err) {
@@ -274,6 +274,7 @@ function EditQuizPage(props) {
         error,
         data: { getQuiz: quiz } = {},
     } = useQuery(FETCH_QUIZ_QUERY, {
+        skip: !user,
         fetchPolicy: 'network-only',
         variables: {
             quizId,
@@ -282,10 +283,7 @@ function EditQuizPage(props) {
             console.log(JSON.stringify(err, null, 2));
             props.history.push('/');
         },
-    });
-
-    useEffect(() => {
-        if (quiz && user) {
+        onCompleted({ getQuiz: quiz }) {
             if (user === 'NoUser' || user._id !== quiz.user._id) {
                 props.history.push('/');
             }
@@ -318,15 +316,23 @@ function EditQuizPage(props) {
             setTimeType(quiz.isTimerForQuiz ? 'Quiz' : 'Question');
             setQuizTimer(quiz.quizTimer);
             setQuestionTimer(quiz.questionTimer);
-            vertified = true;
-        }
-    }, [quiz, user]);
+            setSetUp(true);
+        },
+    });
+
+    if (user === null) {
+        return <div></div>;
+    }
+
+    if (!setup) {
+        return <div></div>;
+    }
 
     if (error) {
         return <div></div>;
     }
 
-    if (loading || !vertified) {
+    if (loading) {
         return <div></div>;
     }
 

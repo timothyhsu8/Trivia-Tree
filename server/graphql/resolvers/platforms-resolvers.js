@@ -67,6 +67,9 @@ module.exports = {
             });
 
             const platform = await newPlatform.save();
+            await User.findByIdAndUpdate(context.req.user._id, {
+                $push: { platformsMade: platform._id },
+            });
 
             return platform;
         },
@@ -151,6 +154,9 @@ module.exports = {
                 // if (!platform.user.equals(context.req.user._id)) {
                 //     throw new Error('You are not the creator of this platform');
                 // }
+                await User.findByIdAndUpdate(context.req.user._id, {
+                    $pull: { platformsMade: platform._id },
+                });
                 await platform.delete();
                 return platform;
             } catch (err) {

@@ -21,6 +21,7 @@ import QuestionCreatorCard from '../components/QuestionCreatorCard';
 
 let img = 'Default Image';
 let refs = {};
+const hiddenImageInput = createRef(null);
 
 function CreateQuizPage(props) {
     const [title, setTitle] = useState('');
@@ -45,7 +46,6 @@ function CreateQuizPage(props) {
     const [timeType, setTimeType] = useState('Quiz');
     const [quizTimer, setQuizTimer] = useState('10:00:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
-    const hiddenImageInput = createRef(null);
 
     //Have to create a ref for the initial question manually
     if (Object.keys(refs).length === 0) {
@@ -228,7 +228,7 @@ function CreateQuizPage(props) {
                 imagetype: img,
             },
         },
-        update() {
+        onCompleted() {
             props.history.push('/');
         },
         onError(err) {
@@ -306,7 +306,8 @@ function CreateQuizPage(props) {
                 </div>
                 <div className='title-description'>
                     <Input
-                        onBlur={(event) => updateTitle(event)}
+                        value={title}
+                        onChange={(event) => updateTitle(event)}
                         placeholder='Enter Quiz Title'
                         variant='flushed'
                         borderColor='black'
@@ -318,7 +319,8 @@ function CreateQuizPage(props) {
                     />
                     <Text marginLeft='10px'>Quiz Title</Text>
                     <Textarea
-                        onBlur={(event) => updateDescription(event)}
+                        value={description}
+                        onChange={(event) => updateDescription(event)}
                         placeholder='Enter Quiz Description'
                         fontSize='100%'
                         height='fit-content'

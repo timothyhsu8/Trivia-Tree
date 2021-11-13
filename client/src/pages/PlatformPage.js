@@ -82,7 +82,7 @@ export default function PlatformPage({}) {
     }
 
     const [updatePlatform] = useMutation(UPDATE_PLATFORM, {
-        update() {
+        onCompleted() {
             // history.push('/');
         },
         onError(err) {

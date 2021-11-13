@@ -23,9 +23,8 @@ export default function Navbar() {
     let menu_text_hover = "white"
     let currency = 0;
 
-
     const [createPlatform] = useMutation(CREATE_PLATFORM, {
-        update() {
+        onCompleted() {
             history.push('/');
         },
         onError(err) {

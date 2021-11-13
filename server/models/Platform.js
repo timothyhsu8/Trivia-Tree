@@ -47,6 +47,9 @@ const platformSchema = new Schema(
         tags: {
             type: [String],
         },
+        quizzes: {
+            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
+        },
         playlists: {
             type: [playlistSchema],
         },

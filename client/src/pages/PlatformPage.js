@@ -1,22 +1,25 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM } from '../cache/mutations';
-import { useParams } from 'react-router-dom';
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM } from '../cache/mutations';
+import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
 import { useState, createRef, useContext } from 'react';
-import defaultIcon from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
+import AddQuizCard from "../components/AddQuizCard";
+import SelectQuizCard from "../components/SelectQuizCard"
 
 export default function PlatformPage({}) {
+    let history = useHistory();
+
     const { user } = useContext(AuthContext);
     let { platformId } = useParams();
     
     const [following, setFollowing] = useState(false)
     const [page, setPage] = useState('Platform')
 
-    const quiz_sections = ["Best Quizzes", "Most Played Quizzes", "Geography"]
+    const quiz_sections = ["All Quizzes", "Most Played Quizzes", "Geography"]
 
     // Fetch quiz data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
@@ -36,15 +39,12 @@ export default function PlatformPage({}) {
     const [unsavedChanges, setUnsavedChanges] = useState(false)
     const [editDescription, setEditDescription] = useState(false)
     const [description, setDescription] = useState(null)
+    const [isAddingQuiz, setIsAddingQuiz] = useState(false)
+    const [chosenQuiz, setChosenQuiz] = useState(null)
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
 
-    // Previous state (for canceling changes)
-    const [prevIcon, setPrevIcon] = useState()
-    const [prevBanner, setPrevBanner] = useState()
-    const [prevName, setPrevName] = useState()
-    const [prevDescription, setPrevDescription] = useState()
-
+    // Updates the icon without saving it to the database
     function updateIcon(event) {
         if (
             event.target.files &&
@@ -63,6 +63,7 @@ export default function PlatformPage({}) {
         }
     }
 
+    // Updates the banner without saving it to the database
     function updateBanner(event) {
         if (
             event.target.files &&
@@ -81,6 +82,7 @@ export default function PlatformPage({}) {
         }
     }
 
+    // Sends the updated platform information to the database
     const [updatePlatform] = useMutation(UPDATE_PLATFORM, {
         onCompleted() {
             // history.push('/');
@@ -108,20 +110,32 @@ export default function PlatformPage({}) {
             },
         })
 
-        if (iconChanged)
-            setPrevIcon(new_icon)
-
-        if (bannerChanged)
-            setPrevBanner(new_banner)
-        
         setUnsavedChanges(false)
     }
 
-    // Cancel icon/banner/name update
-    function cancelChanges() {
-        setIcon(prevIcon)
-        setBanner(prevBanner)
-        setUnsavedChanges(false)
+    // Sends the selected quiz to the database and adds it to the platform
+    const [addQuizToPlatform] = useMutation(ADD_QUIZ_TO_PLATFORM, {
+        onCompleted() {
+            history.go(0)
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    })
+
+    // Finish selecting quiz and send added quiz to database
+    function handleAddQuizToPlatform() {
+        setIsAddingQuiz(false)
+
+        if(chosenQuiz !== null){
+            addQuizToPlatform({
+                variables: {
+                    platformId: platform_data._id,
+                    quizId: chosenQuiz
+                },
+            })
+        }
+        setChosenQuiz(null)
     }
 
     // Loading Screen
@@ -143,16 +157,15 @@ export default function PlatformPage({}) {
     }
 
     // Set variables 
-    const quiz_data = quizzes.data.getQuizzes
+    const all_quizzes = quizzes.data.getQuizzes // Temporary, remove when quizzes are grabbed from an individual user
+    const quiz_data = platform.data.getPlatform.quizzes
     const platform_data = platform.data.getPlatform
 
     if (icon === null) {
         setIcon(platform_data.iconImage)
-        setPrevIcon(platform_data.iconImage)
     }
     if (banner === null) {
         setBanner(platform_data.bannerImage)
-        setPrevBanner(platform_data.bannerImage)
     }
 
     if (name === null) {
@@ -166,6 +179,13 @@ export default function PlatformPage({}) {
     // Checks if user owns
     if (user !== null && user !== "NoUser" && user._id === platform_data.user._id){
         is_owner = true
+    }
+
+    // Cancel icon/banner/name update
+    function cancelChanges() {
+        setIcon(platform_data.iconImage)
+        setBanner(platform_data.bannerImage)
+        setUnsavedChanges(false)
     }
 
     function renderPage() {
@@ -295,11 +315,7 @@ export default function PlatformPage({}) {
                                 borderRadius="10px" 
                                 padding="10px"
                                 _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
-                                onClick={
-                                    () => {
-                                        setPrevName(name)
-                                        setEditName(true)
-                                    }}
+                                onClick={() => { setEditName(true) }}
                                 >
                                 {platform_data.name} 
                             </Text>
@@ -351,7 +367,7 @@ export default function PlatformPage({}) {
                                     _focus={{border:"none"}} 
                                     onClick={
                                         () => {
-                                            setName(prevName)
+                                            setName(platform_data.name)
                                             setEditName(false)
                                         }}
                                 >
@@ -372,8 +388,19 @@ export default function PlatformPage({}) {
                         return (
                             <Box w="100%" borderRadius="10" overflowX="auto" key={key}>
                                 <Text pl="1.5%" pt="1%" fontSize="130%" fontWeight="medium"> {section} </Text>
-                                {/* FEATURED QUIZZES */}
                                 <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
+                                    {/* Card for adding a quiz, if platform owner is viewing */}
+                                    {is_owner ? 
+                                        <AddQuizCard 
+                                            width="7.5%"
+                                            title_fontsize="125%" 
+                                            callback={setIsAddingQuiz}
+                                        />
+                                        :
+                                        null
+                                    }
+                                    
+                                    {/* QUIZ CARDS */}
                                     {quiz_data.map((quiz, key) => {
                                         return <QuizCard 
                                             quiz={quiz} 
@@ -443,10 +470,7 @@ export default function PlatformPage({}) {
                                     padding="10px"
                                     _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
                                     onClick={
-                                        () => {
-                                            setPrevDescription(description)
-                                            setEditDescription(true)
-                                        }}
+                                        () => { setEditDescription(true) }}
                                     >
                                     {description}
                                 </Text>
@@ -498,7 +522,7 @@ export default function PlatformPage({}) {
                                         _focus={{border:"none"}} 
                                         onClick={
                                             () => {
-                                                setDescription(prevDescription)
+                                                setDescription(platform_data.description)
                                                 setEditDescription(false)
                                             }}
                                     >
@@ -516,11 +540,40 @@ export default function PlatformPage({}) {
 
     return (
         <Box>
-            {/* <Box padding="3%">
-                Platform Title <Input w="20%" defaultValue={name} onChange={(e) => updateName(e.target.value)} bgColor="white" /> <br /><br />
-                <Button onClick={() => handleUpdatePlatform()} bgColor="gray.800" textColor="white"> Save Changes </Button>
-            </Box> */}
+            {/* Darken screen and allow user to select quiz to add to the platform */}
+            {
+                isAddingQuiz ? 
+                    <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
+                       {/* QUIZ CARDS */}
+                            <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
+                                {all_quizzes.map((quiz, key) => {
+                                    return <SelectQuizCard
+                                        key={key}
+                                        quiz={quiz} 
+                                        width="7.5%"
+                                        title_fontsize="92%" 
+                                        include_author={false}
+                                        char_limit={35}  
+                                        font_color="white"
+                                        show_stats={false}
+                                        chosenQuiz={chosenQuiz}
+                                        setChosenQuiz={setChosenQuiz}
+                                        />
+                                })}
+                            </Flex>
+                        
+                        {/* Finish selecting a quiz */}
+                        <Button pos="fixed" bottom="3%" right="3%" bgColor="blue.500" textColor="white" fontSize="125%" pt="1.5%" pb="1.5%" pl="2%" pr="2%"
+                            onClick={() => {handleAddQuizToPlatform()}}>
+                            Finish
+                        </Button>
+                    </Box>
+                    :
+                    null
+            }    
 
+
+            {/* RENDER FULL PAGE */}
             <Grid templateColumns="1fr 20fr 1fr">
                 <Box/>
                 <Box>

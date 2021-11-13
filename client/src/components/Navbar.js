@@ -26,7 +26,7 @@ export default function Navbar() {
 
     const [createPlatform] = useMutation(CREATE_PLATFORM, {
         onCompleted() {
-            history.push('/');
+            // history.push('/');
         },
         onError(err) {
             console.log(err);

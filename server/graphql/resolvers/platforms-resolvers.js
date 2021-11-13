@@ -7,7 +7,13 @@ module.exports = {
 	Query: {
 		async getPlatforms() {
 			try {
-				const platforms = await Platform.find().populate('user').exec();
+				const platforms = await Platform.find()
+                .populate('user')
+                .populate({
+                    path: 'quizzes',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+                .exec();
 				return platforms;
 			} catch (err) {
 				throw new Error(err);
@@ -16,9 +22,14 @@ module.exports = {
 
         async getPlatform(_, { platformId }) {
             try {
-                const platform = await Platform.findById(platformId).populate('user').exec();
-                    // .populate('user')
-                    // .exec();
+                const platform = await Platform.findById(platformId)
+                .populate('user')
+                .populate({
+                    path: 'quizzes',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+                .exec();
+
                 if (platform) {
                     return platform;
                 } else {
@@ -61,7 +72,7 @@ module.exports = {
             let bannerEffect = null
             let followers = []
             let playlists = []
-            let description = ""
+            let description = "Platform Description"
 
             const newPlatform = new Platform({
                 user: context.req.user._id,
@@ -98,9 +109,9 @@ module.exports = {
             context
         ) {
             let platform = await Platform.findById(platformId);
-            // if (!platform.user.equals(context.req.user._id)) {
-            //     throw new Error('You are not the creator of this platform');
-            // }
+            if (!platform.user.equals(context.req.user._id)) {
+                throw new Error('You are not the creator of this platform');
+            }
 
             if (name.trim() === '') {
                 throw new Error('Platform title cannot be blank');
@@ -178,6 +189,41 @@ module.exports = {
             } catch (err) {
                 throw new Error(err);
             }
-        }
+        },
+
+        // Creates a new playlist for this platform
+        async addPlaylistToPlatform(_, { platformId, playlistName }, context) {
+            try {
+                const platform = await Platform.findById(platformId);
+                // if (!platform.user.equals(context.req.user._id)) {
+                //     throw new Error('You are not the creator of this platform');
+                // }
+
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+
+        // Adds quiz to the platform 
+        async addQuizToPlatform(_, { platformId, quizId }, context) {
+            try {
+                const platform = await Platform.findByIdAndUpdate(platformId, {
+                    $push: { quizzes: quizId },
+                })
+                .populate({
+                    path: 'quizzes',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+                .exec()
+                // if (!platform.user.equals(context.req.user._id)) {
+                //     throw new Error('You are not the creator of this platform');
+                // }
+
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
 	}
 };

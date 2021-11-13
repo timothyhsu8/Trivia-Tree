@@ -150,6 +150,13 @@ export const GET_PLATFORM = gql`
                 _id
                 displayName
             }
+            quizzes {
+                _id
+                title
+                icon
+                numFavorites
+                numAttempts
+            }
         }
     }
 `;

@@ -52,3 +52,12 @@ export const UPDATE_PLATFORM = gql`
         }
     }
 `;
+
+export const ADD_QUIZ_TO_PLATFORM = gql`
+mutation ($platformId: ID!, $quizId: ID!) {
+    addQuizToPlatform(platformId: $platformId, quizId: $quizId) {
+        name
+        _id
+    }
+}
+`

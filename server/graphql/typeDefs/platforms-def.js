@@ -12,6 +12,7 @@ module.exports = gql`
         background: String
         followers: [User]
         tags: [String]
+        quizzes: [Quiz]
         playlists: [Playlist]
         description: String
     }
@@ -41,5 +42,7 @@ module.exports = gql`
         createPlatform(platformInput: PlatformInput!): Platform
         updatePlatform(platformInput: PlatformInput!): Platform
         deletePlatform(platformId: ID!): Platform
+        addPlaylistToPlatform(platformId: ID!, playlistName: String!): Platform
+        addQuizToPlatform(platformId: ID!, quizId: ID!): Platform
     }
 `;

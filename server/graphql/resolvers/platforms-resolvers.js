@@ -7,7 +7,7 @@ module.exports = {
 	Query: {
 		async getPlatforms() {
 			try {
-				const platforms = await Platform.find()
+				const platforms = await Platform.find().populate('user').exec();
 				return platforms;
 			} catch (err) {
 				throw new Error(err);
@@ -16,7 +16,7 @@ module.exports = {
 
         async getPlatform(_, { platformId }) {
             try {
-                const platform = await Platform.findById(platformId)
+                const platform = await Platform.findById(platformId).populate('user').exec();
                     // .populate('user')
                     // .exec();
                 if (platform) {
@@ -31,7 +31,7 @@ module.exports = {
 
         async searchPlatforms(_, { searchText }) {
             try {
-                const platforms = await Platform.find({name: { "$regex": searchText, "$options": "i"}})
+                const platforms = await Platform.find({name: { "$regex": searchText, "$options": "i"}}).populate('user').exec();
                 return platforms;
             } catch (err) {
                 throw new Error(err);

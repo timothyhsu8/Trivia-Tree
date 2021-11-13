@@ -116,8 +116,7 @@ export default function Navbar() {
                         transition: 'opacity 0.2s linear',
                     }}
                     transition='opacity 0.2s linear'
-                    pos='relative'
-                    left='2%'
+                    ml='2%'
                     color='white'
                     fontSize='200%'
                 >
@@ -182,7 +181,7 @@ export default function Navbar() {
                     <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
 
                     {/* PROFILE PICTURE */}
-                    <Box className='squareimage_container' w="8%"> 
+                    <Box className='squareimage_container' w="8%" minW="30px"> 
                         <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
                     </Box>
 

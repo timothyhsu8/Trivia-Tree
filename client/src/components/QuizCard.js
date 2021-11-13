@@ -61,7 +61,7 @@ export default function QuizCard( props ) {
                         textColor="purple.500"
                         _hover={{textColor:"blue.400", cursor:"pointer"}}
                         onClick={(event) => {
-                            history.push('/accountpage/')
+                            history.push('/accountpage/' + quiz_data.user._id)
                             event.stopPropagation()
                         }}
                         >

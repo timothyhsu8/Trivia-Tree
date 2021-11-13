@@ -6,6 +6,7 @@ export const GET_QUIZZES = gql`
             _id
             title
             user {
+                _id
                 displayName
             }
             icon
@@ -145,6 +146,10 @@ export const GET_PLATFORM = gql`
             }
             tags
             description
+            user {
+                _id
+                displayName
+            }
         }
 	}
 `;

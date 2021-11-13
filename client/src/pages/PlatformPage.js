@@ -27,7 +27,8 @@ export default function PlatformPage({}) {
 
     // State Variables
     let is_owner = false
-    let name = "Untitled Platform"
+    const [name, setName] = useState(null)
+    const [editName, setEditName] = useState(false)
     const [iconChanged, setIconChanged] = useState(false)
     const [icon, setIcon] = useState(null);
     const [bannerChanged, setBannerChanged] = useState(false)
@@ -41,12 +42,8 @@ export default function PlatformPage({}) {
     // Previous state (for canceling changes)
     const [prevIcon, setPrevIcon] = useState()
     const [prevBanner, setPrevBanner] = useState()
+    const [prevName, setPrevName] = useState()
     const [prevDescription, setPrevDescription] = useState()
-
-    // Updater Functions
-    function updateName(newName){
-        name = newName
-    }
 
     function updateIcon(event) {
         if (
@@ -145,11 +142,6 @@ export default function PlatformPage({}) {
         );
     }
 
-    // Checks if user owns (TODO: Fix this, right now it just allows editing when it determines a user is logged in. Make this specific to platform owner)
-    if (user !== null && user !== "NoUser"){
-        is_owner = true
-    }
-
     // Set variables 
     const quiz_data = quizzes.data.getQuizzes
     const platform_data = platform.data.getPlatform
@@ -163,11 +155,19 @@ export default function PlatformPage({}) {
         setPrevBanner(platform_data.bannerImage)
     }
 
+    if (name === null) {
+        setName(platform_data.name)
+    }
+
     if (description === null) {
         setDescription(platform_data.description)
     }
 
-    name = platform_data.name
+    // Checks if user owns
+    if (user !== null && user !== "NoUser" && user._id === platform_data.user._id){
+        is_owner = true
+    }
+
     function renderPage() {
         if (page === 'Platform') 
             return renderPlatform()
@@ -189,7 +189,7 @@ export default function PlatformPage({}) {
                             <Tooltip label="Edit Platform Banner" placement="bottom" fontSize="100%" bgColor="gray.800">
                                 <Box
                                     h="27vh"
-                                    minH="200px"
+                                    minH="150px"
                                     pos="relative"
                                     bgColor="gray.300"
                                     bgImage={"url('" + banner +  "')"} 
@@ -204,7 +204,7 @@ export default function PlatformPage({}) {
                             : 
                             <Box
                                 h="27vh"
-                                minH="200px"
+                                minH="150px"
                                 pos="relative"
                                 bgColor="gray.300"
                                 bgImage={"url('" + banner +  "')"} 
@@ -213,43 +213,6 @@ export default function PlatformPage({}) {
                                 borderRadius="10"
                             />
                     }
-
-                {/* PLATFORM ICON / NAME / FOLLOWERS */}
-                <VStack pos="absolute" top="18%" w="23%" spacing="-1">
-                    <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenIconInput} onChange={(event) => updateIcon(event)}/> 
-                    {
-                        // If user is owner, they can edit the platform icon
-                        is_owner ? 
-                        <Tooltip label="Edit Platform Icon" placement="top" fontSize="100%" bgColor="gray.800">
-                            <Box className='squareimage_container' w="47%" minW="75px" minH="75px">
-                                <Image 
-                                    className="squareimage" 
-                                    src={icon} 
-                                    objectFit="cover" 
-                                    border="3px solid white" 
-                                    borderRadius="50%" 
-                                    onClick={() => hiddenIconInput.current.click()}
-                                    _hover={{cursor:"pointer", filter:"brightness(65%)", transition:"0.15s linear"}}
-                                    transition="0.15s linear" 
-                                />
-                            </Box>
-                        </Tooltip>
-                        :
-                        // If user is not owner, they cannot edit the platform icon
-                        <Box className='squareimage_container' w="47%" minW="75px" minH="75px">
-                            <Image 
-                                className="squareimage" 
-                                src={icon} 
-                                objectFit="cover" 
-                                border="3px solid white" 
-                                borderRadius="50%" 
-                            />
-                        </Box>
-                    }
-                    <Text fontSize="160%" fontWeight="medium" textAlign="center"> {platform_data.name} </Text>
-                    <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
-                </VStack>
-
                 {/* FOLLOW BUTTON */}
                 {
                     following ?
@@ -287,6 +250,121 @@ export default function PlatformPage({}) {
                             Follow 
                         </Button>
                 }
+
+                {/* PLATFORM ICON / NAME / FOLLOWERS */}
+                <VStack pos="absolute" top="18%" w="23%" spacing="-1">
+                    <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenIconInput} onChange={(event) => updateIcon(event)}/> 
+                    {
+                        // If user is owner, they can edit the platform icon
+                        is_owner ? 
+                        <Tooltip label="Edit Platform Icon" placement="top" fontSize="100%" bgColor="gray.800">
+                            <Box className='squareimage_container' w="47%" minW="75px" minH="75px">
+                                <Image 
+                                    className="squareimage" 
+                                    src={icon} 
+                                    objectFit="cover" 
+                                    border="3px solid white" 
+                                    borderRadius="50%" 
+                                    onClick={() => hiddenIconInput.current.click()}
+                                    _hover={{cursor:"pointer", filter:"brightness(65%)", transition:"0.15s linear"}}
+                                    transition="0.15s linear" 
+                                />
+                            </Box>
+                        </Tooltip>
+                        :
+                        // If user is not owner, they cannot edit the platform icon
+                        <Box className='squareimage_container' w="47%" minW="75px" minH="75px">
+                            <Image 
+                                className="squareimage" 
+                                src={icon} 
+                                objectFit="cover" 
+                                border="3px solid white" 
+                                borderRadius="50%" 
+                            />
+                        </Box>
+                    }
+                    
+                    {/* Platform Name */}
+                    {
+                        is_owner ? 
+                        <Tooltip label="Edit Platform Name" placement="bottom" fontSize="100%" bgColor="gray.800">
+                            <Text 
+                                fontSize="160%" 
+                                fontWeight="medium"
+                                transition=".1s linear"
+                                borderRadius="10px" 
+                                padding="10px"
+                                _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
+                                onClick={
+                                    () => {
+                                        setPrevName(name)
+                                        setEditName(true)
+                                    }}
+                                >
+                                {platform_data.name} 
+                            </Text>
+                        </Tooltip>
+                        :
+                        <Text 
+                            fontSize="160%" 
+                            fontWeight="medium"
+                            transition=".1s linear"
+                            borderRadius="10px" 
+                            padding="10px" 
+                        >
+                            {platform_data.name} 
+                        </Text>
+                    }
+                    {/* Edit Platform Name */}
+                    {
+                        editName ?
+                            <Box w="100%">
+                                {/* Save platform name edit */}
+                                <Input value={name} onChange={(event) => setName(event.target.value)} borderColor="gray.400"/>
+                                <Button 
+                                    mt="1%" 
+                                    ml="1.5%" 
+                                    float="right" 
+                                    bgColor="gray.800" 
+                                    textColor="white" 
+                                    _hover={{bgColor:"gray.700"}} 
+                                    _active={{bgColor:"gray.600"}} 
+                                    _focus={{border:"none"}}
+                                    onClick={
+                                        () => {
+                                            handleUpdatePlatform()
+                                            setEditName(false)
+                                        }
+                                    }
+                                >
+                                    Save
+                                </Button>
+
+                                {/* Cancel platform name edit */}
+                                <Button 
+                                    mt="1%" 
+                                    float="right" 
+                                    bgColor="red.600" 
+                                    textColor="white" 
+                                    _hover={{bgColor:"red.500"}} 
+                                    _active={{bgColor:"red.400"}}
+                                    _focus={{border:"none"}} 
+                                    onClick={
+                                        () => {
+                                            setName(prevName)
+                                            setEditName(false)
+                                        }}
+                                >
+                                    Cancel
+                                </Button>
+                            </Box>
+                                :
+                            null
+                    }
+
+                    <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
+                </VStack>
+               
 
                 {/* QUIZZES */}
                 <Box mt="9%" borderTop="0.2vh solid" borderColor="gray.300">
@@ -355,22 +433,34 @@ export default function PlatformPage({}) {
                         <Text fontSize="120%"> {platform_data.followers.length} Followers </Text>
                         
                         {/* Platform Description */}
-                        <Tooltip label="Edit Platform Description" placement="bottom" fontSize="100%" bgColor="gray.800">
+                        {
+                            is_owner ? 
+                            <Tooltip label="Edit Platform Description" placement="bottom" fontSize="100%" bgColor="gray.800">
+                                <Text 
+                                    fontSize="110%" 
+                                    transition=".1s linear"
+                                    borderRadius="10px" 
+                                    padding="10px"
+                                    _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
+                                    onClick={
+                                        () => {
+                                            setPrevDescription(description)
+                                            setEditDescription(true)
+                                        }}
+                                    >
+                                    {description}
+                                </Text>
+                            </Tooltip>
+                            :
                             <Text 
                                 fontSize="110%" 
                                 transition=".1s linear"
                                 borderRadius="10px" 
-                                padding="10px"
-                                _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
-                                onClick={
-                                    () => {
-                                        setPrevDescription(description)
-                                        setEditDescription(true)
-                                    }}
-                                >
+                                padding="10px" 
+                            >
                                 {description}
                             </Text>
-                        </Tooltip>
+                        }
 
                         {/* Platform Description */}
                         {

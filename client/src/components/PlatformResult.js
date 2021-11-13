@@ -3,7 +3,6 @@ import quizImage from '../images/defaultquiz.jpeg';
 import { Link } from 'react-router-dom';
 
 export default function PlatformResult( {platform} ) {
-    console.log(platform)
     return (
         <Link to={'/platformpage/' + platform._id}>
             <HStack
@@ -31,30 +30,6 @@ export default function PlatformResult( {platform} ) {
                     <Text fontSize="135%" fontWeight="medium"> {platform.name}</Text>
                     <Text fontSize="110%"> {platform.followers.length} Followers </Text>
                 </Stack>
-                
-                {/* QUIZ TITLE AND DESCRIPTION */}
-                {/* <Grid templateRows="1fr 1fr">
-                    <Text fontSize="115%" fontWeight="medium"> {quiz.title} </Text>
-                    <Text fontSize="95%"> {quiz.description} </Text>
-                </Grid> */}
-
-                {/* RATING */}
-                {/* <Center>
-                    <Text fontSize="110%" fontWeight="thin">
-                        <Icon pos="relative" as={StarIcon} boxSize="4" color="yellow.500"/>
-                        &nbsp;{quiz_rating}
-                    </Text>
-                </Center> */}
-
-                {/* PLATFORM */}
-                {/* <Center>
-                    <Text top="50%" fontSize="1.8vh" color="blue.500" > {quiz_platform} </Text> 
-                </Center> */}
-
-                {/* CREATOR */}
-                {/* <Center>
-                    <Text top="50%" fontSize="1.8vh"> {quiz.user.displayName} </Text> 
-                </Center> */}
             </HStack>
         </Link>
     )

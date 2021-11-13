@@ -4,11 +4,13 @@ import { useQuery } from '@apollo/client';
 import { SEARCH_QUIZZES, SEARCH_PLATFORMS } from "../cache/queries";
 import QuizResult from '../components/QuizResult'
 import PlatformResult from '../components/PlatformResult'
+import { useState } from 'react';
 import '../styles/styles.css'
 
 export default function SearchResultsPage() {
 
     const location = useLocation()
+    const [sortType, setSortType] = useState("none")
     let search = location.state.search
     let searchType = location.state.searchType
     let search_text = 'Search Results for "' + search + '"'
@@ -42,6 +44,7 @@ export default function SearchResultsPage() {
 
     // Gather all search results
     let search_results = getSearchResults(searchType, quiz_data, platform_data)
+    search_results = sortSearchResults(search_results, sortType)
 
     // Puts the correct data into the search results array (Depending on if the user serached for quizzes, platforms, users, or all)
     function getSearchResults(searchType, quiz_data, platform_data) {
@@ -60,6 +63,48 @@ export default function SearchResultsPage() {
                 break
         }
         return search_results
+    }
+
+    // Sorting Search results
+    function sortSearchResults(search_results, sortType) {
+        if(sortType === "sort_random")
+            return sortRandom(search_results)
+        if(sortType === "sort_abc")
+            return sortAlphabetical(search_results)
+        if(sortType === "sort_zyx")
+            return sortReverseAlphabetical(search_results)
+        return search_results
+    }
+
+    function sortRandom(search_results) {
+        return search_results.sort((a, b) => {
+            return Math.random() > 0.5 ? 1 : -1
+        })
+    }
+
+    function sortAlphabetical(search_results) {
+        return search_results.sort((a, b) => {
+            let resultA = getName(a)
+            let resultB = getName(b)
+            return resultA > resultB ? 1 : -1
+        })
+    }
+
+    function sortReverseAlphabetical(search_results) {
+        return search_results.sort((a, b) => {
+            let resultA = getName(a)
+            let resultB = getName(b)
+            return resultA < resultB ? 1 : -1
+        })
+    }
+
+    // Determines if this is a quiz/platform/user and returns the appropriate name value
+    function getName(x) {
+        if (x.__typename === "Quiz")
+            return x.title
+        if (x.__typename === "Platform")
+            return x.name
+        return null
     }
 
     // Render search results to the user
@@ -107,7 +152,7 @@ export default function SearchResultsPage() {
                     <Box w="75%" h="0.15vh" bgColor="gray.300"/>
 
                     <Text fontSize="100%"> Difficulties </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
                         <option> All Difficulties </option>
                         <option> Easy </option>
                         <option> Intermediate </option>
@@ -116,17 +161,29 @@ export default function SearchResultsPage() {
                     </Select>
 
                     <Text fontSize="100%"> Quiz Types </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
                         <option> All Quiz Types </option>
                         <option> Standard </option>
                         <option> Instant </option>
                     </Select>
 
                     <Text fontSize="100%"> Timers </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px" _focus={{boxShadow:"none"}}> 
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
                         <option> Any Time Limit </option>
                         <option> Standard </option>
                         <option> Instant </option>
+                    </Select>
+
+                    <Box h="3vh" />
+                    <Box w="75%" h="0.10vh" bgColor="gray.300"/>
+
+                    {/* SORT QUIZZES */}
+                    <Text fontSize="125%" fontWeight="medium">Sort</Text>
+                    <Select w="75%" borderColor="gray.400" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
+                        <option value="none">None</option>
+                        <option value="sort_abc">Alphabetical [A-Z]</option>
+                        <option value="sort_zyx">Reverse Alphabetical [Z-A]</option>
+                        <option value="sort_random">Random</option>
                     </Select>
                 </VStack>
 

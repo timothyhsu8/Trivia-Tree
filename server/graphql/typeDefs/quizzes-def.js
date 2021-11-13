@@ -39,7 +39,7 @@ module.exports = gql`
     }
 
     input QuizInput {
-        quizId: ID!
+        quizId: ID
         title: String
         questions: [QuestionInput]
         description: String

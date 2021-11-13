@@ -6,6 +6,7 @@ export const GET_QUIZZES = gql`
             _id
             title
             user {
+                _id
                 displayName
             }
             icon
@@ -77,6 +78,33 @@ export const GET_QUIZ_ATTEMPT = gql`
     }
 `;
 
+export const SEARCH_QUIZZES = gql`
+    query Query($searchText: String!) {
+        searchQuizzes(searchText: $searchText) {
+            _id
+            title
+            description
+            numQuestions
+            icon
+            rating
+            numFavorites
+            quizInstant
+            quizShuffled
+            questionTimer
+            quizTimer
+            isTimerForQuiz
+            platform {
+                _id
+                name
+            }
+            user {
+                _id
+                displayName
+            }
+        }
+    }
+`;
+
 export const GET_LEADERBOARD = gql`
     query GetLeaderboard($quiz_id: ID!) {
         getLeaderboard(quiz_id: $quiz_id) {
@@ -117,6 +145,25 @@ export const GET_PLATFORM = gql`
                 displayName
             }
             tags
+            description
+            user {
+                _id
+                displayName
+            }
+        }
+    }
+`;
+
+export const SEARCH_PLATFORMS = gql`
+    query searchPlatform($searchText: String!) {
+        searchPlatforms(searchText: $searchText) {
+            _id
+            name
+            iconImage
+            bannerImage
+            followers {
+                displayName
+            }
         }
     }
 `;

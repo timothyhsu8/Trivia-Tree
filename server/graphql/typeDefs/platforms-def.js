@@ -13,6 +13,7 @@ module.exports = gql`
         followers: [User]
         tags: [String]
         playlists: [Playlist]
+        description: String
     }
 
     input PlatformInput {
@@ -22,6 +23,7 @@ module.exports = gql`
         bannerImage: String
         background: String
         tags: [String]
+        description: String
     }
 
     type Playlist {
@@ -32,6 +34,7 @@ module.exports = gql`
     extend type Query {
         getPlatforms: [Platform]
         getPlatform(platformId: ID!): Platform
+        searchPlatforms(searchText: String!): [Platform]
     }
 
     extend type Mutation {

@@ -50,6 +50,9 @@ const platformSchema = new Schema(
         playlists: {
             type: [playlistSchema],
         },
+        description: {
+            type: String,
+        }
     },
     { timestamps: true }
 );

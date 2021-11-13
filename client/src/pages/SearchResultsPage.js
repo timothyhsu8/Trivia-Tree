@@ -1,26 +1,23 @@
 import { Box, Grid, Text, Image, HStack, Icon, Button, Center, VStack, Select, Spinner } from "@chakra-ui/react"
-import { StarIcon } from '@chakra-ui/icons'
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES } from "../cache/queries";
-import quizImage from '../images/defaultquiz.jpeg';
+import { SEARCH_QUIZZES, SEARCH_PLATFORMS } from "../cache/queries";
+import QuizResult from '../components/QuizResult'
+import PlatformResult from '../components/PlatformResult'
 import '../styles/styles.css'
 
 export default function SearchResultsPage() {
 
     const location = useLocation()
     let search = location.state.search
+    let searchType = location.state.searchType
     let search_text = 'Search Results for "' + search + '"'
 
-    // Placeholder data for the quiz info we don't have in the database yet
-    let quiz_rating = 5
-    let quiz_platform = "No Platform"
+    const quizzes = useQuery(SEARCH_QUIZZES, { variables: { searchText: search }, fetchPolicy: 'cache-and-network' })
+    const platforms = useQuery(SEARCH_PLATFORMS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
 
-    const {
-        loading,
-        error,
-        data: { getQuizzes: quiz_data } = {},
-    } = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' });
+    const loading = quizzes.loading || platforms.loading
+    const error = quizzes.error || platforms.error
 
     // Loading Screen
     if (loading) {
@@ -39,78 +36,66 @@ export default function SearchResultsPage() {
             </Center>
         );
     }
-    
-    // Filters quizzes to match the search parameters
-    const quizzes = quiz_data.filter((quiz) => {
-        let quiz_title = quiz.title.toLowerCase()
-        let search_word = search.toLowerCase()
-        return quiz_title.includes(search_word)
-    })
+
+    const quiz_data = quizzes.data.searchQuizzes
+    const platform_data = platforms.data.searchPlatforms
+
+    // Gather all search results
+    let search_results = getSearchResults(searchType, quiz_data, platform_data)
+
+    // Puts the correct data into the search results array (Depending on if the user serached for quizzes, platforms, users, or all)
+    function getSearchResults(searchType, quiz_data, platform_data) {
+        let search_results = []
+        
+        switch(searchType) {
+            case "All":
+                search_results = search_results.concat(quiz_data)
+                search_results = search_results.concat(platform_data)
+                break
+            case "Quizzes":
+                search_results = search_results.concat(quiz_data)
+                break
+            case "Platforms":
+                search_results = search_results.concat(platform_data)
+                break
+        }
+        return search_results
+    }
 
     // Render search results to the user
     function renderSearchResults(){
         // No quizzes found
-        if (quizzes.length === 0)
+        if (search_results.length === 0)
             return (
                 <Center mt="1%">
-                    <Text fontSize="2vw" fontWeight="thin">No quizzes found for "{search}"</Text>
+                    <Text fontSize="2vw" fontWeight="thin"> No results found for "{search}"</Text>
                 </Center>
             )
-                    
+        
         // Show quizzes that matched user's search
         return (
-            quizzes.map((quiz, index) => {
-                return( 
-                    <Link to={'/prequizpage/' + quiz._id} key={index}>
-                        <Grid 
-                            h="10vh" 
-                            minH="80px"
-                            top="50%" 
-                            templateColumns="2fr 9fr 1fr 2fr 3fr" 
-                            borderBottom="1px" 
-                            borderColor="gray.300" 
-                            dipslay="flex" 
-                            alignItems="center" 
-                            _hover={{bgColor:"gray.200", 
-                            cursor:"pointer", 
-                            transition:"background-color 0.2s linear"}} 
-                            transition="background-color 0.1s linear"
-                        >
-                    
-                        {/* QUIZ ICON */}
-                        <Center>
-                            <Box className='squareimage_container' w="40%"> 
-                                <Image className="squareimage" src={quiz.icon} fallbackSrc={quizImage} objectFit="cover" borderRadius="23%"></Image>
-                            </Box>
-                        </Center>
+            // Content refers to either a Quiz, Platform, or User
+            search_results.map((content, index) => {
+                if (content.__typename === "Quiz") {
+                    return ( 
+                        <QuizResult 
+                            key={index}
+                            quiz={content}
+                        />)
+                }
 
-                        {/* QUIZ TITLE AND DESCRIPTION */}
-                        <Grid templateRows="1fr 1fr">
-                            <Text fontSize="115%" fontWeight="medium"> {quiz.title} </Text>
-                            <Text fontSize="95%"> {quiz.description} </Text>
-                        </Grid>
-
-                        {/* RATING */}
-                        <Center>
-                            <Text fontSize="110%" fontWeight="thin">
-                                <Icon pos="relative" as={StarIcon} boxSize="4" color="yellow.500"/>
-                                &nbsp;{quiz_rating}
-                            </Text>
-                        </Center>
-
-                        {/* PLATFORM */}
-                        <Center>
-                            <Text top="50%" fontSize="1.8vh" color="blue.500" > {quiz_platform} </Text> 
-                        </Center>
-
-                        {/* CREATOR */}
-                        <Center>
-                            <Text top="50%" fontSize="1.8vh"> {quiz.user.displayName} </Text> 
-                        </Center>
-                    </Grid>
-                </Link>
-            )})
+                else if (content.__typename === "Platform") {
+                    return (
+                        <PlatformResult 
+                            key={index}
+                            platform={content}
+                        />
+                    )
+                }
+                
+            })
         )
+
     }
 
     return (

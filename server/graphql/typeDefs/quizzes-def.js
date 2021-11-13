@@ -66,6 +66,7 @@ module.exports = gql`
     extend type Query {
         getQuizzes: [Quiz]
         getQuiz(quizId: ID!): Quiz
+        searchQuizzes(searchText: String!): [Quiz]
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz

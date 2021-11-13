@@ -1,4 +1,4 @@
-import {
+  import {
     Box,
     Text,
     Grid,
@@ -9,6 +9,9 @@ import {
     Spinner,
     Flex,
     Textarea,
+    FormControl,
+    FormLabel,
+    Select
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_QUIZZES, GET_USER } from '../cache/queries';
@@ -31,13 +34,15 @@ export default function AccountPage(props) {
 
     let quiz_sections = ['Featured Quizzes', 'Featured Platforms'];
 
-    //New stuff for updating this page, I don't know how to send to DB so it just console logs
     const [page, setPage] = useState('user');
     const [isEditing, setIsEditing] = React.useState(false);
     const [bio, setBio] = React.useState('');
     const [userTitle, setUserTitle] = React.useState('');
     const [pfp_src, setPFP] = useState(''); //String path
     const [banner_src, setBanner] = useState(''); //String path
+    //Here we go again
+    const [backgroundNum, setBackground] = useState(""); //Int bg
+    const background = ["white","red","blue","green"];
 
     function toggleEditPage() {
         setIsEditing(!isEditing);
@@ -49,6 +54,26 @@ export default function AccountPage(props) {
 
     function updateUserTitle(value) {
         setUserTitle(value);
+    }
+
+    //Not attached to backend
+
+    function changeBackground(event) {
+        event.preventDefault();
+        console.log(event.target[0].value)
+        setBackground(event.target[0].value)
+        //console.log(backgroundNum)
+        //Does change but a little after
+        
+    }
+    function listCreator(numberOfRows, background ) {
+        //Takes number of rows to make a variable number of rows of categories
+        //Takes an images array and text array to fill the rows with
+        let list = []
+        for(let i=0;i<numberOfRows;i++) {
+            list.push(<option value={background[i]}>{background[i]}</option>)
+        }
+        return list;
     }
 
     function updatePFP(event) {
@@ -84,6 +109,7 @@ export default function AccountPage(props) {
             };
         }
     }
+    
 
     function cancelEditing() {
         toggleEditPage(false);
@@ -152,6 +178,7 @@ export default function AccountPage(props) {
             },
         });
     }
+    
     // Loading Screen
     if (loading) {
         return (
@@ -183,7 +210,8 @@ export default function AccountPage(props) {
     // Render User
     function renderUser() {
         return (
-            <Box minW='500px'>
+            //move the bgColor={backgroundNum} to wherever would cover the whole screen
+            <Box bgColor={backgroundNum} minW='500px'>
                 {/* BANNER */}
                 <Box
                     h='28vh'
@@ -390,6 +418,18 @@ export default function AccountPage(props) {
                             <Button onClick={() => handleUpdateUser()}>
                                 Save Updates
                             </Button>
+                            <form onSubmit={changeBackground}>
+                                <FormControl id="background">
+                                    <FormLabel>Background</FormLabel>
+                                    <Select placeholder="Default" name="go">
+                                        { listCreator(background.length, background ) }
+                                        
+                                    </Select>          
+                                </FormControl>
+                                <Button type="submit" value="Submit">Confirm</Button>
+                            </form>
+                            
+                            
                         </VStack>
                     ) : (
                         <Box position='absolute' left='20px'>

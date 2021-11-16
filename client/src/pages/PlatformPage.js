@@ -1,7 +1,7 @@
-import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Popover, PopoverTrigger, PopoverContent, PopoverBody, PopoverFooter, PopoverCloseButton, PopoverHeader } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM } from '../cache/mutations';
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
@@ -136,6 +136,25 @@ export default function PlatformPage({}) {
             })
         }
         setChosenQuiz(null)
+    }
+
+    // Deletes platform
+    const [deletePlatform] = useMutation(DELETE_PLATFORM, {
+        onCompleted() {
+            history.push('/');
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
+
+    // Button event to delete a platform
+    function handleDeletePlatform() {
+        deletePlatform({
+            variables: {
+                platformId: platformId,
+            },
+        })
     }
 
     // Loading Screen
@@ -534,6 +553,42 @@ export default function PlatformPage({}) {
                         }
                     </VStack>
                 </Center>
+                {/* Delete Platform Button */}
+                {
+                    is_owner ? 
+                        <Center>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Button 
+                                        mt="5%" 
+                                        bgColor="red.600" 
+                                        textColor="white" 
+                                        _hover={{bgColor:"red.500"}} 
+                                        _active={{bgColor:"red.400"}}
+                                        _focus={{border:"none"}} 
+                                        // onClick={}
+                                        >
+                                        Delete Platform
+                                    </Button>
+                                </PopoverTrigger>
+                                
+                                <PopoverContent>
+                                    <PopoverCloseButton />
+                                    <PopoverHeader fontWeight="medium"> Confirmation </PopoverHeader>
+                                    <PopoverBody> 
+                                        Are you sure you want to delete this platform? 
+                                    </PopoverBody>
+                                    <PopoverFooter>
+                                        <Center>
+                                            <Button colorScheme="blue" onClick={() => handleDeletePlatform()}> Yes, delete this platform </Button> 
+                                        </Center>
+                                    </PopoverFooter>
+                                </PopoverContent>
+                            </Popover>
+                        </Center>
+                    :
+                    null
+                }
             </Box>
         )
     }
@@ -562,11 +617,22 @@ export default function PlatformPage({}) {
                                 })}
                             </Flex>
                         
-                        {/* Finish selecting a quiz */}
-                        <Button pos="fixed" bottom="3%" right="3%" bgColor="blue.500" textColor="white" fontSize="125%" pt="1.5%" pb="1.5%" pl="2%" pr="2%"
-                            onClick={() => {handleAddQuizToPlatform()}}>
-                            Finish
-                        </Button>
+                        {/* Cancel Selecting a quiz */}
+                        <HStack w="100%" spacing="1%" pos="fixed" bottom="3%" right="-83%">
+                            <Button bgColor="gray.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                                onClick={() => {
+                                    setIsAddingQuiz(false)
+                                    setChosenQuiz(null)
+                                }}>
+                                Cancel
+                            </Button>
+
+                            {/* Finish selecting a quiz */}
+                            <Button bgColor="blue.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                                onClick={() => {handleAddQuizToPlatform()}}>
+                                Finish
+                            </Button>
+                        </HStack>
                     </Box>
                     :
                     null

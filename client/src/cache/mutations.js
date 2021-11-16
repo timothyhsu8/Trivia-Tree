@@ -61,3 +61,12 @@ mutation ($platformId: ID!, $quizId: ID!) {
     }
 }
 `
+
+export const DELETE_PLATFORM = gql`
+    mutation ($platformId: ID!) {
+        deletePlatform(platformId: $platformId) {
+            name
+            _id
+        }
+    }
+`;

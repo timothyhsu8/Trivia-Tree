@@ -25,8 +25,8 @@ export default function Navbar() {
     let currency = 0;
 
     const [createPlatform] = useMutation(CREATE_PLATFORM, {
-        onCompleted() {
-            // history.push('/');
+        onCompleted(platform) {
+            history.push('/platformpage/' + platform.createPlatform._id);
         },
         onError(err) {
             console.log(err);

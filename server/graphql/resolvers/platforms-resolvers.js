@@ -1,5 +1,6 @@
 const Platform = require('../../models/Platform');
 // const Quiz = require('../../models/Quiz');
+const User = require('../../models/User');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
@@ -181,9 +182,9 @@ module.exports = {
                 // if (!platform.user.equals(context.req.user._id)) {
                 //     throw new Error('You are not the creator of this platform');
                 // }
-                await User.findByIdAndUpdate(context.req.user._id, {
-                    $pull: { platformsMade: platform._id },
-                });
+                // await User.findByIdAndUpdate(context.req.user._id, {
+                //     $pull: { platformsMade: platform._id },
+                // });
                 await platform.delete();
                 return platform;
             } catch (err) {

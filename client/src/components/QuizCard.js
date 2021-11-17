@@ -26,12 +26,7 @@ export default function QuizCard( props ) {
     let author_fontsize = props.author_fontsize
     let include_author = props.include_author
     let author = null
-<<<<<<< HEAD
-    let disableClick = props.disableClick
-    if (include_author){
-=======
     if (include_author) {
->>>>>>> 6d864d1a582f774c85671880f5284cd66cc75c40
         author = quiz_data.user.displayName
     }
     
@@ -39,9 +34,7 @@ export default function QuizCard( props ) {
     let icon_src = quiz_data.icon == null ? quizImage : quiz_data.icon
     let numAttempts = quiz_data.numAttempts
     let numFavorites = quiz_data.numFavorites
-<<<<<<< HEAD
     let isEditing = props.isEditing ? true:false;
-=======
     let is_owner = false
     if (props.is_owner) {
         is_owner = true
@@ -66,7 +59,6 @@ export default function QuizCard( props ) {
             }
         })
     }
->>>>>>> 6d864d1a582f774c85671880f5284cd66cc75c40
 
     // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
     
@@ -91,18 +83,12 @@ export default function QuizCard( props ) {
             _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
             _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
             transition="background-color 0.1s linear"
-<<<<<<< HEAD
             onClick={isEditing ? ()=> quizToDelete():() => history.push('/prequizpage/' + quiz_data._id)}
-            color={disableClick ? 'white':'black'}
-        >
-            <Box className='squareimage_container' w="75%"> 
-                <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
-            </Box>
-=======
+            //color={disableClick ? 'white':'black'}
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
-            onClick={() => history.push('/prequizpage/' + quiz_data._id)}
-        >   
+        >
+
             {/* EDIT/DELETE BUTTONS (If user is owner) */}
             {renderEditButtons()}
             
@@ -111,7 +97,6 @@ export default function QuizCard( props ) {
                 <Box className='squareimage_container' w="75%"> 
                     <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>
                 </Box>
->>>>>>> 6d864d1a582f774c85671880f5284cd66cc75c40
 
                 {/* QUIZ TITLE */}
                 <Tooltip label={quiz_data.title} openDelay={350}>

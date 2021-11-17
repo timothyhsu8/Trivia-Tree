@@ -1,4 +1,6 @@
 const User = require('../../models/User');
+const Platform = require('../../models/Platform');
+const Quiz = require('../../models/Quiz');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
@@ -147,6 +149,56 @@ module.exports = {
                 })
                 .exec();
             return user;
+        },
+        async addFeaturedQuiz(_, {userId, newFeaturedQuizId}, context){
+            const quiz = await Quiz.findById(newFeaturedQuizId)
+            const user = await User.findById(userId);
+            user.featuredQuizzes.push(quiz);
+            user.save()
+        },
+
+        async deleteFeaturedQuiz(_, {userId, deleteFeaturedQuizId}, context){
+            const quiz = await Quiz.findById(deleteFeaturedQuizId)
+            const user = await User.findById(userId).populate({
+                path: 'featuredQuizzes',
+                populate: { path: 'user', model: 'User' },
+            })
+
+
+            for(let i = 0; i < user.featuredQuizzes.length; i++){
+                if(user.featuredQuizzes[i].id == quiz._id){
+                    user.featuredQuizzes.splice(i,1);
+                    break;
+                }
+            }
+
+
+            user.save();
+        },
+        async addFeaturedPlatform(_, {userId, newFeaturedPlatformId}, context){
+            const platform = await Platform.findById(newFeaturedPlatformId)
+            const user = await User.findById(userId);
+            user.featuredPlatforms.push(platform);
+            user.save()
+        },
+        async deleteFeaturedPlatform(_, {userId, deleteFeaturedPlatformId}, context){
+            console.log(userId)
+            const platform = await Platform.findById(deleteFeaturedPlatformId)
+            const user = await User.findById(userId).populate({
+                path: 'featuredPlatforms',
+                populate: { path: 'user', model: 'User' },
+            })
+
+
+            for(let i = 0; i < user.featuredPlatforms.length; i++){
+                if(user.featuredPlatforms[i].id == platform._id){
+                    user.featuredPlatforms.splice(i,1);
+                    break;
+                }
+            }
+
+
+            user.save();
         }
-    },
+    }
 };

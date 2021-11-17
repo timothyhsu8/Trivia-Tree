@@ -78,7 +78,7 @@ const userSchema = new Schema(
             type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
         },
         featuredPlatforms: {
-            type: [{ type: Schema.Types.ObjectId, ref: 'Quiz' }],
+            type: [{ type: Schema.Types.ObjectId, ref: 'Platform' }],
         },
         verified: {
             type: Boolean,

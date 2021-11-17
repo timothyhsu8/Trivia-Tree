@@ -48,5 +48,9 @@ module.exports = gql`
     extend type Mutation {
         updateUser(userInput: UserInput!): User
         updateSettings(settingInput: SettingInput!): User
+        addFeaturedQuiz(userId: ID!, newFeaturedQuizId: ID!): Quiz
+        deleteFeaturedQuiz(userId: ID!, deleteFeaturedQuizId: ID!): Quiz
+        addFeaturedPlatform(userId: ID!, newFeaturedPlatformId: ID!): Platform
+        deleteFeaturedPlatform(userId: ID!, deleteFeaturedPlatformId: ID!): Platform
     }
 `;

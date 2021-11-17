@@ -3,35 +3,31 @@ import defaultIcon from '../images/defaultquiz.jpeg';
 import { useHistory } from 'react-router-dom';
 import '../styles/styles.css'
 
-export default function PlatformCard( props ) {
-    let history = useHistory();
-
+export default function SelectPlatformCard( props ) {
     const platform = props.platform
     const width = props.width
     const minWidth = props.minWidth
     const img_height = props.img_height
     const char_limit = props.char_limit
-    let isEditing = props.isEditing ? true:false;
+    let setChosenPlatform = props.setChosenPlatform
+
+    let chosen = false
+    if (props.chosenPlatform === platform)
+        chosen = true
    
     let platform_name = platform.name
     if (platform_name.length > char_limit)
         platform_name = platform_name.slice(0, char_limit) + "..."
-
-    function platformToDelete() {
-        props.handleDeleteFeaturedPlatform(platform)
-    }
 
     return (
         <Box 
             w={width}
             minWidth={minWidth}
             margin="1%"
-            _hover={{cursor:"pointer", opacity:"0.8", transition:"0.15s linear"}}
-            _active={{opacity:"0.6"}}
+            _hover={{bgColor: chosen ? "green" : "blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
+            _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear", opacity:"0.6"}}
             transition="0.10s linear"
-            border={isEditing ? "1px":""}
-            borderColor={isEditing ? "red":""}
-            onClick={isEditing ? ()=> platformToDelete():() => history.push('/platformpage/' + platform._id)}
+            onClick={() => setChosenPlatform(platform)}
         >
             <Flex flexDirection="column">
                 {/* MAIN IMAGE */}
@@ -50,7 +46,7 @@ export default function PlatformCard( props ) {
                     pos="relative"
                     h={img_height}
                     borderBottomRadius="10"
-                    bgColor="gray.800"
+                    bgColor={chosen ? "green":"gray.800"}
                 >
                     {/* PLATFORM NAME / ICON */}
                     <Flex className="disable-select" w="100%" direction="row" position="absolute" top="8%" ml="3%">

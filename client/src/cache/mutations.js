@@ -81,3 +81,36 @@ export const UPDATE_SETTINGS = gql`
         }
     }
 `;
+
+export const ADD_FEATURED_QUIZ = gql`
+mutation ($userId: ID!, $newFeaturedQuizId: ID!) {
+    addFeaturedQuiz(userId: $userId, newFeaturedQuizId: $newFeaturedQuizId) {
+        title
+    }
+}
+`
+
+export const DELETE_FEATURED_QUIZ = gql`
+mutation ($userId: ID!, $deleteFeaturedQuizId: ID!) {
+    deleteFeaturedQuiz(userId: $userId, deleteFeaturedQuizId: $deleteFeaturedQuizId) {
+        title
+    }
+}
+`
+
+export const ADD_FEATURED_PLATFORM = gql`
+mutation ($userId: ID!, $newFeaturedPlatformId: ID!) {
+    addFeaturedPlatform(userId: $userId, newFeaturedPlatformId: $newFeaturedPlatformId) {
+        name
+    }
+}
+`
+
+export const DELETE_FEATURED_PLATFORM = gql`
+mutation ($userId: ID!, $deleteFeaturedPlatformId: ID!) {
+    deleteFeaturedPlatform(userId: $userId, deleteFeaturedPlatformId: $deleteFeaturedPlatformId) {
+        name
+    }
+}
+`
+

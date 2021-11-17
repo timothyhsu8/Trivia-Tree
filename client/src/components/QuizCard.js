@@ -15,6 +15,7 @@ export default function QuizCard( props ) {
     let author_fontsize = props.author_fontsize
     let include_author = props.include_author
     let author = null
+    let disableClick = props.disableClick
     if (include_author){
         author = quiz_data.user.displayName
     }
@@ -23,11 +24,16 @@ export default function QuizCard( props ) {
     let icon_src = quiz_data.icon == null ? quizImage : quiz_data.icon
     let numAttempts = quiz_data.numAttempts
     let numFavorites = quiz_data.numFavorites
+    let isEditing = props.isEditing ? true:false;
 
     // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
     
     if (quiz_title.length > char_limit)
         quiz_title = quiz_title.slice(0, char_limit) + "..."
+
+    function quizToDelete() {
+        props.handleDeleteFeaturedQuiz(quiz_data)
+    }
 
     return (
         <VStack 
@@ -38,10 +44,13 @@ export default function QuizCard( props ) {
             margin="0.5%" 
             spacing="2%" 
             borderRadius="4%" 
-            _hover={{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
+            border={isEditing ? "1px":""}
+            borderColor={isEditing ? "red":""}
+            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
             _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
             transition="background-color 0.1s linear"
-            onClick={() => history.push('/prequizpage/' + quiz_data._id)}
+            onClick={isEditing ? ()=> quizToDelete():() => history.push('/prequizpage/' + quiz_data._id)}
+            color={disableClick ? 'white':'black'}
         >
             <Box className='squareimage_container' w="75%"> 
                 <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>

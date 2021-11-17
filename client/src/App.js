@@ -24,53 +24,66 @@ import Navbar from './components/Navbar';
 import PlatformPage from './pages/PlatformPage';
 import RewardsPage from './pages/RewardPage';
 import EditQuizPage from './pages/EditQuizPage';
+import { positions, Provider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
 
 function App() {
+    const options = {
+        timeout: 2500,
+        position: positions.BOTTOM_CENTER,
+        type: 'error',
+        containerStyle: {
+            zIndex: 100
+          }
+      };
+
     return (
         <ChakraProvider>
             <AuthProvider>
-                <Router>
-                    <Navbar/>
-                    <Switch>
-                        <Route exact path='/' component={Homepage} />
-                        <Route exact path='/quizzes' component={Quizzes} />
-                        <Route exact path='/quiz/:quizId' component={Quiz} />
-                        <Route
-                            exact
-                            path='/createQuiz'
-                            component={CreateQuizPage}
-                        />
-                        <Route
-                            exact
-                            path='/editQuiz/:quizId'
-                            component={EditQuizPage}
-                        />
-                        <Route
-                            path='/quiztakingpage/:quizId'
-                            component={QuizTakingPage}
-                        />
-                        <Route path='/settingspage/:userId' component={SettingsPage} />
-                        <Route path='/categorypage' component={CategoryPage} />
-                        <Route path='/accountpage/:userId' component={AccountPage} />
-                        <Route path='/platformpage/:platformId' component={PlatformPage} />
-                        <Route
-                            path='/postquizpage/:quizId/:quizAttemptId'
-                            component={PostQuizPage}
-                        />
-                        <Route
-                            path='/prequizpage/:quizId'
-                            component={PreQuizPage}
-                        />
-                        \
-                        <Route
-                            path='/searchresultspage'
-                            component={SearchResultsPage}
-                        />
-                        <Route path='/loginpage' component={LoginPage}></Route>
-                        <Route path='/shoppingpage' component={ShoppingPage}></Route>
-                        <Route path='/rewardspage' component={RewardsPage}></Route>
-                    </Switch>
-                </Router>
+                <Provider template={AlertTemplate} {...options}>
+                    <Router>
+                        <Navbar/>
+                        <Switch>
+                            <Route exact path='/' component={Homepage} />
+                            <Route exact path='/quizzes' component={Quizzes} />
+                            <Route exact path='/quiz/:quizId' component={Quiz} />
+                            <Route
+                                exact
+                                path='/createQuiz'
+                                component={CreateQuizPage}
+                            />
+                            <Route
+                                exact
+                                path='/editQuiz/:quizId'
+                                component={EditQuizPage}
+                            />
+                            <Route
+                                path='/quiztakingpage/:quizId'
+                                component={QuizTakingPage}
+                            />
+                            <Route path='/settingspage/:userId' component={SettingsPage} />
+                            <Route path='/categorypage' component={CategoryPage} />
+                            <Route path='/accountpage/:userId' component={AccountPage} />
+                            <Route path='/platformpage/:platformId' component={PlatformPage} />
+                            <Route
+                                path='/postquizpage/:quizId/:quizAttemptId'
+                                component={PostQuizPage}
+                            />
+                            <Route
+                                path='/prequizpage/:quizId'
+                                component={PreQuizPage}
+                            />
+                            \
+                            <Route
+                                path='/searchresultspage'
+                                component={SearchResultsPage}
+                            />
+                            <Route path='/loginpage' component={LoginPage}></Route>
+                            <Route path='/shoppingpage' component={ShoppingPage}></Route>
+                            <Route path='/rewardspage' component={RewardsPage}></Route>
+                        </Switch>
+                    </Router>
+                </Provider>
             </AuthProvider>
         </ChakraProvider>
     );

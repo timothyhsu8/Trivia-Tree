@@ -210,8 +210,13 @@ export const GET_USER = gql`
             platformsMade {
                 _id
                 iconImage
+                bannerImage
                 name
                 user {
+                    displayName
+                }
+                followers{
+                    _id
                     displayName
                 }
             }
@@ -229,8 +234,12 @@ export const GET_USER = gql`
             featuredPlatforms {
                 _id
                 iconImage
+                bannerImage
                 name
                 user {
+                    displayName
+                }
+                followers {
                     displayName
                 }
             }

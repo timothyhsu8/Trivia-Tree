@@ -11,16 +11,23 @@
     Textarea,
     FormControl,
     FormLabel,
-    Select
+    Select,
+    HStack
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_QUIZZES, GET_USER } from '../cache/queries';
+import { ADD_FEATURED_QUIZ, DELETE_FEATURED_QUIZ, ADD_FEATURED_PLATFORM, DELETE_FEATURED_PLATFORM} from '../cache/mutations';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import QuizCard from '../components/QuizCard';
 import { AuthContext } from '../context/auth';
 import { useState, useContext, createRef, useEffect } from 'react';
 import React from 'react';
 import '../styles/styles.css';
+import PlatformCard from '../components/PlatformCard';
+import AddQuizCard from '../components/AddQuizCard';
+import SelectQuizCard from '../components/SelectQuizCard';
+import SelectPlatformCard from '../components/SelectPlatformCard';
+import { useAlert } from "react-alert";
 
 let profileImg = 'Same Image';
 let bannerImg = 'Same Image';
@@ -29,8 +36,10 @@ const hiddenBannerInput = createRef(null);
 let username = null;
 
 export default function AccountPage(props) {
+    const alert = useAlert();
     const { user, refreshUserData } = useContext(AuthContext);
     let { userId } = useParams();
+    let isOwner = false;
 
     let quiz_sections = ['Featured Quizzes', 'Featured Platforms'];
 
@@ -43,6 +52,33 @@ export default function AccountPage(props) {
     //Here we go again
     const [backgroundNum, setBackground] = useState(""); //Int bg
     const background = ["white","red","blue","green"];
+    const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] = React.useState(false);
+    const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] = React.useState(false);
+    const [chosenFeaturedQuiz, setChosenFeaturedQuiz] = useState(null)
+    const [chosenFeaturedPlatform, setChosenFeaturedPlatform] = useState(null)
+
+    const [AddFeaturedQuiz] = useMutation(ADD_FEATURED_QUIZ, { fetchPolicy: 'network-only' , onCompleted() {
+        refetch();
+    }});
+
+    const [AddFeaturedPlatform] = useMutation(ADD_FEATURED_PLATFORM, { fetchPolicy: 'network-only' , onCompleted() {
+        refetch();
+    }});
+
+    const [DeleteFeaturedQuiz] = useMutation(DELETE_FEATURED_QUIZ, { fetchPolicy: 'network-only' , onCompleted() {
+        refetch();
+    }});
+
+    const [DeleteFeaturedPlatform] = useMutation(DELETE_FEATURED_PLATFORM, { fetchPolicy: 'network-only' , onCompleted() {
+        refetch();
+    }});
+
+
+    if(user != null){
+        if(user._id == userId){
+            isOwner = true;
+        }
+    }
 
     function toggleEditPage() {
         setIsEditing(!isEditing);
@@ -124,10 +160,12 @@ export default function AccountPage(props) {
         }
     }
 
+
     const {
         loading,
         error,
         data: { getUser: userData } = {},
+        refetch
     } = useQuery(GET_USER, {
         skip: !user,
         fetchPolicy: 'cache-and-network',
@@ -200,6 +238,67 @@ export default function AccountPage(props) {
         );
     }
 
+    async function handleAddFeaturedQuiz() {
+        setIsAddingFeaturedQuiz(false)
+
+        if(chosenFeaturedQuiz !== null){
+
+            for(let i = 0; i < userData.featuredQuizzes.length; i++){
+                if(userData.featuredQuizzes[i]._id == chosenFeaturedQuiz._id){
+                    alert.show("Already Featured");
+                    return //later provide error message that you cannot add already featured quiz!!
+                }
+            }
+
+            const {data} = await AddFeaturedQuiz({ variables: {
+                userId:userData._id, newFeaturedQuizId:chosenFeaturedQuiz._id}}); 
+
+            console.log(data)
+
+        }
+
+        setChosenFeaturedQuiz(null)
+    }
+
+    async function handleAddFeaturedPlatform() {
+        setIsAddingFeaturedPlatform(false)
+
+        if(chosenFeaturedPlatform !== null){
+
+            for(let i = 0; i < userData.featuredPlatforms.length; i++){
+                if(userData.featuredPlatforms[i]._id == chosenFeaturedPlatform._id){
+                    alert.show("Already Featured");
+                    return //later provide error message that you cannot add already featured quiz!!
+                }
+            }
+
+            const {data} = await AddFeaturedPlatform({ variables: {
+                userId:userData._id, newFeaturedPlatformId:chosenFeaturedPlatform._id}}); 
+
+            console.log(data)
+
+        }
+
+        setChosenFeaturedPlatform(null)
+    }
+
+    async function handleDeleteFeaturedQuiz(quizToDelete){
+        console.log(quizToDelete.title)
+        let quizToDeleteId = quizToDelete._id
+        const {data} = await DeleteFeaturedQuiz({ variables: {
+            userId:userData._id, deleteFeaturedQuizId:quizToDeleteId}}); 
+    }
+
+    async function handleDeleteFeaturedPlatform(platformToDelete){
+        let platformToDeleteId = platformToDelete._id;
+        const {data} = await DeleteFeaturedPlatform({ variables: {
+            userId:userData._id, deleteFeaturedPlatformId:platformToDeleteId}}); 
+        
+    }
+
+    
+
+
     function renderPage() {
         if (page === 'user') return renderUser();
         if (page === 'platforms') return renderPlatforms();
@@ -207,11 +306,42 @@ export default function AccountPage(props) {
         if (page === 'badges') return renderBadges();
     }
 
+
     // Render User
     function renderUser() {
         return (
             //move the bgColor={backgroundNum} to wherever would cover the whole screen
             <Box bgColor={backgroundNum} minW='500px'>
+                {user._id === userId ? (
+                    isEditing ? (
+                        <VStack position='absolute' left='20px'>
+                            <Button onClick={() => cancelEditing()}>
+                                Cancel Updates
+                            </Button>
+                            <Button onClick={() => handleUpdateUser()}>
+                                Save Updates
+                            </Button>
+                            <form onSubmit={changeBackground}>
+                                <FormControl id="background">
+                                    <FormLabel>Background</FormLabel>
+                                    <Select placeholder="Default" name="go">
+                                        { listCreator(background.length, background ) }
+                                        
+                                    </Select>          
+                                </FormControl>
+                                <Button type="submit" value="Submit">Confirm</Button>
+                            </form>
+                            
+                            
+                        </VStack>
+                    ) : (
+                        <Box position='absolute' left='20px'>
+                            <Button onClick={() => toggleEditPage(true)}>
+                                Update Page
+                            </Button>
+                        </Box>
+                    )
+                ) : null}
                 {/* BANNER */}
                 <Box
                     h='28vh'
@@ -267,10 +397,11 @@ export default function AccountPage(props) {
                             {userTitle}{' '}
                         </Text>
                     </Box>
+                    
 
                     {/*Quick Stuff for changing PFP and Banner*/}
                     {isEditing ? (
-                        <div>
+                        <div position="absolute">
                             <Button
                                 _focus={{ outline: 'none' }}
                                 borderColor='black'
@@ -328,32 +459,52 @@ export default function AccountPage(props) {
                     {/* FEATURED QUIZZES/PLATFORMS */}
                     <Box w='98.5%' borderRadius='10'>
                         <VStack spacing='1.5vh'>
-                            {quiz_sections.map((name, index) => {
-                                return (
                                     <Box
-                                        key={index}
                                         w='100%'
                                         bgColor='gray.200'
                                         borderRadius='10'
                                         overflowX='auto'
                                     >
+                                        {isEditing ? 
+                                        <Text
+                                        pl='1.5%'
+                                        pt='1%'
+                                        fontSize='130%'
+                                        fontWeight='bold'
+                                        color='red'
+                                        >
+                                        Select Featured Quiz To Delete
+                                        </Text>
+                                        :
                                         <Text
                                             pl='1.5%'
                                             pt='1%'
                                             fontSize='130%'
                                             fontWeight='medium'
                                         >
-                                            {name}
+                                            Featured Quizzes
                                         </Text>
+                                        }
 
                                         {/* QUIZZES */}
                                         <Flex
                                             ml='1%'
+                                            mt='.5%'
                                             spacing='4%'
                                             display='flex'
                                             flexWrap='wrap'
                                         >
-                                            {userData.quizzesMade.map(
+                                        {isOwner ? 
+                                        <AddQuizCard 
+                                            width="10%"
+                                            title_fontsize="100%"
+                                            type="1"
+                                            callback={setIsAddingFeaturedQuiz}
+                                        />
+                                        : ''}
+    
+                                            
+                                            {userData.featuredQuizzes.map(
                                                 (quiz, key) => {
                                                     return (
                                                         <QuizCard
@@ -365,14 +516,77 @@ export default function AccountPage(props) {
                                                             }
                                                             char_limit={35}
                                                             key={key}
+                                                            isEditing={isEditing}
+                                                            handleDeleteFeaturedQuiz={handleDeleteFeaturedQuiz}
                                                         />
                                                     );
                                                 }
-                                            )}
+                                            )
+                                            }
                                         </Flex>
                                     </Box>
-                                );
-                            })}
+                                    <Box
+                                        w='100%'
+                                        bgColor='gray.200'
+                                        borderRadius='10'
+                                        overflowX='auto'
+                                    >
+                                        {isEditing ? 
+                                        <Text
+                                        pl='1.5%'
+                                        pt='1%'
+                                        fontSize='130%'
+                                        fontWeight='bold'
+                                        color='red'
+                                        >
+                                        Select Featured Platform To Delete
+                                        </Text>
+                                        :
+                                        <Text
+                                            pl='1.5%'
+                                            pt='1%'
+                                            fontSize='130%'
+                                            fontWeight='medium'
+                                        >
+                                            Featured Platforms
+                                        </Text>
+                                        }
+
+                                        {/* Platforms */}
+                                        <Flex
+                                            ml='1%'
+                                            mt='.5%'
+                                            spacing='4%'
+                                            display='flex'
+                                            flexWrap='wrap'
+                                        >
+                                        {isOwner ?
+                                        <AddQuizCard 
+                                            width="10%"
+                                            title_fontsize="100%"
+                                            type="0"
+                                            callback={setIsAddingFeaturedPlatform}
+                                        />  
+                                        : ''}
+                                            {userData.featuredPlatforms.map(
+                                                (platform, key) => {
+                                                    return (
+                                                        <PlatformCard
+                                                        platform={platform}
+                                                        width='15%'
+                                                        minWidth="200px"
+                                                        img_height="50px"
+                                                        char_limit={44} 
+                                                        key={key}
+                                                        isEditing={isEditing}
+                                                        handleDeleteFeaturedPlatform={handleDeleteFeaturedPlatform}
+                                                        />
+                                                    );
+                                                }
+                                            )
+                                            }
+                                        </Flex>
+                                    </Box>
                         </VStack>
                     </Box>
 
@@ -408,37 +622,6 @@ export default function AccountPage(props) {
                         )}
                     </Box>
                 </Grid>
-
-                {user._id === userId ? (
-                    isEditing ? (
-                        <VStack position='absolute' left='20px'>
-                            <Button onClick={() => cancelEditing()}>
-                                Cancel Updates
-                            </Button>
-                            <Button onClick={() => handleUpdateUser()}>
-                                Save Updates
-                            </Button>
-                            <form onSubmit={changeBackground}>
-                                <FormControl id="background">
-                                    <FormLabel>Background</FormLabel>
-                                    <Select placeholder="Default" name="go">
-                                        { listCreator(background.length, background ) }
-                                        
-                                    </Select>          
-                                </FormControl>
-                                <Button type="submit" value="Submit">Confirm</Button>
-                            </form>
-                            
-                            
-                        </VStack>
-                    ) : (
-                        <Box position='absolute' left='20px'>
-                            <Button onClick={() => toggleEditPage(true)}>
-                                Update Page
-                            </Button>
-                        </Box>
-                    )
-                ) : null}
                 </Box>
         );
     }
@@ -450,15 +633,15 @@ export default function AccountPage(props) {
                 <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                     All Platforms
                 </Text>
-                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                    {userData.quizzesMade.map((quiz, key) => {
+                <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    {userData.platformsMade.map((platform, key) => {
                         return (
-                            <QuizCard
-                                quiz={quiz}
-                                width='10%'
-                                title_fontsize='0.8vw'
-                                include_author={false}
-                                char_limit={35}
+                            <PlatformCard
+                                platform={platform}
+                                width='15%'
+                                minWidth="200px"
+                                img_height="50px"
+                                char_limit={44} 
                                 key={key}
                             />
                         );
@@ -524,6 +707,87 @@ export default function AccountPage(props) {
 
     return (
         <Box data-testid='main-component'>
+            {
+                isAddingFeaturedQuiz ? 
+                    <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
+                       {/* QUIZ CARDS */}
+                            <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
+                                {userData.quizzesMade.map((quiz, key) => {
+                                    return <SelectQuizCard
+                                        key={key}
+                                        quiz={quiz} 
+                                        width="7.5%"
+                                        title_fontsize="92%" 
+                                        include_author={false}
+                                        char_limit={35}  
+                                        font_color="white"
+                                        show_stats={false}
+                                        chosenQuiz={chosenFeaturedQuiz}
+                                        setChosenQuiz={setChosenFeaturedQuiz}
+                                        />
+                                })}
+                            </Flex>
+                        
+                        {/* Cancel Selecting a quiz */}
+                        <HStack w="100%" spacing="1%" pos="fixed" bottom="3%" right="-83%">
+                            <Button bgColor="gray.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                            onClick={() => {
+                            setIsAddingFeaturedQuiz(false)
+                            setChosenFeaturedQuiz(null);
+                            }}>
+                                Cancel
+                            </Button>
+
+                            {/* Finish selecting a quiz */}
+                            <Button bgColor="blue.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                                onClick={() => {handleAddFeaturedQuiz()}}>
+                                Finish
+                            </Button>
+                        </HStack>
+                    </Box>
+                    :
+                    null
+            }    
+            {
+                isAddingFeaturedPlatform ? 
+                    <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
+                       {/* QUIZ CARDS */}
+                            <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
+                                {userData.platformsMade.map((platform, key) => {
+                                    return <SelectPlatformCard
+                                        key={key}
+                                        platform={platform} 
+                                        width='15%'
+                                        minWidth="200px"
+                                        img_height="60px"
+                                        char_limit={44} 
+                                        key={key}
+                                        setChosenPlatform={setChosenFeaturedPlatform}
+                                        chosenPlatform={chosenFeaturedPlatform}
+                                        />
+                                })}
+                            </Flex>
+                        
+                        {/* Cancel Selecting a quiz */}
+                        <HStack w="100%" spacing="1%" pos="fixed" bottom="3%" right="-83%">
+                            <Button bgColor="gray.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                            onClick={() => {
+                            setIsAddingFeaturedPlatform(false)
+                            setChosenFeaturedPlatform(null)
+                            }}>
+                                Cancel
+                            </Button>
+
+                            {/* Finish selecting a quiz */}
+                            <Button bgColor="blue.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                                onClick={() => {handleAddFeaturedPlatform()}}>
+                                Finish
+                            </Button>
+                        </HStack>
+                    </Box>
+                    :
+                    null
+            }    
             <Grid templateColumns='1fr 6fr 1fr'>
                 <Box w='100%'></Box>
 
@@ -587,6 +851,7 @@ export default function AccountPage(props) {
             {/* {renderPage()} */}
         </Box>
     );
+
 }
 
 const UPDATE_USER = gql`

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import '../styles/styles.css'
 
+
 export default function SelectQuizCard( props ) {
     let quiz_data = props.quiz
     let quiz_title = quiz_data.title
@@ -16,7 +17,7 @@ export default function SelectQuizCard( props ) {
         show_stats = false
 
     let chosen = false
-    if (props.chosenQuiz === quiz_data._id)
+    if (props.chosenQuiz === quiz_data)
         chosen = true
     
 
@@ -40,7 +41,7 @@ export default function SelectQuizCard( props ) {
             _hover={{bgColor: chosen ? "green.300" : "blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
             _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
             transition="background-color 0.1s linear"
-            onClick={() => setChosenQuiz(quiz_data._id)}
+            onClick={() => setChosenQuiz(quiz_data)}
         >
             <Box className='squareimage_container' w="75%"> 
                 <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="20%"></Image>

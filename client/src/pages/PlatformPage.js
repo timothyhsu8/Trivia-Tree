@@ -131,7 +131,7 @@ export default function PlatformPage({}) {
             addQuizToPlatform({
                 variables: {
                     platformId: platform_data._id,
-                    quizId: chosenQuiz
+                    quizId: chosenQuiz._id
                 },
             })
         }
@@ -413,6 +413,7 @@ export default function PlatformPage({}) {
                                         <AddQuizCard 
                                             width="7.5%"
                                             title_fontsize="125%" 
+                                            type='1'
                                             callback={setIsAddingQuiz}
                                         />
                                         :

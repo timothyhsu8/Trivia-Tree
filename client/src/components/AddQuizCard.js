@@ -32,7 +32,7 @@ export default function AddQuizCard( props ) {
 
             {/* QUIZ TITLE */}
             <Text fontSize={title_fontsize} textAlign="center" fontWeight="medium" wordBreak="break-word">
-                Add Quiz
+                Add {props.type == 1 ? "Quiz":"Platform"}
             </Text>
             
         </VStack>

@@ -1,17 +1,18 @@
-import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Popover, PopoverTrigger, PopoverContent, PopoverBody, PopoverFooter, PopoverCloseButton, PopoverHeader } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
-import { useState, createRef, useContext } from 'react';
+import { useState, createRef, useContext, useRef } from 'react';
 import '../styles/styles.css'
 import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
 
 export default function PlatformPage({}) {
     let history = useHistory();
+    const cancelRef = useRef()
 
     const { user } = useContext(AuthContext);
     let { platformId } = useParams();
@@ -41,6 +42,7 @@ export default function PlatformPage({}) {
     const [description, setDescription] = useState(null)
     const [isAddingQuiz, setIsAddingQuiz] = useState(false)
     const [chosenQuiz, setChosenQuiz] = useState(null)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
 
@@ -150,6 +152,7 @@ export default function PlatformPage({}) {
 
     // Button event to delete a platform
     function handleDeletePlatform() {
+        setDeleteConfirmation(false)
         deletePlatform({
             variables: {
                 platformId: platformId,
@@ -199,6 +202,8 @@ export default function PlatformPage({}) {
     if (user !== null && user !== "NoUser" && user._id === platform_data.user._id){
         is_owner = true
     }
+
+    let header_sections = ["Quizzes", "Followers", "About"]
 
     // Cancel icon/banner/name update
     function cancelChanges() {
@@ -557,34 +562,44 @@ export default function PlatformPage({}) {
                 {
                     is_owner ? 
                         <Center>
-                            <Popover>
-                                <PopoverTrigger>
-                                    <Button 
-                                        mt="5%" 
-                                        bgColor="red.600" 
-                                        textColor="white" 
-                                        _hover={{bgColor:"red.500"}} 
-                                        _active={{bgColor:"red.400"}}
-                                        _focus={{border:"none"}} 
-                                        // onClick={}
-                                        >
-                                        Delete Platform
-                                    </Button>
-                                </PopoverTrigger>
+                                <Button 
+                                    mt="5%" 
+                                    bgColor="red.600" 
+                                    textColor="white" 
+                                    _hover={{bgColor:"red.500"}} 
+                                    _active={{bgColor:"red.400"}}
+                                    _focus={{border:"none"}} 
+                                    onClick={() => setDeleteConfirmation(true)}
+                                    >
+                                    Delete Platform
+                                </Button>
                                 
-                                <PopoverContent>
-                                    <PopoverCloseButton />
-                                    <PopoverHeader fontWeight="medium"> Confirmation </PopoverHeader>
-                                    <PopoverBody> 
-                                        Are you sure you want to delete this platform? 
-                                    </PopoverBody>
-                                    <PopoverFooter>
-                                        <Center>
-                                            <Button colorScheme="blue" onClick={() => handleDeletePlatform()}> Yes, delete this platform </Button> 
-                                        </Center>
-                                    </PopoverFooter>
-                                </PopoverContent>
-                            </Popover>
+                                <AlertDialog
+                                    isOpen={deleteConfirmation}
+                                    leastDestructiveRef={cancelRef}
+                                    onClose={() => setDeleteConfirmation(false)}
+                                >
+                                    <AlertDialogOverlay>
+                                        <AlertDialogContent top="30%">
+                                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                                Delete Platform
+                                            </AlertDialogHeader>
+
+                                            <AlertDialogBody>
+                                                Are you sure you want to delete this platform? This action cannot be undone
+                                            </AlertDialogBody>
+
+                                            <AlertDialogFooter>
+                                            <Button ref={cancelRef} onClick={() => setDeleteConfirmation(false)} _focus={{border:"none"}}>
+                                                Cancel
+                                            </Button>
+                                            <Button colorScheme="red" onClick={() => handleDeletePlatform()} ml={3} _focus={{border:"none"}}>
+                                                Delete
+                                            </Button>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialogOverlay>
+                                </AlertDialog>
                         </Center>
                     :
                     null
@@ -644,11 +659,20 @@ export default function PlatformPage({}) {
                 <Box/>
                 <Box>
                     {/* HEADER BUTTONS */}
-                    <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr"> 
-                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'Platform' ? "blue" : "black" } _focus={{boxShadow:"none"}} onClick={() => setPage('Platform')}> {platform_data.name }</Button>
-                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'Quizzes' ? "blue" : "black" } _focus={{boxShadow:"none"}} onClick={() => setPage('Quizzes')}> Quizzes </Button>
-                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'Followers' ? "blue" : "black" } _focus={{boxShadow:"none"}} onClick={() => setPage('Followers')}> Followers </Button>
-                        <Button height="100%" fontSize="115%" bgColor="white" textColor={ page === 'About' ? "blue" : "black" } _focus={{boxShadow:"none"}} onClick={() => setPage('About')}> About </Button>
+                    <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr" justifyContent="center" alignItems="center"> 
+
+                        <Text className="disable-select" fontSize="125%" textColor={page === "Platform" ? "blue" : "gray.1000" } textAlign="center" _hover={{ cursor:"pointer", textColor: page === "Platform" ? "blue" : "gray.500", transition:"0.15s linear" }} transition="0.1s linear" onClick={() => setPage('Platform')} >
+                            {platform_data.name}
+                        </Text>
+
+                        {header_sections.map((section, key) => {
+                            return (
+                                <Text key={key} className="disable-select" fontSize="125%" textColor={page === section ? "blue" : "gray.1000" } textAlign="center" _hover={{ cursor:"pointer", textColor: page === section ? "blue" : "gray.500", transition:"0.15s linear" }} transition="0.1s linear" onClick={() => setPage(section)} >
+                                    {section}
+                                </Text>
+                            )
+                        })}
+                       
                     </Grid>
                     {renderPage()}
                 </Box>

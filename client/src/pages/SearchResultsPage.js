@@ -1,9 +1,10 @@
 import { Box, Grid, Text, Image, HStack, Icon, Button, Center, VStack, Select, Spinner } from "@chakra-ui/react"
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { SEARCH_QUIZZES, SEARCH_PLATFORMS } from "../cache/queries";
+import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries";
 import QuizResult from '../components/QuizResult'
 import PlatformResult from '../components/PlatformResult'
+import UserResult from '../components/UserResult'
 import { useState } from 'react';
 import '../styles/styles.css'
 
@@ -17,9 +18,10 @@ export default function SearchResultsPage() {
 
     const quizzes = useQuery(SEARCH_QUIZZES, { variables: { searchText: search }, fetchPolicy: 'cache-and-network' })
     const platforms = useQuery(SEARCH_PLATFORMS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
+    const users = useQuery(SEARCH_USERS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
 
-    const loading = quizzes.loading || platforms.loading
-    const error = quizzes.error || platforms.error
+    const loading = quizzes.loading || platforms.loading || users.loading
+    const error = quizzes.error || platforms.error || users.loading
 
     // Loading Screen
     if (loading) {
@@ -41,25 +43,30 @@ export default function SearchResultsPage() {
 
     const quiz_data = quizzes.data.searchQuizzes
     const platform_data = platforms.data.searchPlatforms
+    const user_data = users.data.searchUsers
 
     // Gather all search results
-    let search_results = getSearchResults(searchType, quiz_data, platform_data)
+    let search_results = getSearchResults(searchType, quiz_data, platform_data, user_data)
     search_results = sortSearchResults(search_results, sortType)
 
     // Puts the correct data into the search results array (Depending on if the user serached for quizzes, platforms, users, or all)
-    function getSearchResults(searchType, quiz_data, platform_data) {
+    function getSearchResults(searchType, quiz_data, platform_data, user_data) {
         let search_results = []
         
         switch(searchType) {
             case "All":
                 search_results = search_results.concat(quiz_data)
                 search_results = search_results.concat(platform_data)
+                search_results = search_results.concat(user_data)
                 break
             case "Quizzes":
                 search_results = search_results.concat(quiz_data)
                 break
             case "Platforms":
                 search_results = search_results.concat(platform_data)
+                break
+            case "Users":
+                search_results = search_results.concat(user_data)
                 break
         }
         return search_results
@@ -104,6 +111,8 @@ export default function SearchResultsPage() {
             return x.title
         if (x.__typename === "Platform")
             return x.name
+        if (x.__typename === "User")
+            return x.displayName
         return null
     }
 
@@ -134,6 +143,15 @@ export default function SearchResultsPage() {
                         <PlatformResult 
                             key={index}
                             platform={content}
+                        />
+                    )
+                }
+
+                else if (content.__typename === "User") {
+                    return (
+                        <UserResult 
+                            key={index}
+                            user={content}
                         />
                     )
                 }

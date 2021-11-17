@@ -18,7 +18,7 @@ export default function Navbar() {
 
     let history = useHistory();
     let logged_in = false
-    let categories = ["All", "Quizzes", "Platforms"]
+    let categories = ["All", "Quizzes", "Platforms", "Users"]
     let username = "Guest"
     let pfp_src = {guestImage}
     let menu_bg_hover = "blue.500"
@@ -135,7 +135,7 @@ export default function Navbar() {
                     {/* SEARCH CATEGORIES */}
                     <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
-                            return <option key={index} on> {category} </option>;
+                            return <option key={index}> {category} </option>;
                         })}
                     </Select>
 

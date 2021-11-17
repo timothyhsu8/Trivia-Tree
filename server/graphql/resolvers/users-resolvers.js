@@ -33,6 +33,15 @@ module.exports = {
                 .exec();
             return user;
         },
+        async searchUsers(_, { searchText }) {
+            console.log(searchText)
+            try {
+                const users = await User.find({displayName: { "$regex": searchText, "$options": "i"}});
+                return users;
+            } catch (err) {
+                throw new Error(err);
+            }
+        }
     },
     Mutation: {
         async updateUser(

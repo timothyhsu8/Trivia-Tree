@@ -1,10 +1,10 @@
-import { Box, Grid, Input, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex } from "@chakra-ui/react"
+import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { BsShopWindow } from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import coin from '../images/coin.png';
 import { useMutation, gql } from '@apollo/client';
 import guestImage from '../images/guest.png';
@@ -13,8 +13,12 @@ import '../styles/styles.css'
 export default function Navbar() {
     const { user } = useContext(AuthContext);
     let userId = null;
+    
+    const cancelRef = useRef()
     const [searchType, setSearchType] = useState('All')
     const [searchText, setSearchText] = useState("")
+    const [choosePlatformName, setChoosePlatformName] = useState(false)
+    const [chosenPlatformName, setChosenPlatformName] = useState("Untitled Platform")
 
     let history = useHistory();
     let logged_in = false
@@ -35,17 +39,19 @@ export default function Navbar() {
     });
 
     function handleCreatePlatform() {
+        setChoosePlatformName(false)
         createPlatform({
             variables: {
                 platformInput: {
-                    name: "Untitled Platform",
+                    name: chosenPlatformName,
                     iconImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg",
                     bannerImage: "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/what-is-coding.png",
                     background: "white",
-                    tags: ["Programming"]
+                    tags: []
                 },
             },
         });
+        setChosenPlatformName("Untitled Platform")
     }
 
     // Checks if user is logged in
@@ -196,38 +202,74 @@ export default function Navbar() {
 
                     {/* DROPDOWN MENU */}
                     <Menu>
-                        <MenuButton
-                            as={HamburgerIcon}
-                            boxSize='6'
-                            color='white'
-                            _hover={{ cursor: 'pointer' }}
-                        >
-                            {' '}
-                            dasfs
-                        </MenuButton>
-                        <MenuList>
-                            <Link to='/createQuiz'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz      </MenuItem></Link>
-                            <MenuItem onClick={() => handleCreatePlatform()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
-                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
-                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
-                            <Link to={user != "NoUser" ? '/settingspage/' + userId:'/loginpage'}><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
-                            
-                            {/* Logout Button */}
-                            {logged_in === true ? (
+                        <MenuButton as={HamburgerIcon} boxSize='6' color='white' _hover={{ cursor: 'pointer' }} />
+                            <MenuList>
+                                {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
+                                {logged_in === true ? (
+                                    <Box>
+                                        <Link to='/createQuiz'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz   </MenuItem></Link>
+                                        <MenuItem onClick={() => setChoosePlatformName(true)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
+                                        <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
+                                        <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
+                                    </Box>) 
+                                    : 
+                                    null
+                                }
                                 
-                                <a href={`${config.API_URL}/auth/logout`}>
-                                    <Link to='/rewardspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem></Link>
-                                    <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
-                                </a>
+                                {/* Settings Page Button */}
+                                <Link to={user != "NoUser" ? '/settingspage/' + userId:'/loginpage'}><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
                                 
-                            ) : (
-                                null
-                            )}
-                        </MenuList>
+                                {/* Rewards Button / Logout Button */}
+                                {logged_in === true ? (<Box>
+                                        <Link to='/rewardspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem></Link>
+                                        <a href={`${config.API_URL}/auth/logout`}>
+                                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
+                                        </a>
+                                    </Box>) 
+                                    : 
+                                    null
+                                }
+                            </MenuList>
                     </Menu>
                     <Box w='1%' />
                 </HStack>
             </Grid>
+            
+            {/* Platform Name Input (For Creating Platforms) */}
+            <AlertDialog
+                isOpen={choosePlatformName}
+                leastDestructiveRef={cancelRef}
+                onClose={() => setChoosePlatformName(false)}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent top="30%">
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Choose A Platform Name
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                            <Input borderColor="gray.300" value={chosenPlatformName} onChange={(e) => setChosenPlatformName(e.target.value)}/>
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={() => setChoosePlatformName(false)} _focus={{border:"none"}}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            colorScheme="blue"  
+                            ml={3} 
+                            bgColor={chosenPlatformName.trim() !== "" ? "" : "gray.400"}
+                            _hover={{bgColor: chosenPlatformName.trim() !== "" ? "blue.600" : "gray.400"}}
+                            _active={{bgColor: chosenPlatformName.trim() !== "" ? "blue.700" : "gray.400"}}
+                            _focus={{border:"none"}}
+                            onClick={() => chosenPlatformName.trim() !== "" ? handleCreatePlatform() : null}
+                        >
+                            Create Platform
+                        </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
         </Box>
     );
 }

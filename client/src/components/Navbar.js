@@ -12,6 +12,7 @@ import '../styles/styles.css'
 
 export default function Navbar() {
     const { user } = useContext(AuthContext);
+    let userId = null;
     const [searchType, setSearchType] = useState('All')
     const [searchText, setSearchText] = useState("")
 
@@ -50,9 +51,10 @@ export default function Navbar() {
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
-        username = user.googleDisplayName
+        username = user.displayName
         currency = user.currency
         pfp_src = user.iconImage
+        userId = user._id
     }
 
     // Allows search to work when 'Enter' key is pressed
@@ -208,7 +210,7 @@ export default function Navbar() {
                             <MenuItem onClick={() => handleCreatePlatform()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
-                            <Link to='/settingspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
+                            <Link to={user != "NoUser" ? '/settingspage/' + userId:'/loginpage'}><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
                             
                             {/* Logout Button */}
                             {logged_in === true ? (

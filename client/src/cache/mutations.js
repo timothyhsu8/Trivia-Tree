@@ -52,3 +52,14 @@ export const UPDATE_PLATFORM = gql`
         }
     }
 `;
+
+export const UPDATE_SETTINGS = gql`
+    mutation ($settingInput: SettingInput!) {
+        updateSettings(settingInput: $settingInput){
+            _id
+            displayName
+            iconImage
+            darkMode
+        }
+    }
+`;

@@ -49,7 +49,7 @@ function App() {
                             path='/quiztakingpage/:quizId'
                             component={QuizTakingPage}
                         />
-                        <Route path='/settingspage' component={SettingsPage} />
+                        <Route path='/settingspage/:userId' component={SettingsPage} />
                         <Route path='/categorypage' component={CategoryPage} />
                         <Route path='/accountpage/:userId' component={AccountPage} />
                         <Route path='/platformpage/:platformId' component={PlatformPage} />

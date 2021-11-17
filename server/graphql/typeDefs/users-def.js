@@ -34,11 +34,19 @@ module.exports = gql`
         bio: String
     }
 
+    input SettingInput {
+        userId: ID!
+        displayName: String!
+        iconImage: String
+        darkMode: Boolean
+    }
+
     extend type Query {
         getUsers: [User]
         getUser(_id: ID!): User
     }
     extend type Mutation {
         updateUser(userInput: UserInput!): User
+        updateSettings(settingInput: SettingInput!): User
     }
 `;

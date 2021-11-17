@@ -53,6 +53,7 @@ export const UPDATE_PLATFORM = gql`
     }
 `;
 
+<<<<<<< HEAD
 export const ADD_QUIZ_TO_PLATFORM = gql`
 mutation ($platformId: ID!, $quizId: ID!) {
     addQuizToPlatform(platformId: $platformId, quizId: $quizId) {
@@ -70,3 +71,15 @@ export const DELETE_PLATFORM = gql`
         }
     }
 `;
+=======
+export const UPDATE_SETTINGS = gql`
+    mutation ($settingInput: SettingInput!) {
+        updateSettings(settingInput: $settingInput){
+            _id
+            displayName
+            iconImage
+            darkMode
+        }
+    }
+`;
+>>>>>>> build4

@@ -1,11 +1,12 @@
 import React from 'react';
 import { useState, createRef } from 'react';
-import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup } from "@chakra-ui/react"
+import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
-import { useQuery } from '@apollo/client';
-import * as queries from '../cache/queries';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_QUIZZES, GET_USER } from '../cache/queries';
+import * as mutations from '../cache/mutations';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
 import {
@@ -13,185 +14,111 @@ import {
 } from 'react-router-dom';
 import { subscribe } from 'graphql';
 
-export default function SettingsPage() {
-    let quizScore = null; 
-    let logged_in = false
+export default function SettingsPage(props) {
+    const { user, refreshUserData } = useContext(AuthContext);
+    let profileImg = 'Same Image';
 
-    let { quizId, quizAttemptId } = useParams();
+    let {userId} = useParams();
 
-    function retry() {
-        return;
-    }
-    function saveChanges() {
-        //Can check console to see that changes are effected before this printout
-        console.log(username)
-        console.log(darkMode)
-        console.log(icon)
-        return;
-    }
 
-    function updateUsername(event) {
-        username = event.target.value;
-    }
 
-    function updateIcon(event) {
-        if (event.target.files && event.target.files[0]) {
-            let img = event.target.files[0];
-            setIcon(URL.createObjectURL(img));
+
+    const [displayName, setDisplayName] = useState("");
+    const [email, setEmail] = useState("");
+    const [darkMode, setDarkMode] = useState("");
+    const [iconImage, setIconImage] = useState("");
+    const [updateSettings] = useMutation(mutations.UPDATE_SETTINGS, {context:{
+        headers: {
+            profileimagetype: profileImg
+        },
+        onCompleted() {
+            console.log("HELLO")
+
         }
-    }
-
-    /*
-    const [updateSettings] = useMutation(UPDATE_SETTINGS, {
-        onCompleted() {
-            props.history.push('/');
-        },
-        onError(err) {
-            console.log(err);
-        },
-    });
-    */
-
-/**_USer definition? 
- * id: ID!
-        email: String!
-        displayName: String!
-        iconImage: String
-        iconEffect: Item
-        bannerImage: String
-        bannerEffect: Item
-        background: String
-        bio: String
-        currency: Int
-        ownedBannerEffects: [Item]
-        ownedBackgrounds: [Item]
-        quizzesMade: [Quiz]
-        quizzesTaken: [Quiz]
-        platformsMade: [Platform]
-        following: [Platform]
-        featuredQuizzes: [Quiz]
-        featuredPlatforms: [Platform]
-        verified: Boolean
-        admin: Boolean
-        darkMode: Boolean */
-   
-   /*     function handleUpdateSettings() {
-        updateSettings({
-            variables: {
-                userInput: {
-                    displayName: username,
-                    email: email,
-                    darkMode: darkMode,
-                    iconImage: icon,
-                },
-            },
-        });
-    }
-*/
-
-
-
-/*
-    const [deleteAccount] = useMutation(DELETE_ACCOUNT, {
-        onCompleted() {
-            props.history.push('/');
-        },
-        onError(err) {
-            console.log(err);
-        },
-    });
-    */
-
- /*     function handleDeleteAccount() {
-        deleteAccount({
-            variables: {
-                userInput: {
-                    email: email
-                },
-            },
-        });
-    }
-*/
-
-
-    //Later on these will pull from Leaderboard for given quiz in Database
-    const { user } = useContext(AuthContext);
-
-    const [previousData, changePreviousData] = useState([
-        'SBU_Fan',
-        "Email?",
-        "1",
-        'https://yt3.ggpht.com/ytc/AKedOLTcxhIAhfigoiA59ZB6aB8z4mruPJnAoBQNd6b0YA=s900-c-k-c0x00ffffff-no-rj'
-    ]);
-    //Username, email, light or dark, icon_path. 
-
-    let username = previousData[0]; //String username
-    
-    let email = 'Create an Account to Save your Progress!' 
-    if (user !== null && user !== "NoUser"){
-        logged_in = true
-        username = user.googleDisplayName
-        email = user.email; 
-        // pfp_src = user.iconImage
-    }
-
-    const [darkMode, setDarkMode] = useState(previousData[2]); //String int
-
-    const [icon, setIcon] = useState(previousData[3]); //String path
+    }});
+     
 
     const hiddenImageInput = createRef(null);
 
-    let quizAttempt = null; 
-    let quiz = null; 
 
-    const {data, loading} = useQuery(queries.GET_QUIZ_ATTEMPT, {
-        variables: { _id: quizAttemptId },
+    async function saveChanges() {
+        const {data} = await updateSettings({ variables: {settingInput:{userId:userId, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
+        return;
+    }
+
+    function updateDisplayName(event) {
+        setDisplayName(event.target.value);
+    }
+
+    function updateDarkMode(event) {
+        if(event == "true"){
+            setDarkMode(true)
+        }
+        else{
+            setDarkMode(false)
+        }
+    }
+
+    function updateIcon(event) {
+        // if (event.target.files && event.target.files[0]) {
+        //     let img = event.target.files[0];
+        //     setIconImage(URL.createObjectURL(img));
+        // }
+        if (
+            event.target.files &&
+            event.target.files[0] &&
+            event.target.files[0].type.split('/')[0] === 'image'
+        ) {
+            let tempImg = event.target.files[0];
+            let fr = new FileReader();
+            fr.readAsDataURL(tempImg);
+            fr.onload = () => {
+                tempImg = fr.result;
+                profileImg = 'New Image';
+                setIconImage(tempImg);
+            };
+        }
+    }
+
+
+    const {
+        loading,
+        error,
+        data: { getUser: userData } = {},
+    } = useQuery(GET_USER, {
+        fetchPolicy: 'cache-and-network',
+        variables: { _id: userId },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+        onCompleted({ getUser: userData }) {
+            setEmail(userData.email)
+            setDisplayName(userData.displayName);
+            setDarkMode(userData.darkMode);
+            setIconImage(userData.iconImage);
+        },
     });
 
-    const {data:data1, loading1 } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId: quizId },
-    });
-    
     if (loading) {
-        return(
-            <Box height="auto">
-                <h1 className="maintitle">"Loading..."</h1>
-                <Box className="quizIconCentered" w="50%" h="50%">
-                            <img alt="Moon" src={moon} />
-                </Box>
-                <h1 className="center button white">"Here's a picuture of the moon while you wait!"</h1>
-                <Box h="200px">
-                </Box>
-            </Box>
-            
-       //Displays a loading screen while it waits
-        );
-    }
-    if (loading1) {
-        return(
-            <Box height="auto">
-                <h1 className="maintitle">"Loading..."</h1>
-                <Box className="quizIconCentered" w="50%" h="50%">
-                            <img alt="Moon" src={moon} />
-                </Box>
-                <h1 className="center button white">"Here's a picuture of the moon while you wait!"</h1>
-                <Box h="200px">
-                </Box>
-            </Box>
-            
-       //Displays a loading screen while it waits
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
         );
     }
 
-    if(data){
-        quizAttempt = data.getQuizAttempt
-        quizScore = quizAttempt.score;
-        console.log(quizAttempt);
+    // Error Screen
+    if (error) {
+        return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    Sorry, something went wrong{' '}
+                </Text>
+            </Center>
+        );
     }
-
-    if(data1){
-
-    }
+    
 
     return(
         /*Top Title Section with hr line*/
@@ -290,8 +217,8 @@ export default function SettingsPage() {
                 {/*Main section Right*/}
                 <Box>
                 <Input
-                    onBlur={(event) => updateUsername(event)}
-                    placeholder='Enter New Username'
+                    onBlur={(event) => updateDisplayName(event)}
+                    placeholder={displayName}
                     variant='flushed'
                     borderColor='black'
                     borderBottomWidth='3px'
@@ -305,10 +232,10 @@ export default function SettingsPage() {
                 <Text fontSize={["20px","20px","20px","30px"]}>{email}</Text>
 
                 <Box h="40px"></Box>        
-                <RadioGroup onChange={setDarkMode} value={darkMode}>
+                <RadioGroup onChange={(event) => updateDarkMode(event)} value={darkMode}>
                     <Stack direction="row">
-                        <Radio value="1" ><Text className="title" fontSize={["20px","20px","20px","30px"]}>Light Mode</Text></Radio>
-                        <Radio value="2"><Text className="title" fontSize={["20px","20px","20px","30px"]}>Dark Mode</Text></Radio>
+                        <Radio value={false} ><Text className="title" fontSize={["20px","20px","20px","30px"]}>Light Mode</Text></Radio>
+                        <Radio value={true}><Text className="title" fontSize={["20px","20px","20px","30px"]}>Dark Mode</Text></Radio>
                     </Stack>
                 </RadioGroup>
 
@@ -344,7 +271,7 @@ export default function SettingsPage() {
                         display: 'block',
                         }}
                         // borderRadius='20px'
-                        src={icon}
+                        src={iconImage}
                     />
                     </HStack>
 
@@ -354,7 +281,7 @@ export default function SettingsPage() {
                         <Box className="containerAcross">
                                         
                             <Box w={["200px","200px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px'>
-                                <Link to={'/'} className="center button white" onClick={saveChanges}><Text  mt={["0px","0px","0px","0px"]} fontSize={["23px","23px","23px","23px"]}>Save Changes</Text></Link>  
+                                <Link to='/' className="center button white" onClick={saveChanges}><Text  mt={["0px","0px","0px","0px"]} fontSize={["23px","23px","23px","23px"]}>Save Changes</Text></Link>  
                             </Box>
                             <Box w="30px"></Box>
                         </Box>

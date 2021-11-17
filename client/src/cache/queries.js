@@ -193,6 +193,7 @@ export const GET_USER = gql`
             displayName
             iconImage
             bio
+            email
             title
             bannerImage
             quizzesMade {
@@ -233,6 +234,7 @@ export const GET_USER = gql`
                     displayName
                 }
             }
+            darkMode
         }
     }
 `;

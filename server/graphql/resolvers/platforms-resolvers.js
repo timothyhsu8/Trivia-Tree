@@ -226,5 +226,26 @@ module.exports = {
                 throw new Error(err);
             }
         },
+
+         // Removes quiz from platform
+         async removeQuizFromPlatform(_, { platformId, quizId }, context) {
+            try {
+                const platform = await Platform.findByIdAndUpdate(platformId, {
+                    $pull: { quizzes: quizId },
+                })
+                .populate({
+                    path: 'quizzes',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+                .exec()
+                // if (!platform.user.equals(context.req.user._id)) {
+                //     throw new Error('You are not the creator of this platform');
+                // }
+
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
 	}
 };

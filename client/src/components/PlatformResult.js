@@ -29,8 +29,8 @@ export default function PlatformResult( {platform} ) {
                 {/* PLATFORM NAME */}
                 <Stack spacing="0" direction="column">
                     <Text fontSize="135%" fontWeight="medium"> {platform.name}</Text>
-                    <Text fontSize="110%"> {platform.followers.length} Followers </Text>
-                    <Text> {platform.description} </Text>
+                    <Text fontSize="110%" textColor="gray.600"> {platform.followers.length} Followers </Text>
+                    <Text textColor="gray.600"> {platform.description} </Text>
                 </Stack>
             </HStack>
         </Link>

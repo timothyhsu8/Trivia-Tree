@@ -62,6 +62,15 @@ mutation ($platformId: ID!, $quizId: ID!) {
 }
 `
 
+export const REMOVE_QUIZ_FROM_PLATFORM = gql`
+mutation ($platformId: ID!, $quizId: ID!) {
+    removeQuizFromPlatform(platformId: $platformId, quizId: $quizId) {
+        name
+        _id
+    }
+}
+`
+
 export const DELETE_PLATFORM = gql`
     mutation ($platformId: ID!) {
         deletePlatform(platformId: $platformId) {

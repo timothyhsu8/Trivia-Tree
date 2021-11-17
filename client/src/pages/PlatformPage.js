@@ -1,4 +1,4 @@
-import { Box, Text, Grid, VStack, Stack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM } from '../cache/mutations';
@@ -340,7 +340,7 @@ export default function PlatformPage({}) {
                                         padding="10px"
                                         _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
                                         onClick={() => { setEditName(true) }}
-                                        >
+                                    >
                                         {platform_data.name} 
                                     </Text>
                                 </Tooltip>
@@ -428,7 +428,7 @@ export default function PlatformPage({}) {
                                     }
                                     
                                     {/* QUIZ CARDS */}
-                                    {quiz_data.map((quiz, key) => {
+                                    {quiz_data.slice(0).reverse().map((quiz, key) => {
                                         return <QuizCard 
                                             quiz={quiz} 
                                             width="7.5%"
@@ -436,7 +436,9 @@ export default function PlatformPage({}) {
                                             include_author={false}
                                             char_limit={35}  
                                             key={key}
-                                            />
+                                            is_owner={is_owner}
+                                            platform_id={platform_data._id}
+                                        />
                                     })}
                                 </Flex>
                                 <Box bgColor="gray.300" h="0.12vh" />

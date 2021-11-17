@@ -128,7 +128,7 @@ export default function Homepage() {
                         return <PlatformCard 
                             platform={platform}
                             width="15%"
-                            minWidth="200px"
+                            minWidth="220px"
                             img_height="75px"
                             char_limit={44} 
                             key={key}

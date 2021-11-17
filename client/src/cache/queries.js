@@ -171,6 +171,7 @@ export const SEARCH_PLATFORMS = gql`
             followers {
                 displayName
             }
+            description
         }
     }
 `;
@@ -244,6 +245,16 @@ export const GET_USER = gql`
                 }
             }
             darkMode
+        }
+    }
+`;
+
+export const SEARCH_USERS = gql`
+    query searchUsers($searchText: String!) {
+        searchUsers(searchText: $searchText) {
+            _id
+            displayName
+            iconImage
         }
     }
 `;

@@ -17,7 +17,6 @@ import { subscribe } from 'graphql';
 export default function SettingsPage(props) {
     const { user, refreshUserData } = useContext(AuthContext);
     let profileImg = 'Same Image';
-    console.log(user)
 
     let {userId} = useParams();
 
@@ -33,7 +32,8 @@ export default function SettingsPage(props) {
             profileimagetype: profileImg
         },
         onCompleted() {
-            //refreshUserData();
+            console.log("HELLO")
+
         }
     }});
      
@@ -42,9 +42,6 @@ export default function SettingsPage(props) {
 
 
     async function saveChanges() {
-        console.log(displayName)
-        console.log(iconImage)
-        console.log(darkMode)
         const {data} = await updateSettings({ variables: {settingInput:{userId:userId, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
         return;
     }
@@ -95,10 +92,8 @@ export default function SettingsPage(props) {
             console.log(JSON.stringify(err, null, 2));
         },
         onCompleted({ getUser: userData }) {
-            console.log(userData.email)
             setEmail(userData.email)
             setDisplayName(userData.displayName);
-            console.log(userData.darkMode)
             setDarkMode(userData.darkMode);
             setIconImage(userData.iconImage);
         },
@@ -223,7 +218,7 @@ export default function SettingsPage(props) {
                 <Box>
                 <Input
                     onBlur={(event) => updateDisplayName(event)}
-                    placeholder='Enter New Username'
+                    placeholder={displayName}
                     variant='flushed'
                     borderColor='black'
                     borderBottomWidth='3px'
@@ -286,7 +281,7 @@ export default function SettingsPage(props) {
                         <Box className="containerAcross">
                                         
                             <Box w={["200px","200px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px'>
-                                <Link to={"/"} className="center button white" onClick={saveChanges}><Text  mt={["0px","0px","0px","0px"]} fontSize={["23px","23px","23px","23px"]}>Save Changes</Text></Link>  
+                                <Link to='/' className="center button white" onClick={saveChanges}><Text  mt={["0px","0px","0px","0px"]} fontSize={["23px","23px","23px","23px"]}>Save Changes</Text></Link>  
                             </Box>
                             <Box w="30px"></Box>
                         </Box>

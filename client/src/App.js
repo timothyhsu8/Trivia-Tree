@@ -30,7 +30,7 @@ function App() {
         <ChakraProvider>
             <AuthProvider>
                 <Router>
-                    <Navbar />
+                    <Navbar/>
                     <Switch>
                         <Route exact path='/' component={Homepage} />
                         <Route exact path='/quizzes' component={Quizzes} />

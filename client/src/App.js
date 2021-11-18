@@ -22,6 +22,7 @@ import CategoryPage from './pages/CategoryPage';
 import ShoppingPage from './pages/ShoppingPage';
 import Navbar from './components/Navbar';
 import PlatformPage from './pages/PlatformPage';
+import PlatformManagerPage from './pages/PlatformManagerPage';
 import RewardsPage from './pages/RewardPage';
 import EditQuizPage from './pages/EditQuizPage';
 import { positions, Provider } from "react-alert";
@@ -81,6 +82,7 @@ function App() {
                             <Route path='/loginpage' component={LoginPage}></Route>
                             <Route path='/shoppingpage' component={ShoppingPage}></Route>
                             <Route path='/rewardspage' component={RewardsPage}></Route>
+                            <Route path='/platformmanager/:userId' component={PlatformManagerPage}></Route>
                         </Switch>
                     </Router>
                 </Provider>

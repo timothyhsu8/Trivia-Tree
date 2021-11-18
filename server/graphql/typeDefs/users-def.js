@@ -53,5 +53,6 @@ module.exports = gql`
         deleteFeaturedQuiz(userId: ID!, deleteFeaturedQuizId: ID!): Quiz
         addFeaturedPlatform(userId: ID!, newFeaturedPlatformId: ID!): Platform
         deleteFeaturedPlatform(userId: ID!, deleteFeaturedPlatformId: ID!): Platform
+        resetPlatformsMadeApollo(userId: ID!): User
     }
 `;

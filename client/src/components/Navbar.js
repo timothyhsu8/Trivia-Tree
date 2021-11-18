@@ -102,14 +102,6 @@ export default function Navbar() {
         }
     }
 
-    // Conditional rendering of logout button in the dropdown menu
-    function renderLogout() {
-        if (logged_in === false)
-            return
-
-        return <MenuItem fontSize="18px" fontWeight="medium"> Logout </MenuItem>
-    }
-
     return(
         <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
@@ -207,25 +199,26 @@ export default function Navbar() {
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (
                                     <Box>
-                                        <Link to='/createQuiz'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz   </MenuItem></Link>
+                                        <MenuItem onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz   </MenuItem>
                                         <MenuItem onClick={() => setChoosePlatformName(true)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                                         <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
-                                        <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
+                                        <MenuItem onClick={() => history.push('/platformmanager/' + user._id)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
                                     </Box>) 
                                     : 
                                     null
                                 }
                                 
                                 {/* Settings Page Button */}
-                                <Link to={user != "NoUser" ? '/settingspage/' + userId:'/loginpage'}><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings         </MenuItem></Link>
+                                <MenuItem onClick={() => history.push(user !== "NoUser" ? '/settingspage/' + userId :'/loginpage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
                                 
                                 {/* Rewards Button / Logout Button */}
-                                {logged_in === true ? (<Box>
-                                        <Link to='/rewardspage'><MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem></Link>
+                                {logged_in === true ? 
+                                    <Box>
+                                        <MenuItem onClick={() => history.push('/rewardspage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem>
                                         <a href={`${config.API_URL}/auth/logout`}>
                                             <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
                                         </a>
-                                    </Box>) 
+                                    </Box>
                                     : 
                                     null
                                 }

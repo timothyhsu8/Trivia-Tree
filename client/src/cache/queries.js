@@ -216,9 +216,12 @@ export const GET_USER = gql`
                 user {
                     displayName
                 }
-                followers{
+                followers {
                     _id
                     displayName
+                }
+                quizzes {
+                    _id
                 }
             }
             featuredQuizzes {

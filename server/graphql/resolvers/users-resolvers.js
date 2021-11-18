@@ -26,15 +26,19 @@ module.exports = {
                 })
                 .populate({
                     path: 'platformsMade',
-                    populate: { path: 'user', model: 'User' },
+                    populate: [{ path: 'user', model: 'User' }, { path: 'followers', model: 'User' }]
                 })
                 .populate({
                     path: 'featuredPlatforms',
-                    populate: { path: 'user', model: 'User' },
+                    populate: [{ path: 'user', model: 'User' }, { path: 'followers', model: 'User' }]
                 })
                 .populate({
                     path: 'favoritedQuizzes',
                     populate: { path: 'user', model: 'User' },
+                })
+                .populate({
+                    path: 'following',
+                    populate: [{ path: 'user', model: 'User' }, { path: 'followers', model: 'User' }]
                 })
                 .exec();
             return user;

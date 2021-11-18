@@ -236,7 +236,7 @@ module.exports = {
          // Removes quiz from platform
          async removeQuizFromPlatform(_, { platformId, quizId }, context) {
             try {
-                const platform = await Platform.findByIdAndUpdate(platformId, {
+                const platform = await User.findByIdAndUpdate(platformId, {
                     $pull: { quizzes: quizId },
                 })
                 .populate({
@@ -262,10 +262,23 @@ module.exports = {
                     path: 'followers',
                     populate: { path: 'platform', model: 'Platform' },
                 })
+
                 .exec()
                 // if (!platform.user.equals(context.req.user._id)) {
                 //     throw new Error('You are not the creator of this platform');
                 // }
+                // let user = await User.findById(userId);
+                // user.following.push(platform);
+                // user.save();
+                const user = await User.findByIdAndUpdate(userId, {
+                    $push: { following: platformId },
+                })
+                .populate({
+                    path: 'following',
+                    populate: { path: '', model: 'User' },
+                })
+
+                .exec()
                 
                 return platform;
             } catch (err) {
@@ -286,6 +299,15 @@ module.exports = {
                 // if (!platform.user.equals(context.req.user._id)) {
                 //     throw new Error('You are not the creator of this platform');
                 // }
+                const user = await Platform.findByIdAndUpdate(userId, {
+                    $pull: { following: platformId },
+                })
+                .populate({
+                    path: 'following',
+                    populate: { path: 'user', model: 'User' },
+                })
+
+                .exec()
                 
                 return platform;
             } catch (err) {

@@ -13,6 +13,7 @@ export default function UserCard( props ) {
     let width = props.width
     let title_fontsize = props.title_fontsize
     let icon_src = user_data.iconImage
+    console.log(user_data)
 
     return (
         <VStack 

@@ -63,7 +63,7 @@ export default function PlatformCard( props ) {
                         <Flex w="100%" direction="column" ml="3%" paddingRight="5%">
                             {/* PLATFORM NAME */}
                             <Text fontSize="110%" textColor="white" fontWeight="medium" lineHeight="120%" paddingRight=""> {platform.name} </Text>
-                            <Text pos="relative" mt="1%" bottom="4%" fontSize="100%" textColor="white" fontWeight="thin"> {platform.followers.length} Followers </Text>
+                            <Text pos="relative" mt="1%" bottom="4%" fontSize="100%" textColor="white" fontWeight="thin"> {platform.followers.length} {platform.followers.length == 1 ? " Follower":" Followers"} </Text>
                         </Flex>
                     </Flex>
                 </Box>

@@ -9,6 +9,7 @@ import { useState, createRef, useContext, useRef } from 'react';
 import '../styles/styles.css'
 import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
+import UserCard from "../components/UserCard"
 
 export default function PlatformPage({}) {
     let history = useHistory();
@@ -240,8 +241,8 @@ export default function PlatformPage({}) {
             return renderPlatform()
         // if (page === 'Quizzes') 
         //     return renderPlatforms()
-        // if (page === 'Followers') 
-        //     return renderQuizzes()
+        if (page === 'Followers') 
+            return renderFollowers()
         if (page === 'About') 
             return renderAbout()
     }
@@ -450,7 +451,7 @@ export default function PlatformPage({}) {
                                     null
                             }
 
-                            <Text fontSize="110%"> {platform.data.getPlatform.followers.length} Followers </Text>
+                            <Text fontSize="110%"> {platform.data.getPlatform.followers.length} {platform.data.getPlatform.followers.length == 1 ? "Follower":"Followers"} </Text>
                         </VStack>
                     </Box>
                
@@ -659,6 +660,32 @@ export default function PlatformPage({}) {
                 }
             </Box>
         )
+    }
+
+    function renderFollowers() {
+        return (
+            <Box bgColor='gray.200' borderRadius='10'>
+                <Text pl='1.5%'  fontSize='1.2vw' fontWeight='bold'>
+                    Followers ({platform.data.getPlatform.followers.length})
+                </Text>
+                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    {platform.data.getPlatform.followers.map((user, key) => {
+                        return (
+                            <UserCard 
+                            user={user} 
+                            width="7.7%" 
+                            title_fontsize="100%" 
+                            author_fontsize="90%" 
+                            include_author={true}
+                            char_limit={30} 
+                            key={key}
+                        />
+                        );
+                    })}
+                </Flex>
+            </Box>
+        );
+
     }
 
     return (

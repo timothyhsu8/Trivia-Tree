@@ -129,3 +129,19 @@ mutation ($userId: ID!, $deleteFeaturedPlatformId: ID!) {
 }
 `
 
+export const FOLLOW_PLATFORM = gql`
+    mutation ($platformId: ID!, $userId: ID!) {
+        followPlatform(platformId: $platformId, userId: $userId){
+            displayName
+        }
+    }
+`;
+
+export const UNFOLLOW_PLATFORM = gql`
+    mutation ($platformId: ID!, $userId: ID!) {
+        unfollowPlatform(platformId: $platformId, userId: $userId){
+            displayName
+        }
+    }
+`;
+

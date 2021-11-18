@@ -185,9 +185,6 @@ export default function AccountPage(props) {
         skip: !user,
         fetchPolicy: 'cache-and-network',
         variables: { _id: userId },
-        onError(err) {
-            console.log(JSON.stringify(err, null, 2));
-        },
         onCompleted({ getUser: userData }) {
             if (userData) {
                 username = userData.displayName;
@@ -682,30 +679,45 @@ export default function AccountPage(props) {
     // Render Platforms
     function renderPlatforms() {
         return (
-            <Box bgColor='gray.200' borderRadius='10'>
-                <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                    All Platforms
-                </Text>
-                <Flex
-                    ml='1%'
-                    mt='1%'
-                    spacing='4%'
-                    display='flex'
-                    flexWrap='wrap'
-                >
-                    {userData.platformsMade.map((platform, key) => {
-                        return (
-                            <PlatformCard
-                                platform={platform}
-                                width='15%'
-                                minWidth='200px'
-                                img_height='50px'
-                                char_limit={44}
-                                key={key}
-                            />
-                        );
-                    })}
-                </Flex>
+            <Box>
+                <Box bgColor='gray.200' borderRadius='10'>
+                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
+                        User's Platforms
+                    </Text>
+                    <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                        {userData.platformsMade.map((platform, key) => {
+                            return (
+                                <PlatformCard
+                                    platform={platform}
+                                    width='15%'
+                                    minWidth="200px"
+                                    img_height="50px"
+                                    char_limit={44} 
+                                    key={key}
+                                />
+                            );
+                        })}
+                    </Flex>
+                </Box>
+                <Box mt="10px" bgColor='gray.200' borderRadius='10'>
+                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
+                        User's Followed Platforms
+                    </Text>
+                    <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                        {userData.following.map((platform, key) => {
+                            return (
+                                <PlatformCard
+                                    platform={platform}
+                                    width='15%'
+                                    minWidth="200px"
+                                    img_height="50px"
+                                    char_limit={44} 
+                                    key={key}
+                                />
+                            );
+                        })}
+                    </Flex>
+                </Box>
             </Box>
         );
     }

@@ -14,6 +14,9 @@ module.exports = {
                     path: 'quizzes',
                     populate: { path: 'platform', model: 'Platform' },
                 })
+                .populate({
+                    path: 'followers'
+                })
                 .exec();
 				return platforms;
 			} catch (err) {
@@ -28,6 +31,9 @@ module.exports = {
                 .populate({
                     path: 'quizzes',
                     populate: { path: 'platform', model: 'Platform' },
+                })
+                .populate({
+                    path: 'followers'
                 })
                 .exec();
 
@@ -230,7 +236,7 @@ module.exports = {
          // Removes quiz from platform
          async removeQuizFromPlatform(_, { platformId, quizId }, context) {
             try {
-                const platform = await Platform.findByIdAndUpdate(platformId, {
+                const platform = await User.findByIdAndUpdate(platformId, {
                     $pull: { quizzes: quizId },
                 })
                 .populate({
@@ -241,11 +247,72 @@ module.exports = {
                 // if (!platform.user.equals(context.req.user._id)) {
                 //     throw new Error('You are not the creator of this platform');
                 // }
-
                 return platform;
             } catch (err) {
                 throw new Error(err);
             }
         },
+
+        async followPlatform(_, { platformId, userId }, context) {
+            try {
+                const platform = await Platform.findByIdAndUpdate(platformId, {
+                    $push: { followers: userId },
+                })
+                .populate({
+                    path: 'followers',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+
+                .exec()
+                // if (!platform.user.equals(context.req.user._id)) {
+                //     throw new Error('You are not the creator of this platform');
+                // }
+                // let user = await User.findById(userId);
+                // user.following.push(platform);
+                // user.save();
+                const user = await User.findByIdAndUpdate(userId, {
+                    $push: { following: platformId },
+                })
+                .populate({
+                    path: 'following',
+                    populate: { path: '', model: 'User' },
+                })
+
+                .exec()
+                
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+
+        async unfollowPlatform(_, { platformId, userId }, context) {
+            try {
+                const platform = await Platform.findByIdAndUpdate(platformId, {
+                    $pull: { followers: userId },
+                })
+                .populate({
+                    path: 'followers',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+                .exec()
+                // if (!platform.user.equals(context.req.user._id)) {
+                //     throw new Error('You are not the creator of this platform');
+                // }
+                const user = await Platform.findByIdAndUpdate(userId, {
+                    $pull: { following: platformId },
+                })
+                .populate({
+                    path: 'following',
+                    populate: { path: 'user', model: 'User' },
+                })
+
+                .exec()
+                
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        }
 	}
 };

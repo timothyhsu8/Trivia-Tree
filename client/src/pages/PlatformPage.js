@@ -1,7 +1,7 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM } from '../cache/mutations';
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
@@ -9,6 +9,7 @@ import { useState, createRef, useContext, useRef } from 'react';
 import '../styles/styles.css'
 import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
+import UserCard from "../components/UserCard"
 
 export default function PlatformPage({}) {
     let history = useHistory();
@@ -17,14 +18,21 @@ export default function PlatformPage({}) {
     const { user } = useContext(AuthContext);
     let { platformId } = useParams();
     
-    const [following, setFollowing] = useState(false)
     const [page, setPage] = useState('Platform')
+    const [following, setFollowing] = useState(false)
 
     const quiz_sections = ["All Quizzes", "Most Played Quizzes", "Geography"]
 
     // Fetch quiz data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
-    const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId} })
+    const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId}, onCompleted() {
+        for(let i = 0; i < platform.data.getPlatform.followers.length; i++){
+            if(platform.data.getPlatform.followers[i]._id == user._id){
+                setFollowing(true)
+            }
+        }         
+    } })
+
 
     const loading = quizzes.loading || platform.loading
     const error = quizzes.error || platform.error
@@ -125,6 +133,22 @@ export default function PlatformPage({}) {
         },
     })
 
+    const [followPlatform] = useMutation(FOLLOW_PLATFORM, {
+        onCompleted() {
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    })
+
+    const [unfollowPlatform] = useMutation(UNFOLLOW_PLATFORM, {
+        onCompleted() {
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    })
+
     // Finish selecting quiz and send added quiz to database
     function handleAddQuizToPlatform() {
         setIsAddingQuiz(false)
@@ -217,10 +241,32 @@ export default function PlatformPage({}) {
             return renderPlatform()
         // if (page === 'Quizzes') 
         //     return renderPlatforms()
-        // if (page === 'Followers') 
-        //     return renderQuizzes()
+        if (page === 'Followers') 
+            return renderFollowers()
         if (page === 'About') 
             return renderAbout()
+    }
+
+    async function setFollowPlatform(){
+        await followPlatform({
+            variables: {
+                platformId: platform_data._id,
+                userId: user._id
+            },
+        })
+        setFollowing(true);
+        platform.refetch()
+    }
+
+    async function setUnfollowPlatform(){
+        await unfollowPlatform({
+            variables: {
+                platformId: platform_data._id,
+                userId: user._id
+            },
+        })
+        setFollowing(false);
+        platform.refetch()
     }
 
     function renderPlatform() {
@@ -270,7 +316,8 @@ export default function PlatformPage({}) {
                                     fontSize="120%" 
                                     color="white" 
                                     float="right"
-                                    onClick={() => setFollowing(false)}
+                                    display={is_owner ? 'none':''}
+                                    onClick={setUnfollowPlatform}
                                     _hover={{opacity:"85%"}} 
                                     _active={{opacity:"75%"}} 
                                     _focus={{boxShadow:"none"}}
@@ -287,7 +334,8 @@ export default function PlatformPage({}) {
                                     fontSize="120%" 
                                     color="white" 
                                     float="right"
-                                    onClick={() => setFollowing(true)}
+                                    display={is_owner ? 'none':''}
+                                    onClick={setFollowPlatform}
                                     _hover={{opacity:"85%"}} 
                                     _active={{opacity:"75%"}} 
                                     _focus={{boxShadow:"none"}}
@@ -403,7 +451,7 @@ export default function PlatformPage({}) {
                                     null
                             }
 
-                            <Text fontSize="110%"> {platform_data.followers.length} Followers </Text>
+                            <Text fontSize="110%"> {platform.data.getPlatform.followers.length} {platform.data.getPlatform.followers.length == 1 ? "Follower":"Followers"} </Text>
                         </VStack>
                     </Box>
                
@@ -612,6 +660,32 @@ export default function PlatformPage({}) {
                 }
             </Box>
         )
+    }
+
+    function renderFollowers() {
+        return (
+            <Box bgColor='gray.200' borderRadius='10'>
+                <Text pl='1.5%'  fontSize='1.2vw' fontWeight='bold'>
+                    Followers ({platform.data.getPlatform.followers.length})
+                </Text>
+                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    {platform.data.getPlatform.followers.map((user, key) => {
+                        return (
+                            <UserCard 
+                            user={user} 
+                            width="7.7%" 
+                            title_fontsize="100%" 
+                            author_fontsize="90%" 
+                            include_author={true}
+                            char_limit={30} 
+                            key={key}
+                        />
+                        );
+                    })}
+                </Flex>
+            </Box>
+        );
+
     }
 
     return (

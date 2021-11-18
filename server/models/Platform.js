@@ -55,6 +55,9 @@ const platformSchema = new Schema(
         },
         description: {
             type: String,
+        },
+        numFollowers: {
+            type: Number
         }
     },
     { timestamps: true }

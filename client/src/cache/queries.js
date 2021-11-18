@@ -127,7 +127,9 @@ export const GET_PLATFORMS = gql`
             background
             tags
             followers {
+                _id
                 displayName
+                iconImage
             }
         }
     }
@@ -142,7 +144,9 @@ export const GET_PLATFORM = gql`
             bannerImage
             background
             followers {
+                _id
                 displayName
+                iconImage
             }
             tags
             description
@@ -244,6 +248,20 @@ export const GET_USER = gql`
                     displayName
                 }
                 followers {
+                    _id
+                    displayName
+                }
+            }
+            following {
+                _id
+                iconImage
+                bannerImage
+                name
+                user {
+                    displayName
+                }
+                followers {
+                    _id
                     displayName
                 }
             }

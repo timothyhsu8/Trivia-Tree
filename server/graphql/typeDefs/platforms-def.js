@@ -45,5 +45,7 @@ module.exports = gql`
         addPlaylistToPlatform(platformId: ID!, playlistName: String!): Platform
         addQuizToPlatform(platformId: ID!, quizId: ID!): Platform
         removeQuizFromPlatform(platformId: ID!, quizId: ID!): Platform
+        followPlatform(platformId: ID!, userId: ID!): User
+        unfollowPlatform(platformId: ID!, userId: ID!): User
     }
 `;

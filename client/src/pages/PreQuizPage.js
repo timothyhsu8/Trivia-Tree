@@ -12,27 +12,43 @@ import * as queries from '../cache/queries';
 import { AuthContext } from '../context/auth';
 
 export default function PreQuizPage({}) {
-    const { user } = useContext(AuthContext);
+    const { user, refreshUserData } = useContext(AuthContext);
     let history = useHistory();
-
-    const [FavoriteQuiz] = useMutation(mutations.FAVORITE_QUIZ);
-
-    let { quizId } = useParams();
-    let quiz = null;
-    let iconSize = "50px"
-    let iconTextSize = "30px"
-    let quizFavorited = false; 
     let logged_in = false
-    
-    // Checks if user is logged in
+    let { quizId } = useParams();
+
+        // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
     }
 
-    console.log(user)
+    let initialFavoriteState = false; 
+
+
+
+    const [FavoriteQuiz] = useMutation(mutations.FAVORITE_QUIZ);
+    const [UnfavoriteQuiz] = useMutation(mutations.UNFAVORITE_QUIZ);
+    const [isFavorited, setIsFavorited] = useState(false);
+
+    let quiz = null;
+    let iconSize = "50px"
+    let iconTextSize = "30px"
+    
 
     const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId:quizId },
+        variables: { quizId:quizId }, onCompleted() {
+            if (logged_in){
+                for(let i = 0; i < user.favoritedQuizzes.length; i++){
+                    if(user.favoritedQuizzes[i] == quiz._id){
+                        console.log("HERE")
+                        console.log(user.favoritedQuizzes[i]);
+                        console.log(quiz._id);
+                        setIsFavorited(true);
+                        break;
+                    }
+                }
+            }         
+        }
     });
 
     if (loading) {
@@ -52,22 +68,42 @@ export default function PreQuizPage({}) {
     let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
     let icon_src = quiz.icon == null ? quizImage : quiz.icon
     
-    if (logged_in){
-        for(let i = 0; i < user.favoritedQuizzes.length; i++){
-            if(user.favoritedQuizzes[i] == quizId)
-                quizFavorited = true;
-        }
-    }
 
     const favoriteQuiz = async () => {
         if (logged_in){
-            console.log("favorite")
             const {data} = await FavoriteQuiz({ variables: {quizId:quizId, userId: user._id}});
-            history.push({
-                pathname: '/prequizpage/' + quizId 
-            });
             console.log(data);
         }
+        setIsFavorited(true);
+        refetch()
+        refreshUserData()
+    }
+
+    const unfavoriteQuiz = async () => {
+        console.log(user.favoritedQuizzes)
+        if (logged_in){
+            const {data} = await UnfavoriteQuiz({ variables: {quizId:quizId, userId: user._id}});
+            console.log(data);
+        }
+        setIsFavorited(false);
+        refetch();
+        refreshUserData();
+        console.log(user.favoritedQuizzes)
+    }
+
+    const toggleQuizFavorited = async () => {
+        console.log(user.favoritedQuizzes)
+        if(logged_in){
+            if(isFavorited == true){
+                console.log("UNFAVORITE")
+                unfavoriteQuiz();
+            }
+            else{
+                console.log("FAVORITE")
+                favoriteQuiz();
+            }
+        }
+        console.log(user.favoritedQuizzes)
     }
 
     return ( 
@@ -80,10 +116,10 @@ export default function PreQuizPage({}) {
                         <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%"></Image>
                         <Text fontSize="2.7vw" as="b" transform="translateY(57%)" paddingLeft="20px">{quizTitle}</Text>
                         {
-                            quizFavorited ? 
-                            <Image as={BsHeart} color="red" w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}/>
+                            isFavorited ? 
+                            <Image as={BsHeart} color="red" w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}onClick={toggleQuizFavorited}/>
                             : 
-                            <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }} onClick={favoriteQuiz}/>
+                            <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }} onClick={toggleQuizFavorited}/>
                         }
                     </Flex>
                 </GridItem>

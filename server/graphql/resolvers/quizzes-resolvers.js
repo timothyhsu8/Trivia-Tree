@@ -340,16 +340,43 @@ module.exports = {
             const quiz = await Quiz.findById(quizId);
 
 
-            quiz.numFavorites = quiz.numFavorites + 1; 
-            quiz.save();
+
 
             const user = await User.findById(userId);
+            if(user.favoritedQuizzes.includes(quizId)){
+                console.log("ALREADY GOT");
+                return;
+            }
             const userFavQuizzes = user.favoritedQuizzes;
             userFavQuizzes.push(quiz);
             user.favoritedQuizzes = userFavQuizzes;
             user.save();
 
+            quiz.numFavorites = quiz.numFavorites + 1; 
+            quiz.save();
+
             console.log(user.favoritedQuizzes)
+
+            return true
+        },
+        async unfavoriteQuiz(_, { quizId, userId }) {
+
+            const quiz = await Quiz.findById(quizId);
+
+
+            const user = await User.findById(userId);
+
+            for(let i = 0; i < user.favoritedQuizzes.length; i++){
+                if(user.favoritedQuizzes[i] == quizId){
+                    console.log("here")
+                    user.favoritedQuizzes.splice(i,1);    
+                    break;
+                }
+            }
+
+            user.save();
+            quiz.numFavorites = quiz.numFavorites - 1; 
+            quiz.save();    
 
             return true
         }

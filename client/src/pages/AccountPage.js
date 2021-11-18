@@ -203,6 +203,7 @@ export default function AccountPage(props) {
             console.log(JSON.stringify(err, null, 2));
         },
     });
+    
 
     function handleUpdateUser() {
         updateUser({
@@ -281,6 +282,8 @@ export default function AccountPage(props) {
 
         setChosenFeaturedPlatform(null)
     }
+
+    console.log(userData)
 
     async function handleDeleteFeaturedQuiz(quizToDelete){
         console.log(quizToDelete.title)
@@ -654,25 +657,50 @@ export default function AccountPage(props) {
     // Render Quizzes
     function renderQuizzes() {
         return (
-            <Box bgColor='gray.200' borderRadius='10'>
-                <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                    All Quizzes
-                </Text>
-                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                    {userData.quizzesMade.map((quiz, key) => {
-                        return (
-                            <QuizCard
-                                quiz={quiz}
-                                width='10%'
-                                title_fontsize='0.8vw'
-                                include_author={false}
-                                char_limit={35}
-                                key={key}
-                            />
-                        );
-                    })}
-                </Flex>
+            <Box>
+                <Box bgColor='gray.200' borderRadius='10'>
+                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
+                        User's Quizzes
+                    </Text>
+                    <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                        {userData.quizzesMade.map((quiz, key) => {
+                            return (
+                                <QuizCard
+                                    quiz={quiz}
+                                    width='10%'
+                                    title_fontsize='0.8vw'
+                                    include_author={false}
+                                    char_limit={35}
+                                    key={key}
+                                />
+                            );
+                        })}
+                    </Flex>
+                </Box>
+
+                {userData.favoritedQuizzes.length > 0 ? 
+                <Box mt="10px" bgColor='gray.200' borderRadius='10'>
+                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
+                        Favorited Quizzes
+                    </Text>
+                    <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                        {userData.favoritedQuizzes.map((quiz, key) => {
+                            return (
+                                <QuizCard
+                                    quiz={quiz}
+                                    width='10%'
+                                    title_fontsize='0.8vw'
+                                    include_author={false}
+                                    char_limit={35}
+                                    key={key}
+                                />
+                            );
+                        })}
+                    </Flex>
+                </Box>
+                : ''}
             </Box>
+            
         );
     }
 

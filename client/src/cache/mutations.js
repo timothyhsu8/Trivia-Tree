@@ -44,6 +44,12 @@ export const FAVORITE_QUIZ = gql`
     }
 `;
 
+export const UNFAVORITE_QUIZ = gql`
+    mutation ($quizId: ID!, $userId: ID!) {
+        unfavoriteQuiz(quizId: $quizId, userId: $userId)
+    }
+`;
+
 export const UPDATE_PLATFORM = gql`
     mutation ($platformInput: PlatformInput!) {
         updatePlatform(platformInput: $platformInput) {

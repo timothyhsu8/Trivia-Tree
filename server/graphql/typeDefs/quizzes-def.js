@@ -74,5 +74,6 @@ module.exports = gql`
         updateQuiz(quizInput: QuizInput!): Quiz
         deleteQuiz(quizId: ID!): Quiz
         favoriteQuiz(quizId: ID!, userId: ID!): Boolean
+        unfavoriteQuiz(quizId: ID!, userId: ID!): Boolean
     }
 `;

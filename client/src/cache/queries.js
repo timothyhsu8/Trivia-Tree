@@ -244,6 +244,17 @@ export const GET_USER = gql`
                     displayName
                 }
             }
+            favoritedQuizzes {
+                _id
+                title
+                numAttempts
+                numFavorites
+                icon
+                rating
+                user {
+                    displayName
+                }
+            }
             darkMode
         }
     }

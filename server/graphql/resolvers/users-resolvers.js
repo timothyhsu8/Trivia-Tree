@@ -32,6 +32,10 @@ module.exports = {
                     path: 'featuredPlatforms',
                     populate: { path: 'user', model: 'User' },
                 })
+                .populate({
+                    path: 'favoritedQuizzes',
+                    populate: { path: 'user', model: 'User' },
+                })
                 .exec();
             return user;
         },

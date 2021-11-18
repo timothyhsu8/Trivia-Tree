@@ -72,6 +72,7 @@ export default function QuizTakingPage({}) {
     
     if (data) {
         quiz = data.getQuiz;
+        console.log(quiz)
         if(quiz.quizTimer != null){
             if(!quizTimerPulled){
                 setQuizTimerDisplay(quiz.quizTimer);
@@ -83,7 +84,7 @@ export default function QuizTakingPage({}) {
     }
 
     let quizID = quiz._id;
-    let quizicon = quizImage
+    let quizicon = quiz.iconImage;
     let question = quiz.questions[currentQuestionNumber-1].question;
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
@@ -214,6 +215,7 @@ export default function QuizTakingPage({}) {
 
         return hours + ":" + minutes + ":" + seconds;
     }
+    console.log(quiz.iconImage)
 
     return (
         <Box data-testid='main-component'>
@@ -221,7 +223,7 @@ export default function QuizTakingPage({}) {
                 {/* SIDEBAR */}
                 <Box h='100vh' bgColor='gray.200'>
                     {/* QUIZ ICON */}
-                    <Image src={quizicon} borderRadius="50%" p="20px"/>
+                    <Image src={quiz.icon} w="250px" h="200px" borderRadius="20%" p="20px"/>
 
                     {/* QUIZ TITLE */}
                     <Center>

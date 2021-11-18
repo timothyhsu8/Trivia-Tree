@@ -57,6 +57,7 @@ export default function PreQuizPage({}) {
     
     if (data) {
         quiz = data.getQuiz;
+        console.log(quiz)
     }
 
     let quizTitle = quiz.title;

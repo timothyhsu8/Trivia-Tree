@@ -212,6 +212,11 @@ module.exports = {
 
 
             user.save();
-        }
+        },
+        async resetPlatformsMadeApollo(_, { userId }, context){
+            const user = await User.findById(userId);
+            user.platformsMade = [];
+            user.save()
+        },
     }
 };

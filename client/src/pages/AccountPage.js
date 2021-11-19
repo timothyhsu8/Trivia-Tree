@@ -435,7 +435,7 @@ export default function AccountPage(props) {
             <Box minW='500px' pos="relative">
                 {user._id === userId ? (
                     isEditing ? (
-                        <VStack position='absolute' left='20px'>
+                        <VStack position='absolute' left='-150px'>
                             <Button onClick={() => cancelEditing()}>
                                 Cancel Updates
                             </Button>
@@ -574,6 +574,7 @@ export default function AccountPage(props) {
                                 pos='absolute'
                                 bottom='4%'
                                 left='1%'
+                                zIndex="100"
                                 onClick={() => hiddenPFPInput.current.click()}
                             >
                                 <Text
@@ -597,6 +598,7 @@ export default function AccountPage(props) {
                                 pos='absolute'
                                 bottom='4%'
                                 right='1%'
+                                zIndex="100"
                                 onClick={() =>
                                     hiddenBannerInput.current.click()
                                 }

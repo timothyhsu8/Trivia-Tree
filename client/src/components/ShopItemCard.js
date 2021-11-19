@@ -21,6 +21,7 @@ export default function ShopItemCard( props ) {
     const costArr = props.costArr
     const type = props.type
     //+ platform._id
+    // borderRadius="20px"
     return (
         <Box>
             
@@ -31,7 +32,7 @@ export default function ShopItemCard( props ) {
                             img_height="75px"
                             char_limit={44} 
                             key={key}*/
-                            width={[w1,w2,w3,w4]} height= {Imgheight} backgroundRepeat="no-repeat" backgroundSize ={[w1+" "+Imgheight,w2+" "+Imgheight,w3+" "+Imgheight,w4+" "+Imgheight]} backgroundImage={imgArr[offset]} src={borderArr[offset]} alt={"Tree Shop Banner"}/>
+                            width={[w1,w2,w3,w4]} height= {Imgheight}  backgroundRepeat="no-repeat" backgroundSize ={[w1+" "+Imgheight,w2+" "+Imgheight,w3+" "+Imgheight,w4+" "+Imgheight]} backgroundImage={imgArr[offset]} src={borderArr[offset]} alt={"Tree Shop Banner"}/>
                             <Center><Box bg="GRAY" h="25px" w={[w1,w2,w3,w4]}>
                                     <HStack>
                                     <Text>mee</Text>

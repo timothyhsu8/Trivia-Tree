@@ -459,7 +459,8 @@ export default function AccountPage(props) {
                     ) : (
                         <Box position='absolute' left='20px'>
                             {preview ? (
-                            null
+                            <Link to="/shoppingpage">
+                            Back to Shop</Link>
                             ) : 
                             <Button onClick={() => toggleEditPage(true)}>
                                 Update Page

@@ -1,4 +1,4 @@
-import React, { useState, createRef } from 'react';
+import React, { useState, createRef, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import {
     Input,
@@ -19,11 +19,12 @@ import { v4 as uuidv4 } from 'uuid';
 import '../styles/CreateQuizPage.css';
 import QuestionCreatorCard from '../components/QuestionCreatorCard';
 
-let img = 'Default Image';
-let refs = {};
-const hiddenImageInput = createRef(null);
+let refs = null;
+let hiddenImageInput = null;
+let img = null;
 
 function CreateQuizPage(props) {
+    const [isInitialDone, setInitialDone] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [quizQuestions, setQuizQuestions] = useState([
@@ -47,10 +48,15 @@ function CreateQuizPage(props) {
     const [quizTimer, setQuizTimer] = useState('10:00:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
 
-    //Have to create a ref for the initial question manually
-    if (Object.keys(refs).length === 0) {
+    useEffect(() => {
+        refs = {};
         refs[quizQuestions[0].id] = createRef();
-    }
+        hiddenImageInput = createRef(null);
+        img = 'Default Image';
+        setInitialDone(true);
+    }, [])
+
+    //Have to create a ref for the initial question manually
 
     function handleScrollAction(id) {
         let targetEle = refs[id].current;
@@ -263,6 +269,10 @@ function CreateQuizPage(props) {
                 },
             },
         });
+    }
+
+    if (!isInitialDone) {
+        return null;
     }
 
     return (

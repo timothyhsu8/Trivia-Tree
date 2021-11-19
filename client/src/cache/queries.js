@@ -87,6 +87,7 @@ export const SEARCH_QUIZZES = gql`
             numQuestions
             icon
             rating
+            numAttempts
             numFavorites
             quizInstant
             quizShuffled
@@ -173,7 +174,7 @@ export const SEARCH_PLATFORMS = gql`
             iconImage
             bannerImage
             followers {
-                displayName
+                _id
             }
             description
         }

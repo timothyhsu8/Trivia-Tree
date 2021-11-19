@@ -1,5 +1,5 @@
-import { Box, Text, Image, HStack, Stack } from "@chakra-ui/react"
-import quizImage from '../images/defaultquiz.jpeg';
+import { Box, Text, Image, HStack, Stack, Tag, TagLabel } from "@chakra-ui/react"
+import quizImage from '../../images/defaultquiz.jpeg';
 import { Link } from 'react-router-dom';
 
 export default function UserResult( {user} ) {
@@ -26,8 +26,11 @@ export default function UserResult( {user} ) {
                 </Box>
 
                 {/* USER NAME */}
-                <Stack spacing="0" direction="column">
+                <Stack spacing="2" direction="column">
                     <Text fontSize="120%" fontWeight="medium"> {user.displayName}</Text>
+                    <Tag w="fit-content" size="sm" variant="outline" colorScheme="gray">
+                        <TagLabel> User </TagLabel>
+                    </Tag>
                     {/* <Text fontSize="110%"> {platform.followers.length} Followers </Text> */}
                 </Stack>
             </HStack>

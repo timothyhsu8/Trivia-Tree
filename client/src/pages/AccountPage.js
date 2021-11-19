@@ -200,7 +200,7 @@ export default function AccountPage(props) {
     console.log(window.location.pathname);
     const x = window.location.pathname;
     const y = x.substring(1,12)
-    const z = -1;
+    var z = -1;
     const borderArr = [
         lights1,fire1,flowers1,neon1,fire1,lights1,flowers1,neon1,lights1,flowers1,fire1,neon1
     ]
@@ -224,12 +224,12 @@ export default function AccountPage(props) {
         }
         console.log(index)
         var count = index
-        while(parseInt(count)!=NaN){
+        while(parseInt(count)!=NaN && count<x.length){
             count+=1
             console.log(count)
         }
         z = parseInt(x.substring(index,count+1))
-
+    }
 
 
 
@@ -386,9 +386,13 @@ export default function AccountPage(props) {
                         </VStack>
                     ) : (
                         <Box position='absolute' left='20px'>
+                            {preview ? (
+                            null
+                            ) : 
                             <Button onClick={() => toggleEditPage(true)}>
                                 Update Page
                             </Button>
+                        }
                         </Box>
                     )
                 ) : null}
@@ -544,7 +548,8 @@ export default function AccountPage(props) {
                                             display='flex'
                                             flexWrap='wrap'
                                         >
-                                        {isOwner ? 
+                                        {isOwner&&preview==false ? 
+                                        
                                         <AddQuizCard 
                                             width="10%"
                                             title_fontsize="100%"
@@ -610,7 +615,7 @@ export default function AccountPage(props) {
                                             display='flex'
                                             flexWrap='wrap'
                                         >
-                                        {isOwner ?
+                                        {isOwner&&preview==false ?
                                         <AddQuizCard 
                                             width="10%"
                                             title_fontsize="100%"

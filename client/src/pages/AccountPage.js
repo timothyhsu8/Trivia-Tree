@@ -34,6 +34,16 @@ import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { useAlert } from 'react-alert';
 
+//Lol more images
+import absolutelynothing from '../images/absolutelynothing.png'
+import guest from '../images/guest.png'
+import heart from '../images/heart.jpeg'
+import treeshop from '../images/treeshop.png'
+import lights1 from '../images/lights1.png'
+import fire1 from '../images/fire1.png'
+import flowers1 from '../images/flowers1.png'
+import neon1 from '../images/neon1.png'
+const iconPath= "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg"
 
 let profileImg = null;
 let bannerImg = null;
@@ -65,6 +75,7 @@ export default function AccountPage(props) {
         React.useState(false);
     const [chosenFeaturedQuiz, setChosenFeaturedQuiz] = useState(null);
     const [chosenFeaturedPlatform, setChosenFeaturedPlatform] = useState(null);
+    const [preview, setPreview] = useState(false);
 
     const [AddFeaturedQuiz] = useMutation(ADD_FEATURED_QUIZ, {
         fetchPolicy: 'network-only',
@@ -223,6 +234,9 @@ export default function AccountPage(props) {
     //var bannerBorder=-1
     //var bannerBorder=-1
     var offset=-1
+    if(y.localeCompare("previewpage")!=0 && preview==true){
+        setPreview(false)
+    }
     if(y.localeCompare("previewpage")==0 && preview==false){
         //console.log("preview")
         setPreview(true)
@@ -613,7 +627,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {isOwner ? (
+                                    {isOwner &&preview==false? (
                                         <AddQuizCard
                                             width='10%'
                                             title_fontsize='100%'
@@ -680,7 +694,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {isOwner ? (
+                                    {isOwner &&preview==false? (
                                         <AddQuizCard
                                             width='10%'
                                             title_fontsize='100%'

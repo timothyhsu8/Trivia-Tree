@@ -20,9 +20,9 @@ import { v4 as uuidv4 } from 'uuid';
 import '../styles/CreateQuizPage.css';
 import QuestionCreatorCard from '../components/QuestionCreatorCard';
 
-let img = 'Same Image';
-let refs = {};
-const hiddenImageInput = createRef(null);
+let img = null;
+let refs = null;
+let hiddenImageInput = null;
 
 function EditQuizPage(props) {
     const quizId = props.match.params.quizId;
@@ -287,6 +287,9 @@ function EditQuizPage(props) {
             if (user === 'NoUser' || user._id !== quiz.user._id) {
                 props.history.push('/');
             }
+            refs = {};
+            img = 'Same Image';
+            hiddenImageInput = createRef(null);
             setTitle(quiz.title);
             setDescription(quiz.description);
             let modifiedQuizQuestions = quiz.questions.map((question) => {

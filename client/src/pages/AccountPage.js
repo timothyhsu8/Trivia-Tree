@@ -1,4 +1,4 @@
-  import {
+import {
     Box,
     Text,
     Grid,
@@ -12,11 +12,16 @@
     FormControl,
     FormLabel,
     Select,
-    HStack
+    HStack,
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_QUIZZES, GET_USER } from '../cache/queries';
-import { ADD_FEATURED_QUIZ, DELETE_FEATURED_QUIZ, ADD_FEATURED_PLATFORM, DELETE_FEATURED_PLATFORM} from '../cache/mutations';
+import {
+    ADD_FEATURED_QUIZ,
+    DELETE_FEATURED_QUIZ,
+    ADD_FEATURED_PLATFORM,
+    DELETE_FEATURED_PLATFORM,
+} from '../cache/mutations';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import QuizCard from '../components/QuizCard';
 import { AuthContext } from '../context/auth';
@@ -27,23 +32,13 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
-import { useAlert } from "react-alert";
+import { useAlert } from 'react-alert';
 
-//Lol more images
-import absolutelynothing from '../images/absolutelynothing.png'
-import guest from '../images/guest.png'
-import heart from '../images/heart.jpeg'
-import treeshop from '../images/treeshop.png'
-import lights1 from '../images/lights1.png'
-import fire1 from '../images/fire1.png'
-import flowers1 from '../images/flowers1.png'
-import neon1 from '../images/neon1.png'
-const iconPath= "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg"
 
-let profileImg = 'Same Image';
-let bannerImg = 'Same Image';
-const hiddenPFPInput = createRef(null);
-const hiddenBannerInput = createRef(null);
+let profileImg = null;
+let bannerImg = null;
+let hiddenPFPInput = null;
+let hiddenBannerInput = null;
 let username = null;
 
 export default function AccountPage(props) {
@@ -54,7 +49,7 @@ export default function AccountPage(props) {
 
     let quiz_sections = ['Featured Quizzes', 'Featured Platforms'];
 
-    const [preview, setPreview] = useState(false);
+    const [firstQueryDone, setFirstQueryDone] = React.useState(false);
     const [page, setPage] = useState('user');
     const [isEditing, setIsEditing] = React.useState(false);
     const [bio, setBio] = React.useState('');
@@ -62,32 +57,45 @@ export default function AccountPage(props) {
     const [pfp_src, setPFP] = useState(''); //String path
     const [banner_src, setBanner] = useState(''); //String path
     //Here we go again
-    const [backgroundNum, setBackground] = useState(""); //Int bg
-    const background = ["white","red","blue","green"];
-    const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] = React.useState(false);
-    const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] = React.useState(false);
-    const [chosenFeaturedQuiz, setChosenFeaturedQuiz] = useState(null)
-    const [chosenFeaturedPlatform, setChosenFeaturedPlatform] = useState(null)
+    const [backgroundNum, setBackground] = useState(''); //Int bg
+    const background = ['white', 'red', 'blue', 'green'];
+    const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
+        React.useState(false);
+    const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] =
+        React.useState(false);
+    const [chosenFeaturedQuiz, setChosenFeaturedQuiz] = useState(null);
+    const [chosenFeaturedPlatform, setChosenFeaturedPlatform] = useState(null);
 
-    const [AddFeaturedQuiz] = useMutation(ADD_FEATURED_QUIZ, { fetchPolicy: 'network-only' , onCompleted() {
-        refetch();
-    }});
+    const [AddFeaturedQuiz] = useMutation(ADD_FEATURED_QUIZ, {
+        fetchPolicy: 'network-only',
+        onCompleted() {
+            refetch();
+        },
+    });
 
-    const [AddFeaturedPlatform] = useMutation(ADD_FEATURED_PLATFORM, { fetchPolicy: 'network-only' , onCompleted() {
-        refetch();
-    }});
+    const [AddFeaturedPlatform] = useMutation(ADD_FEATURED_PLATFORM, {
+        fetchPolicy: 'network-only',
+        onCompleted() {
+            refetch();
+        },
+    });
 
-    const [DeleteFeaturedQuiz] = useMutation(DELETE_FEATURED_QUIZ, { fetchPolicy: 'network-only' , onCompleted() {
-        refetch();
-    }});
+    const [DeleteFeaturedQuiz] = useMutation(DELETE_FEATURED_QUIZ, {
+        fetchPolicy: 'network-only',
+        onCompleted() {
+            refetch();
+        },
+    });
 
-    const [DeleteFeaturedPlatform] = useMutation(DELETE_FEATURED_PLATFORM, { fetchPolicy: 'network-only' , onCompleted() {
-        refetch();
-    }});
+    const [DeleteFeaturedPlatform] = useMutation(DELETE_FEATURED_PLATFORM, {
+        fetchPolicy: 'network-only',
+        onCompleted() {
+            refetch();
+        },
+    });
 
-
-    if(user != null){
-        if(user._id == userId){
+    if (user != null) {
+        if (user._id == userId) {
             isOwner = true;
         }
     }
@@ -108,18 +116,17 @@ export default function AccountPage(props) {
 
     function changeBackground(event) {
         event.preventDefault();
-        console.log(event.target[0].value)
-        setBackground(event.target[0].value)
+        console.log(event.target[0].value);
+        setBackground(event.target[0].value);
         //console.log(backgroundNum)
         //Does change but a little after
-        
     }
-    function listCreator(numberOfRows, background ) {
+    function listCreator(numberOfRows, background) {
         //Takes number of rows to make a variable number of rows of categories
         //Takes an images array and text array to fill the rows with
-        let list = []
-        for(let i=0;i<numberOfRows;i++) {
-            list.push(<option value={background[i]}>{background[i]}</option>)
+        let list = [];
+        for (let i = 0; i < numberOfRows; i++) {
+            list.push(<option value={background[i]}>{background[i]}</option>);
         }
         return list;
     }
@@ -157,9 +164,10 @@ export default function AccountPage(props) {
             };
         }
     }
-    
 
     function cancelEditing() {
+        profileImg = 'Same Image';
+        bannerImg = 'Same Image';
         toggleEditPage(false);
         setPFP(userData.iconImage);
         setBio(userData.bio);
@@ -172,27 +180,32 @@ export default function AccountPage(props) {
         }
     }
 
-
     const {
         loading,
         error,
         data: { getUser: userData } = {},
-        refetch
+        refetch,
     } = useQuery(GET_USER, {
         skip: !user,
         fetchPolicy: 'cache-and-network',
         variables: { _id: userId },
         onCompleted({ getUser: userData }) {
-            console.log(userData)
-            username = userData.displayName;
-            setPFP(userData.iconImage);
-            setBio(userData.bio);
-            if (userData.bannerImage) {
-                setBanner(userData.bannerImage);
-            } else {
-                setBanner(
-                    'https://www.acemetrix.com/wp-content/themes/acemetrix/images/default/default-black-banner.png'
-                );
+            if (userData) {
+                profileImg = 'Same Image';
+                bannerImg = 'Same Image';
+                hiddenPFPInput = createRef(null);
+                hiddenBannerInput = createRef(null);
+                username = userData.displayName;
+                setPFP(userData.iconImage);
+                setBio(userData.bio);
+                if (userData.bannerImage) {
+                    setBanner(userData.bannerImage);
+                } else {
+                    setBanner(
+                        'https://www.acemetrix.com/wp-content/themes/acemetrix/images/default/default-black-banner.png'
+                    );
+                }
+                setFirstQueryDone(true);
             }
         },
     });
@@ -263,14 +276,16 @@ export default function AccountPage(props) {
             },
         },
         onCompleted() {
+            profileImg = 'Same Image';
+            bannerImg = 'Same Image';
             toggleEditPage(false);
+            //Used so that the icon on the navbar is also changed
             refreshUserData();
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
         },
     });
-    
 
     function handleUpdateUser() {
         updateUser({
@@ -284,12 +299,25 @@ export default function AccountPage(props) {
             },
         });
     }
-    
-    // Loading Screen
-    if (loading) {
+
+    // Loading Screen - Wait for userData and user
+    if ((loading || !user) && !firstQueryDone) {
+        console.log('loading spinner');
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
+    }
+
+    // If the data is null we know that the user does not exist
+    if (!userData) {
+        return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    This user does not exist{' '}
+                </Text>
             </Center>
         );
     }
@@ -307,67 +335,76 @@ export default function AccountPage(props) {
     }
 
     async function handleAddFeaturedQuiz() {
-        setIsAddingFeaturedQuiz(false)
+        setIsAddingFeaturedQuiz(false);
 
-        if(chosenFeaturedQuiz !== null){
-
-            for(let i = 0; i < userData.featuredQuizzes.length; i++){
-                if(userData.featuredQuizzes[i]._id == chosenFeaturedQuiz._id){
-                    alert.show("Already Featured");
-                    return //later provide error message that you cannot add already featured quiz!!
+        if (chosenFeaturedQuiz !== null) {
+            for (let i = 0; i < userData.featuredQuizzes.length; i++) {
+                if (userData.featuredQuizzes[i]._id == chosenFeaturedQuiz._id) {
+                    alert.show('Already Featured');
+                    return; //later provide error message that you cannot add already featured quiz!!
                 }
             }
 
-            const {data} = await AddFeaturedQuiz({ variables: {
-                userId:userData._id, newFeaturedQuizId:chosenFeaturedQuiz._id}}); 
+            const { data } = await AddFeaturedQuiz({
+                variables: {
+                    userId: userData._id,
+                    newFeaturedQuizId: chosenFeaturedQuiz._id,
+                },
+            });
 
-            console.log(data)
-
+            console.log(data);
         }
 
-        setChosenFeaturedQuiz(null)
+        setChosenFeaturedQuiz(null);
     }
 
     async function handleAddFeaturedPlatform() {
-        setIsAddingFeaturedPlatform(false)
+        setIsAddingFeaturedPlatform(false);
 
-        if(chosenFeaturedPlatform !== null){
-
-            for(let i = 0; i < userData.featuredPlatforms.length; i++){
-                if(userData.featuredPlatforms[i]._id == chosenFeaturedPlatform._id){
-                    alert.show("Already Featured");
-                    return //later provide error message that you cannot add already featured quiz!!
+        if (chosenFeaturedPlatform !== null) {
+            for (let i = 0; i < userData.featuredPlatforms.length; i++) {
+                if (
+                    userData.featuredPlatforms[i]._id ==
+                    chosenFeaturedPlatform._id
+                ) {
+                    alert.show('Already Featured');
+                    return; //later provide error message that you cannot add already featured quiz!!
                 }
             }
 
-            const {data} = await AddFeaturedPlatform({ variables: {
-                userId:userData._id, newFeaturedPlatformId:chosenFeaturedPlatform._id}}); 
+            const { data } = await AddFeaturedPlatform({
+                variables: {
+                    userId: userData._id,
+                    newFeaturedPlatformId: chosenFeaturedPlatform._id,
+                },
+            });
 
-            console.log(data)
-
+            console.log(data);
         }
 
-        setChosenFeaturedPlatform(null)
+        setChosenFeaturedPlatform(null);
     }
 
-    console.log(userData)
-
-    async function handleDeleteFeaturedQuiz(quizToDelete){
-        console.log(quizToDelete.title)
-        let quizToDeleteId = quizToDelete._id
-        const {data} = await DeleteFeaturedQuiz({ variables: {
-            userId:userData._id, deleteFeaturedQuizId:quizToDeleteId}}); 
+    async function handleDeleteFeaturedQuiz(quizToDelete) {
+        console.log(quizToDelete.title);
+        let quizToDeleteId = quizToDelete._id;
+        const { data } = await DeleteFeaturedQuiz({
+            variables: {
+                userId: userData._id,
+                deleteFeaturedQuizId: quizToDeleteId,
+            },
+        });
     }
 
-    async function handleDeleteFeaturedPlatform(platformToDelete){
+    async function handleDeleteFeaturedPlatform(platformToDelete) {
         let platformToDeleteId = platformToDelete._id;
-        const {data} = await DeleteFeaturedPlatform({ variables: {
-            userId:userData._id, deleteFeaturedPlatformId:platformToDeleteId}}); 
-        
+        const { data } = await DeleteFeaturedPlatform({
+            variables: {
+                userId: userData._id,
+                deleteFeaturedPlatformId: platformToDeleteId,
+            },
+        });
     }
-
-    
-
 
     function renderPage() {
         if (page === 'user') return renderUser();
@@ -375,7 +412,6 @@ export default function AccountPage(props) {
         if (page === 'quizzes') return renderQuizzes();
         if (page === 'badges') return renderBadges();
     }
-
 
     // Render User
     function renderUser() {
@@ -389,7 +425,22 @@ export default function AccountPage(props) {
                             </Button>
                             <Button onClick={() => handleUpdateUser()}>
                                 Save Updates
-                            </Button> 
+
+                            </Button>
+                            <form onSubmit={changeBackground}>
+                                <FormControl id='background'>
+                                    <FormLabel>Background</FormLabel>
+                                    <Select placeholder='Default' name='go'>
+                                        {listCreator(
+                                            background.length,
+                                            background
+                                        )}
+                                    </Select>
+                                </FormControl>
+                                <Button type='submit' value='Submit'>
+                                    Confirm
+                                </Button>
+                            </form>
                         </VStack>
                     ) : (
                         <Box position='absolute' left='20px'>
@@ -465,11 +516,10 @@ export default function AccountPage(props) {
                             {userTitle}{' '}
                         </Text>
                     </Box>
-                    
 
                     {/*Quick Stuff for changing PFP and Banner*/}
                     {isEditing ? (
-                        <div position="absolute">
+                        <div position='absolute'>
                             <Button
                                 _focus={{ outline: 'none' }}
                                 borderColor='black'
@@ -527,135 +577,141 @@ export default function AccountPage(props) {
                     {/* FEATURED QUIZZES/PLATFORMS */}
                     <Box w='98.5%' borderRadius='10'>
                         <VStack spacing='1.5vh'>
-                                    <Box
-                                        w='100%'
-                                        bgColor='gray.200'
-                                        borderRadius='10'
-                                        overflowX='auto'
-                                    >
-                                        {isEditing ? 
-                                        <Text
+                            <Box
+                                w='100%'
+                                bgColor='gray.200'
+                                borderRadius='10'
+                                overflowX='auto'
+                            >
+                                {isEditing ? (
+                                    <Text
                                         pl='1.5%'
                                         pt='1%'
                                         fontSize='130%'
                                         fontWeight='bold'
                                         color='red'
-                                        >
+                                    >
                                         Select Featured Quiz To Delete
-                                        </Text>
-                                        :
-                                        <Text
-                                            pl='1.5%'
-                                            pt='1%'
-                                            fontSize='130%'
-                                            fontWeight='medium'
-                                        >
-                                            Featured Quizzes
-                                        </Text>
-                                        }
+                                    </Text>
+                                ) : (
+                                    <Text
+                                        pl='1.5%'
+                                        pt='1%'
+                                        fontSize='130%'
+                                        fontWeight='medium'
+                                    >
+                                        Featured Quizzes
+                                    </Text>
+                                )}
 
-                                        {/* QUIZZES */}
-                                        <Flex
-                                            ml='1%'
-                                            mt='.5%'
-                                            spacing='4%'
-                                            display='flex'
-                                            flexWrap='wrap'
-                                        >
-                                        {isOwner&&preview==false ? 
-                                        
-                                        <AddQuizCard 
-                                            width="10%"
-                                            title_fontsize="100%"
-                                            type="1"
+
+                                {/* QUIZZES */}
+                                <Flex
+                                    ml='1%'
+                                    mt='.5%'
+                                    spacing='4%'
+                                    display='flex'
+                                    flexWrap='wrap'
+                                >
+                                    {isOwner ? (
+                                        <AddQuizCard
+                                            width='10%'
+                                            title_fontsize='100%'
+                                            type='1'
                                             callback={setIsAddingFeaturedQuiz}
                                         />
-                                        : ''}
-    
-                                            
-                                            {userData.featuredQuizzes.map(
-                                                (quiz, key) => {
-                                                    return (
-                                                        <QuizCard
-                                                            quiz={quiz}
-                                                            width='11%'
-                                                            title_fontsize='90%'
-                                                            include_author={
-                                                                false
-                                                            }
-                                                            char_limit={35}
-                                                            key={key}
-                                                            isEditing={isEditing}
-                                                            handleDeleteFeaturedQuiz={handleDeleteFeaturedQuiz}
-                                                        />
-                                                    );
-                                                }
-                                            )
-                                            }
-                                        </Flex>
-                                    </Box>
-                                    <Box
-                                        w='100%'
-                                        bgColor='gray.200'
-                                        borderRadius='10'
-                                        overflowX='auto'
-                                    >
-                                        {isEditing ? 
-                                        <Text
+                                    ) : (
+                                        ''
+                                    )}
+
+                                    {userData.featuredQuizzes.map(
+                                        (quiz, key) => {
+                                            return (
+                                                <QuizCard
+                                                    quiz={quiz}
+                                                    width='11%'
+                                                    title_fontsize='90%'
+                                                    include_author={false}
+                                                    char_limit={35}
+                                                    key={key}
+                                                    isEditing={isEditing}
+                                                    handleDeleteFeaturedQuiz={
+                                                        handleDeleteFeaturedQuiz
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    )}
+                                </Flex>
+                            </Box>
+                            <Box
+                                w='100%'
+                                bgColor='gray.200'
+                                borderRadius='10'
+                                overflowX='auto'
+                            >
+                                {isEditing ? (
+                                    <Text
                                         pl='1.5%'
                                         pt='1%'
                                         fontSize='130%'
                                         fontWeight='bold'
                                         color='red'
-                                        >
+                                    >
                                         Select Featured Platform To Delete
-                                        </Text>
-                                        :
-                                        <Text
-                                            pl='1.5%'
-                                            pt='1%'
-                                            fontSize='130%'
-                                            fontWeight='medium'
-                                        >
-                                            Featured Platforms
-                                        </Text>
-                                        }
+                                    </Text>
+                                ) : (
+                                    <Text
+                                        pl='1.5%'
+                                        pt='1%'
+                                        fontSize='130%'
+                                        fontWeight='medium'
+                                    >
+                                        Featured Platforms
+                                    </Text>
+                                )}
 
-                                        {/* Platforms */}
-                                        <Flex
-                                            ml='1%'
-                                            mt='.5%'
-                                            spacing='4%'
-                                            display='flex'
-                                            flexWrap='wrap'
-                                        >
-                                        {isOwner&&preview==false ?
-                                        <AddQuizCard 
-                                            width="10%"
-                                            title_fontsize="100%"
-                                            type="0"
-                                            callback={setIsAddingFeaturedPlatform}
-                                        />  
-                                        : ''}
-                                            {userData.featuredPlatforms.map(
-                                                (platform, key) => {
-                                                    return (
-                                                        <PlatformCard
-                                                        platform={platform}
-                                                        width='15%'
-                                                        minWidth="200px"
-                                                        img_height="50px"
-                                                        char_limit={44} 
-                                                        key={key}
-                                                        isEditing={isEditing}
-                                                        handleDeleteFeaturedPlatform={handleDeleteFeaturedPlatform}
-                                                        />
-                                                    );
-                                                }
-                                            )
+
+                                {/* Platforms */}
+                                <Flex
+                                    ml='1%'
+                                    mt='.5%'
+                                    spacing='4%'
+                                    display='flex'
+                                    flexWrap='wrap'
+                                >
+                                    {isOwner ? (
+                                        <AddQuizCard
+                                            width='10%'
+                                            title_fontsize='100%'
+                                            type='0'
+                                            callback={
+                                                setIsAddingFeaturedPlatform
                                             }
-                                        </Flex>
-                                    </Box>
+                                        />
+                                    ) : (
+                                        ''
+                                    )}
+                                    {userData.featuredPlatforms.map(
+                                        (platform, key) => {
+                                            return (
+                                                <PlatformCard
+                                                    platform={platform}
+                                                    width='15%'
+                                                    minWidth='200px'
+                                                    img_height='50px'
+                                                    char_limit={44}
+                                                    key={key}
+                                                    isEditing={isEditing}
+                                                    handleDeleteFeaturedPlatform={
+                                                        handleDeleteFeaturedPlatform
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    )}
+                                </Flex>
+                            </Box>
                         </VStack>
                     </Box>
 
@@ -691,7 +747,7 @@ export default function AccountPage(props) {
                         )}
                     </Box>
                 </Grid>
-                </Box>
+            </Box>
         );
     }
 
@@ -703,34 +759,46 @@ export default function AccountPage(props) {
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Platforms
                     </Text>
-                    <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    <Flex
+                        ml='1%'
+                        mt='1%'
+                        spacing='4%'
+                        display='flex'
+                        flexWrap='wrap'
+                    >
                         {userData.platformsMade.map((platform, key) => {
                             return (
                                 <PlatformCard
                                     platform={platform}
                                     width='15%'
-                                    minWidth="200px"
-                                    img_height="50px"
-                                    char_limit={44} 
+                                    minWidth='200px'
+                                    img_height='50px'
+                                    char_limit={44}
                                     key={key}
                                 />
                             );
                         })}
                     </Flex>
                 </Box>
-                <Box mt="10px" bgColor='gray.200' borderRadius='10'>
+                <Box mt='10px' bgColor='gray.200' borderRadius='10'>
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Followed Platforms
                     </Text>
-                    <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    <Flex
+                        ml='1%'
+                        mt='1%'
+                        spacing='4%'
+                        display='flex'
+                        flexWrap='wrap'
+                    >
                         {userData.following.map((platform, key) => {
                             return (
                                 <PlatformCard
                                     platform={platform}
                                     width='15%'
-                                    minWidth="200px"
-                                    img_height="50px"
-                                    char_limit={44} 
+                                    minWidth='200px'
+                                    img_height='50px'
+                                    char_limit={44}
                                     key={key}
                                 />
                             );
@@ -765,29 +833,40 @@ export default function AccountPage(props) {
                     </Flex>
                 </Box>
 
-                {userData.favoritedQuizzes.length > 0 ? 
-                <Box mt="10px" bgColor='gray.200' borderRadius='10'>
-                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                        Favorited Quizzes
-                    </Text>
-                    <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                        {userData.favoritedQuizzes.map((quiz, key) => {
-                            return (
-                                <QuizCard
-                                    quiz={quiz}
-                                    width='10%'
-                                    title_fontsize='0.8vw'
-                                    include_author={false}
-                                    char_limit={35}
-                                    key={key}
-                                />
-                            );
-                        })}
-                    </Flex>
-                </Box>
-                : ''}
+                {userData.favoritedQuizzes.length > 0 ? (
+                    <Box mt='10px' bgColor='gray.200' borderRadius='10'>
+                        <Text
+                            pl='1.5%'
+                            pt='1%'
+                            fontSize='1.2vw'
+                            fontWeight='bold'
+                        >
+                            Favorited Quizzes
+                        </Text>
+                        <Flex
+                            ml='1%'
+                            spacing='4%'
+                            display='flex'
+                            flexWrap='wrap'
+                        >
+                            {userData.favoritedQuizzes.map((quiz, key) => {
+                                return (
+                                    <QuizCard
+                                        quiz={quiz}
+                                        width='10%'
+                                        title_fontsize='0.8vw'
+                                        include_author={false}
+                                        char_limit={35}
+                                        key={key}
+                                    />
+                                );
+                            })}
+                        </Flex>
+                    </Box>
+                ) : (
+                    ''
+                )}
             </Box>
-            
         );
     }
 
@@ -816,93 +895,163 @@ export default function AccountPage(props) {
         );
     }
 
-    if (!user) {
-        return null;
-    }
-
     return (
         <Box data-testid='main-component'>
-            {
-                isAddingFeaturedQuiz ? 
-                    <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
-                       {/* QUIZ CARDS */}
-                            <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
-                                {userData.quizzesMade.map((quiz, key) => {
-                                    return <SelectQuizCard
-                                        key={key}
-                                        quiz={quiz} 
-                                        width="7.5%"
-                                        title_fontsize="92%" 
-                                        include_author={false}
-                                        char_limit={35}  
-                                        font_color="white"
-                                        show_stats={false}
-                                        chosenQuiz={chosenFeaturedQuiz}
-                                        setChosenQuiz={setChosenFeaturedQuiz}
-                                        />
-                                })}
-                            </Flex>
-                        
-                        {/* Cancel Selecting a quiz */}
-                        <HStack w="100%" spacing="1%" pos="fixed" bottom="3%" right="-83%">
-                            <Button bgColor="gray.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
-                            onClick={() => {
-                            setIsAddingFeaturedQuiz(false)
-                            setChosenFeaturedQuiz(null);
-                            }}>
-                                Cancel
-                            </Button>
+            {isAddingFeaturedQuiz ? (
+                <Box
+                    position='fixed'
+                    w='100%'
+                    h='100vh'
+                    zIndex='1'
+                    bgColor='rgba(0, 0, 0, 0.9)'
+                    transition='0.2s linear'
+                >
+                    {/* QUIZ CARDS */}
+                    <Flex
+                        mt='0.5%'
+                        ml='1%'
+                        spacing='4%'
+                        display='flex'
+                        flexWrap='wrap'
+                    >
+                        {userData.quizzesMade.map((quiz, key) => {
+                            return (
+                                <SelectQuizCard
+                                    key={key}
+                                    quiz={quiz}
+                                    width='7.5%'
+                                    title_fontsize='92%'
+                                    include_author={false}
+                                    char_limit={35}
+                                    font_color='white'
+                                    show_stats={false}
+                                    chosenQuiz={chosenFeaturedQuiz}
+                                    setChosenQuiz={setChosenFeaturedQuiz}
+                                />
+                            );
+                        })}
+                    </Flex>
 
-                            {/* Finish selecting a quiz */}
-                            <Button bgColor="blue.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
-                                onClick={() => {handleAddFeaturedQuiz()}}>
-                                Finish
-                            </Button>
-                        </HStack>
-                    </Box>
-                    :
-                    null
-            }    
-            {
-                isAddingFeaturedPlatform ? 
-                    <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
-                       {/* QUIZ CARDS */}
-                            <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
-                                {userData.platformsMade.map((platform, key) => {
-                                    return <SelectPlatformCard
-                                        key={key}
-                                        platform={platform} 
-                                        width='15%'
-                                        minWidth="200px"
-                                        img_height="60px"
-                                        char_limit={44} 
-                                        key={key}
-                                        setChosenPlatform={setChosenFeaturedPlatform}
-                                        chosenPlatform={chosenFeaturedPlatform}
-                                        />
-                                })}
-                            </Flex>
-                        
-                        {/* Cancel Selecting a quiz */}
-                        <HStack w="100%" spacing="1%" pos="fixed" bottom="3%" right="-83%">
-                            <Button bgColor="gray.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                    {/* Cancel Selecting a quiz */}
+                    <HStack
+                        w='100%'
+                        spacing='1%'
+                        pos='fixed'
+                        bottom='3%'
+                        right='-83%'
+                    >
+                        <Button
+                            bgColor='gray.500'
+                            textColor='white'
+                            fontSize='120%'
+                            pt='1.3%'
+                            pb='1.3%'
+                            pl='1.5%'
+                            pr='1.5%'
                             onClick={() => {
-                            setIsAddingFeaturedPlatform(false)
-                            setChosenFeaturedPlatform(null)
-                            }}>
-                                Cancel
-                            </Button>
+                                setIsAddingFeaturedQuiz(false);
+                                setChosenFeaturedQuiz(null);
+                            }}
+                        >
+                            Cancel
+                        </Button>
 
-                            {/* Finish selecting a quiz */}
-                            <Button bgColor="blue.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
-                                onClick={() => {handleAddFeaturedPlatform()}}>
-                                Finish
-                            </Button>
-                        </HStack>
-                    </Box>
-                    :
-                    null
-            }    
+                        {/* Finish selecting a quiz */}
+                        <Button
+                            bgColor='blue.500'
+                            textColor='white'
+                            fontSize='120%'
+                            pt='1.3%'
+                            pb='1.3%'
+                            pl='1.5%'
+                            pr='1.5%'
+                            onClick={() => {
+                                handleAddFeaturedQuiz();
+                            }}
+                        >
+                            Finish
+                        </Button>
+                    </HStack>
+                </Box>
+            ) : null}
+            {isAddingFeaturedPlatform ? (
+                <Box
+                    position='fixed'
+                    w='100%'
+                    h='100vh'
+                    zIndex='1'
+                    bgColor='rgba(0, 0, 0, 0.9)'
+                    transition='0.2s linear'
+                >
+                    {/* QUIZ CARDS */}
+                    <Flex
+                        mt='0.5%'
+                        ml='1%'
+                        spacing='4%'
+                        display='flex'
+                        flexWrap='wrap'
+                    >
+                        {userData.platformsMade.map((platform, key) => {
+                            return (
+                                <SelectPlatformCard
+                                    key={key}
+                                    platform={platform}
+                                    width='15%'
+                                    minWidth='200px'
+                                    img_height='60px'
+                                    char_limit={44}
+                                    key={key}
+                                    setChosenPlatform={
+                                        setChosenFeaturedPlatform
+                                    }
+                                    chosenPlatform={chosenFeaturedPlatform}
+                                />
+                            );
+                        })}
+                    </Flex>
+
+                    {/* Cancel Selecting a quiz */}
+                    <HStack
+                        w='100%'
+                        spacing='1%'
+                        pos='fixed'
+                        bottom='3%'
+                        right='-83%'
+                    >
+                        <Button
+                            bgColor='gray.500'
+                            textColor='white'
+                            fontSize='120%'
+                            pt='1.3%'
+                            pb='1.3%'
+                            pl='1.5%'
+                            pr='1.5%'
+                            onClick={() => {
+                                setIsAddingFeaturedPlatform(false);
+                                setChosenFeaturedPlatform(null);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+
+                        {/* Finish selecting a quiz */}
+                        <Button
+                            bgColor='blue.500'
+                            textColor='white'
+                            fontSize='120%'
+                            pt='1.3%'
+                            pb='1.3%'
+                            pl='1.5%'
+                            pr='1.5%'
+                            onClick={() => {
+                                handleAddFeaturedPlatform();
+                            }}
+                        >
+                            Finish
+                        </Button>
+                    </HStack>
+                </Box>
+            ) : null}
             <Grid templateColumns='1fr 6fr 1fr'>
                 <Box w='100%'></Box>
 
@@ -966,7 +1115,6 @@ export default function AccountPage(props) {
             {/* {renderPage()} */}
         </Box>
     );
-
 }
 
 const UPDATE_USER = gql`

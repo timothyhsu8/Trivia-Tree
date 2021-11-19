@@ -1,7 +1,7 @@
 import { React, useContext, useState } from 'react';
 import { config } from '../util/constants';
 import { AuthContext } from '../context/auth';
-import { Box, Text, Image, VStack, Flex, Spinner, Center, Heading, Grid } from '@chakra-ui/react';
+import { Box, Text, VStack, Flex, Spinner, Center, Heading, Grid } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORMS, GET_USERS } from "../cache/queries";
 import { useHistory, Link } from 'react-router-dom';
@@ -81,14 +81,13 @@ export default function Homepage() {
             {/* QUIZZES */}
             <Box mt="1%" ml="2%" mr="2%">
                 <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
-                {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
                 <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                     {quiz_data.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
-                            width="7.7%" 
-                            title_fontsize="100%" 
-                            author_fontsize="90%" 
+                            width="7.5%" 
+                            title_fontsize="95%" 
+                            author_fontsize="85%" 
                             include_author={true}
                             char_limit={30} 
                             key={key}
@@ -102,15 +101,12 @@ export default function Homepage() {
             {/* USERS */}
             <Box mt="1%" ml="2%" mr="2%">
                 <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Users </Text>
-                {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
                 <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                     {user_data.map((user, key) => {
                         return <UserCard 
                             user={user} 
-                            width="7.7%" 
-                            title_fontsize="100%" 
-                            author_fontsize="90%" 
-                            include_author={true}
+                            width="7.5%" 
+                            title_fontsize="95%" 
                             char_limit={30} 
                             key={key}
                         />
@@ -123,18 +119,17 @@ export default function Homepage() {
             <Box mt="1%" ml="2%" mr="2%">
                 <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Platforms </Text>
                 {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
-                <Flex mt="0.5%" ml="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                <Grid mt="0.5%" ml="0.5%" mr="0.5%" templateColumns="repeat(auto-fill, minmax(325px, 1fr))">
                     {platform_data.map((platform, key) => {
                         return <PlatformCard 
                             platform={platform}
-                            width="15%"
-                            minWidth="220px"
+                            margin="5%"
                             img_height="75px"
                             char_limit={44} 
                             key={key}
                         />
                     })}
-                </Flex>
+                </Grid>
             </Box>
 
             <Center marginTop='70vh'>

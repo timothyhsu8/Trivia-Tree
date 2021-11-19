@@ -275,7 +275,7 @@ module.exports = {
                 })
                 .populate({
                     path: 'following',
-                    populate: { path: '', model: 'User' },
+                    populate: { path: 'platform', model: 'Platform' },
                 })
 
                 .exec()
@@ -304,7 +304,7 @@ module.exports = {
                 })
                 .populate({
                     path: 'following',
-                    populate: { path: 'user', model: 'User' },
+                    populate: { path: 'platform', model: 'Platform' },
                 })
 
                 .exec()

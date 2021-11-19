@@ -27,6 +27,7 @@ import RewardsPage from './pages/RewardPage';
 import EditQuizPage from './pages/EditQuizPage';
 import { positions, Provider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
+import QuizManagerPage from './pages/QuizManagerPage';
 
 function App() {
     const options = {
@@ -84,6 +85,7 @@ function App() {
                             <Route path='/shoppingpage' component={ShoppingPage}></Route>
                             <Route path='/rewardspage' component={RewardsPage}></Route>
                             <Route path='/platformmanager/:userId' component={PlatformManagerPage}></Route>
+                            <Route path='/quizmanager' component={QuizManagerPage}></Route>
                         </Switch>
                     </Router>
                 </Provider>

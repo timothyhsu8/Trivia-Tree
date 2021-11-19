@@ -54,5 +54,6 @@ module.exports = gql`
         addFeaturedPlatform(userId: ID!, newFeaturedPlatformId: ID!): Platform
         deleteFeaturedPlatform(userId: ID!, deleteFeaturedPlatformId: ID!): Platform
         resetPlatformsMadeApollo(userId: ID!): User
+        deleteUser(userId: ID!): Boolean
     }
 `;

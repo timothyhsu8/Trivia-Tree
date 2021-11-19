@@ -467,7 +467,7 @@ export default function AccountPage(props) {
                             <Button onClick={() => toggleEditPage(true)}>
                                 Update Page
                             </Button>
-                        }
+                            }
                         </Box>
                     )
                 ) : null}
@@ -660,7 +660,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {isOwner && preview === false? (
+                                    {isOwner && isEditing && preview === false ? (
                                         <AddQuizCard
                                             width='10%'
                                             title_fontsize='100%'
@@ -727,7 +727,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {isOwner && preview === false? (
+                                    {isOwner && isEditing && preview === false? (
                                         <AddQuizCard
                                             width='10%'
                                             title_fontsize='100%'

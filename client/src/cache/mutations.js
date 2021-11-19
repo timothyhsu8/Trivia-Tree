@@ -145,3 +145,9 @@ export const UNFOLLOW_PLATFORM = gql`
     }
 `;
 
+export const DELETE_USER = gql`
+    mutation ($userId: ID!) {
+        deleteUser(userId: $userId)
+    }
+`;
+

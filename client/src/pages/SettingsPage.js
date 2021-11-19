@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, createRef } from 'react';
 import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner } from "@chakra-ui/react"
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
 import { useQuery, useMutation } from '@apollo/client';
@@ -9,6 +9,9 @@ import { GET_QUIZZES, GET_USER } from '../cache/queries';
 import * as mutations from '../cache/mutations';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
+import {
+    DELETE_USER
+} from '../cache/mutations';
 import {
     useParams
 } from 'react-router-dom';
@@ -19,6 +22,7 @@ export default function SettingsPage(props) {
     let profileImg = 'Same Image';
 
     let {userId} = useParams();
+    let history = useHistory();
 
 
 
@@ -36,6 +40,7 @@ export default function SettingsPage(props) {
 
         }
     }});
+    const [deleteUser] = useMutation(mutations.DELETE_USER);
      
 
     const hiddenImageInput = createRef(null);
@@ -119,6 +124,11 @@ export default function SettingsPage(props) {
         );
     }
     
+    async function deleteAccount() {
+        console.log(userData._id)
+        const {data} = await deleteUser({ variables: {userId:userId}});
+        //history.push('/')
+    }
 
     return(
         /*Top Title Section with hr line*/
@@ -194,13 +204,8 @@ export default function SettingsPage(props) {
                                 
                                 <Box ></Box>
 
-                                <Box position="absolute" bottom="0">
-                                    <Box className="containerAcross">
-                                                    
-                                        <Box w={["200px","200px","200px","200px"]} h="50px" bg='#ff0000' borderRadius='5px'>
-                                            <Link to={'/'} className="center button white" onClick={saveChanges}><Text  mt={["0px","0px","0px","0px"]} fontSize={["23px","23px","23px","23px"]}>Delete Account</Text></Link>  
-                                        </Box>
-                                    </Box>
+                                <Box position="absolute" bottom="0">    
+                                    <Button w="200px" h="50px" borderRadius='5px' onClick={deleteAccount}>Delete Account</Button>  
                                 </Box>
                         </Box>
                       

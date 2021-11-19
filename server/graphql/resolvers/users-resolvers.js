@@ -222,5 +222,10 @@ module.exports = {
             user.platformsMade = [];
             user.save()
         },
+        async deleteUser(_, { userId }, context){
+            const user = await User.findById(userId);
+            
+            console.log(user)
+        }
     }
 };

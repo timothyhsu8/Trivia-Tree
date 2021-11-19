@@ -1,4 +1,4 @@
-import { Box, Grid, Text, Center, VStack, Select, Spinner, Input } from "@chakra-ui/react"
+import { Box, Grid, Text, Center, VStack, Select, Spinner, Button, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Tag, TagLabel } from "@chakra-ui/react"
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries";
@@ -12,6 +12,13 @@ export default function SearchResultsPage() {
 
     const location = useLocation()
     const [sortType, setSortType] = useState("none")
+    const [filters, setFilters] = useState( {
+        minPlays: 0,
+        minFavorites: 0,
+        minRating: 1,
+        minFollowers: 0
+    })
+
     let search = location.state.search
     let searchType = location.state.searchType
     let search_text = 'Search Results for "' + search + '"'
@@ -46,8 +53,17 @@ export default function SearchResultsPage() {
     const platform_data = platforms.data.searchPlatforms
     const user_data = users.data.searchUsers
 
+    // Doing the actual filtering work
+    let filtered_quiz_data = quiz_data.filter((quiz) => {
+        return (quiz.numAttempts >= filters.minPlays) && (quiz.numFavorites >= filters.minFavorites)
+    })
+
+    let filtered_platform_data = platform_data.filter((platform) => {
+        return platform.followers.length >= filters.minFollowers
+    })
+
     // Gather all search results
-    let search_results = getSearchResults(searchType, quiz_data, platform_data, user_data)
+    let search_results = getSearchResults(searchType, filtered_quiz_data, filtered_platform_data, user_data)
     search_results = sortSearchResults(search_results, sortType)
 
     // Puts the correct data into the search results array (Depending on if the user serached for quizzes, platforms, users, or all)
@@ -117,6 +133,26 @@ export default function SearchResultsPage() {
         return null
     }
 
+    function handleChangeFilter(event) {
+        event.preventDefault()
+        
+        // Quiz Filters
+        console.log(event.target.minPlays.value)
+        let minPlays = event.target.minPlays.value !== "" ? event.target.minPlays.value : 0
+        let minFavs = event.target.minFavs.value !== "" ? event.target.minFavs.value : 0
+        // let minRating = event.target.minRating.value !== "" ? event.target.minRating.value : 1
+
+        // Platform Filters
+        let minFollowers = event.target.minFollowers.value !== "" ? event.target.minFollowers.value : 0
+
+        setFilters({
+            minPlays: minPlays,
+            minFavorites: minFavs,
+            // minRating: minRating,
+            minFollowers: minFollowers
+        });
+      }
+
     // Render search results to the user
     function renderSearchResults(){
         // No quizzes found
@@ -164,34 +200,102 @@ export default function SearchResultsPage() {
 
     return (
         <Box data-testid="main-component">
-            <Grid templateColumns="1fr 6fr" minWidth="700px">
-                {/* FILTERS */}
-                <VStack pt="5vh">
-                    <Text fontSize="125%" fontWeight="medium" >Filters</Text>
-                    <Box w="75%" h="0.15vh" bgColor="gray.300"/>
-                    
-                    <Text fontSize="100%"> Minimum Plays </Text>
-                    <Input w="80%" borderColor="gray.300" placeholder="Minimum Plays (Ex: 10)" />
+            <Grid templateColumns="1fr 5.75fr" minWidth="700px">
 
-                    <Text fontSize="100%"> Minimum Rating </Text>
-                    <Input w="80%" borderColor="gray.300" placeholder="Minimum Rating (Ex: 3)" />
+                {/* FILTERS / SORTING */}
+                <Box minH="94vh"  boxShadow="md" borderColor="gray.300"> 
+                    {/* FILTERS */}
+                    <form onSubmit={handleChangeFilter} >
+                    <VStack spacing={5} pt="5vh">
+                        <Text fontSize="125%" fontWeight="medium" >Filters</Text>
+                        <Box w="75%" h="0.15vh" bgColor="gray.300"/>
+                        
+                        {/* Quiz Label */}
+                        <Tag w="fit-content" size="md" variant="outline" colorScheme="blue">
+                            <TagLabel> Quiz </TagLabel>
+                        </Tag>
 
-                    <Box h="3vh" />
-                    <Box w="75%" h="0.10vh" bgColor="gray.300"/>
+                        {/* Minimum Plays */}
+                        <VStack spacing={1} w="100%">
+                            <Text fontSize="100%"> Minimum Plays </Text>
+                            <NumberInput 
+                                name="minPlays"
+                                w="75%" 
+                                min={0}
+                            >
+                                
+                                <NumberInputField placeholder="Min Plays (Ex: 10)" borderColor="gray.300" />
+                            </NumberInput>
+                        </VStack>
+
+                        {/* Minimum Favorites */}
+                        <VStack spacing={1} w="100%">
+                            <Text fontSize="100%"> Minimum Favorites </Text>
+                            <NumberInput 
+                                name="minFavs"
+                                w="75%" 
+                                min={0}
+                            >
+                                
+                                <NumberInputField placeholder="Min Favs (Ex: 10)" borderColor="gray.300" />
+                            </NumberInput>
+                        </VStack>
+
+                        {/* Platform Label */}
+                        <Tag w="fit-content" size="md" variant="outline" colorScheme="orange">
+                            <TagLabel> Platform </TagLabel>
+                        </Tag>
+                        
+                         {/* Minimum Followers */}
+                         <VStack spacing={1} w="100%">
+                            <Text fontSize="100%"> Minimum Followers </Text>
+                            <NumberInput 
+                                name="minFollowers"
+                                w="75%" 
+                                min={0}
+                            >
+                                
+                                <NumberInputField placeholder="Min Followers (Ex: 5)" borderColor="gray.300" />
+                            </NumberInput>
+                        </VStack>
+
+
+                        {/* Minimum Rating */}
+                        {/* <VStack spacing={1} w="100%">
+                            <Text fontSize="100%"> Minimum Rating </Text>
+                            <NumberInput 
+                                name="minRating"
+                                w="75%" 
+                                min={1} 
+                                max={5}>
+                                <NumberInputField placeholder="Min Favs (Ex: 10)" borderColor="gray.300" />
+                                
+                                <NumberInputStepper> <NumberIncrementStepper /> <NumberDecrementStepper /> </NumberInputStepper>
+                            </NumberInput>
+                        </VStack> */}
+
+                        <Button type="submit" colorScheme="blue" variant="outline" _focus={{border:"1px solid blue.400"}}> Apply </Button>
+
+                        {/* <Box h="3vh" />
+                        <Box w="75%" h="0.10vh" bgColor="gray.300"/> */}
+                    </VStack>
+                    </form>
 
                     {/* SORT QUIZZES */}
-                    <Text fontSize="125%" fontWeight="medium">Sort</Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
-                        <option value="none">None</option>
-                        <option value="sort_abc">Alphabetical [A-Z]</option>
-                        <option value="sort_zyx">Reverse Alphabetical [Z-A]</option>
-                        <option value="sort_random">Random</option>
-                    </Select>
-                </VStack>
+                    <VStack pt="3vh">
+                        <Text fontSize="125%" fontWeight="medium">Sort</Text>
+                        <Select w="75%" borderColor="gray.300" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
+                            <option value="none">None</option>
+                            <option value="sort_abc">Alphabetical [A-Z]</option>
+                            <option value="sort_zyx">Reverse Alphabetical [Z-A]</option>
+                            <option value="sort_random">Random</option>
+                        </Select>
+                    </VStack> 
+                </Box>
 
                 {/* SEARCH RESULTS */}
                 <Box pt="2vh">
-                    <Text fontSize="200%" fontWeight="light"> {search_text} </Text>
+                    <Text fontSize="200%" fontWeight="light" pl="3%"> {search_text} </Text>
                     <Box w="100%" h="0.2vh" bgColor="gray.300"> </Box>
 
                     {/* ALL SEARCH RESULTS */}

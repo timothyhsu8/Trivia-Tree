@@ -40,9 +40,10 @@ import guest from '../images/guest.png'
 import heart from '../images/heart.jpeg'
 import treeshop from '../images/treeshop.png'
 import lights1 from '../images/lights1.png'
-import fire1 from '../images/fire1.png'
+import fire1 from '../images/fire2.png'
 import flowers1 from '../images/flowers1.png'
 import neon1 from '../images/neon1.png'
+import pfp_gold from '../images/pfp_gold.png'
 const iconPath= "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg"
 
 let profileImg = null;
@@ -105,8 +106,8 @@ export default function AccountPage(props) {
         },
     });
 
-    if (user != null) {
-        if (user._id == userId) {
+    if (user !== null) {
+        if (user._id === userId) {
             isOwner = true;
         }
     }
@@ -225,6 +226,7 @@ export default function AccountPage(props) {
     console.log(window.location.pathname);
     const x = window.location.pathname;
     const y = x.substring(1,12)
+
     var pfpBorder = 0;
     var bannerBorder = 0;
     var z=0;
@@ -234,10 +236,10 @@ export default function AccountPage(props) {
     //var bannerBorder=-1
     //var bannerBorder=-1
     var offset=-1
-    if(y.localeCompare("previewpage")!=0 && preview==true){
+    if(y.localeCompare("previewpage") !== 0 && preview === true){
         setPreview(false)
     }
-    if(y.localeCompare("previewpage")==0 && preview==false){
+    if(y.localeCompare("previewpage") === 0 && preview === false){
         //console.log("preview")
         setPreview(true)
     }
@@ -430,7 +432,7 @@ export default function AccountPage(props) {
     // Render User
     function renderUser() {
         return (
-            <Box minW='500px'>
+            <Box minW='500px' pos="relative">
                 {user._id === userId ? (
                     isEditing ? (
                         <VStack position='absolute' left='20px'>
@@ -457,7 +459,7 @@ export default function AccountPage(props) {
                             </form>
                         </VStack>
                     ) : (
-                        <Box position='absolute' left='20px'>
+                        <Box position='absolute' left='-150px' zIndex="2">
                             {preview ? (
                             <Link to="/shoppingpage">
                             Back to Shop</Link>
@@ -469,17 +471,26 @@ export default function AccountPage(props) {
                         </Box>
                     )
                 ) : null}
+
                 {/* BANNER */}
+                <Image
+                    src={borderArr[bannerBorder]}
+                    w="100%"
+                    h='28vh'
+                    minH='200px'
+                    pos='absolute'
+                    zIndex="1"
+                />
                 <Box
                     h='28vh'
                     minH='200px'
                     pos='relative'
 
                     //This is a nightmare
-                    borderWidth="100px"
-                    style={{borderImage:" url('" +
-                    borderArr[bannerBorder] +
-                    "')",borderImageSlice:"200",borderImageWidth:"1000px"}}
+                    // borderWidth="100px"
+                    // style={{borderImage:" url('" +
+                    // borderArr[bannerBorder] +
+                    // "')",borderImageSlice:"200",borderImageWidth:"1000px"}}
                     bgImage={
                         "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
                         banner_src +
@@ -496,6 +507,24 @@ export default function AccountPage(props) {
                         transform='translateY(-50%)'
                         position='relative'
                     >
+                        {/* Profile Picture Effect */}
+                        <Box
+                            pos="absolute"
+                            className='squareimage_container'
+                            zIndex="1"
+                            w='12%'
+                            minW='100px'
+                        >
+                            <Image
+                                className='squareimage'
+                                src={[borderArr[pfpBorder]]}
+                                alt='Profile Picture'
+                                objectFit='cover'
+                                borderRadius='50%'
+                            />
+                        </Box>
+
+                        {/* Profile Picture */}
                         <Box
                             className='squareimage_container'
                             w='12%'
@@ -503,14 +532,16 @@ export default function AccountPage(props) {
                         >
                             <Image
                                 className='squareimage'
-                                src={borderArr[pfpBorder]}
-                                backgroundImage={pfp_src}
+                                src={pfp_src}
+                                // src={[borderArr[pfpBorder]]}
+                                // backgroundImage={pfp_src}
                                 alt='Profile Picture'
                                 objectFit='cover'
                                 borderRadius='50%'
-                            ></Image>
+                            />
                         </Box>
 
+                        {/* Username */}
                         <Text
                             pos='absolute'
                             bottom='30%'
@@ -587,6 +618,7 @@ export default function AccountPage(props) {
                         <h1></h1>
                     )}
                 </Box>
+                
                 {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
                 <Grid pt='1%' templateColumns='4fr 1fr'>
                     {/* FEATURED QUIZZES/PLATFORMS */}
@@ -628,7 +660,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {isOwner &&preview==false? (
+                                    {isOwner && preview === false? (
                                         <AddQuizCard
                                             width='10%'
                                             title_fontsize='100%'
@@ -695,7 +727,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {isOwner &&preview==false? (
+                                    {isOwner && preview === false? (
                                         <AddQuizCard
                                             width='10%'
                                             title_fontsize='100%'

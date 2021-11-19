@@ -4,7 +4,7 @@ import { AuthContext } from '../context/auth';
 import { Box, Text, VStack, Flex, Spinner, Center, Heading, Grid } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORMS, GET_USERS } from "../cache/queries";
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import QuizCard from '../components/QuizCard';
 import '../styles/styles.css'
@@ -85,7 +85,7 @@ export default function Homepage() {
                     {quiz_data.map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
-                            width="7.5%" 
+                            width="7.3%" 
                             title_fontsize="95%" 
                             author_fontsize="85%" 
                             include_author={true}

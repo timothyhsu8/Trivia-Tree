@@ -3,11 +3,10 @@ import quizImage from '../../images/defaultquiz.jpeg';
 import { Link } from 'react-router-dom';
 
 export default function PlatformResult( {platform} ) {
-    console.log(platform)
     return (
         <Link to={'/platformpage/' + platform._id}>
             <HStack
-                h="14vh" 
+                h="13vh" 
                 minH="80px"
                 top="50%" 
                 spacing="1.5%"
@@ -22,7 +21,7 @@ export default function PlatformResult( {platform} ) {
                 overflow="hidden"
             >
                 {/* PLATFORM ICON */}
-                <Box className='squareimage_container' w="6%" minW="60px" ml="2.8%"> 
+                <Box className='squareimage_container' w="5.5%" minW="55px" ml="2.8%"> 
                     <Image className="squareimage" src={platform.iconImage} fallbackSrc={quizImage} objectFit="cover" borderRadius="50%"></Image>
                 </Box>
 

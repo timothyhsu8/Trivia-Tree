@@ -9,14 +9,13 @@ let quiz_rating = 5
 let quiz_platform = "No Platform"
 
 export default function QuizResult( {quiz} ) {
-    console.log(quiz)
     return (
         <Link to={'/prequizpage/' + quiz._id}>
             <Grid 
                 h="10.5vh" 
                 minH="80px"
                 top="50%" 
-                templateColumns="2fr 9fr 1fr 2fr 3fr" 
+                templateColumns="1.5fr 9fr 1fr 2fr 3fr" 
                 borderBottom="1px" 
                 borderColor="gray.300" 
                 dipslay="flex" 
@@ -29,7 +28,7 @@ export default function QuizResult( {quiz} ) {
             >
                 {/* QUIZ ICON */}
                 <Center>
-                    <Box className='squareimage_container' w="40%" minW="50px"> 
+                    <Box className='squareimage_container' w="50%" minW="50px"> 
                         <Image className="squareimage" src={quiz.icon} fallbackSrc={quizImage} objectFit="cover" borderRadius="23%"></Image>
                     </Box>
                 </Center>

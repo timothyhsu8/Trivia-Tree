@@ -29,6 +29,16 @@ import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { useAlert } from "react-alert";
 
+//Lol more images
+import guest from '../images/guest.png'
+import heart from '../images/heart.jpeg'
+import treeshop from '../images/treeshop.png'
+import lights1 from '../images/lights1.png'
+import fire1 from '../images/fire1.png'
+import flowers1 from '../images/flowers1.png'
+import neon1 from '../images/neon1.png'
+const iconPath= "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg"
+
 let profileImg = 'Same Image';
 let bannerImg = 'Same Image';
 const hiddenPFPInput = createRef(null);
@@ -43,6 +53,7 @@ export default function AccountPage(props) {
 
     let quiz_sections = ['Featured Quizzes', 'Featured Platforms'];
 
+    const [preview, setPreview] = useState(false);
     const [page, setPage] = useState('user');
     const [isEditing, setIsEditing] = React.useState(false);
     const [bio, setBio] = React.useState('');
@@ -184,6 +195,44 @@ export default function AccountPage(props) {
             }
         },
     });
+
+    //For Preview
+    console.log(window.location.pathname);
+    const x = window.location.pathname;
+    const y = x.substring(1,12)
+    const z = -1;
+    const borderArr = [
+        lights1,fire1,flowers1,neon1,fire1,lights1,flowers1,neon1,lights1,flowers1,fire1,neon1
+    ]
+    var offset=-1
+    if(y.localeCompare("previewpage")==0 && preview==false){
+        console.log("preview")
+        setPreview(true)
+        var index= -1
+        if(x.indexOf("bannerEffects=")!=-1){
+            index=x.indexOf("bannerEffects=")+13
+        }
+        else if(x.indexOf("iconEffects=")!=-1){
+            index=x.indexOf("iconEffects=")+11
+        }
+        else if(x.indexOf("backgrounds=")!=-1){
+            index=x.indexOf("backgrounds=")+11
+        
+        }
+        else if(x.indexOf("weeklySpecials=")!=-1){
+            index=x.indexOf("weeklySpecials=")+14
+        }
+        console.log(index)
+        var count = index
+        while(parseInt(count)!=NaN){
+            count+=1
+            console.log(count)
+        }
+        z = parseInt(x.substring(index,count+1))
+
+
+
+
 
     const [updateUser] = useMutation(UPDATE_USER, {
         refetchQueries: [GET_USER],

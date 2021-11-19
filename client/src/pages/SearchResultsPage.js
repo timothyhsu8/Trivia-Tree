@@ -1,10 +1,10 @@
-import { Box, Grid, Text, Image, HStack, Icon, Button, Center, VStack, Select, Spinner } from "@chakra-ui/react"
+import { Box, Grid, Text, Center, VStack, Select, Spinner, Input } from "@chakra-ui/react"
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries";
-import QuizResult from '../components/QuizResult'
-import PlatformResult from '../components/PlatformResult'
-import UserResult from '../components/UserResult'
+import QuizResult from '../components/SearchResults/QuizResult'
+import PlatformResult from '../components/SearchResults/PlatformResult'
+import UserResult from '../components/SearchResults/UserResult'
 import { useState } from 'react';
 import '../styles/styles.css'
 
@@ -21,7 +21,7 @@ export default function SearchResultsPage() {
     const users = useQuery(SEARCH_USERS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
 
     const loading = quizzes.loading || platforms.loading || users.loading
-    const error = quizzes.error || platforms.error || users.loading
+    const error = quizzes.error || platforms.error || users.error
 
     // Loading Screen
     if (loading) {
@@ -34,6 +34,7 @@ export default function SearchResultsPage() {
 
     // Error Screen
     if (error) {
+        console.log(error)
         return (
             <Center>
                 <Text fontSize="3vw" fontWeight="thin"> Sorry, something went wrong </Text>
@@ -168,29 +169,12 @@ export default function SearchResultsPage() {
                 <VStack pt="5vh">
                     <Text fontSize="125%" fontWeight="medium" >Filters</Text>
                     <Box w="75%" h="0.15vh" bgColor="gray.300"/>
+                    
+                    <Text fontSize="100%"> Minimum Plays </Text>
+                    <Input w="80%" borderColor="gray.300" placeholder="Minimum Plays (Ex: 10)" />
 
-                    <Text fontSize="100%"> Difficulties </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
-                        <option> All Difficulties </option>
-                        <option> Easy </option>
-                        <option> Intermediate </option>
-                        <option> Difficult </option>
-                        <option> Expert </option>
-                    </Select>
-
-                    <Text fontSize="100%"> Quiz Types </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
-                        <option> All Quiz Types </option>
-                        <option> Standard </option>
-                        <option> Instant </option>
-                    </Select>
-
-                    <Text fontSize="100%"> Timers </Text>
-                    <Select w="75%" borderColor="gray.400" borderRadius="10px"> 
-                        <option> Any Time Limit </option>
-                        <option> Standard </option>
-                        <option> Instant </option>
-                    </Select>
+                    <Text fontSize="100%"> Minimum Rating </Text>
+                    <Input w="80%" borderColor="gray.300" placeholder="Minimum Rating (Ex: 3)" />
 
                     <Box h="3vh" />
                     <Box w="75%" h="0.10vh" bgColor="gray.300"/>

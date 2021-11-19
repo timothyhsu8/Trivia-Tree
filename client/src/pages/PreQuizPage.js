@@ -1,12 +1,11 @@
-import { Box, Flex, HStack, Text, Grid, VStack, Button, Image, GridItem,Icon, Spacer} from "@chakra-ui/react"
+import { Box, Flex, HStack, Text, Grid, Button, Image, GridItem,Icon, Avatar, Stack} from "@chakra-ui/react"
 import { useQuery, useMutation} from '@apollo/client';
 import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
-import { Link, Redirect, useParams, useHistory } from 'react-router-dom';
-import userImage from '../images/guest.png';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
-import {BsHeart, BsShuffle, BsQuestionLg, BsFillPlayCircleFill} from "react-icons/bs"
-import { MdTimer } from "react-icons/md";
+import { ViewIcon } from '@chakra-ui/icons'
+import { BsHeart, BsHeartFill, BsShuffle, BsQuestionLg, BsFillPlayCircleFill, BsAlarm } from "react-icons/bs"
 import { IoRibbonSharp } from "react-icons/io5";
 import * as queries from '../cache/queries';
 import { AuthContext } from '../context/auth';
@@ -68,7 +67,7 @@ export default function PreQuizPage({}) {
     let numFavorites = quiz.numFavorites; 
     let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
     let icon_src = quiz.icon == null ? quizImage : quiz.icon
-    
+    console.log(quiz)
 
     const favoriteQuiz = async () => {
         if (logged_in){
@@ -109,36 +108,38 @@ export default function PreQuizPage({}) {
 
     return ( 
         <Box>
-            <Grid h="845px" templateRows="repeat(6, 1fr)"  pl="2%" pr="2%" bgColor="white" paddingTop="10px"> 
+            <Grid h="845px" templateRows="repeat(6, 1fr)" bgColor="white" paddingTop="10px"> 
 
                 {/* Title and Image */}
-                <GridItem rowSpan={2} colSpan={6} borderBottom="2px" borderColor="gray.400">
-                    <Flex direction="row" top="50%" left="2%" transform="translateY(-45%)" position="relative"> 
+                <GridItem rowSpan={2} colSpan={6} borderBottom="1px solid" borderColor="gray.300" overflow="hidden">
+                    <Flex pl="3%" direction="row" top="50%" transform="translateY(-45%)" position="relative"> 
                         <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%"></Image>
-                        <Text fontSize="2.7vw" as="b" transform="translateY(57%)" paddingLeft="20px">{quizTitle}</Text>
-                        {
-                            isFavorited ? 
-                            <Image as={BsHeart} color="red" w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }}onClick={toggleQuizFavorited}/>
-                            : 
-                            <Image as={BsHeart} w="50px" h="50px" transform="translateY(240%)" marginLeft="30px" _hover={{cursor:"pointer" }} onClick={toggleQuizFavorited}/>
-                        }
+                        <Text fontSize="275%" as="b" transform="translateY(62%)" paddingLeft="20px">
+                            {quizTitle}
+                            {
+                                isFavorited ? 
+                                <Icon as={BsHeartFill} color="red.500" w="45px" h="45px" marginLeft="30px" _hover={{cursor:"pointer", color:"red.300", transition:".1s linear" }} transition=".1s linear" onClick={toggleQuizFavorited}/>
+                                : 
+                                <Icon as={BsHeart} w="45px" h="45px" marginLeft="30px" color="gray.500" _hover={{cursor:"pointer", color:"red.400", transition:".1s linear" }} transition=".1s linear" onClick={toggleQuizFavorited}/>
+                            }    
+                        </Text>
                     </Flex>
                 </GridItem>
 
                 {/* Description */}
-                <GridItem rowStart={3} colSpan={4} borderBottom="2px" borderColor="gray.400">
-                    <Text top="20px" left="5px" position="relative" fontSize="22" noOfLines={3}> {quizDescription} </Text>
+                <GridItem rowStart={3} colSpan={4} borderBottom="1px solid" borderColor="gray.300">
+                    <Text pl="2%" top="20px" left="5px" position="relative" fontSize="22" noOfLines={3}> {quizDescription} </Text>
                 </GridItem>
 
                 {/* Settings */}
-                <GridItem rowStart={4} rowSpan={3} colSpan={4}>
+                <GridItem rowStart={4} rowSpan={3} colSpan={4} overflow="hidden">
                     <Grid pt="7%" pl="5%" templateColumns="1fr 1fr" >
-                        <HStack>
-                            <Icon as={MdTimer} w={iconSize} h={iconSize} position="relative"/> 
+                        <HStack spacing={4}>
+                            <Icon as={BsAlarm} w={iconSize} h={iconSize} position="relative"/> 
                             <Text fontSize={iconTextSize} as="b"> {quizTimer}</Text>
                         </HStack>
                         
-                        <HStack>
+                        <HStack spacing={3}>
                             <Icon as={BsShuffle} w={iconSize} h={iconSize} position="relative"/> 
                             <Text fontSize={iconTextSize} as="b"> Ordered Questions </Text>
                         </HStack>
@@ -150,7 +151,7 @@ export default function PreQuizPage({}) {
                             <Text fontSize={iconTextSize} as="b"> {numQuestions} Questions </Text>
                         </HStack>
                         
-                        <HStack>
+                        <HStack spacing={3}>
                             <Icon as={IoRibbonSharp} w={iconSize} h={iconSize} position="relative"/> 
                             <Text fontSize={iconTextSize} as="b"> Standard Quiz </Text>
                         </HStack>
@@ -158,20 +159,32 @@ export default function PreQuizPage({}) {
                 </GridItem>
 
                 {/* Other Info */}
-                <GridItem rowStart={3} rowSpan={4} colSpan={2} borderLeft="2px" borderColor="gray.400">
+                <GridItem rowStart={3} rowSpan={4} colSpan={2} borderLeft="1px" borderColor="gray.300">
                     <Flex direction="column" position="relative" top="5%" left="3%">
-                        <Flex direction="row" top="5%" left="3%" position="relative"> 
-                                <Image w="70px" h="70px" src={userImage} objectFit="cover" borderRadius="50%"></Image>
-                                <Flex direction="column" position="relative"> 
-                                    <Text fontSize="24" as="b" left="10px" top="10px" position="relative" >Creator</Text>
-                                    <Text fontSize="21" left="10px" top="7px" position="relative">{quizAuthor}</Text>
-                                </Flex>
-                        </Flex>
-                        <Text fontSize="24" left="10px" top="30px" position="relative" >{numAttempts} Plays</Text>
-                        <Text fontSize="24" left="10px" top="40px" position="relative">{numFavorites} Favorites</Text>
-        
-                        <Link to={'/quiztakingpage/' + quiz._id}> <Button colorScheme="blue" rightIcon={<BsFillPlayCircleFill/>} variant="solid" 
-                        position="relative" top="265px" left="px" h="60px" fontSize="25px"> Start Quiz </Button></Link>
+                        <HStack>
+                            <Avatar src={quiz.user.iconImage} size="lg"/>
+                            <Stack spacing={0}>
+                                <Text fontSize="140%" as="b" >Creator</Text>
+                                <Text fontSize="120%" left="10px">{quizAuthor}</Text>
+                            </Stack>
+                        </HStack>
+                        <Text fontSize="140%" left="10px" top="30px" position="relative" >  <Icon as={ViewIcon} color="blue.400" /> {numAttempts} Plays</Text>
+                        <Text fontSize="140%" left="10px" top="40px" position="relative"> <Icon as={BsHeartFill} color="red.400" /> {numFavorites} Favorites</Text>
+                        
+                        {/* Start Quiz Button */}
+                        <Button 
+                            w="fit-content" 
+                            colorScheme="blue" 
+                            rightIcon={<BsFillPlayCircleFill/>} 
+                            variant="solid" 
+                            position="relative" 
+                            top="265px" 
+                            h="60px" 
+                            fontSize="25px"
+                            onClick={() => history.push('/quiztakingpage/' + quiz._id)}
+                        > 
+                            Start Quiz 
+                        </Button>
                     </Flex>
                 </GridItem>
             </Grid>

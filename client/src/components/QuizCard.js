@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import quizImage from '../images/defaultquiz.jpeg';
 import { ViewIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons'
-import { BsHeart } from "react-icons/bs"
+import { BsHeartFill } from "react-icons/bs"
 import '../styles/styles.css'
 import { REMOVE_QUIZ_FROM_PLATFORM } from '../cache/mutations';
 
@@ -80,9 +80,9 @@ export default function QuizCard( props ) {
             borderRadius="4%" 
             border={isEditing ? "1px":""}
             borderColor={isEditing ? "red":""}
-            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
+            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"blue.100", cursor:"pointer", transition:"0.15s linear"}} 
             _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
-            transition="background-color 0.1s linear"
+            transition="0.1s linear"
             onClick={isEditing ? ()=> quizToDelete():() => history.push('/prequizpage/' + quiz_data._id)}
             //color={disableClick ? 'white':'black'}
             onMouseEnter={() => setHovering(true)}
@@ -127,15 +127,17 @@ export default function QuizCard( props ) {
 
                 {/* QUIZ VIEWS/PLAYS */}
                 <Grid w="100%" templateColumns="1fr 1fr"> 
-                    <HStack spacing="0">
-                        <Icon boxSize="50%" as={ViewIcon} pos="relative" top="3%"/>
-                        <Text fontSize="90%"> {numAttempts} </Text>
-                    </HStack>
+                    <Center>
+                        <HStack spacing="0">
+                            <Text fontSize="90%"> <Icon as={ViewIcon} pos="relative" top="3%" color="blue.400" /> {numAttempts} </Text>
+                        </HStack>
+                    </Center>
                     
-                    <HStack spacing="0">
-                        <Icon as={BsHeart} boxSize="45%" pos="relative" left="10%" top="6%"/>
-                        <Text fontSize="90%" pos="relative" left="8%"> {numFavorites} </Text>
-                    </HStack>
+                    <Center>
+                        <HStack spacing="0">
+                            <Text fontSize="90%" pos="relative"> <Icon as={BsHeartFill} pos="relative" color="red.400"/> {numFavorites} </Text>
+                        </HStack>
+                    </Center>
                 </Grid>
             </VStack>
         </Box>

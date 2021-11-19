@@ -1,4 +1,5 @@
-import { Box, Grid, Text, Center, VStack, Select, Spinner, Button, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Tag, TagLabel } from "@chakra-ui/react"
+import { Box, Grid, Text, Center, VStack, Select, Spinner, Button, NumberInput, NumberInputField, Flex, Spacer, HStack,
+    IconButton, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Tag, TagLabel } from "@chakra-ui/react"
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries";
@@ -6,6 +7,7 @@ import QuizResult from '../components/SearchResults/QuizResult'
 import PlatformResult from '../components/SearchResults/PlatformResult'
 import UserResult from '../components/SearchResults/UserResult'
 import { useState } from 'react';
+import TimeField from "react-simple-timefield";
 import '../styles/styles.css'
 
 export default function SearchResultsPage() {
@@ -15,6 +17,7 @@ export default function SearchResultsPage() {
     const [filters, setFilters] = useState( {
         minPlays: 0,
         minFavorites: 0,
+        minTimer: "00:00:00",
         minRating: 1,
         minFollowers: 0
     })
@@ -55,7 +58,7 @@ export default function SearchResultsPage() {
 
     // Doing the actual filtering work
     let filtered_quiz_data = quiz_data.filter((quiz) => {
-        return (quiz.numAttempts >= filters.minPlays) && (quiz.numFavorites >= filters.minFavorites)
+        return (quiz.numAttempts >= filters.minPlays) && (quiz.numFavorites >= filters.minFavorites) && (quiz.quizTimer >= filters.minTimer)
     })
 
     let filtered_platform_data = platform_data.filter((platform) => {
@@ -97,6 +100,8 @@ export default function SearchResultsPage() {
             return sortAlphabetical(search_results)
         if(sortType === "sort_zyx")
             return sortReverseAlphabetical(search_results)
+        if(sortType === "popular")
+            return sortPopular(search_results)
         return search_results
     }
 
@@ -122,14 +127,34 @@ export default function SearchResultsPage() {
         })
     }
 
+    function sortPopular(search_results) {
+        return search_results.sort((a, b) => {
+            let resultA = getPopularity(a)
+            let resultB = getPopularity(b)
+            return resultA < resultB ? 1 : -1
+        })
+    }
+
     // Determines if this is a quiz/platform/user and returns the appropriate name value
     function getName(x) {
         if (x.__typename === "Quiz")
-            return x.title
+            return x.title.toLowerCase()
         if (x.__typename === "Platform")
-            return x.name
+            return x.name.toLowerCase()
         if (x.__typename === "User")
-            return x.displayName
+            return x.displayName.toLowerCase()
+        return null
+    }
+
+    function getPopularity(x) {
+        if (x.__typename === "Quiz")
+            return x.numAttempts
+        if (x.__typename === "Platform")
+            return x.followers.length
+        if (x.__typename === "User"){
+            console.log(x)
+            return 0    // fix
+        }
         return null
     }
 
@@ -137,17 +162,18 @@ export default function SearchResultsPage() {
         event.preventDefault()
         
         // Quiz Filters
-        console.log(event.target.minPlays.value)
         let minPlays = event.target.minPlays.value !== "" ? event.target.minPlays.value : 0
         let minFavs = event.target.minFavs.value !== "" ? event.target.minFavs.value : 0
         // let minRating = event.target.minRating.value !== "" ? event.target.minRating.value : 1
-
+        let minTimer = event.target.minTimer.value
+        
         // Platform Filters
         let minFollowers = event.target.minFollowers.value !== "" ? event.target.minFollowers.value : 0
 
         setFilters({
             minPlays: minPlays,
             minFavorites: minFavs,
+            minTimer: minTimer,
             // minRating: minRating,
             minFollowers: minFollowers
         });
@@ -224,7 +250,7 @@ export default function SearchResultsPage() {
                                 min={0}
                             >
                                 
-                                <NumberInputField placeholder="Min Plays (Ex: 10)" borderColor="gray.300" />
+                                <NumberInputField textAlign="center" placeholder="Min Plays (Ex: 10)" borderColor="gray.300" />
                             </NumberInput>
                         </VStack>
 
@@ -237,8 +263,14 @@ export default function SearchResultsPage() {
                                 min={0}
                             >
                                 
-                                <NumberInputField placeholder="Min Favs (Ex: 10)" borderColor="gray.300" />
+                                <NumberInputField textAlign="center" placeholder="Min Favs (Ex: 10)" borderColor="gray.300" />
                             </NumberInput>
+                        </VStack>
+
+                        {/* Timer */}
+                        <VStack spacing={1} w="100%">
+                            <Text fontSize="100%"> Minimum Timer </Text>
+                            <TimeField name="minTimer" showSeconds style={{padding:"4px", width:"75%", height:"40px", border:"1px solid", borderRadius:"5px", borderColor:"#cfcfcf", textAlign:"center" }}/>
                         </VStack>
 
                         {/* Platform Label */}
@@ -274,28 +306,30 @@ export default function SearchResultsPage() {
                             </NumberInput>
                         </VStack> */}
 
-                        <Button type="submit" colorScheme="blue" variant="outline" _focus={{border:"1px solid blue.400"}}> Apply </Button>
+                        <Button type="submit" colorScheme="blue" variant="outline" _focus={{border:"1px solid blue.400"}} load> Apply </Button>
 
                         {/* <Box h="3vh" />
                         <Box w="75%" h="0.10vh" bgColor="gray.300"/> */}
                     </VStack>
                     </form>
-
-                    {/* SORT QUIZZES */}
-                    <VStack pt="3vh">
-                        <Text fontSize="125%" fontWeight="medium">Sort</Text>
-                        <Select w="75%" borderColor="gray.300" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
-                            <option value="none">None</option>
-                            <option value="sort_abc">Alphabetical [A-Z]</option>
-                            <option value="sort_zyx">Reverse Alphabetical [Z-A]</option>
-                            <option value="sort_random">Random</option>
-                        </Select>
-                    </VStack> 
                 </Box>
 
                 {/* SEARCH RESULTS */}
                 <Box pt="2vh">
-                    <Text fontSize="200%" fontWeight="light" pl="3%"> {search_text} </Text>
+                    <Grid templateColumns="4fr 1fr">
+                        <Text fontSize="200%" fontWeight="light" pl="3%"> {search_text} </Text>
+                        
+                        <HStack>
+                            <Text> Sort By: </Text>
+                            <Select w="fit-content" mr="5%" borderColor="gray.300" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
+                                <option value="none"> None </option>
+                                <option value="popular"> Popular </option>
+                                <option value="sort_abc">Alphabetical [A-Z]</option>
+                                <option value="sort_zyx">Reverse Alphabetical [Z-A]</option>
+                                <option value="sort_random">Random</option>
+                            </Select>
+                        </HStack>
+                    </Grid>
                     <Box w="100%" h="0.2vh" bgColor="gray.300"> </Box>
 
                     {/* ALL SEARCH RESULTS */}

@@ -1,19 +1,11 @@
 import React, { useState, useEffect, useContext} from 'react';
-import {
-    Box,
-    Center,
-    Text,
-    Grid,
-    VStack,
-    Button,
-    Image
-} from '@chakra-ui/react';
+import { Box, Center, Text, Grid, VStack, Button, Image, Avatar } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
-import { Link, useParams, useHistory } from 'react-router-dom';
-import quizImage from '../images/defaultquiz.jpeg';
+import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
+import '../styles/styles.css'
 
 
 
@@ -25,8 +17,6 @@ export default function QuizTakingPage({}) {
     let numQuestions = null; 
     let history = useHistory();
 
-    console.log(user)
-
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
     const [userAnswers, setUserAnswers] = useState(() => []);
@@ -36,6 +26,7 @@ export default function QuizTakingPage({}) {
     const [quizTimer, setQuizTimer] = useState(-1);
     const [quizTimerDisplay, setQuizTimerDisplay] = useState("No Timer");
     const [quizTimerPulled, setQuizTimerPulled] = useState(false);
+    const [timeRunningOut, setTimeRunningOut] = useState(false);
     
     useEffect(() => {
         if(quizTimer != -1){
@@ -50,11 +41,15 @@ export default function QuizTakingPage({}) {
     useEffect(() => {
         if(quizTimer == -1)
             return;
-        const timeStringDisplay = convertSecondsToString(quizTimer);
-        console.log(timeStringDisplay)
-        setQuizTimerDisplay(timeStringDisplay)
 
-        if(quizTimer == 0){
+        const timeStringDisplay = convertSecondsToString(quizTimer);
+        setQuizTimerDisplay(timeStringDisplay)
+        
+        if(quizTimer <= 30 && !timeRunningOut) {
+            setTimeRunningOut(true)
+        }
+
+        if(quizTimer === 0) {
             submitQuiz()
         }
 
@@ -72,7 +67,6 @@ export default function QuizTakingPage({}) {
     
     if (data) {
         quiz = data.getQuiz;
-        console.log(quiz)
         if(quiz.quizTimer != null){
             if(!quizTimerPulled){
                 setQuizTimerDisplay(quiz.quizTimer);
@@ -84,7 +78,6 @@ export default function QuizTakingPage({}) {
     }
 
     let quizID = quiz._id;
-    let quizicon = quiz.iconImage;
     let question = quiz.questions[currentQuestionNumber-1].question;
     let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
     let questionNumber = [];
@@ -156,7 +149,6 @@ export default function QuizTakingPage({}) {
 
             else newAnswers[question_num].push(choice);
 
-            // console.log(newAnswers);
             setUserAnswers(newAnswers);
         }
     }
@@ -165,7 +157,7 @@ export default function QuizTakingPage({}) {
     function getAnswerColor(questionType, currentQuestionNumber, choice) {
         // If question type is select one answer
         if (questionType === 1){
-            return userAnswers[currentQuestionNumber-1] === choice ? "blue.500" : "gray.500"
+            return userAnswers[currentQuestionNumber-1] === choice ? "blue.100" : ""
         }
 
         // If question type is select multiple answers
@@ -174,7 +166,7 @@ export default function QuizTakingPage({}) {
             if (userAnswers[currentQuestionNumber-1] === undefined)
                 return "gray.500"
 
-            return userAnswers[currentQuestionNumber-1].includes(choice) ? "blue.500" : "gray.500"
+            return userAnswers[currentQuestionNumber-1].includes(choice) ? "blue.100" : ""
         }
     }
 
@@ -215,51 +207,50 @@ export default function QuizTakingPage({}) {
 
         return hours + ":" + minutes + ":" + seconds;
     }
-    console.log(quiz.iconImage)
 
     return (
         <Box data-testid='main-component'>
             <Grid templateColumns='1fr 6fr'>
+                
                 {/* SIDEBAR */}
-                <Box h='100vh' bgColor='gray.200'>
+                <Box h='100vh' bgColor='gray.100' boxShadow="md">
+
                     {/* QUIZ ICON */}
-                    <Image src={quiz.icon} w="250px" h="200px" borderRadius="20%" p="20px"/>
+                    <Center pt="5%">
+                        <Avatar size="2xl" src={quiz.icon} />
+                    </Center>
 
                     {/* QUIZ TITLE */}
                     <Center>
-                        <Text fontSize='2vw' textAlign='center'>{quiz.title}</Text>
+                        <Text padding={2} fontSize='130%' fontWeight="medium" textAlign='center'>{quiz.title}</Text>
                     </Center>
 
                     {/* QUIZ AUTHOR */}
                     <Center>
-                        <Text fontSize='1vw'>No User Found</Text>
+                        <Text fontSize='120%' color="blue.600"> {quiz.user.displayName} </Text>
                     </Center>
 
-                    <Center>
-                        <Box w='95%' h='1vh' />
-                    </Center>
-
-                    <Center>
-                        <Box w='70%' h='5vh' bgColor='gray.400' border="1px">
-                        <Text fontSize='1.5vw' textAlign='center'>{quizDone ? "Quiz Ended":quizTimerDisplay}</Text>
+                    {/* QUIZ TIMER */}
+                    <Center pt="6%">
+                        <Box w='70%' h='5vh' bgColor='gray.100' border="1px solid" borderColor="gray.400" borderRadius="15">
+                        <Text fontSize='170%' textAlign='center' color={ timeRunningOut ? "red.500" : "gray.800" }>
+                            {quizDone ? "Quiz Ended" : quizTimerDisplay}
+                        </Text>
                         </Box>
                     </Center>
 
-                    <Center>
-                        <Box w='95%' h='1vh' />
-                    </Center>
-
                     {/* QUESTION NUMBERS */}
-                    <Grid w='100%' templateColumns='1fr 1fr'>
+                    <Grid w='100%' templateColumns='1fr 1fr' pt="4%">
                         {questionNumber.map((item, index) => {
                             return (
                                 <Button 
                                     key = {index}
-                                    bgColor= { index+1 === currentQuestionNumber ? 'blue.400' : 'gray.200' }
+                                    bgColor= { index+1 === currentQuestionNumber ? 'blue.400' : 'gray.100' }
                                     borderRadius="0" 
                                     fontSize='0.9vw' 
                                     onClick={() => {setCurrentQuestionNumber(index+1)}}
-                                    _hover={{ bgColor: index+1 === currentQuestionNumber ? 'blue.400' : 'gray.300'}}
+                                    _hover={{ bgColor: index+1 === currentQuestionNumber ? 'blue.400' : 'gray.200'}}
+                                    _focus={{border:"none"}}
                                 >
                                     <Text key = {index} color={ index+1 === currentQuestionNumber ? 'white' : 'gray.600' }>
                                         {index + 1}
@@ -274,7 +265,7 @@ export default function QuizTakingPage({}) {
                 <Box>
                     {/* QUESTION */}
                     <Center>
-                        <Text pt='50' fontSize='3vw'>
+                        <Text pt='50' fontSize="270%">
                         {questionType == 2 ?  question + " Select All That Apply": question}
                         </Text>
                     </Center>
@@ -284,14 +275,16 @@ export default function QuizTakingPage({}) {
                         {choices.map((choice, index) => {
                             return (
                                 <Button
+                                    variant="outline"
+                                    colorScheme="blue"
                                     key={index}
                                     w='60%'
                                     h='10vh'
                                     bgColor = {getAnswerColor(quiz.questions[currentQuestionNumber-1].questionType, currentQuestionNumber, choice)}
                                     fontSize='1.5vw'
-                                    textColor='white'
+                                    _focus={{border:"1px"}}
                                     onClick={() => { updateUserAnswers(currentQuestionNumber, choice, quiz.questions[currentQuestionNumber-1].questionType) }}
-                                    _hover={{ bg: "blue.500" }}
+                                    _hover={{ bg: "blue.100" }}
                                 >
                                     {choices[index]}
                                 </Button>

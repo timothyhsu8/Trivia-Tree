@@ -25,6 +25,7 @@ export const GET_QUIZ = gql`
             title
             user {
                 displayName
+                iconImage
             }
             questions {
                 question
@@ -101,6 +102,7 @@ export const SEARCH_QUIZZES = gql`
             user {
                 _id
                 displayName
+                iconImage
             }
         }
     }

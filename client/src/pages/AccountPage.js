@@ -495,7 +495,7 @@ export default function AccountPage(props) {
                                             display='flex'
                                             flexWrap='wrap'
                                         >
-                                        {isOwner ? 
+                                        {isOwner && isEditing ? 
                                         <AddQuizCard 
                                             width="10%"
                                             title_fontsize="100%"
@@ -561,7 +561,7 @@ export default function AccountPage(props) {
                                             display='flex'
                                             flexWrap='wrap'
                                         >
-                                        {isOwner ?
+                                        {isOwner && isEditing ?
                                         <AddQuizCard 
                                             width="10%"
                                             title_fontsize="100%"
@@ -709,7 +709,7 @@ export default function AccountPage(props) {
                                     quiz={quiz}
                                     width='10%'
                                     title_fontsize='0.8vw'
-                                    include_author={false}
+                                    include_author={true}
                                     char_limit={35}
                                     key={key}
                                 />

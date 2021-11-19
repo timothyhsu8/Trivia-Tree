@@ -64,8 +64,6 @@ serverOptions(app);
 //routes
 app.use('/auth', require('./routes/auth'));
 app.use('/getuser', (req, res) => {
-    console.log('getting user data from backend')
-    console.log(req.user);2
     res.send(req.user);
 });
 

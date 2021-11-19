@@ -34,10 +34,10 @@ import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { useAlert } from 'react-alert';
 
-let profileImg = 'Same Image';
-let bannerImg = 'Same Image';
-const hiddenPFPInput = createRef(null);
-const hiddenBannerInput = createRef(null);
+let profileImg = null;
+let bannerImg = null;
+let hiddenPFPInput = null;
+let hiddenBannerInput = null;
 let username = null;
 
 export default function AccountPage(props) {
@@ -48,6 +48,7 @@ export default function AccountPage(props) {
 
     let quiz_sections = ['Featured Quizzes', 'Featured Platforms'];
 
+    const [firstQueryDone, setFirstQueryDone] = React.useState(false);
     const [page, setPage] = useState('user');
     const [isEditing, setIsEditing] = React.useState(false);
     const [bio, setBio] = React.useState('');
@@ -164,6 +165,8 @@ export default function AccountPage(props) {
     }
 
     function cancelEditing() {
+        profileImg = 'Same Image';
+        bannerImg = 'Same Image';
         toggleEditPage(false);
         setPFP(userData.iconImage);
         setBio(userData.bio);
@@ -187,6 +190,10 @@ export default function AccountPage(props) {
         variables: { _id: userId },
         onCompleted({ getUser: userData }) {
             if (userData) {
+                profileImg = 'Same Image';
+                bannerImg = 'Same Image';
+                hiddenPFPInput = createRef(null);
+                hiddenBannerInput = createRef(null);
                 username = userData.displayName;
                 setPFP(userData.iconImage);
                 setBio(userData.bio);
@@ -197,6 +204,7 @@ export default function AccountPage(props) {
                         'https://www.acemetrix.com/wp-content/themes/acemetrix/images/default/default-black-banner.png'
                     );
                 }
+                setFirstQueryDone(true);
             }
         },
     });
@@ -210,6 +218,8 @@ export default function AccountPage(props) {
             },
         },
         onCompleted() {
+            profileImg = 'Same Image';
+            bannerImg = 'Same Image';
             toggleEditPage(false);
             //Used so that the icon on the navbar is also changed
             refreshUserData();
@@ -232,8 +242,9 @@ export default function AccountPage(props) {
         });
     }
 
-    // Loading Screen
-    if (loading) {
+    // Loading Screen - Wait for userData and user
+    if ((loading || !user) && !firstQueryDone) {
+        console.log('loading spinner');
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -263,11 +274,6 @@ export default function AccountPage(props) {
                 </Text>
             </Center>
         );
-    }
-
-    //Wait for the user context so we know if we should render edit functionalities
-    if (!user) {
-        return null;
     }
 
     async function handleAddFeaturedQuiz() {
@@ -320,8 +326,6 @@ export default function AccountPage(props) {
 
         setChosenFeaturedPlatform(null);
     }
-
-    console.log(userData);
 
     async function handleDeleteFeaturedQuiz(quizToDelete) {
         console.log(quizToDelete.title);
@@ -684,34 +688,46 @@ export default function AccountPage(props) {
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Platforms
                     </Text>
-                    <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    <Flex
+                        ml='1%'
+                        mt='1%'
+                        spacing='4%'
+                        display='flex'
+                        flexWrap='wrap'
+                    >
                         {userData.platformsMade.map((platform, key) => {
                             return (
                                 <PlatformCard
                                     platform={platform}
                                     width='15%'
-                                    minWidth="200px"
-                                    img_height="50px"
-                                    char_limit={44} 
+                                    minWidth='200px'
+                                    img_height='50px'
+                                    char_limit={44}
                                     key={key}
                                 />
                             );
                         })}
                     </Flex>
                 </Box>
-                <Box mt="10px" bgColor='gray.200' borderRadius='10'>
+                <Box mt='10px' bgColor='gray.200' borderRadius='10'>
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Followed Platforms
                     </Text>
-                    <Flex ml='1%' mt='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    <Flex
+                        ml='1%'
+                        mt='1%'
+                        spacing='4%'
+                        display='flex'
+                        flexWrap='wrap'
+                    >
                         {userData.following.map((platform, key) => {
                             return (
                                 <PlatformCard
                                     platform={platform}
                                     width='15%'
-                                    minWidth="200px"
-                                    img_height="50px"
-                                    char_limit={44} 
+                                    minWidth='200px'
+                                    img_height='50px'
+                                    char_limit={44}
                                     key={key}
                                 />
                             );

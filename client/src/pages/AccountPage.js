@@ -34,6 +34,7 @@ import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { useAlert } from 'react-alert';
 
+
 let profileImg = null;
 let bannerImg = null;
 let hiddenPFPInput = null;
@@ -209,6 +210,63 @@ export default function AccountPage(props) {
         },
     });
 
+    //For Preview
+    console.log(window.location.pathname);
+    const x = window.location.pathname;
+    const y = x.substring(1,12)
+    var pfpBorder = 0;
+    var bannerBorder = 0;
+    var z=0;
+    const borderArr = [
+        absolutelynothing, lights1,fire1,flowers1,neon1,fire1,lights1,flowers1,neon1,lights1,flowers1,fire1,neon1
+    ]
+    //var bannerBorder=-1
+    //var bannerBorder=-1
+    var offset=-1
+    if(y.localeCompare("previewpage")==0 && preview==false){
+        //console.log("preview")
+        setPreview(true)
+    }
+    var index= -1
+        if(x.indexOf("bannerEffects=")!=-1){
+            index=x.indexOf("bannerEffects=")+14
+        }
+        else if(x.indexOf("iconEffects=")!=-1){
+            index=x.indexOf("iconEffects=")+12
+        }
+        else if(x.indexOf("backgrounds=")!=-1){
+            index=x.indexOf("backgrounds=")+12
+        
+        }
+        else if(x.indexOf("weeklySpecials=")!=-1){
+            index=x.indexOf("weeklySpecials=")+15
+        }
+        //console.log(index)
+        var count = index
+        while(parseInt(x.substring(index,count))!=NaN && count<=x.length &&index!=-1){
+            //console.log(x.substring(index,count))
+            count+=1
+            //console.log(count)
+        }
+        if(parseInt(x.substring(index,count+1))!=NaN &&index!=-1 ){
+            z = parseInt(x.substring(index,count+1))+1
+        }
+
+        if(x.indexOf("bannerEffects=")!=-1){
+            bannerBorder=z
+        }
+        else if(x.indexOf("iconEffects=")!=-1){
+            pfpBorder=z
+        }
+        else if(x.indexOf("weeklySpecials=")!=-1){
+            pfpBorder=z
+        }
+        //console.log(z)
+    console.log(bannerBorder)
+
+
+
+
     const [updateUser] = useMutation(UPDATE_USER, {
         refetchQueries: [GET_USER],
         context: {
@@ -358,8 +416,7 @@ export default function AccountPage(props) {
     // Render User
     function renderUser() {
         return (
-            //move the bgColor={backgroundNum} to wherever would cover the whole screen
-            <Box bgColor={backgroundNum} minW='500px'>
+            <Box minW='500px'>
                 {user._id === userId ? (
                     isEditing ? (
                         <VStack position='absolute' left='20px'>
@@ -368,6 +425,7 @@ export default function AccountPage(props) {
                             </Button>
                             <Button onClick={() => handleUpdateUser()}>
                                 Save Updates
+
                             </Button>
                             <form onSubmit={changeBackground}>
                                 <FormControl id='background'>
@@ -386,9 +444,13 @@ export default function AccountPage(props) {
                         </VStack>
                     ) : (
                         <Box position='absolute' left='20px'>
+                            {preview ? (
+                            null
+                            ) : 
                             <Button onClick={() => toggleEditPage(true)}>
                                 Update Page
                             </Button>
+                        }
                         </Box>
                     )
                 ) : null}
@@ -397,14 +459,20 @@ export default function AccountPage(props) {
                     h='28vh'
                     minH='200px'
                     pos='relative'
+
+                    //This is a nightmare
+                    borderWidth="100px"
+                    style={{borderImage:" url('" +
+                    borderArr[bannerBorder] +
+                    "')",borderImageSlice:"200",borderImageWidth:"1000px"}}
                     bgImage={
                         "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
                         banner_src +
                         "')"
-                    }
+                    }    
                     bgSize='cover'
                     bgPosition='center'
-                    borderRadius='10'
+                    borderRadius='10px'
                 >
                     {/* PROFILE PICTURE AND NAME */}
                     <Box
@@ -420,7 +488,8 @@ export default function AccountPage(props) {
                         >
                             <Image
                                 className='squareimage'
-                                src={pfp_src}
+                                src={borderArr[pfpBorder]}
+                                backgroundImage={pfp_src}
                                 alt='Profile Picture'
                                 objectFit='cover'
                                 borderRadius='50%'
@@ -535,6 +604,7 @@ export default function AccountPage(props) {
                                     </Text>
                                 )}
 
+
                                 {/* QUIZZES */}
                                 <Flex
                                     ml='1%'
@@ -600,6 +670,7 @@ export default function AccountPage(props) {
                                         Featured Platforms
                                     </Text>
                                 )}
+
 
                                 {/* Platforms */}
                                 <Flex

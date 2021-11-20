@@ -14,6 +14,8 @@ export const GET_QUIZZES = gql`
             quizTimer
             numAttempts
             numFavorites
+            numRatings
+            rating
         }
     }
 `;
@@ -39,6 +41,8 @@ export const GET_QUIZ = gql`
             numQuestions
             numAttempts
             numFavorites
+            rating
+            numRatings
         }
     }
 `;

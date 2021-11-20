@@ -575,6 +575,7 @@ export default function AccountPage(props) {
                                 bottom='4%'
                                 left='1%'
                                 zIndex="100"
+                                display={isAddingFeaturedPlatform || isAddingFeaturedQuiz ? "none" : ""}
                                 onClick={() => hiddenPFPInput.current.click()}
                             >
                                 <Text
@@ -596,6 +597,7 @@ export default function AccountPage(props) {
                                 border='solid'
                                 borderWidth='2px'
                                 pos='absolute'
+                                display={isAddingFeaturedPlatform || isAddingFeaturedQuiz ? "none" : ""}
                                 bottom='4%'
                                 right='1%'
                                 zIndex="100"

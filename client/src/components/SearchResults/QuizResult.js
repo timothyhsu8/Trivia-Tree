@@ -81,7 +81,7 @@ export default function QuizResult( {quiz} ) {
                 <Center>
                     <Text fontSize="110%" fontWeight="thin">
                         <Icon pos="relative" as={StarIcon} boxSize="4" color="yellow.500"/>
-                        &nbsp;{quiz_rating}
+                        &nbsp;{quiz.rating}
                     </Text>
                 </Center>
 

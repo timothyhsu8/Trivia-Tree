@@ -11,10 +11,13 @@ import quizImage from '../images/defaultquiz.jpeg';
 import LeaderboardCard from '../components/LeaderboardEntryCard';
 import {IoMdClock} from "react-icons/io"
 import {BsStarFill} from "react-icons/bs"
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
+import * as mutations from '../cache/mutations';
 import { useParams } from 'react-router-dom';
 import PostQuizAnswersCard from '../components/PostQuizAnswersCard';
+import { StarIcon } from '@chakra-ui/icons'
+import { Rating, RatingView } from 'react-simple-star-rating'
 
 export default function PostQuizPage() {
     let quizScore = null; 
@@ -29,26 +32,11 @@ export default function PostQuizPage() {
     let icon_src = null; 
 
     let { quizId, quizAttemptId } = useParams();
-    let leaderboard_entries = [ 'alpha', 'vita', 'gamma', 'thelta', 'epsilon', 'zita', 'ita', 'thita', 'iota', 'kappa']
 
-    function mainPage() {
-        return;
-    }
-    function retry() {
-        return;
-    }
+    const [rating, setRating] = useState(0)
+    const [isRated, setIsRated] = useState(false)
+    const [rateQuiz] = useMutation(mutations.RATE_QUIZ);
 
-    //Later on these will pull from Leaderboard for given quiz in Database
-    const [bleh, changeBleh] = useState([
-        'alpha',
-        'vita',
-        'gamma',
-        'thelta',
-        'epsilon',
-        'zita',
-        'ita',
-        'thita',
-    ]);
     
     const [showResults, setShowResults] = React.useState(true);
     const onClickResults = () => {
@@ -77,7 +65,7 @@ export default function PostQuizPage() {
         variables: { quiz_id: quizId },
     });
 
-    const {data:data2, error:error2, loading:loading2} = useQuery(queries.GET_QUIZ, {
+    const {data:data2, error:error2, loading:loading2, refetch} = useQuery(queries.GET_QUIZ, {
         variables: { quizId: quizId },
     });
 
@@ -123,6 +111,14 @@ export default function PostQuizPage() {
 
     }
 
+    function handleRating(rate) {
+        setRating(rate)
+        const {data} = rateQuiz({variables: {quizId: quizId, rating: rate }});
+        // Some logic
+        refetch()
+        setIsRated(true)
+    }
+
     let quizTitle = quiz.title;
     let user = "None";
     let pfp_src = quizImage;
@@ -149,9 +145,9 @@ export default function PostQuizPage() {
                             <Flex direction="row" position="relative">  
                                 <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="2.5vw">{quizTitle}</Text> 
                                 { subbed ? 
-                                <Image width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
+                                <Image display="none" width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
                                 : 
-                                <Image w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" marginLeft="20px" transform="translateY(-35%)" onClick={onClickSubscribe}></Image>
+                                <Image display="none" w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" marginLeft="20px" transform="translateY(-35%)" onClick={onClickSubscribe}></Image>
                                 }
                             </Flex>    
                             </Box>
@@ -167,7 +163,7 @@ export default function PostQuizPage() {
                         {/*used a little absolute positioning */}
                         <div className="containerDown">
                             <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="500px" top="25px">
-                                <Link to={'/prequizpage/' + quiz._id} className="center button white" onClick={retry}><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
+                                <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
                             </Box>
                         </div>
                     </div>
@@ -206,14 +202,21 @@ export default function PostQuizPage() {
                                                 <Text fontSize="40px" left="120px" position="relative" color="white">You scored: {numCorrect}/{quiz.numQuestions} = {quizScore}%</Text>
                                                 <Text fontSize="20px" left="190px" position="relative" color="white">The average score is 50%</Text>
                                                 <Text fontSize="20px" left="140px" position="relative" color="white">You did better than 30% of Quiztakers</Text>
-                                                <Text fontSize="35px" left="230px" top="20px" position="relative" color="white">Rate Quiz</Text>
-                                                <Flex direction = "row">
-                                                    <Icon as={BsStarFill} h="50px" w="50px" position="relative" left="135px" top="35px" marginRight="20px" color="white"></Icon>
-                                                    <Icon as={BsStarFill} h="50px" w="50px" position="relative" left="135px" top="35px" marginRight="20px" color="white"></Icon>
-                                                    <Icon as={BsStarFill} h="50px" w="50px" position="relative" left="135px" top="35px" marginRight="20px" color="white"></Icon>
-                                                    <Icon as={BsStarFill} h="50px" w="50px" position="relative" left="135px" top="35px" marginRight="20px" color="white"></Icon>
-                                                    <Icon as={BsStarFill} h="50px" w="50px" position="relative" left="135px" top="35px" marginRight="20px" color="white"></Icon>
-                                                </Flex>
+                                                <Text fontSize="30px" left="200px" top="20px" position="relative" color="white">
+                                                    Rate Quiz &nbsp;
+                                                    <Icon pos="relative" as={StarIcon} bottom="5px" boxSize="8" color="yellow.500"/>
+                                                    &nbsp;{data2.getQuiz.rating}
+                                                </Text>
+                                                <Box position="relative" left="170px" top="35px" marginRight="20px">
+                                                    {
+                                                        !isRated ? 
+                                                        <Rating onClick={handleRating} ratingValue={rating} size={50}/>
+                                                        :
+                                                        <RatingView ratingValue={rating} size={50}/>
+                                                    }
+                                                    
+                                                </Box>
+                                                { isRated ? <Text fontSize="20px" left="210px" top="30px" position="relative" color="white">Thank you for rating!</Text> : ""}
                                             </Flex>
                                         </Box>
                                         <Box

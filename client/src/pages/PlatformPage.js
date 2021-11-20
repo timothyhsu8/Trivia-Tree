@@ -1,4 +1,5 @@
-import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon,
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM } from '../cache/mutations';
@@ -10,18 +11,18 @@ import '../styles/styles.css'
 import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
+import { BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill } from "react-icons/bs";
 
 export default function PlatformPage({}) {
-    let history = useHistory();
-    const cancelRef = useRef()
-
     const { user } = useContext(AuthContext);
-    let { platformId } = useParams();
-    
+    const cancelRef = useRef()
     const [page, setPage] = useState('Platform')
     const [following, setFollowing] = useState(false)
-
     const quiz_sections = ["All Quizzes", "Most Played Quizzes", "Geography"]
+    const maxDescription = 250
+
+    let history = useHistory();
+    let { platformId } = useParams();
 
     // Fetch quiz data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
@@ -227,7 +228,19 @@ export default function PlatformPage({}) {
         is_owner = true
     }
 
-    let header_sections = ["Quizzes", "Followers", "About"]
+    let header_sections = [
+        {
+            name: "Quizzes",
+            icon: BsFillFileEarmarkTextFill
+        },
+        {
+            name: "Followers",
+            icon: BsFillPersonFill
+        }, 
+        {
+            name: "About",
+            icon: BsFillInfoCircleFill
+        }, ]
 
     // Cancel icon/banner/name update
     function cancelChanges() {
@@ -386,6 +399,7 @@ export default function PlatformPage({}) {
                                         transition=".1s linear"
                                         borderRadius="10px" 
                                         padding="10px"
+                                        whiteSpace="nowrap"
                                         _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}} 
                                         onClick={() => { setEditName(true) }}
                                     >
@@ -569,7 +583,12 @@ export default function PlatformPage({}) {
                             editDescription ?
                                 <Box w="100%">
                                     {/* Save platform description edit */}
-                                    <Textarea h="15vh" value={description} onChange={(event) => setDescription(event.target.value)} borderColor="gray.400"/>
+                                    <Textarea h="15vh" value={description} onChange={(event) => setDescription(event.target.value)} borderColor="gray.400" maxLength={maxDescription}/>
+                                    <Box h={30}>
+                                        <Text float="right" fontSize="85%" color={description.length === maxDescription ? "red.500" : "gray.800"} > 
+                                            {description.length}/{maxDescription} 
+                                        </Text>
+                                    </Box>
                                     <Button 
                                         mt="1%" 
                                         ml="1.5%" 
@@ -745,14 +764,32 @@ export default function PlatformPage({}) {
                     {/* HEADER BUTTONS */}
                     <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr" justifyContent="center" alignItems="center"> 
 
-                        <Text className="disable-select" fontSize="125%" textColor={page === "Platform" ? "blue" : "gray.1000" } textAlign="center" _hover={{ cursor:"pointer", textColor: page === "Platform" ? "blue" : "gray.500", transition:"0.15s linear" }} transition="0.1s linear" onClick={() => setPage('Platform')} >
+                        <Text 
+                            className="disable-select" 
+                            fontSize="125%" textColor={page === "Platform" ? "blue.500" : "gray.1000" } 
+                            textAlign="center" 
+                            _hover={{ cursor:"pointer", textColor: page === "Platform" ? "blue.500" : "gray.500", transition:"0.15s linear" }} 
+                            transition="0.1s linear" 
+                            onClick={() => setPage('Platform')} 
+                            whiteSpace="nowrap"
+                        >
+                            <Icon as={BsFillHouseDoorFill} pos="relative" top={-0.5}  mr={2} />
                             {platform_data.name}
                         </Text>
 
                         {header_sections.map((section, key) => {
                             return (
-                                <Text key={key} className="disable-select" fontSize="125%" textColor={page === section ? "blue" : "gray.1000" } textAlign="center" _hover={{ cursor:"pointer", textColor: page === section ? "blue" : "gray.500", transition:"0.15s linear" }} transition="0.1s linear" onClick={() => setPage(section)} >
-                                    {section}
+                                <Text key={key} 
+                                    className="disable-select" 
+                                    fontSize="125%" 
+                                    textColor={page === section.name ? "blue.500" : "gray.1000" } 
+                                    textAlign="center" 
+                                    _hover={{ cursor:"pointer", textColor: page === section.name ? "blue.500" : "gray.500", transition:"0.15s linear" }} 
+                                    transition="0.1s linear" onClick={() => setPage(section.name)} 
+                                    whiteSpace="nowrap"
+                                    >
+                                    <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
+                                    {section.name}
                                 </Text>
                             )
                         })}

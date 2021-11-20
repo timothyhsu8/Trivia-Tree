@@ -164,7 +164,7 @@ export default function QuizTakingPage({}) {
         else if (questionType === 2){
             // Array hasn't been created yet, set color to gray
             if (userAnswers[currentQuestionNumber-1] === undefined)
-                return "gray.500"
+                return ""
 
             return userAnswers[currentQuestionNumber-1].includes(choice) ? "blue.100" : ""
         }
@@ -285,6 +285,7 @@ export default function QuizTakingPage({}) {
                                     _focus={{border:"1px"}}
                                     onClick={() => { updateUserAnswers(currentQuestionNumber, choice, quiz.questions[currentQuestionNumber-1].questionType) }}
                                     _hover={{ bg: "blue.100" }}
+                                    _active={{ opacity: "75%" }}
                                 >
                                     {choices[index]}
                                 </Button>

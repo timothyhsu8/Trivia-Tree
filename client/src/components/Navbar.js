@@ -1,4 +1,5 @@
-import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
+import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { BsShopWindow } from "react-icons/bs"
 import { config } from '../util/constants';
@@ -19,6 +20,7 @@ export default function Navbar() {
     const [searchText, setSearchText] = useState("")
     const [choosePlatformName, setChoosePlatformName] = useState(false)
     const [chosenPlatformName, setChosenPlatformName] = useState("Untitled Platform")
+    const maxPlatformName = 35
 
     let history = useHistory();
     let logged_in = false
@@ -119,6 +121,7 @@ export default function Navbar() {
                     ml='2%'
                     color='white'
                     fontSize='200%'
+                    whiteSpace="nowrap"
                 >
                     Trivia Tree
                 </Text>
@@ -241,11 +244,26 @@ export default function Navbar() {
                         </AlertDialogHeader>
 
                         <AlertDialogBody>
-                            <Input borderColor="gray.300" value={chosenPlatformName} onChange={(e) => setChosenPlatformName(e.target.value)}/>
+                            <Input 
+                                maxLength={maxPlatformName}
+                                borderColor="gray.300" 
+                                value={chosenPlatformName} 
+                                onChange={(e) => 
+                                    setChosenPlatformName(e.target.value)
+                                }/>
+                            <Text float="right" fontSize="85%" color={ chosenPlatformName.length === maxPlatformName ? "red.500" : "gray.800" }>  
+                                {chosenPlatformName.length}/{maxPlatformName} 
+                            </Text>
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={() => setChoosePlatformName(false)} _focus={{border:"none"}}>
+                        <Button 
+                            ref={cancelRef} 
+                            onClick={() => {
+                                setChoosePlatformName(false)
+                                setChosenPlatformName("Untitled Platform")
+                            }} 
+                            _focus={{border:"none"}}>
                             Cancel
                         </Button>
                         <Button 

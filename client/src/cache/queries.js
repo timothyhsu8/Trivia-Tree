@@ -186,6 +186,9 @@ export const SEARCH_PLATFORMS = gql`
             followers {
                 _id
             }
+            quizzes {
+                _id
+            }
             description
         }
     }

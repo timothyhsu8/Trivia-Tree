@@ -1,7 +1,7 @@
 import { Box, Grid, Text, Image, Icon, Center, Stack, Tag, TagLabel, HStack } from "@chakra-ui/react"
-import { StarIcon } from '@chakra-ui/icons'
+import { StarIcon, ViewIcon } from '@chakra-ui/icons'
 import quizImage from '../../images/defaultquiz.jpeg';
-import { BsFillPersonFill, BsHeartFill, BsFillAlarmFill } from 'react-icons/bs';
+import { BsHeartFill, BsFillAlarmFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
 // Placeholder data since we don't have this information yet
@@ -32,9 +32,9 @@ export default function QuizResult( {quiz} ) {
     return (
         <Link to={'/prequizpage/' + quiz._id}>
             <Grid 
-                h="10.5vh" 
+                pt={2}
+                pb={2}
                 minH="80px"
-                top="50%" 
                 templateColumns="1.5fr 9fr 2fr 3fr" 
                 borderBottom="1px" 
                 borderColor="gray.300" 
@@ -57,7 +57,7 @@ export default function QuizResult( {quiz} ) {
                 <Stack spacing="1">
                     <Stack spacing="0">
                         <Text fontSize="120%" fontWeight="medium"> {quiz.title} </Text>
-                        <Text fontSize="95%"> {quiz.description} </Text>
+                        <Text fontSize="95%" textColor="gray.600"> {quiz.description} </Text>
                     </Stack>
                     <HStack>
                         <Tag w="fit-content" size="sm" variant="outline" colorScheme="blue">
@@ -65,7 +65,7 @@ export default function QuizResult( {quiz} ) {
                         </Tag>
 
                         <Text textColor="gray.600" fontSize="95%"> 
-                            <Icon as={BsFillPersonFill} color="blue.400"/> {quiz.numAttempts} Plays  
+                            <Icon as={ViewIcon} color="blue.400"/> {quiz.numAttempts} Plays  
                         </Text>
                         <Text textColor="gray.600" fontSize="95%"> 
                             <Icon as={BsHeartFill} color="red.300"/> {quiz.numFavorites} Favorites  

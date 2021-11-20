@@ -124,8 +124,8 @@ module.exports = {
                 throw new Error('Platform title cannot be blank');
             }
             
-            if (name.length >= 40) {
-                throw new Error('Platform name cannot be greater than 40 characters');
+            if (name.length > 35) {
+                throw new Error('Platform name cannot be greater than 35 characters');
             }
 
             // if name has special characters
@@ -166,7 +166,7 @@ module.exports = {
                 }
             }
             
-            if (description.length >= 250) {
+            if (description.length > 250) {
                 throw new Error('Platform description cannot be greater than 250 characters');
             }
 
@@ -233,10 +233,10 @@ module.exports = {
             }
         },
 
-         // Removes quiz from platform
+         // Removes quiz from platform (Only removes from the platform, doesn't delete the quiz entirely)
          async removeQuizFromPlatform(_, { platformId, quizId }, context) {
             try {
-                const platform = await User.findByIdAndUpdate(platformId, {
+                const platform = await Platform.findByIdAndUpdate(platformId, {
                     $pull: { quizzes: quizId },
                 })
                 .populate({

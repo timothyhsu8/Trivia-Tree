@@ -16,7 +16,8 @@ export default function PostQuizAnswersCard(props) {
     let questionTitle = props.question.question
     let answer = question.answer 
     for(let i = 0; i < answer.length; i++){
-        if(answer[i].trim() != props.answer[i].trim())
+        // if(answer[i].trim() != props.answer[i].trim())
+        if(answer[i] != props.answer[i])
             color = "red"
     }
     

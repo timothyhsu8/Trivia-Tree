@@ -31,15 +31,19 @@ export default function SettingsPage(props) {
     const [email, setEmail] = useState("");
     const [darkMode, setDarkMode] = useState("");
     const [iconImage, setIconImage] = useState("");
-    const [updateSettings] = useMutation(mutations.UPDATE_SETTINGS, {context:{
-        headers: {
-            profileimagetype: profileImg
+    const [updateSettings] = useMutation(mutations.UPDATE_SETTINGS, {
+        context:{
+            headers: {
+                profileimagetype: profileImg
+            }
         },
         onCompleted() {
-            console.log("HELLO")
-
-        }
-    }});
+            refreshUserData();
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
     const [deleteUser] = useMutation(mutations.DELETE_USER);
      
 

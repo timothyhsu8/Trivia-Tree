@@ -379,6 +379,24 @@ module.exports = {
             quiz.save();    
 
             return true
+        },
+        async rateQuiz(_, { quizId, rating }) {    
+            const quiz = await Quiz.findById(quizId);
+            
+            let oldRating = quiz.rating;
+            let numRatings = quiz.numRatings;
+
+            let tempRating = ((oldRating*numRatings)+rating)/(numRatings+1);
+            let stringRating = tempRating.toFixed(2)
+            let newRating = parseFloat(stringRating)
+            
+            quiz.rating = newRating
+            quiz.numRatings = numRatings + 1;
+
+            quiz.save();
+    
+    
+            return quiz
         }
-    },
+    }
 };

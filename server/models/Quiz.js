@@ -84,6 +84,7 @@ const quizSchema = new Schema(
         },
         rating: {
             type: Number,
+            default: 3
         },
         averageScore: {
             type: Number,
@@ -104,6 +105,10 @@ const quizSchema = new Schema(
         numAttempts: {
             type: Number,
         },
+        numRatings: {
+            type: Number,
+            default: 1
+        }
     },
     { timestamps: true }
 );

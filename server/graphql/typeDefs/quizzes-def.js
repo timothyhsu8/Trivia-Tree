@@ -16,13 +16,14 @@ module.exports = gql`
         questionTimer: String
         quizShuffled: Boolean
         quizInstant: Boolean
-        rating: Int
+        rating: Float
         averageScore: Int
         medianScore: Int
         comments: [Comment!]
         icon: String
         numFavorites: Int
         numAttempts: Int
+        numRatings: Int
     }
 
     type Question {
@@ -75,5 +76,6 @@ module.exports = gql`
         deleteQuiz(quizId: ID!): Quiz
         favoriteQuiz(quizId: ID!, userId: ID!): Boolean
         unfavoriteQuiz(quizId: ID!, userId: ID!): Boolean
+        rateQuiz(quizId: ID!, rating: Int!): Quiz
     }
 `;

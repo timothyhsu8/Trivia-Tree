@@ -258,27 +258,12 @@ module.exports = {
                 const platform = await Platform.findByIdAndUpdate(platformId, {
                     $push: { followers: userId },
                 })
-                .populate({
-                    path: 'followers',
-                    populate: { path: 'platform', model: 'Platform' },
-                })
 
-                .exec()
-                // if (!platform.user.equals(context.req.user._id)) {
-                //     throw new Error('You are not the creator of this platform');
-                // }
-                // let user = await User.findById(userId);
-                // user.following.push(platform);
-                // user.save();
+
                 const user = await User.findByIdAndUpdate(userId, {
                     $push: { following: platformId },
                 })
-                .populate({
-                    path: 'following',
-                    populate: { path: 'platform', model: 'Platform' },
-                })
 
-                .exec()
                 
                 return platform;
             } catch (err) {
@@ -291,23 +276,29 @@ module.exports = {
                 const platform = await Platform.findByIdAndUpdate(platformId, {
                     $pull: { followers: userId },
                 })
-                .populate({
-                    path: 'followers',
-                    populate: { path: 'platform', model: 'Platform' },
-                })
-                .exec()
-                // if (!platform.user.equals(context.req.user._id)) {
-                //     throw new Error('You are not the creator of this platform');
-                // }
-                const user = await Platform.findByIdAndUpdate(userId, {
-                    $pull: { following: platformId },
-                })
-                .populate({
-                    path: 'following',
-                    populate: { path: 'platform', model: 'Platform' },
-                })
 
-                .exec()
+
+                // const user = await User.findByIdAndUpdate(userId, {
+                //     $pull: { following: platformId },
+                // })
+                // .populate({
+                //     path: 'following',
+                //     populate: { path: 'platform', model: 'Platform' },
+                // })
+
+                // .exec()
+
+                const user = await User.findById(userId);
+
+
+                for(let i = 0; i < user.following.length; i++){
+                    if(user.following[i] == platformId){
+                        console.log("here")
+                        user.following.splice(i,1);    
+                    }
+                }
+    
+                user.save();
                 
                 return platform;
             } catch (err) {

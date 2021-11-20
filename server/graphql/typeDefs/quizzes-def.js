@@ -24,6 +24,7 @@ module.exports = gql`
         numFavorites: Int
         numAttempts: Int
         numRatings: Int
+        createdAt: String
     }
 
     type Question {

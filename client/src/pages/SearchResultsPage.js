@@ -55,7 +55,7 @@ export default function SearchResultsPage() {
     const quiz_data = quizzes.data.searchQuizzes
     const platform_data = platforms.data.searchPlatforms
     const user_data = users.data.searchUsers
-
+    
     // Doing the actual filtering work
     let filtered_quiz_data = quiz_data.filter((quiz) => {
         return (quiz.numAttempts >= filters.minPlays) && (quiz.numFavorites >= filters.minFavorites) && (quiz.quizTimer >= filters.minTimer)
@@ -98,10 +98,11 @@ export default function SearchResultsPage() {
             return sortRandom(search_results)
         if(sortType === "sort_abc")
             return sortAlphabetical(search_results)
-        if(sortType === "sort_zyx")
-            return sortReverseAlphabetical(search_results)
-        if(sortType === "popular")
+        if(sortType === "sort_popular")
             return sortPopular(search_results)
+        if(sortType === "sort_newest")
+            return sortNewest(search_results)
+
         return search_results
     }
 
@@ -118,19 +119,19 @@ export default function SearchResultsPage() {
             return resultA > resultB ? 1 : -1
         })
     }
-
-    function sortReverseAlphabetical(search_results) {
-        return search_results.sort((a, b) => {
-            let resultA = getName(a)
-            let resultB = getName(b)
-            return resultA < resultB ? 1 : -1
-        })
-    }
-
+    
     function sortPopular(search_results) {
         return search_results.sort((a, b) => {
             let resultA = getPopularity(a)
             let resultB = getPopularity(b)
+            return resultA < resultB ? 1 : -1
+        })
+    }
+
+    function sortNewest(search_results) {
+        return search_results.sort((a, b) => {
+            let resultA = a.createdAt
+            let resultB = b.createdAt
             return resultA < resultB ? 1 : -1
         })
     }
@@ -323,9 +324,9 @@ export default function SearchResultsPage() {
                             <Text> Sort By: </Text>
                             <Select w="fit-content" mr="5%" borderColor="gray.300" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
                                 <option value="none"> None </option>
-                                <option value="popular"> Popular </option>
+                                <option value="sort_popular"> Popular </option>
+                                <option value="sort_newest">Newest</option>
                                 <option value="sort_abc">Alphabetical [A-Z]</option>
-                                <option value="sort_zyx">Reverse Alphabetical [Z-A]</option>
                                 <option value="sort_random">Random</option>
                             </Select>
                         </HStack>

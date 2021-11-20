@@ -19,6 +19,7 @@ export default function PlatformPage({}) {
     const [page, setPage] = useState('Platform')
     const [following, setFollowing] = useState(false)
     const quiz_sections = ["All Quizzes", "Most Played Quizzes", "Geography"]
+    const maxPlatformName = 35
     const maxDescription = 250
 
     let history = useHistory();
@@ -423,7 +424,10 @@ export default function PlatformPage({}) {
                                 editName ?
                                     <Box w="100%">
                                         {/* Save platform name edit */}
-                                        <Input value={name} onChange={(event) => setName(event.target.value)} borderColor="gray.400"/>
+                                        <Input value={name} maxLength={maxPlatformName} onChange={(event) => setName(event.target.value)} borderColor="gray.400"/>
+                                        <Box h={30}>
+                                            <Text float="right" fontSize="90%" color={ name.length === maxPlatformName ? "red.500" : "gray.800" }> { name.length }/{ maxPlatformName } </Text>
+                                        </Box>
                                         <Button 
                                             mt="1%" 
                                             ml="1.5%" 
@@ -789,7 +793,7 @@ export default function PlatformPage({}) {
                                     whiteSpace="nowrap"
                                     >
                                     <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
-                                    {section.name}
+                                    {  section.name !== "Followers" ? section.name : "Followers (" + platform_data.followers.length + ")"}
                                 </Text>
                             )
                         })}

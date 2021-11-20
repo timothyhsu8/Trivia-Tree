@@ -264,11 +264,16 @@ export default function QuizTakingPage({}) {
                 {/* MAIN PAGE */}
                 <Box>
                     {/* QUESTION */}
-                    <Center>
-                        <Text pt='50' fontSize="270%">
-                        {questionType == 2 ?  question + " Select All That Apply": question}
+                    <VStack>
+                        <Text pt='50' fontSize="270%" textAlign="center" pl={17} pr={17}>
+                            {question}
                         </Text>
-                    </Center>
+
+                   
+                        <Text fontSize="150%" textAlign="center" color="blue.400" pl={17} pr={17}>
+                            {questionType === 2 ? "(Select All That Apply)" : null}
+                        </Text>
+                    </VStack>
 
                     {/* ANSWER CHOICES */}
                     <VStack pt='30' spacing='6'>

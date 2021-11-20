@@ -1,5 +1,5 @@
 import { Box, Grid, Text, Image, Icon, Center, Stack, Tag, TagLabel, HStack } from "@chakra-ui/react"
-import { StarIcon, ViewIcon } from '@chakra-ui/icons'
+import { StarIcon, ViewIcon, CalendarIcon } from '@chakra-ui/icons'
 import quizImage from '../../images/defaultquiz.jpeg';
 import { BsHeartFill, BsFillAlarmFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
@@ -8,27 +8,8 @@ import { Link } from 'react-router-dom';
 let quiz_rating = 5
 let quiz_platform = "No Platform"
 
-// Converts timer value into text (E.g. 00:10:00 -> 10 mins)
-function converTimeToText(time) {
-    let hour_min_sec = time.split(":")
-    let hours = parseInt(hour_min_sec[0])
-    let mins = parseInt(hour_min_sec[1])
-    let secs = parseInt(hour_min_sec[2])
-    let timeString = ""
-
-    if (hours !== 0)
-        timeString += hours !== 1 ? hours + " Hours " : hours + " Hour "
-
-    if (mins !== 0)
-        timeString += mins !== 1 ? mins + " Mins " : mins + " Min "
-
-    if (secs !== 0)
-        timeString += secs !== 1 ? secs + " Secs " : secs + " Second "
-
-    return timeString
-}
-
 export default function QuizResult( {quiz} ) {
+
     return (
         <Link to={'/prequizpage/' + quiz._id}>
             <Grid 
@@ -71,9 +52,11 @@ export default function QuizResult( {quiz} ) {
                             <Icon as={BsHeartFill} color="red.300"/> {quiz.numFavorites} Favorites  
                         </Text>
                         <Text textColor="gray.600" fontSize="95%"> 
-                            <Icon as={BsFillAlarmFill} color="gray.500"/> {converTimeToText(quiz.quizTimer)}
+                            <Icon as={BsFillAlarmFill} color="purple.400"/> {converTimeToText(quiz.quizTimer)}
                         </Text>
-
+                        <Text textColor="gray.600" fontSize="95%">
+                            <Icon as={CalendarIcon} color="grey.400"/> {getTimeAgo(new Date(parseInt(quiz.createdAt)))}
+                        </Text>
                     </HStack>
                 </Stack>
 
@@ -81,7 +64,7 @@ export default function QuizResult( {quiz} ) {
                 <Center>
                     <Text fontSize="110%" fontWeight="thin">
                         <Icon pos="relative" as={StarIcon} boxSize="4" color="yellow.500"/>
-                        &nbsp;{quiz.rating}
+                        &nbsp;{ quiz.rating !== null ? quiz.rating : "No Rating" }
                     </Text>
                 </Center>
 
@@ -102,4 +85,58 @@ export default function QuizResult( {quiz} ) {
             </Grid>
         </Link>
     )
+
+    
+// Converts timer value into text (E.g. 00:10:00 -> 10 mins)
+function converTimeToText(time) {
+    let hour_min_sec = time.split(":")
+    let hours = parseInt(hour_min_sec[0])
+    let mins = parseInt(hour_min_sec[1])
+    let secs = parseInt(hour_min_sec[2])
+    let timeString = ""
+
+    if (hours !== 0)
+        timeString += hours !== 1 ? hours + " Hours " : hours + " Hour "
+
+    if (mins !== 0)
+        timeString += mins !== 1 ? mins + " Mins " : mins + " Min "
+
+    if (secs !== 0)
+        timeString += secs !== 1 ? secs + " Secs " : secs + " Second "
+
+    return timeString
+}
+
+// Returns time since something was created (Ex: "3 days ago")
+function getTimeAgo(creationDate) {
+    // Get difference in time between now and the creation date
+    let time_diff_ms= Math.abs(new Date() - creationDate)
+    
+    // Format as 'x weeks ago'
+    let weeks_ago = parseInt(time_diff_ms / (7*24*60*60*1000))
+    if (weeks_ago !== 0)
+        return weeks_ago !== 1 ? weeks_ago + " weeks ago" : "1 week ago"
+
+    // Format as 'x days ago'
+    let days_ago = parseInt(time_diff_ms / (60*60*24*1000))
+    if (days_ago !== 0)
+        return days_ago !== 1 ? days_ago + " days ago" : "1 day ago"
+    
+    // Format as 'x hours ago'
+    let hours_ago = parseInt(time_diff_ms / (60*60*1000))
+    if (hours_ago !== 0)
+        return hours_ago + " hours ago"
+
+    // Format as 'x minutes ago'
+    let minutes_ago = parseInt(time_diff_ms / (60*1000))
+    if (minutes_ago !== 0)
+        return minutes_ago !== 1 ? minutes_ago + " minutes ago" : "1 minute ago"
+
+    // Format as 'x seconds ago'
+    let seconds_ago = parseInt(time_diff_ms / 1000)
+    if (seconds_ago !== 0)
+        return seconds_ago + " seconds ago"
+
+    return "Undefined Date"
+}
 }

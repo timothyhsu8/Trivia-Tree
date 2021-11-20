@@ -25,6 +25,7 @@ module.exports = gql`
         admin: Boolean
         darkMode: Boolean
         favoritedQuizzes: [Quiz]
+        createdAt: String
     }
 
     input UserInput {

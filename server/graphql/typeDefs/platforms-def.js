@@ -15,6 +15,7 @@ module.exports = gql`
         quizzes: [Quiz]
         playlists: [Playlist]
         description: String
+        createdAt: String
     }
 
     input PlatformInput {

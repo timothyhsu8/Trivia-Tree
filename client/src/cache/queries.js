@@ -112,6 +112,7 @@ export const SEARCH_QUIZZES = gql`
                 displayName
                 iconImage
             }
+            createdAt
         }
     }
 `;
@@ -190,6 +191,7 @@ export const SEARCH_PLATFORMS = gql`
                 _id
             }
             description
+            createdAt
         }
     }
 `;
@@ -304,6 +306,7 @@ export const SEARCH_USERS = gql`
             _id
             displayName
             iconImage
+            createdAt
         }
     }
 `;

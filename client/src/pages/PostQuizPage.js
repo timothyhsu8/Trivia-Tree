@@ -93,6 +93,7 @@ export default function PostQuizPage() {
         else {
             percentIncrease = ((Math.abs(increase)) / adjustedAverage) * 100;
         }
+        percentIncrease = Math.round(percentIncrease * 100) / 100;
         if (increase >= 0) {
             return `You did better than ${percentIncrease}% of Quiztakers`
         } else {

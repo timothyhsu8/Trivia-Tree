@@ -6,7 +6,7 @@ module.exports = gql`
         user: User
         quiz: Quiz
         elapsedTime: String
-        score: Int!
+        score: Float!
         answerChoices: [[String!]!]!
         questions: [String!]!
         numCorrect: Int!

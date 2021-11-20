@@ -43,6 +43,8 @@ export const GET_QUIZ = gql`
             numFavorites
             rating
             numRatings
+            averageScore
+            medianScore
         }
     }
 `;
@@ -71,6 +73,8 @@ export const GET_QUIZ_ATTEMPT = gql`
                 numQuestions
                 numAttempts
                 numFavorites
+                averageScore
+                medianScore
             }
             score
             numCorrect

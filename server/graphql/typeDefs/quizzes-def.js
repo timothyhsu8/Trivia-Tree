@@ -17,8 +17,8 @@ module.exports = gql`
         quizShuffled: Boolean
         quizInstant: Boolean
         rating: Float
-        averageScore: Int
-        medianScore: Int
+        averageScore: Float
+        medianScore: Float
         comments: [Comment!]
         icon: String
         numFavorites: Int

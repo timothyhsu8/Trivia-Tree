@@ -3,6 +3,10 @@ const User = require('../../models/User');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
+function roundToTwoPlace(num) {
+    return Math.round(num * 100) / 100;
+}
+
 module.exports = {
     Query: {
         async getQuizzes() {
@@ -118,6 +122,7 @@ module.exports = {
             let numQuestions = questions.length;
             let numFavorites = 0;
             let numAttempts = 0;
+            let numRatings = 0;
 
             const newQuiz = new Quiz({
                 user: context.req.user._id,
@@ -133,6 +138,7 @@ module.exports = {
                 numQuestions,
                 numFavorites,
                 numAttempts,
+                numRatings
             });
 
             const quiz = await newQuiz.save();
@@ -382,21 +388,22 @@ module.exports = {
         },
         async rateQuiz(_, { quizId, rating }) {    
             const quiz = await Quiz.findById(quizId);
-            
+
             let oldRating = quiz.rating;
             let numRatings = quiz.numRatings;
-
-            let tempRating = ((oldRating*numRatings)+rating)/(numRatings+1);
-            let stringRating = tempRating.toFixed(2)
-            let newRating = parseFloat(stringRating)
-            
-            quiz.rating = newRating
+            let tempRating;
+            if (oldRating === null) {
+                tempRating = rating;
+            }   
+            else {
+                tempRating = oldRating + ((rating - oldRating) / (numRatings + 1));
+            }
+            quiz.rating = roundToTwoPlace(tempRating);
             quiz.numRatings = numRatings + 1;
 
             quiz.save();
     
-    
-            return quiz
+            return quiz;
         }
     }
 };

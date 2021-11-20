@@ -35,7 +35,11 @@ export default function PostQuizPage() {
 
     const [rating, setRating] = useState(0)
     const [isRated, setIsRated] = useState(false)
-    const [rateQuiz] = useMutation(mutations.RATE_QUIZ);
+    const [rateQuiz] = useMutation(mutations.RATE_QUIZ, {
+        onCompleted() {
+            refetch();
+        }
+    });
 
     
     const [showResults, setShowResults] = React.useState(true);
@@ -58,16 +62,37 @@ export default function PostQuizPage() {
     let quiz = null; 
 
     const {data, error, loading} = useQuery(queries.GET_QUIZ_ATTEMPT, {
+        fetchPolicy: 'network-only',
         variables: { _id: quizAttemptId },
     });
 
     const {data:data1, error:error1, loading:loading1} = useQuery(queries.GET_LEADERBOARD, {
+        fetchPolicy: 'network-only',
         variables: { quiz_id: quizId },
     });
 
     const {data:data2, error:error2, loading:loading2, refetch} = useQuery(queries.GET_QUIZ, {
+        fetchPolicy: 'network-only',
         variables: { quizId: quizId },
+        onCompleted(data) {
+            console.log(data2);
+        }
     });
+
+    function calculateBetterScore(userScore, averageScore, attempts) {
+        if (attempts === 1) {
+            return 'No comparisons possible, you are the first to take this quiz'
+        }
+        //First we have to calculate the average when the user's score is factored out
+        let adjustedAverage = ((averageScore * attempts) - userScore) / (attempts - 1);
+        let increase = userScore - adjustedAverage;
+        let percentIncrease = ((increase * -1) / adjustedAverage) * 100;
+        if (increase >= 0) {
+            return `You did better than ${percentIncrease}% of Quiztakers`
+        } else {
+            return `You did worse than ${percentIncrease}% of Quiztakers`
+        }
+    }
 
     if (loading) {
         return <div></div>;
@@ -96,18 +121,20 @@ export default function PostQuizPage() {
         creator = quiz.user.displayName;
         answerChoices = quizAttempt.answerChoices;
         coinsEarned = quizAttempt.coinsEarned;
-        console.log(quizAttempt)
-        console.log(answerChoices)
+        // console.log(quizAttempt);
+        // console.log(quiz);
+        // console.log(answerChoices)
     }
 
     if (data1) {
         leaderboard = data1.getLeaderboard
+        // console.log(leaderboard)
     }
 
     if (data2) {
         questions = data2.getQuiz.questions
         icon_src = data2.getQuiz.icon == null ? quizImage : data2.getQuiz.icon
-        console.log(questions)
+        console.log(data2.getQuiz);
 
     }
 
@@ -115,8 +142,7 @@ export default function PostQuizPage() {
         setRating(rate)
         const {data} = rateQuiz({variables: {quizId: quizId, rating: rate }});
         // Some logic
-        refetch()
-        setIsRated(true)
+        setIsRated(true);
     }
 
     let quizTitle = quiz.title;
@@ -200,12 +226,12 @@ export default function PostQuizPage() {
                                         >
                                             <Flex direction = "column">
                                                 <Text fontSize="40px" left="120px" position="relative" color="white">You scored: {numCorrect}/{quiz.numQuestions} = {quizScore}%</Text>
-                                                <Text fontSize="20px" left="190px" position="relative" color="white">The average score is 50%</Text>
-                                                <Text fontSize="20px" left="140px" position="relative" color="white">You did better than 30% of Quiztakers</Text>
+                                                <Text fontSize="20px" left="190px" position="relative" color="white">The average score is {quiz.averageScore}</Text>
+                                                <Text fontSize="20px" left="140px" position="relative" color="white">{calculateBetterScore(quizScore, quiz.averageScore, quiz.numAttempts)}</Text>
                                                 <Text fontSize="30px" left="200px" top="20px" position="relative" color="white">
                                                     Rate Quiz &nbsp;
                                                     <Icon pos="relative" as={StarIcon} bottom="5px" boxSize="8" color="yellow.500"/>
-                                                    &nbsp;{data2.getQuiz.rating}
+                                                    &nbsp;{data2.getQuiz.rating ? data2.getQuiz.rating : 'No ratings yet'}
                                                 </Text>
                                                 <Box position="relative" left="170px" top="35px" marginRight="20px">
                                                     {

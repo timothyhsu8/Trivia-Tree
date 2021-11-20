@@ -84,13 +84,15 @@ const quizSchema = new Schema(
         },
         rating: {
             type: Number,
-            default: 3
+            default: null
         },
         averageScore: {
             type: Number,
+            default: null
         },
         medianScore: {
             type: Number,
+            default: null
         },
         comments: {
             type: [commentSchema],
@@ -101,13 +103,15 @@ const quizSchema = new Schema(
         },
         numFavorites: {
             type: Number,
+            default: 0
         },
         numAttempts: {
             type: Number,
+            default: 0
         },
         numRatings: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
     { timestamps: true }

@@ -1,5 +1,7 @@
 const Quiz = require('../../models/Quiz');
 const User = require('../../models/User');
+const QuizAttempt = require('../../models/QuizAttempt');
+const Platform = require('../../models/Platform');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
@@ -33,12 +35,16 @@ module.exports = {
         },
         async searchQuizzes(_, { searchText }) {
             try {
-                const quizzes = await Quiz.find({title: { "$regex": searchText, "$options": "i"}}).populate('user').exec();
+                const quizzes = await Quiz.find({
+                    title: { $regex: searchText, $options: 'i' },
+                })
+                    .populate('user')
+                    .exec();
                 return quizzes;
             } catch (err) {
                 throw new Error(err);
             }
-        }
+        },
     },
     Mutation: {
         async createQuiz(
@@ -138,7 +144,7 @@ module.exports = {
                 numQuestions,
                 numFavorites,
                 numAttempts,
-                numRatings
+                numRatings,
             });
 
             const quiz = await newQuiz.save();
@@ -298,8 +304,6 @@ module.exports = {
             }
 
             let numQuestions = questions.length;
-            let numFavorites = 0;
-            let numAttempts = 0;
 
             const updates = {
                 user: context.req.user._id,
@@ -313,8 +317,6 @@ module.exports = {
                 quizShuffled,
                 quizInstant,
                 numQuestions,
-                numFavorites,
-                numAttempts,
             };
 
             quiz = await Quiz.findByIdAndUpdate(quizId, updates, { new: true });
@@ -328,29 +330,50 @@ module.exports = {
                     throw new Error('You are not the creator of this quiz');
                 }
                 await quiz.delete();
-                await User.findByIdAndUpdate(context.req.user._id, {
-                    $pull: { quizzesMade: quiz._id },
-                    $pull: { featuredQuizzes: quiz._id },
-                    $pull: { favoritedQuizzes: quiz._id },
-                    $pull: { quizzesTaken: quiz._id },
-                });
+                await User.findOneAndUpdate(
+                    { quizzesMade: quiz._id },
+                    {
+                        $pull: {
+                            quizzesMade: quiz._id,
+                            featuredQuizzes: quiz._id,
+                        },
+                    }
+                );
+                await User.updateMany(
+                    {
+                        $or: [
+                            { favoritedQuizzes: quiz._id },
+                            { quizzesTaken: quiz._id },
+                        ],
+                    },
+                    {
+                        $pull: {
+                            favoritedQuizzes: quiz._id,
+                            quizzesTaken: quiz._id,
+                        },
+                    }
+                );
+                await QuizAttempt.deleteMany({ quiz: quiz._id });
+                await Platform.updateMany(
+                    { quizzes: quiz._id },
+                    {
+                        $pull: { quizzes: quiz._id },
+                    }
+                );
                 return quiz;
             } catch (err) {
                 throw new Error(err);
             }
         },
         async favoriteQuiz(_, { quizId, userId }) {
-            console.log(quizId)
-            console.log(userId)
+            console.log(quizId);
+            console.log(userId);
 
             const quiz = await Quiz.findById(quizId);
 
-
-
-
             const user = await User.findById(userId);
-            if(user.favoritedQuizzes.includes(quizId)){
-                console.log("ALREADY GOT");
+            if (user.favoritedQuizzes.includes(quizId)) {
+                console.log('ALREADY GOT');
                 return;
             }
             const userFavQuizzes = user.favoritedQuizzes;
@@ -358,35 +381,33 @@ module.exports = {
             user.favoritedQuizzes = userFavQuizzes;
             user.save();
 
-            quiz.numFavorites = quiz.numFavorites + 1; 
+            quiz.numFavorites = quiz.numFavorites + 1;
             quiz.save();
 
-            console.log(user.favoritedQuizzes)
+            console.log(user.favoritedQuizzes);
 
-            return true
+            return true;
         },
         async unfavoriteQuiz(_, { quizId, userId }) {
-
             const quiz = await Quiz.findById(quizId);
-
 
             const user = await User.findById(userId);
 
-            for(let i = 0; i < user.favoritedQuizzes.length; i++){
-                if(user.favoritedQuizzes[i] == quizId){
-                    console.log("here")
-                    user.favoritedQuizzes.splice(i,1);    
+            for (let i = 0; i < user.favoritedQuizzes.length; i++) {
+                if (user.favoritedQuizzes[i] == quizId) {
+                    console.log('here');
+                    user.favoritedQuizzes.splice(i, 1);
                     break;
                 }
             }
 
             user.save();
-            quiz.numFavorites = quiz.numFavorites - 1; 
-            quiz.save();    
+            quiz.numFavorites = quiz.numFavorites - 1;
+            quiz.save();
 
-            return true
+            return true;
         },
-        async rateQuiz(_, { quizId, rating }) {    
+        async rateQuiz(_, { quizId, rating }) {
             const quiz = await Quiz.findById(quizId);
 
             let oldRating = quiz.rating;
@@ -394,16 +415,16 @@ module.exports = {
             let tempRating;
             if (oldRating === null) {
                 tempRating = rating;
-            }   
-            else {
-                tempRating = oldRating + ((rating - oldRating) / (numRatings + 1));
+            } else {
+                tempRating =
+                    oldRating + (rating - oldRating) / (numRatings + 1);
             }
             quiz.rating = roundToTwoPlace(tempRating);
             quiz.numRatings = numRatings + 1;
 
             quiz.save();
-    
+
             return quiz;
-        }
-    }
+        },
+    },
 };

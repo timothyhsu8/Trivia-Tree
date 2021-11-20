@@ -219,6 +219,9 @@ export const GET_USER = gql`
                 numFavorites
                 icon
                 rating
+                numRatings
+                averageScore
+                medianScore
                 user {
                     displayName
                 }

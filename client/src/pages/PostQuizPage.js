@@ -86,7 +86,13 @@ export default function PostQuizPage() {
         //First we have to calculate the average when the user's score is factored out
         let adjustedAverage = ((averageScore * attempts) - userScore) / (attempts - 1);
         let increase = userScore - adjustedAverage;
-        let percentIncrease = ((increase * -1) / adjustedAverage) * 100;
+        let percentIncrease;
+        if (adjustedAverage === 0) {
+            percentIncrease = Math.abs(increase);
+        }
+        else {
+            percentIncrease = ((Math.abs(increase)) / adjustedAverage) * 100;
+        }
         if (increase >= 0) {
             return `You did better than ${percentIncrease}% of Quiztakers`
         } else {

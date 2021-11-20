@@ -82,8 +82,8 @@ module.exports = {
           coinsEarned = questionsCorrect * 10;
           user.currency += coinsEarned;
           user.save();
-          console.log(user)
-          console.log(user.currency)
+          // console.log(user)
+          // console.log(user.currency)
         }
       }
 

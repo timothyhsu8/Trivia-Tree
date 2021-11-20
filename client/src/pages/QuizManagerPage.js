@@ -21,7 +21,8 @@ import { AuthContext } from '../context/auth';
 import { useState, useContext, createRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { BsFillFileEarmarkTextFill, BsFillPersonFill, BsHeart } from 'react-icons/bs';
-import { ViewIcon } from '@chakra-ui/icons';
+import { ViewIcon, StarIcon } from '@chakra-ui/icons';
+import { GrScorecard } from 'react-icons/gr';
 
 export default function QuizManagerPage() {
     const { user } = useContext(AuthContext);
@@ -32,6 +33,7 @@ export default function QuizManagerPage() {
         loading,
         error,
         data: { getUser: userData } = {},
+        refetch
     } = useQuery(GET_USER,
         (!user || user === 'NoUser') ?
         {skip: true} : {
@@ -42,8 +44,27 @@ export default function QuizManagerPage() {
                 setFirstQueryDone(true);
             }
         },
-        
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        }
     });
+
+    const [deleteQuiz] = useMutation(DELETE_QUIZ, {
+        onCompleted() {
+            refetch();
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
+
+    function handleDeleteQuiz(quizId) {
+        deleteQuiz({
+            variables: {
+                quizId,
+            },
+        });
+    }
 
     if (user === 'NoUser') {
         return (
@@ -77,7 +98,7 @@ export default function QuizManagerPage() {
 
     console.log(userData);
     return (
-        <Box>
+        <Box> 
             <Center> 
                 <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Quizzes </Text>
             </Center>
@@ -85,7 +106,7 @@ export default function QuizManagerPage() {
             {/* PLATFORM CARDS */}
             {
                 userData.quizzesMade.length !== 0 ?
-                    <Grid mt="0.5%" ml="5%" mr="5%" templateColumns="repeat(auto-fill, minmax(425px, 1fr))">
+                    <Grid mt="0.5%" ml="5%" mr="5%" justifyItems='center' rowGap='3%' templateColumns="repeat(auto-fill, minmax(600px, 1fr))">
                         {
                             userData.quizzesMade.map((quiz, key) => {
                                 return (
@@ -96,37 +117,58 @@ export default function QuizManagerPage() {
                                         borderRadius={10} 
                                         boxShadow="lg" 
                                         transition=".1s linear"
-                                        _hover={{cursor:"pointer", opacity:"85%", transition:".15s linear"}} 
-                                        _active={{opacity:"75%"}}
-                                        onClick={() => history.push('/prequizpage/' + quiz._id)}
+                                        // _hover={{cursor:"pointer", opacity:"85%", transition:".15s linear"}} 
+                                        // _active={{opacity:"75%"}}
+                                        // onClick={() => history.push('/prequizpage/' + quiz._id)}
                                     >
-                                        <VStack>
                                             {/* PLATFORM IMAGE */}
                                             <Box
                                                 pos="relative"
                                                 w="100%"
                                                 h="20vh"
-                                                bgColor="gray.300"
+                                                // bgColor="gray.300"
+                                                bgGradient="linear(to-br, gray.100, gray.600)" 
                                                 // bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.10), rgba(30, 30, 30, 0.75)), url('" + platform.bannerImage +  "')"}
                                                 bgSize="cover" 
                                                 bgPosition="center"
                                                 borderTopRadius={10}
+                                                display='flex'
                                             >
-                                                <HStack w="100%" spacing={3} pos="absolute" bottom="5%" ml="2%">
+                                                <HStack w="100%" spacing={3} ml="2%">
                                                     <Box className='squareimage_container' w="15%" minW={50}> 
                                                         <Image className="squareimage" src={quiz.icon} objectFit="cover" borderRadius="50%" border="2px solid white"></Image>
                                                     </Box>
                                                     <Text className="disable-select" fontSize="160%" textColor="white" fontWeight="medium"> {quiz.title} </Text>
+                                                    <Box pl='4%'>
+                                                        <VStack spacing={4} align='start'>
+                                                            <Text className="disable-select" fontSize="125%"> 
+                                                                <Icon as={ViewIcon} /> {quiz.numAttempts} Attempts 
+                                                            </Text>
+                                                            <Text className="disable-select" fontSize="125%"> 
+                                                                <Icon as={BsHeart} /> {quiz.numFavorites} Favorites 
+                                                            </Text>
+                                                            <Text className="disable-select" fontSize="125%"> 
+                                                                <Icon as={StarIcon} /> {quiz.rating ? quiz.rating : 'No'} Rating {quiz.rating ? `(${quiz.numRatings})`: ''}
+                                                            </Text>
+                                                        </VStack>
+                                                    </Box>
+                                                    <Box pl='6%'>
+                                                        <VStack spacing={4} align='start'>
+                                                            <Text className="disable-select" fontSize="125%"> 
+                                                                <Icon as={GrScorecard} /> {quiz.averageScore ? `${quiz.averageScore}%` : 'No'} Average Score 
+                                                            </Text>
+                                                            <Text className="disable-select" fontSize="125%"> 
+                                                                <Icon as={GrScorecard} /> {quiz.medianScore ? `${quiz.medianScore}%` : 'No'} Median Score 
+                                                            </Text>
+                                                        </VStack>
+                                                    </Box>
                                                 </HStack>
                                             </Box>
-                                            <Text className="disable-select" fontSize="125%"> 
-                                                <Icon as={ViewIcon} /> {quiz.numAttempts} Attempts 
-                                            </Text>
-                                            <Text className="disable-select" fontSize="125%" pb={3}> 
-                                                <Icon as={BsHeart} /> {quiz.numFavorites} Favorites 
-                                            </Text>
-    
-                                        </VStack>
+                                        <HStack justifyContent='center' spacing='15%' pt='1%' pb='1%'>
+                                            <Button backgroundColor='green.500' color='white' onClick={() => history.push('/prequizpage/' + quiz._id)} _focus={{ outline: 'none' }} _hover={{ backgroundColor: 'green.600' }} _active={{backgroundColor: 'green.700'}}>Go To Quiz</Button>
+                                            <Button colorScheme='blue' onClick={() => history.push('/editQuiz/' + quiz._id)} _focus={{ outline: 'none' }}>Edit Quiz</Button>
+                                            <Button colorScheme='red' onClick={() => handleDeleteQuiz(quiz._id)} _focus={{ outline: 'none' }}>Delete Quiz</Button>
+                                        </HStack>
                                     </Box>   
                                 )
                             })
@@ -141,3 +183,11 @@ export default function QuizManagerPage() {
         </Box>
     )
 }
+
+const DELETE_QUIZ = gql`
+    mutation ($quizId: ID!) {
+        deleteQuiz(quizId: $quizId) {
+            _id
+        }
+    }
+`;

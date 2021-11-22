@@ -38,7 +38,7 @@ export default function PlatformResult( {platform} ) {
                         </Tag>
 
                         <Text textColor="gray.600" fontSize="95%"> 
-                            <Icon as={BsFillPersonFill} color="blue.400"/> {platform.followers.length} Followers  
+                            <Icon as={BsFillPersonFill} color="blue.400"/> { platform.followers.length !== 1 ? platform.followers.length + " Followers" : "1 Follower"  } 
                         </Text>
 
                         <Text textColor="gray.600" fontSize="95%"> 

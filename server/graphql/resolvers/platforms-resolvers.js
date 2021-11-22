@@ -27,7 +27,16 @@ module.exports = {
         async getPlatform(_, { platformId }) {
             try {
                 const platform = await Platform.findById(platformId)
-                .populate('user')
+                .populate({
+                    path: 'user',
+                    populate: [{
+                        path: 'quizzesMade',
+                        populate: { 
+                            path: 'platform', 
+                            model: 'Platform' 
+                        },
+                    }]
+                })
                 .populate({
                     path: 'quizzes',
                     populate: { path: 'platform', model: 'Platform' },

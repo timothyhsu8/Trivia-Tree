@@ -46,10 +46,10 @@ export default function QuizResult( {quiz} ) {
                         </Tag>
 
                         <Text textColor="gray.600" fontSize="95%"> 
-                            <Icon as={ViewIcon} color="blue.400"/> {quiz.numAttempts} Plays  
+                            <Icon as={ViewIcon} color="blue.400"/> { quiz.numAttempts !== 1 ? quiz.numAttempts + " Plays" : "1 Play" }  
                         </Text>
                         <Text textColor="gray.600" fontSize="95%"> 
-                            <Icon as={BsHeartFill} color="red.300"/> {quiz.numFavorites} Favorites  
+                            <Icon as={BsHeartFill} color="red.300"/> { quiz.numFavorites !== 1 ? quiz.numFavorites + " Favorites" : "1 Favorite" }
                         </Text>
                         <Text textColor="gray.600" fontSize="95%"> 
                             <Icon as={BsFillAlarmFill} color="purple.400"/> {converTimeToText(quiz.quizTimer)}
@@ -63,7 +63,7 @@ export default function QuizResult( {quiz} ) {
                 {/* RATING */}
                 <Center>
                     <Text fontSize="110%" fontWeight="thin">
-                        <Icon pos="relative" as={StarIcon} boxSize="4" color="yellow.500"/>
+                        <Icon pos="relative" top={-0.5} as={StarIcon} boxSize="4" color="yellow.500"/>
                         &nbsp;{ quiz.rating !== null ? quiz.rating : "No Rating" }
                     </Text>
                 </Center>

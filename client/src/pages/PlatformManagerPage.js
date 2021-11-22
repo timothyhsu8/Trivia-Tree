@@ -90,10 +90,10 @@ export default function PlatformManagerPage() {
                                             </Box>
                     
                                             <Text className="disable-select" fontSize="125%"> 
-                                                <Icon as={BsFillPersonFill} /> {platform.followers.length} Followers 
+                                                <Icon as={BsFillPersonFill} /> { platform.followers.length !== 1 ? platform.followers.length + " Followers" : "1 Follower"}
                                             </Text>
                                             <Text className="disable-select" fontSize="125%" pb={3}> 
-                                                <Icon as={BsFillFileEarmarkTextFill}/> {platform.quizzes.length} Quizzes 
+                                                <Icon as={BsFillFileEarmarkTextFill}/> { platform.quizzes.length !== 1 ? platform.quizzes.length + " Quizzes" : "1 Quiz" }
                                             </Text>
                                         </VStack>
                                     </Box>   

@@ -1,7 +1,7 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon,
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_QUIZZES, GET_PLATFORM } from "../cache/queries";
+import { GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
@@ -12,10 +12,12 @@ import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
 import { BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill } from "react-icons/bs";
+import { useAlert } from 'react-alert';
 
 export default function PlatformPage({}) {
     const { user } = useContext(AuthContext);
     const cancelRef = useRef()
+    const alert = useAlert();
     const [page, setPage] = useState('Platform')
     const [following, setFollowing] = useState(false)
     const quiz_sections = ["All Quizzes", "Most Played Quizzes", "Geography"]
@@ -26,7 +28,6 @@ export default function PlatformPage({}) {
     let { platformId } = useParams();
 
     // Fetch quiz data from the backend
-    const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
     const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId}, onCompleted() {
         for(let i = 0; i < platform.data.getPlatform.followers.length; i++){
             if(platform.data.getPlatform.followers[i]._id == user._id){
@@ -36,8 +37,8 @@ export default function PlatformPage({}) {
     } })
 
 
-    const loading = quizzes.loading || platform.loading
-    const error = quizzes.error || platform.error
+    const loading = platform.loading
+    const error = platform.error
 
     // State Variables
     let is_owner = false
@@ -151,11 +152,18 @@ export default function PlatformPage({}) {
         },
     })
 
-    // Finish selecting quiz and send added quiz to database
+    // Finish selecting quiz and send added quiz to database, closes add quiz menu
     function handleAddQuizToPlatform() {
         setIsAddingQuiz(false)
+        setChosenQuiz(null)
 
-        if(chosenQuiz !== null){
+        if (chosenQuiz !== null){
+            for (let i = 0; i < platform_data.quizzes.length; i++)
+                if (platform_data.quizzes[i]._id == chosenQuiz._id) {
+                    alert.show('Quiz already exists on this platform')
+                    return
+                }
+                
             addQuizToPlatform({
                 variables: {
                     platformId: platform_data._id,
@@ -163,7 +171,6 @@ export default function PlatformPage({}) {
                 },
             })
         }
-        setChosenQuiz(null)
     }
 
     // Deletes platform
@@ -197,6 +204,8 @@ export default function PlatformPage({}) {
 
     // Error Screen
     if (error) {
+        console.log(error)
+        
         return (
             <Center>
                 <Text fontSize="3vw" fontWeight="thin"> Sorry, something went wrong </Text>
@@ -205,7 +214,6 @@ export default function PlatformPage({}) {
     }
 
     // Set variables 
-    const all_quizzes = quizzes.data.getQuizzes // Temporary, remove when quizzes are grabbed from an individual user
     const quiz_data = platform.data.getPlatform.quizzes
     const platform_data = platform.data.getPlatform
 
@@ -253,8 +261,8 @@ export default function PlatformPage({}) {
     function renderPage() {
         if (page === 'Platform') 
             return renderPlatform()
-        // if (page === 'Quizzes') 
-        //     return renderPlatforms()
+        if (page === 'Quizzes') 
+            return renderQuizzes()
         if (page === 'Followers') 
             return renderFollowers()
         if (page === 'About') 
@@ -322,31 +330,22 @@ export default function PlatformPage({}) {
                         {
                             following ?
                                 <Button 
-                                    w="7%" 
-                                    minW="80px"
-                                    h="50px" 
-                                    mt="1%" 
-                                    bgColor="red.600" 
-                                    fontSize="120%" 
-                                    color="white" 
+                                    size="lg"
+                                    colorScheme="red"
+                                    mt={4}
                                     float="right"
-                                    display={is_owner ? 'none':''}
+                                    display={is_owner ? 'none' : ''}
                                     onClick={setUnfollowPlatform}
-                                    _hover={{opacity:"85%"}} 
-                                    _active={{opacity:"75%"}} 
                                     _focus={{boxShadow:"none"}}
                                 > 
                                     Unfollow 
                                 </Button>
                                 :
                                 <Button 
-                                    w="7%" 
-                                    minW="80px"
-                                    h="50px" 
-                                    mt="1%" 
+                                    size="lg"
                                     bgColor="gray.800" 
-                                    fontSize="120%" 
-                                    color="white" 
+                                    color="white"
+                                    mt={4} 
                                     float="right"
                                     display={is_owner ? 'none':''}
                                     onClick={setFollowPlatform}
@@ -553,7 +552,18 @@ export default function PlatformPage({}) {
                             </Box>
                         }
                         <Text fontSize="160%" fontWeight="medium" textAlign="center"> {platform_data.name} </Text>
-                        <Text fontSize="120%"> {platform_data.followers.length} Followers </Text>
+                        
+                        {/* Platform Misc. Information (# Followers, # Quizzes, etc.) */}
+                        <HStack spacing={4}>
+                            <Text fontSize="120%"> 
+                                <Icon as={BsFillPersonFill} mr={1} /> 
+                                { platform_data.followers.length !== 1 ? platform_data.followers.length + " Followers" : "1 Follower"  } 
+                            </Text>
+                            <Text fontSize="120%"> 
+                                <Icon as={BsFillFileEarmarkTextFill} mr={1} /> 
+                                { platform_data.quizzes.length } { platform_data.quizzes.length !== 1 ? "Quizzes" : "Quiz" }
+                            </Text>
+                        </HStack>
                         
                         {/* Platform Description */}
                         {
@@ -708,7 +718,25 @@ export default function PlatformPage({}) {
                 </Flex>
             </Box>
         );
+    }
 
+    function renderQuizzes() {
+        return (
+            <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                {platform_data.quizzes.map((quiz, key) => {
+                    return (
+                        <QuizCard
+                            quiz={quiz}
+                            width='8%'
+                            title_fontsize='95%'
+                            include_author={false}
+                            char_limit={35}
+                            key={key}
+                        />
+                    );
+                })}
+            </Flex>
+        )
     }
 
     return (
@@ -719,7 +747,7 @@ export default function PlatformPage({}) {
                     <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
                        {/* QUIZ CARDS */}
                             <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
-                                {all_quizzes.map((quiz, key) => {
+                                {platform_data.user.quizzesMade.map((quiz, key) => {
                                     return <SelectQuizCard
                                         key={key}
                                         quiz={quiz} 
@@ -735,9 +763,10 @@ export default function PlatformPage({}) {
                                 })}
                             </Flex>
                         
-                        {/* Cancel Selecting a quiz */}
+                        {/* Selecting a quiz to add to the platform */}
                         <HStack w="100%" spacing="1%" pos="fixed" bottom="3%" right="-83%">
-                            <Button bgColor="gray.500" textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%" _hover={{bgColor:"gray.600"}}  _focus={{border:"none"}}
+                            {/* Cancel Selecting a quiz */}
+                            <Button size="lg" bgColor="gray.500" textColor="white" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%" _hover={{bgColor:"gray.600"}}  _focus={{border:"none"}}
                                 onClick={() => {
                                     setIsAddingQuiz(false)
                                     setChosenQuiz(null)
@@ -746,7 +775,7 @@ export default function PlatformPage({}) {
                             </Button>
 
                             {/* Finish selecting a quiz */}
-                            <Button textColor="white" fontSize="120%" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                            <Button size="lg" textColor="white" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
                                 bgColor={chosenQuiz !== null ? "blue.400" : "gray.400"} 
                                 _hover={{bgColor: chosenQuiz !== null ? "blue.300" : "gray.400"}}
                                 _active={{bgColor: chosenQuiz !== null ? "blue.200" : "gray.400"}}

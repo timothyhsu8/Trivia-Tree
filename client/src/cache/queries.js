@@ -165,6 +165,17 @@ export const GET_PLATFORM = gql`
             user {
                 _id
                 displayName
+                quizzesMade {
+                    _id
+                    title
+                    numAttempts
+                    numFavorites
+                    icon
+                    rating
+                    numRatings
+                    averageScore
+                    medianScore
+                }
             }
             quizzes {
                 _id

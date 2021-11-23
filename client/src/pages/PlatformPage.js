@@ -1,8 +1,8 @@
-import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon,
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon, Select, Tag, TagLeftIcon, TagLabel,
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM } from '../cache/mutations';
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
@@ -12,6 +12,7 @@ import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
 import { BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill } from "react-icons/bs";
+import { AddIcon } from '@chakra-ui/icons'
 import { useAlert } from 'react-alert';
 
 export default function PlatformPage({}) {
@@ -20,8 +21,8 @@ export default function PlatformPage({}) {
     const alert = useAlert();
     const [page, setPage] = useState('Platform')
     const [following, setFollowing] = useState(false)
-    const quiz_sections = ["All Quizzes", "Most Played Quizzes", "Geography"]
     const maxPlatformName = 35
+    const maxPlaylistName = 50
     const maxDescription = 250
 
     let history = useHistory();
@@ -30,7 +31,7 @@ export default function PlatformPage({}) {
     // Fetch quiz data from the backend
     const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId}, onCompleted() {
         for(let i = 0; i < platform.data.getPlatform.followers.length; i++){
-            if(platform.data.getPlatform.followers[i]._id == user._id){
+            if(user !== null && platform.data.getPlatform.followers[i]._id === user._id){
                 setFollowing(true)
             }
         }         
@@ -51,11 +52,20 @@ export default function PlatformPage({}) {
     const [unsavedChanges, setUnsavedChanges] = useState(false)
     const [editDescription, setEditDescription] = useState(false)
     const [description, setDescription] = useState(null)
-    const [isAddingQuiz, setIsAddingQuiz] = useState(false)
+    const [isAddingQuiz, setIsAddingQuiz] = useState(
+        {
+            adding: false,
+            type: null
+        }
+    )
     const [chosenQuiz, setChosenQuiz] = useState(null)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const [creatingPlaylist, setCreatingPlaylist] = useState(false)
+    const [chosenPlaylist, setChosenPlaylist] = useState(null)
+    const [chosenPlaylistName, setChosenPlaylistName] = useState('')
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
+    
 
     // Updates the icon without saving it to the database
     function updateIcon(event) {
@@ -136,6 +146,15 @@ export default function PlatformPage({}) {
         },
     })
 
+    const [addQuizToPlaylist] = useMutation(ADD_QUIZ_TO_PLAYLIST, {
+        onCompleted() {
+            history.go(0)
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    })
+
     const [followPlatform] = useMutation(FOLLOW_PLATFORM, {
         onCompleted() {
         },
@@ -153,24 +172,50 @@ export default function PlatformPage({}) {
     })
 
     // Finish selecting quiz and send added quiz to database, closes add quiz menu
-    function handleAddQuizToPlatform() {
-        setIsAddingQuiz(false)
-        setChosenQuiz(null)
-
+    function handleAddQuizToPlatform(destination) {
         if (chosenQuiz !== null){
-            for (let i = 0; i < platform_data.quizzes.length; i++)
-                if (platform_data.quizzes[i]._id == chosenQuiz._id) {
-                    alert.show('Quiz already exists on this platform')
-                    return
-                }
-                
-            addQuizToPlatform({
-                variables: {
-                    platformId: platform_data._id,
-                    quizId: chosenQuiz._id
-                },
-            })
+            // Adding quiz to the platform as a whole
+            if (destination === "platform") {
+                for (let i = 0; i < platform_data.quizzes.length; i++)
+                    if (platform_data.quizzes[i]._id === chosenQuiz._id) {
+                        alert.show('Quiz already exists on this platform')
+                        setIsAddingQuiz( { adding: false, type: null })
+                        setChosenQuiz(null)
+                        setChosenPlaylist(null)
+                        return
+                    }
+                    
+                addQuizToPlatform({
+                    variables: {
+                        platformId: platform_data._id,
+                        quizId: chosenQuiz._id
+                    },
+                })
+            }
+
+            // Adding quiz to an individual playlist
+            if (destination === "playlist") {
+                for (let i = 0; i < chosenPlaylist.quizzes.length; i++)
+                    if (chosenPlaylist.quizzes[i]._id === chosenQuiz._id) {
+                        alert.show('Quiz already exists in this playlist')
+                        setIsAddingQuiz( { adding: false, type: null })
+                        setChosenQuiz(null)
+                        setChosenPlaylist(null)
+                        return
+                    }
+
+                addQuizToPlaylist({
+                    variables: {
+                        platformId: platform_data._id,
+                        playlistId: chosenPlaylist._id,
+                        quizId: chosenQuiz._id
+                    },
+                })
+            }
         }
+        setIsAddingQuiz( { adding: false, type: null })
+        setChosenQuiz(null)
+        setChosenPlaylist(null)
     }
 
     // Deletes platform
@@ -216,6 +261,7 @@ export default function PlatformPage({}) {
     // Set variables 
     const quiz_data = platform.data.getPlatform.quizzes
     const platform_data = platform.data.getPlatform
+    console.log(platform_data)
 
     if (icon === null) {
         setIcon(platform_data.iconImage)
@@ -471,30 +517,61 @@ export default function PlatformPage({}) {
                             <Text fontSize="110%"> {platform.data.getPlatform.followers.length} {platform.data.getPlatform.followers.length == 1 ? "Follower":"Followers"} </Text>
                         </VStack>
                     </Box>
-               
-               
+                        
+                <Box mt="7%"/>
 
-                {/* QUIZZES */}
-                <Box mt="9%" borderTop="0.2vh solid" borderColor="gray.300">
-                    {quiz_sections.map((section, key) => {
+                {/* CREATE NEW PLAYLIST BUTTON */}
+                {
+                    is_owner ?
+                    <Box h={5} mb={3}>
+                        <Tag className="disable-select" float="right" mr={2} variant="subtle" colorScheme="cyan"
+                            _hover={{cursor:"pointer", opacity:"85%"}}
+                            onClick={() => setCreatingPlaylist(true)}
+                            >
+                            <TagLeftIcon as={AddIcon} />
+                            <TagLabel> Create New Playlist </TagLabel>
+                        </Tag>
+                    </Box>
+                    :
+                    null
+                }
+
+                <Box h="0.4px" bgColor="gray.300" />
+                
+
+                {/* ADD QUIZ TO PLATFORM BUTTON */}
+                {/* {is_owner ? 
+                    <Button colorScheme="purple" onClick={() => setIsAddingQuiz({ adding: true, type: "platform"  })}> 
+                        ADD QUIZ
+                    </Button>
+                    :
+                    null
+                } */}
+                {/* QUIZ SECTIONS */}
+                <Box>
+                    {platform_data.playlists.map((playlist, key) => {
                         return (
                             <Box w="100%" borderRadius="10" overflowX="auto" key={key}>
-                                <Text pl="1.5%" pt="1%" fontSize="130%" fontWeight="medium"> {section} </Text>
-                                <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
+                                <HStack>
+                                    <Text pl="1.5%" pt="1%" fontSize="130%" fontWeight="medium"> {playlist.name} </Text>
                                     {/* Card for adding a quiz, if platform owner is viewing */}
                                     {is_owner ? 
-                                        <AddQuizCard 
-                                            width="7.5%"
-                                            title_fontsize="125%" 
-                                            type='1'
-                                            callback={setIsAddingQuiz}
-                                        />
+                                        <Tag className="disable-select" variant="subtle" colorScheme="orange"
+                                            _hover={{cursor:"pointer", opacity:"85%"}}
+                                            onClick={() => {
+                                                setIsAddingQuiz({ adding: true, type: "playlist" })
+                                                setChosenPlaylist(playlist)
+                                            }}> 
+                                            <TagLeftIcon as={AddIcon} />
+                                            <TagLabel> Add Quiz </TagLabel>
+                                        </Tag>
                                         :
                                         null
                                     }
-                                    
+                                </HStack>
+                                <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
                                     {/* QUIZ CARDS */}
-                                    {quiz_data.slice(0).reverse().map((quiz, key) => {
+                                    {playlist.quizzes.slice(0).reverse().map((quiz, key) => {
                                         return <QuizCard 
                                             quiz={quiz} 
                                             width="7.5%"
@@ -510,6 +587,7 @@ export default function PlatformPage({}) {
                                 <Box bgColor="gray.300" h="0.12vh" />
                             </Box>
                     )})}
+                    <Box h="15vh" />
                 </Box>
             </Box>
         )
@@ -722,20 +800,32 @@ export default function PlatformPage({}) {
 
     function renderQuizzes() {
         return (
-            <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                {platform_data.quizzes.map((quiz, key) => {
-                    return (
-                        <QuizCard
-                            quiz={quiz}
-                            width='8%'
-                            title_fontsize='95%'
-                            include_author={false}
-                            char_limit={35}
-                            key={key}
-                        />
-                    );
-                })}
-            </Flex>
+            <Box>
+                <Box borderBottom="1px solid" borderColor="gray.300">
+                    <HStack padding={2}>
+                        <Text> Sort By: </Text>
+                        <Select w="fit-content" size="md" variant="outline">
+                            <option value="none"> Newest </option>
+                            <option value="popular"> Most Popular </option>
+                            <option value="sort_abc">Alphabetical [A-Z]</option>
+                        </Select>
+                    </HStack>
+                </Box>
+                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+                    {platform_data.quizzes.map((quiz, key) => {
+                        return (
+                            <QuizCard
+                                quiz={quiz}
+                                width='7.5%'
+                                title_fontsize='95%'
+                                include_author={false}
+                                char_limit={35}
+                                key={key}
+                            />
+                        );
+                    })}
+                </Flex>
+            </Box>
         )
     }
 
@@ -743,7 +833,7 @@ export default function PlatformPage({}) {
         <Box>
             {/* Darken screen and allow user to select quiz to add to the platform */}
             {
-                isAddingQuiz ? 
+                isAddingQuiz.adding ? 
                     <Box position="fixed" w="100%" h="100vh" zIndex="1" bgColor="rgba(0, 0, 0, 0.9)" transition="0.2s linear"> 
                        {/* QUIZ CARDS */}
                             <Flex mt="0.5%" ml="1%" spacing="4%" display="flex" flexWrap="wrap">
@@ -768,8 +858,9 @@ export default function PlatformPage({}) {
                             {/* Cancel Selecting a quiz */}
                             <Button size="lg" bgColor="gray.500" textColor="white" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%" _hover={{bgColor:"gray.600"}}  _focus={{border:"none"}}
                                 onClick={() => {
-                                    setIsAddingQuiz(false)
+                                    setIsAddingQuiz({ adding: false, type: null })
                                     setChosenQuiz(null)
+                                    setChosenPlaylist(null)
                                 }}>
                                 Cancel
                             </Button>
@@ -780,7 +871,7 @@ export default function PlatformPage({}) {
                                 _hover={{bgColor: chosenQuiz !== null ? "blue.300" : "gray.400"}}
                                 _active={{bgColor: chosenQuiz !== null ? "blue.200" : "gray.400"}}
                                 _focus={{border:"none"}}
-                                onClick={() => chosenQuiz !== null ? handleAddQuizToPlatform() : null}>
+                                onClick={() => chosenQuiz !== null ? handleAddQuizToPlatform(isAddingQuiz.type) : null}>
                                 Finish
                             </Button>
                         </HStack>
@@ -878,6 +969,70 @@ export default function PlatformPage({}) {
                 </Box> : 
                 null
             }
+
+            {renderCreatePlaylist()}
         </Box>
     )
+    
+
+    // Handles the actual creation of a new playlist
+    function handleCreatePlaylist() {
+
+    }
+
+    
+    // Darken screen and let user choose playlist name
+    function renderCreatePlaylist() {
+        return (
+            <AlertDialog
+                isOpen={creatingPlaylist}
+                leastDestructiveRef={cancelRef}
+                onClose={() => setCreatingPlaylist(false)}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent top="30%">
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Choose A Playlist Name
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                            <Input 
+                                maxLength={maxPlaylistName}
+                                borderColor="gray.300" 
+                                value={chosenPlaylistName} 
+                                onChange={(e) => 
+                                    setChosenPlaylistName(e.target.value)
+                                }/>
+                            <Text float="right" fontSize="85%" color={ chosenPlaylistName.length === maxPlaylistName ? "red.500" : "gray.800" }>  
+                                {chosenPlaylistName.length}/{maxPlaylistName} 
+                            </Text>
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                        <Button 
+                            ref={cancelRef} 
+                            onClick={() => {
+                                setCreatingPlaylist(false)
+                                setChosenPlaylistName("")
+                            }} 
+                            _focus={{border:"none"}}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            colorScheme="blue"  
+                            ml={3} 
+                            bgColor={chosenPlaylistName.trim() !== "" ? "" : "gray.400"}
+                            _hover={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.600" : "gray.400"}}
+                            _active={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.700" : "gray.400"}}
+                            _focus={{border:"none"}}
+                            onClick={() => chosenPlaylistName.trim() !== "" ? handleCreatePlaylist() : null}
+                        >
+                            Create Playlist
+                        </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
+        )
+    }
 }

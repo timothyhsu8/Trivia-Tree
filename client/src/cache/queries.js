@@ -184,6 +184,17 @@ export const GET_PLATFORM = gql`
                 numFavorites
                 numAttempts
             }
+            playlists {
+                _id
+                name
+                quizzes {
+                    _id
+                    title
+                    icon
+                    numFavorites
+                    numAttempts
+                }
+            }
         }
     }
 `;

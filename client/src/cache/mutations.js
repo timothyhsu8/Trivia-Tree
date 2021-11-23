@@ -67,6 +67,14 @@ mutation ($platformId: ID!, $quizId: ID!) {
     }
 }
 `
+export const ADD_QUIZ_TO_PLAYLIST = gql`
+mutation ($platformId: ID!, $playlistId: ID!, $quizId: ID!) {
+    addQuizToPlaylist(platformId: $platformId, playlistId: $playlistId, quizId: $quizId) {
+        name
+        _id
+    }
+}
+`
 
 export const REMOVE_QUIZ_FROM_PLATFORM = gql`
 mutation ($platformId: ID!, $quizId: ID!) {

@@ -1,5 +1,6 @@
 const Platform = require('../../models/Platform');
-// const Quiz = require('../../models/Quiz');
+const Playlist = require('../../models/Playlist')
+const Quiz = require('../../models/Quiz');
 const User = require('../../models/User');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
@@ -43,6 +44,16 @@ module.exports = {
                 })
                 .populate({
                     path: 'followers'
+                })
+                .populate({
+                    path: 'playlists',
+                    populate: {
+                        path: 'quizzes',
+                        populate: {
+                            path: 'platform',
+                            model: 'Platform'
+                        }
+                    }
                 })
                 .exec();
 
@@ -194,12 +205,12 @@ module.exports = {
         async deletePlatform(_, { platformId }, context) {
             try {
                 const platform = await Platform.findById(platformId);
-                // if (!platform.user.equals(context.req.user._id)) {
-                //     throw new Error('You are not the creator of this platform');
-                // }
-                // await User.findByIdAndUpdate(context.req.user._id, {
-                //     $pull: { platformsMade: platform._id },
-                // });
+                if (!platform.user.equals(context.req.user._id)) {
+                    throw new Error('You are not the creator of this platform');
+                }
+                await User.findByIdAndUpdate(context.req.user._id, {
+                    $pull: { platformsMade: platform._id },
+                });
                 await platform.delete();
                 return platform;
             } catch (err) {
@@ -210,10 +221,42 @@ module.exports = {
         // Creates a new playlist for this platform
         async addPlaylistToPlatform(_, { platformId, playlistName }, context) {
             try {
+                const newPlaylist = new Playlist({
+                    name: playlistName,
+                    quizzes: []
+                });
+
+                const platform = await Platform.findByIdAndUpdate(platformId, {
+                    $push: { playlists: newPlaylist}
+                })
+
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+
+        // Adds quiz to the platform 
+        async addQuizToPlaylist(_, { platformId, playlistId, quizId }, context) {
+            try {
                 const platform = await Platform.findById(platformId);
-                // if (!platform.user.equals(context.req.user._id)) {
-                //     throw new Error('You are not the creator of this platform');
-                // }
+                const quiz = await Quiz.findById(quizId);
+
+                // If quiz doesn't already exist on the platform, add it
+                for (let i = 0; i < platform.quizzes.length; i++) {
+                    if (platform.quizzes[i]._id.toString() === quizId)
+                        break
+                    
+                    if (i === platform.quizzes.length-1)
+                        platform.quizzes.push(quiz)
+                }
+                
+                // Add quiz to playlist
+                for (let i = 0; i < platform.playlists.length; i++) 
+                    if (platform.playlists[i]._id.toString() === playlistId) 
+                        platform.playlists[i].quizzes.push(quiz)
+                
+                platform.save()
 
                 return platform;
             } catch (err) {
@@ -245,6 +288,7 @@ module.exports = {
          // Removes quiz from platform (Only removes from the platform, doesn't delete the quiz entirely)
          async removeQuizFromPlatform(_, { platformId, quizId }, context) {
             try {
+                // Remove quiz from the main quizzes array
                 const platform = await Platform.findByIdAndUpdate(platformId, {
                     $pull: { quizzes: quizId },
                 })
@@ -253,9 +297,16 @@ module.exports = {
                     populate: { path: 'platform', model: 'Platform' },
                 })
                 .exec()
-                // if (!platform.user.equals(context.req.user._id)) {
-                //     throw new Error('You are not the creator of this platform');
-                // }
+                
+                // Remove quiz from all playlists it was in
+                for (let i = 0; i < platform.playlists.length; i++) 
+                    for (let j = 0; j < platform.playlists[i].quizzes.length; j++){
+                        if (platform.playlists[i].quizzes[j]._id.toString() === quizId){
+                            platform.playlists[i].quizzes.splice(j, 1)
+                            platform.save()
+                        }
+                    }
+                
                 return platform;
             } catch (err) {
                 throw new Error(err);

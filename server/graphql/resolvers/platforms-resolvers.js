@@ -2,7 +2,6 @@ const Platform = require('../../models/Platform');
 const Playlist = require('../../models/Playlist')
 const Quiz = require('../../models/Quiz');
 const User = require('../../models/User');
-const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
 module.exports = {
@@ -225,9 +224,9 @@ module.exports = {
                     name: playlistName,
                     quizzes: []
                 });
-
+                
                 const platform = await Platform.findByIdAndUpdate(platformId, {
-                    $push: { playlists: newPlaylist}
+                    $push: { playlists: newPlaylist }
                 })
 
                 return platform;
@@ -235,6 +234,25 @@ module.exports = {
                 throw new Error(err);
             }
         },
+
+
+        // Removes specified playlist from a platform
+        async removePlaylistFromPlatform(_, { platformId, playlistId }, context) {
+            try {
+                const platform = await Platform.findById(platformId)
+                
+                for (let i = 0; i < platform.playlists.length; i++)
+                    if(platform.playlists[i]._id.toString() === playlistId) {
+                        platform.playlists.splice(i, 1)
+                        platform.save()
+                    }
+    
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+
 
         // Adds quiz to the platform 
         async addQuizToPlaylist(_, { platformId, playlistId, quizId }, context) {

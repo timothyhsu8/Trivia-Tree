@@ -1,18 +1,18 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon, Select, Tag, TagLeftIcon, TagLabel,
-    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter,
+    Menu, MenuButton, IconButton, MenuList, MenuItem } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST } from '../cache/mutations';
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
 import { useState, createRef, useContext, useRef } from 'react';
 import '../styles/styles.css'
-import AddQuizCard from "../components/AddQuizCard";
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
-import { BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill } from "react-icons/bs";
-import { AddIcon } from '@chakra-ui/icons'
+import { BsArrowUp, BsArrowDown, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill, BsThreeDotsVertical, BsTrash } from "react-icons/bs";
+import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import { useAlert } from 'react-alert';
 
 export default function PlatformPage({}) {
@@ -52,12 +52,6 @@ export default function PlatformPage({}) {
     const [unsavedChanges, setUnsavedChanges] = useState(false)
     const [editDescription, setEditDescription] = useState(false)
     const [description, setDescription] = useState(null)
-    const [isAddingQuiz, setIsAddingQuiz] = useState(
-        {
-            adding: false,
-            type: null
-        }
-    )
     const [chosenQuiz, setChosenQuiz] = useState(null)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [creatingPlaylist, setCreatingPlaylist] = useState(false)
@@ -65,45 +59,12 @@ export default function PlatformPage({}) {
     const [chosenPlaylistName, setChosenPlaylistName] = useState('')
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
-    
+    const [isAddingQuiz, setIsAddingQuiz] = useState(
+        {
+            adding: false,
+            type: null
+        })
 
-    // Updates the icon without saving it to the database
-    function updateIcon(event) {
-        if (
-            event.target.files &&
-            event.target.files[0] &&
-            event.target.files[0].type.split('/')[0] === 'image'
-        ) {
-            let img = event.target.files[0];
-            let fr = new FileReader();
-            fr.readAsDataURL(img);
-            fr.onload = () => {
-                img = fr.result;
-                setIcon(img);
-                setIconChanged(true)
-                setUnsavedChanges(true)
-            };
-        }
-    }
-
-    // Updates the banner without saving it to the database
-    function updateBanner(event) {
-        if (
-            event.target.files &&
-            event.target.files[0] &&
-            event.target.files[0].type.split('/')[0] === 'image'
-        ) {
-            let img = event.target.files[0];
-            let fr = new FileReader();
-            fr.readAsDataURL(img);
-            fr.onload = () => {
-                img = fr.result;
-                setBanner(img);
-                setBannerChanged(true)
-                setUnsavedChanges(true)
-            };
-        }
-    }
 
     // Sends the updated platform information to the database
     const [updatePlatform] = useMutation(UPDATE_PLATFORM, {
@@ -114,27 +75,6 @@ export default function PlatformPage({}) {
             console.log(JSON.stringify(err, null, 2));
         },
     });
-
-    // Send updated platform information to the database
-    function handleUpdatePlatform() {
-        let new_icon, new_banner
-        iconChanged ? ( new_icon = icon ) : ( new_icon = "NoChange" )
-        bannerChanged ? ( new_banner = banner ) : ( new_banner = "NoChange" )
-    
-        updatePlatform({
-            variables: {
-                platformInput: {
-                    platformId: platformId,
-                    name: name.trim(),
-                    iconImage: new_icon,
-                    bannerImage: new_banner,
-                    description: description
-                },
-            },
-        })
-
-        setUnsavedChanges(false)
-    }
 
     // Sends the selected quiz to the database and adds it to the platform
     const [addQuizToPlatform] = useMutation(ADD_QUIZ_TO_PLATFORM, {
@@ -163,6 +103,7 @@ export default function PlatformPage({}) {
         },
     })
 
+
     const [unfollowPlatform] = useMutation(UNFOLLOW_PLATFORM, {
         onCompleted() {
         },
@@ -171,52 +112,25 @@ export default function PlatformPage({}) {
         },
     })
 
-    // Finish selecting quiz and send added quiz to database, closes add quiz menu
-    function handleAddQuizToPlatform(destination) {
-        if (chosenQuiz !== null){
-            // Adding quiz to the platform as a whole
-            if (destination === "platform") {
-                for (let i = 0; i < platform_data.quizzes.length; i++)
-                    if (platform_data.quizzes[i]._id === chosenQuiz._id) {
-                        alert.show('Quiz already exists on this platform')
-                        setIsAddingQuiz( { adding: false, type: null })
-                        setChosenQuiz(null)
-                        setChosenPlaylist(null)
-                        return
-                    }
-                    
-                addQuizToPlatform({
-                    variables: {
-                        platformId: platform_data._id,
-                        quizId: chosenQuiz._id
-                    },
-                })
-            }
 
-            // Adding quiz to an individual playlist
-            if (destination === "playlist") {
-                for (let i = 0; i < chosenPlaylist.quizzes.length; i++)
-                    if (chosenPlaylist.quizzes[i]._id === chosenQuiz._id) {
-                        alert.show('Quiz already exists in this playlist')
-                        setIsAddingQuiz( { adding: false, type: null })
-                        setChosenQuiz(null)
-                        setChosenPlaylist(null)
-                        return
-                    }
+    const [addPlaylistToPlatform] = useMutation(ADD_PLAYLIST_TO_PLATFORM, {
+        onCompleted() {
+            history.go(0)
+        },
+        onError(err) {
+            console.log(err);
+        },
+    });
 
-                addQuizToPlaylist({
-                    variables: {
-                        platformId: platform_data._id,
-                        playlistId: chosenPlaylist._id,
-                        quizId: chosenQuiz._id
-                    },
-                })
-            }
-        }
-        setIsAddingQuiz( { adding: false, type: null })
-        setChosenQuiz(null)
-        setChosenPlaylist(null)
-    }
+    const [removePlaylistFromPlatform] = useMutation(REMOVE_PLAYLIST_FROM_PLATFORM, {
+        onCompleted() {
+            history.go(0)
+        },
+        onError(err) {
+            console.log(err);
+        },
+    });
+
 
     // Deletes platform
     const [deletePlatform] = useMutation(DELETE_PLATFORM, {
@@ -258,10 +172,8 @@ export default function PlatformPage({}) {
         );
     }
 
-    // Set variables 
-    const quiz_data = platform.data.getPlatform.quizzes
+
     const platform_data = platform.data.getPlatform
-    console.log(platform_data)
 
     if (icon === null) {
         setIcon(platform_data.iconImage)
@@ -297,12 +209,6 @@ export default function PlatformPage({}) {
             icon: BsFillInfoCircleFill
         }, ]
 
-    // Cancel icon/banner/name update
-    function cancelChanges() {
-        setIcon(platform_data.iconImage)
-        setBanner(platform_data.bannerImage)
-        setUnsavedChanges(false)
-    }
 
     function renderPage() {
         if (page === 'Platform') 
@@ -538,22 +444,16 @@ export default function PlatformPage({}) {
 
                 <Box h="0.4px" bgColor="gray.300" />
                 
-
-                {/* ADD QUIZ TO PLATFORM BUTTON */}
-                {/* {is_owner ? 
-                    <Button colorScheme="purple" onClick={() => setIsAddingQuiz({ adding: true, type: "platform"  })}> 
-                        ADD QUIZ
-                    </Button>
-                    :
-                    null
-                } */}
                 {/* QUIZ SECTIONS */}
                 <Box>
                     {platform_data.playlists.map((playlist, key) => {
                         return (
                             <Box w="100%" borderRadius="10" overflowX="auto" key={key}>
-                                <HStack>
-                                    <Text pl="1.5%" pt="1%" fontSize="130%" fontWeight="medium"> {playlist.name} </Text>
+                                {/* <Icon as={BsThreeDotsVertical} mt={3} float="right" boxSize={6} _hover={{cursor:"pointer"}} /> */}
+                                {renderPlaylistDropdown(playlist)}
+
+                                <HStack pt="0.5%">
+                                    <Text pl="1.5%" fontSize="125%" fontWeight="medium"> {playlist.name} </Text>
                                     {/* Card for adding a quiz, if platform owner is viewing */}
                                     {is_owner ? 
                                         <Tag className="disable-select" variant="subtle" colorScheme="orange"
@@ -724,51 +624,7 @@ export default function PlatformPage({}) {
                     </VStack>
                 </Center>
                 {/* Delete Platform Button */}
-                {
-                    is_owner ? 
-                        <Center>
-                                <Button 
-                                    mt="5%" 
-                                    bgColor="red.600" 
-                                    textColor="white" 
-                                    _hover={{bgColor:"red.500"}} 
-                                    _active={{bgColor:"red.400"}}
-                                    _focus={{border:"none"}} 
-                                    onClick={() => setDeleteConfirmation(true)}
-                                    >
-                                    Delete Platform
-                                </Button>
-                                
-                                <AlertDialog
-                                    isOpen={deleteConfirmation}
-                                    leastDestructiveRef={cancelRef}
-                                    onClose={() => setDeleteConfirmation(false)}
-                                >
-                                    <AlertDialogOverlay>
-                                        <AlertDialogContent top="30%">
-                                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                                Delete Platform
-                                            </AlertDialogHeader>
-
-                                            <AlertDialogBody>
-                                                Are you sure you want to delete this platform? This action cannot be undone
-                                            </AlertDialogBody>
-
-                                            <AlertDialogFooter>
-                                            <Button ref={cancelRef} onClick={() => setDeleteConfirmation(false)} _focus={{border:"none"}}>
-                                                Cancel
-                                            </Button>
-                                            <Button colorScheme="red" onClick={() => handleDeletePlatform()} ml={3} _focus={{border:"none"}}>
-                                                Delete
-                                            </Button>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                    </AlertDialogOverlay>
-                                </AlertDialog>
-                        </Center>
-                    :
-                    null
-                }
+                {renderDeletePlatformButton()}
             </Box>
         )
     }
@@ -801,6 +657,7 @@ export default function PlatformPage({}) {
     function renderQuizzes() {
         return (
             <Box>
+                {/* ADD QUIZ TO PLATFORM BUTTON */}
                 <Box borderBottom="1px solid" borderColor="gray.300">
                     <HStack padding={2}>
                         <Text> Sort By: </Text>
@@ -809,6 +666,17 @@ export default function PlatformPage({}) {
                             <option value="popular"> Most Popular </option>
                             <option value="sort_abc">Alphabetical [A-Z]</option>
                         </Select>
+                        {is_owner ? 
+                            <Tag className="disable-select" float="right" mr={2} variant="subtle" colorScheme="orange"
+                                _hover={{cursor:"pointer", opacity:"85%"}}
+                                onClick={() => setIsAddingQuiz({ adding: true, type: "platform"  })}
+                            >
+                                <TagLeftIcon as={AddIcon} />
+                                <TagLabel> Add Quiz </TagLabel>
+                            </Tag>
+                            :
+                            null
+                        }
                     </HStack>
                 </Box>
                 <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
@@ -821,11 +689,147 @@ export default function PlatformPage({}) {
                                 include_author={false}
                                 char_limit={35}
                                 key={key}
+                                is_owner={is_owner}
+                                platform_id={platform_data._id}
                             />
                         );
                     })}
                 </Flex>
             </Box>
+        )
+    }
+
+
+    // Darken screen and let user choose playlist name
+    function renderCreatePlaylist() {
+        return (
+            <AlertDialog
+                isOpen={creatingPlaylist}
+                leastDestructiveRef={cancelRef}
+                onClose={() => setCreatingPlaylist(false)}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent top="30%">
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Choose A Playlist Name
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                            <Input 
+                                maxLength={maxPlaylistName}
+                                borderColor="gray.300" 
+                                value={chosenPlaylistName} 
+                                onChange={(e) => 
+                                    setChosenPlaylistName(e.target.value)
+                                }/>
+                            <Text float="right" fontSize="85%" color={ chosenPlaylistName.length === maxPlaylistName ? "red.500" : "gray.800" }>  
+                                {chosenPlaylistName.length}/{maxPlaylistName} 
+                            </Text>
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                        <Button 
+                            ref={cancelRef} 
+                            onClick={() => {
+                                setCreatingPlaylist(false)
+                                setChosenPlaylistName("")
+                            }} 
+                            _focus={{border:"none"}}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            colorScheme="blue"  
+                            ml={3} 
+                            bgColor={chosenPlaylistName.trim() !== "" ? "" : "gray.400"}
+                            _hover={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.600" : "gray.400"}}
+                            _active={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.700" : "gray.400"}}
+                            _focus={{border:"none"}}
+                            onClick={() => chosenPlaylistName.trim() !== "" ? handleCreatePlaylist() : null}
+                        >
+                            Create Playlist
+                        </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
+        )
+    }
+
+    // Dropdown menu for playlists
+    function renderPlaylistDropdown(playlist) {
+        return (
+            <Menu>
+                <MenuButton
+                    float="right"
+                    as={IconButton}
+                    aria-label="Options"
+                    icon={<BsThreeDotsVertical />}
+                    _focus={{border:"none"}}
+                    variant=""
+                />
+                <MenuList boxShadow="md">
+                    <MenuItem icon={<BsArrowUp />}>
+                        Move Playlist Up
+                    </MenuItem>
+                    <MenuItem icon={<BsArrowDown />}>
+                        Move Playlist Down
+                    </MenuItem>
+                    <MenuItem icon={<EditIcon />}>
+                        Rename Playlist
+                    </MenuItem>
+                    <MenuItem icon={<BsTrash />} onClick={() => handleRemovePlaylist(playlist._id)}>
+                        Delete Playlist
+                    </MenuItem>
+                </MenuList>
+            </Menu>
+        )
+    }
+
+    function renderDeletePlatformButton() {
+        return (
+            is_owner ? 
+                <Center>
+                    <Button 
+                        mt="5%" 
+                        bgColor="red.600" 
+                        textColor="white" 
+                        _hover={{bgColor:"red.500"}} 
+                        _active={{bgColor:"red.400"}}
+                        _focus={{border:"none"}} 
+                        onClick={() => setDeleteConfirmation(true)}
+                        >
+                        Delete Platform
+                    </Button>
+                        
+                    <AlertDialog
+                        isOpen={deleteConfirmation}
+                        leastDestructiveRef={cancelRef}
+                        onClose={() => setDeleteConfirmation(false)}
+                    >
+                        <AlertDialogOverlay>
+                            <AlertDialogContent top="30%">
+                                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                    Delete Platform
+                                </AlertDialogHeader>
+
+                                <AlertDialogBody>
+                                    Are you sure you want to delete this platform? This action cannot be undone
+                                </AlertDialogBody>
+
+                                <AlertDialogFooter>
+                                <Button ref={cancelRef} onClick={() => setDeleteConfirmation(false)} _focus={{border:"none"}}>
+                                    Cancel
+                                </Button>
+                                <Button colorScheme="red" onClick={() => handleDeletePlatform()} ml={3} _focus={{border:"none"}}>
+                                    Delete
+                                </Button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialogOverlay>
+                    </AlertDialog>
+                </Center>
+            :
+            null
         )
     }
 
@@ -974,65 +978,158 @@ export default function PlatformPage({}) {
         </Box>
     )
     
+    
+    // Updates the icon without saving it to the database
+    function updateIcon(event) {
+        if (
+            event.target.files &&
+            event.target.files[0] &&
+            event.target.files[0].type.split('/')[0] === 'image'
+        ) {
+            let img = event.target.files[0];
+            let fr = new FileReader();
+            fr.readAsDataURL(img);
+            fr.onload = () => {
+                img = fr.result;
+                setIcon(img);
+                setIconChanged(true)
+                setUnsavedChanges(true)
+            };
+        }
+    }
+
+
+    // Updates the banner without saving it to the database
+    function updateBanner(event) {
+        if (
+            event.target.files &&
+            event.target.files[0] &&
+            event.target.files[0].type.split('/')[0] === 'image'
+        ) {
+            let img = event.target.files[0];
+            let fr = new FileReader();
+            fr.readAsDataURL(img);
+            fr.onload = () => {
+                img = fr.result;
+                setBanner(img);
+                setBannerChanged(true)
+                setUnsavedChanges(true)
+            };
+        }
+    }
+
+
+    // Cancel icon/banner/name update
+    function cancelChanges() {
+        setIcon(platform_data.iconImage)
+        setBanner(platform_data.bannerImage)
+        setUnsavedChanges(false)
+    }
+
+
+    // Send updated platform information to the database
+    function handleUpdatePlatform() {
+        let new_icon, new_banner
+        iconChanged ? ( new_icon = icon ) : ( new_icon = "NoChange" )
+        bannerChanged ? ( new_banner = banner ) : ( new_banner = "NoChange" )
+    
+        updatePlatform({
+            variables: {
+                platformInput: {
+                    platformId: platformId,
+                    name: name.trim(),
+                    iconImage: new_icon,
+                    bannerImage: new_banner,
+                    description: description
+                },
+            },
+        })
+
+        setUnsavedChanges(false)
+    }
+
+
+    // Finish selecting quiz and send added quiz to database, closes add quiz menu
+    function handleAddQuizToPlatform(destination) {
+        if (chosenQuiz !== null){
+            // Adding quiz to the platform as a whole
+            if (destination === "platform") {
+                for (let i = 0; i < platform_data.quizzes.length; i++)
+                    if (platform_data.quizzes[i]._id === chosenQuiz._id) {
+                        alert.show('Quiz already exists on this platform')
+                        setIsAddingQuiz( { adding: false, type: null })
+                        setChosenQuiz(null)
+                        setChosenPlaylist(null)
+                        return
+                    }
+                    
+                addQuizToPlatform({
+                    variables: {
+                        platformId: platform_data._id,
+                        quizId: chosenQuiz._id
+                    },
+                })
+            }
+
+            // Adding quiz to an individual playlist
+            if (destination === "playlist") {
+                for (let i = 0; i < chosenPlaylist.quizzes.length; i++)
+                    if (chosenPlaylist.quizzes[i]._id === chosenQuiz._id) {
+                        alert.show('Quiz already exists in this playlist')
+                        setIsAddingQuiz( { adding: false, type: null })
+                        setChosenQuiz(null)
+                        setChosenPlaylist(null)
+                        return
+                    }
+
+                addQuizToPlaylist({
+                    variables: {
+                        platformId: platform_data._id,
+                        playlistId: chosenPlaylist._id,
+                        quizId: chosenQuiz._id
+                    },
+                })
+            }
+        }
+        setIsAddingQuiz( { adding: false, type: null })
+        setChosenQuiz(null)
+        setChosenPlaylist(null)
+    }
+
 
     // Handles the actual creation of a new playlist
     function handleCreatePlaylist() {
 
+        // If a quiz with the chosen name already exists, display an error
+        for (let i = 0; i < platform_data.playlists.length; i++)
+            if (platform_data.playlists[i].name === chosenPlaylistName){
+                alert.show('Playlist with this name already exists')
+                setChosenPlaylistName("")
+                setCreatingPlaylist(false)
+                return
+            }
+
+        // Playlist added successfully
+        addPlaylistToPlatform({
+            variables: {
+                platformId: platform_data._id,
+                playlistName: chosenPlaylistName
+            }
+        })
+
+        setChosenPlaylistName("")
+        setCreatingPlaylist(false)
     }
 
-    
-    // Darken screen and let user choose playlist name
-    function renderCreatePlaylist() {
-        return (
-            <AlertDialog
-                isOpen={creatingPlaylist}
-                leastDestructiveRef={cancelRef}
-                onClose={() => setCreatingPlaylist(false)}
-            >
-                <AlertDialogOverlay>
-                    <AlertDialogContent top="30%">
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Choose A Playlist Name
-                        </AlertDialogHeader>
-
-                        <AlertDialogBody>
-                            <Input 
-                                maxLength={maxPlaylistName}
-                                borderColor="gray.300" 
-                                value={chosenPlaylistName} 
-                                onChange={(e) => 
-                                    setChosenPlaylistName(e.target.value)
-                                }/>
-                            <Text float="right" fontSize="85%" color={ chosenPlaylistName.length === maxPlaylistName ? "red.500" : "gray.800" }>  
-                                {chosenPlaylistName.length}/{maxPlaylistName} 
-                            </Text>
-                        </AlertDialogBody>
-
-                        <AlertDialogFooter>
-                        <Button 
-                            ref={cancelRef} 
-                            onClick={() => {
-                                setCreatingPlaylist(false)
-                                setChosenPlaylistName("")
-                            }} 
-                            _focus={{border:"none"}}>
-                            Cancel
-                        </Button>
-                        <Button 
-                            colorScheme="blue"  
-                            ml={3} 
-                            bgColor={chosenPlaylistName.trim() !== "" ? "" : "gray.400"}
-                            _hover={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.600" : "gray.400"}}
-                            _active={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.700" : "gray.400"}}
-                            _focus={{border:"none"}}
-                            onClick={() => chosenPlaylistName.trim() !== "" ? handleCreatePlaylist() : null}
-                        >
-                            Create Playlist
-                        </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-        )
+    // Handles the removal of a playlist from the platform
+    function handleRemovePlaylist(playlistId) {
+        
+        // Playlist added successfully
+        removePlaylistFromPlatform({
+            variables: {
+                platformId: platform_data._id,
+                playlistId: playlistId
+            }
+        })
     }
 }

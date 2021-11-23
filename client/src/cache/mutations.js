@@ -59,6 +59,7 @@ export const UPDATE_PLATFORM = gql`
     }
 `;
 
+
 export const ADD_QUIZ_TO_PLATFORM = gql`
 mutation ($platformId: ID!, $quizId: ID!) {
     addQuizToPlatform(platformId: $platformId, quizId: $quizId) {
@@ -67,6 +68,27 @@ mutation ($platformId: ID!, $quizId: ID!) {
     }
 }
 `
+
+
+export const ADD_PLAYLIST_TO_PLATFORM = gql`
+    mutation ($platformId: ID!, $playlistName: String!) {
+        addPlaylistToPlatform(platformId: $platformId, playlistName: $playlistName) {
+            name
+            _id
+        }
+    }
+`;
+
+export const REMOVE_PLAYLIST_FROM_PLATFORM = gql`
+    mutation ($platformId: ID!, $playlistId: ID!) {
+        removePlaylistFromPlatform(platformId: $platformId, playlistId: $playlistId) {
+            name
+            _id
+        }
+    }
+`;
+
+
 export const ADD_QUIZ_TO_PLAYLIST = gql`
 mutation ($platformId: ID!, $playlistId: ID!, $quizId: ID!) {
     addQuizToPlaylist(platformId: $platformId, playlistId: $playlistId, quizId: $quizId) {

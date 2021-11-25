@@ -1,28 +1,13 @@
-import {
-    Box,
-    Text,
-    Grid,
-    VStack,
-    Button,
-    Image,
-    Center,
-    Spinner,
-    Flex,
-    Textarea,
-    FormControl,
-    FormLabel,
-    Select,
-    HStack,
-} from '@chakra-ui/react';
+import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Textarea, FormControl, FormLabel, Select, HStack} from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { GET_QUIZZES, GET_USER } from '../cache/queries';
+import { GET_USER } from '../cache/queries';
 import {
     ADD_FEATURED_QUIZ,
     DELETE_FEATURED_QUIZ,
     ADD_FEATURED_PLATFORM,
     DELETE_FEATURED_PLATFORM,
 } from '../cache/mutations';
-import { Link, Redirect, useParams } from 'react-router-dom';
+import { Link, Redirect, useParams, useLocation } from 'react-router-dom';
 import QuizCard from '../components/QuizCard';
 import { AuthContext } from '../context/auth';
 import { useState, useContext, createRef, useEffect } from 'react';
@@ -34,18 +19,6 @@ import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { useAlert } from 'react-alert';
 
-//Lol more images
-import absolutelynothing from '../images/absolutelynothing.png'
-import guest from '../images/guest.png'
-import heart from '../images/heart.jpeg'
-import treeshop from '../images/treeshop.png'
-import lights1 from '../images/lights1.png'
-import fire1 from '../images/fire2.png'
-import flowers1 from '../images/flowers1.png'
-import neon1 from '../images/neon1.png'
-import pfp_gold from '../images/pfp_gold.png'
-const iconPath= "https://www.goodcore.co.uk/blog/wp-content/uploads/2019/08/coding-vs-programming-2.jpg"
-
 let profileImg = null;
 let bannerImg = null;
 let hiddenPFPInput = null;
@@ -53,12 +26,12 @@ let hiddenBannerInput = null;
 let username = null;
 
 export default function AccountPage(props) {
-    const alert = useAlert();
     const { user, refreshUserData } = useContext(AuthContext);
+    const alert = useAlert();
+    const location = useLocation();
+
     let { userId } = useParams();
     let isOwner = false;
-
-    let quiz_sections = ['Featured Quizzes', 'Featured Platforms'];
 
     const [firstQueryDone, setFirstQueryDone] = React.useState(false);
     const [page, setPage] = useState('user');
@@ -67,16 +40,13 @@ export default function AccountPage(props) {
     const [userTitle, setUserTitle] = React.useState('');
     const [pfp_src, setPFP] = useState(''); //String path
     const [banner_src, setBanner] = useState(''); //String path
-    //Here we go again
+    
     const [backgroundNum, setBackground] = useState(''); //Int bg
     const background = ['white', 'red', 'blue', 'green'];
-    const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
-        React.useState(false);
-    const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] =
-        React.useState(false);
+    const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] = React.useState(false);
+    const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] = React.useState(false);
     const [chosenFeaturedQuiz, setChosenFeaturedQuiz] = useState(null);
     const [chosenFeaturedPlatform, setChosenFeaturedPlatform] = useState(null);
-    const [preview, setPreview] = useState(false);
 
     const [AddFeaturedQuiz] = useMutation(ADD_FEATURED_QUIZ, {
         fetchPolicy: 'network-only',
@@ -124,15 +94,12 @@ export default function AccountPage(props) {
         setUserTitle(value);
     }
 
-    //Not attached to backend
-
     function changeBackground(event) {
         event.preventDefault();
         console.log(event.target[0].value);
         setBackground(event.target[0].value);
-        //console.log(backgroundNum)
-        //Does change but a little after
     }
+
     function listCreator(numberOfRows, background) {
         //Takes number of rows to make a variable number of rows of categories
         //Takes an images array and text array to fill the rows with
@@ -222,66 +189,15 @@ export default function AccountPage(props) {
         },
     });
 
-    //For Preview
-    console.log(window.location.pathname);
-    const x = window.location.pathname;
-    const y = x.substring(1,12)
-
-    var pfpBorder = 0;
-    var bannerBorder = 0;
-    var z=0;
-    const borderArr = [
-        absolutelynothing, lights1,fire1,flowers1,neon1,fire1,lights1,flowers1,neon1,lights1,flowers1,fire1,neon1
-    ]
-    //var bannerBorder=-1
-    //var bannerBorder=-1
-    var offset=-1
-    if(y.localeCompare("previewpage") !== 0 && preview === true){
-        setPreview(false)
+    // If the user is previewing an item
+    let preview = false
+    let itemType = ''
+    let item = ''
+    if (location.state !== undefined){
+        preview = true
+        itemType = location.state.itemType
+        item = location.state.item
     }
-    if(y.localeCompare("previewpage") === 0 && preview === false){
-        //console.log("preview")
-        setPreview(true)
-    }
-    var index= -1
-        if(x.indexOf("bannerEffects=")!=-1){
-            index=x.indexOf("bannerEffects=")+14
-        }
-        else if(x.indexOf("iconEffects=")!=-1){
-            index=x.indexOf("iconEffects=")+12
-        }
-        else if(x.indexOf("backgrounds=")!=-1){
-            index=x.indexOf("backgrounds=")+12
-        
-        }
-        else if(x.indexOf("weeklySpecials=")!=-1){
-            index=x.indexOf("weeklySpecials=")+15
-        }
-        //console.log(index)
-        var count = index
-        while(parseInt(x.substring(index,count))!=NaN && count<=x.length &&index!=-1){
-            //console.log(x.substring(index,count))
-            count+=1
-            //console.log(count)
-        }
-        if(parseInt(x.substring(index,count+1))!=NaN &&index!=-1 ){
-            z = parseInt(x.substring(index,count+1))+1
-        }
-
-        if(x.indexOf("bannerEffects=")!=-1){
-            bannerBorder=z
-        }
-        else if(x.indexOf("iconEffects=")!=-1){
-            pfpBorder=z
-        }
-        else if(x.indexOf("weeklySpecials=")!=-1){
-            pfpBorder=z
-        }
-        //console.log(z)
-    console.log(bannerBorder)
-
-
-
 
     const [updateUser] = useMutation(UPDATE_USER, {
         refetchQueries: [GET_USER],
@@ -472,28 +388,23 @@ export default function AccountPage(props) {
                     )
                 ) : null}
 
-                {/* BANNER */}
+                 {/* BANNER EFFECT */}
                 <Image
-                    src={borderArr[bannerBorder]}
+                    src={ preview && itemType === "bannerEffects" ? item : null }
                     w="100%"
                     h='28vh'
                     minH='200px'
                     pos='absolute'
                     zIndex="1"
                 />
+                {/* BANNER */}
                 <Box
                     h='28vh'
                     minH='200px'
                     pos='relative'
-
-                    //This is a nightmare
-                    // borderWidth="100px"
-                    // style={{borderImage:" url('" +
-                    // borderArr[bannerBorder] +
-                    // "')",borderImageSlice:"200",borderImageWidth:"1000px"}}
                     bgImage={
-                        "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                        banner_src +
+                        "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" + 
+                        (preview && itemType === "backgrounds" ? item : banner_src) +
                         "')"
                     }    
                     bgSize='cover'
@@ -517,8 +428,7 @@ export default function AccountPage(props) {
                         >
                             <Image
                                 className='squareimage'
-                                src={[borderArr[pfpBorder]]}
-                                alt='Profile Picture'
+                                src={ preview && itemType === "iconEffects" ? item : null }
                                 objectFit='cover'
                                 borderRadius='50%'
                             />
@@ -533,9 +443,6 @@ export default function AccountPage(props) {
                             <Image
                                 className='squareimage'
                                 src={pfp_src}
-                                // src={[borderArr[pfpBorder]]}
-                                // backgroundImage={pfp_src}
-                                alt='Profile Picture'
                                 objectFit='cover'
                                 borderRadius='50%'
                             />
@@ -548,6 +455,7 @@ export default function AccountPage(props) {
                             left='14%'
                             fontSize='300%'
                             as='b'
+                            color="black"
                         >
                             {username}
                         </Text>

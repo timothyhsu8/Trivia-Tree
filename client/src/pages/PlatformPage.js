@@ -3,7 +3,8 @@ import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, T
     Menu, MenuButton, IconButton, MenuList, MenuItem } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM } from '../cache/mutations';
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, EDIT_PLAYLIST,
+    ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
@@ -41,7 +42,7 @@ export default function PlatformPage({}) {
     const loading = platform.loading
     const error = platform.error
 
-    // State Variables
+    // State Variables for editing name/icon/banner/description
     let is_owner = false
     const [name, setName] = useState(null)
     const [editName, setEditName] = useState(false)
@@ -52,13 +53,27 @@ export default function PlatformPage({}) {
     const [unsavedChanges, setUnsavedChanges] = useState(false)
     const [editDescription, setEditDescription] = useState(false)
     const [description, setDescription] = useState(null)
-    const [chosenQuiz, setChosenQuiz] = useState(null)
-    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
-    const [creatingPlaylist, setCreatingPlaylist] = useState(false)
-    const [chosenPlaylist, setChosenPlaylist] = useState(null)
-    const [chosenPlaylistName, setChosenPlaylistName] = useState('')
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
+
+    // State variables for editing quizzes/playlists/deleting platform
+    const [chosenQuiz, setChosenQuiz] = useState(null)
+    const [chosenPlaylist, setChosenPlaylist] = useState(null)
+    const [chosenPlaylistName, setChosenPlaylistName] = useState('')
+    const [editedPlaylistName, setEditedPlaylistName] = useState('')
+    const [creatingPlaylist, setCreatingPlaylist] = useState(
+        {
+            creating: false,
+            type: null,
+            playlistId: null
+        }
+    )
+    const [deleteConfirmation, setDeleteConfirmation] = useState(
+        {
+            deleting: false,
+            type: null,
+            playlistId: null
+        })
     const [isAddingQuiz, setIsAddingQuiz] = useState(
         {
             adding: false,
@@ -131,6 +146,16 @@ export default function PlatformPage({}) {
         },
     });
 
+    // Sends the updated platform information to the database
+    const [editPlaylist] = useMutation(EDIT_PLAYLIST, {
+        onCompleted() {
+            history.go(0)
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
+
 
     // Deletes platform
     const [deletePlatform] = useMutation(DELETE_PLATFORM, {
@@ -143,12 +168,28 @@ export default function PlatformPage({}) {
     });
 
     // Button event to delete a platform
-    function handleDeletePlatform() {
-        setDeleteConfirmation(false)
-        deletePlatform({
-            variables: {
-                platformId: platformId,
-            },
+    function handleDelete() {
+        if (deleteConfirmation.type === "platform") {
+            deletePlatform({
+                variables: {
+                    platformId: platformId,
+                },
+            })
+        }
+        
+        else if (deleteConfirmation.type === "playlist") {
+            removePlaylistFromPlatform({
+                variables: {
+                    platformId: platform_data._id,
+                    playlistId: deleteConfirmation.playlistId
+                }
+            })
+        }
+
+        setDeleteConfirmation({
+            deleting: false,
+            type: null,
+            playlistId: null
         })
     }
 
@@ -432,7 +473,13 @@ export default function PlatformPage({}) {
                     <Box h={5} mb={3}>
                         <Tag className="disable-select" float="right" mr={2} variant="subtle" colorScheme="cyan"
                             _hover={{cursor:"pointer", opacity:"85%"}}
-                            onClick={() => setCreatingPlaylist(true)}
+                            onClick={() => setCreatingPlaylist( 
+                                {
+                                    creating: true,
+                                    type: "new",
+                                    playlistId: null
+                                }
+                            )}
                             >
                             <TagLeftIcon as={AddIcon} />
                             <TagLabel> Create New Playlist </TagLabel>
@@ -623,8 +670,25 @@ export default function PlatformPage({}) {
                         }
                     </VStack>
                 </Center>
+                
                 {/* Delete Platform Button */}
-                {renderDeletePlatformButton()}
+                <Center>
+                    <Button 
+                        mt="5%" 
+                        bgColor="red.600" 
+                        textColor="white" 
+                        _hover={{bgColor:"red.500"}} 
+                        _active={{bgColor:"red.400"}}
+                        _focus={{border:"none"}} 
+                        onClick={() => setDeleteConfirmation({
+                            deleting: true,
+                            type: "platform",
+                            playlistId: null
+                        })}
+                        >
+                        Delete Platform
+                    </Button>
+                </Center>
             </Box>
         )
     }
@@ -699,15 +763,43 @@ export default function PlatformPage({}) {
         )
     }
 
-
     // Darken screen and let user choose playlist name
     function renderCreatePlaylist() {
+        let name = ''
+        if (creatingPlaylist.type === "new")
+            name = chosenPlaylistName
+        if (creatingPlaylist.type === "rename")
+            name = editedPlaylistName
+
+        let setName = ''
+        if (creatingPlaylist.type === "new")
+            setName = setChosenPlaylistName
+        if (creatingPlaylist.type === "rename")
+            setName = setEditedPlaylistName
+
+        let buttonText = ''
+        if (creatingPlaylist.type === "new")
+            buttonText = "Create Playlist"
+        if (creatingPlaylist.type === "rename")
+            buttonText = "Rename Playlist"
+        
+        let onClickFunction = null
+        if (creatingPlaylist.type === "new")
+            onClickFunction = () => { return name.trim() !== "" ? handleCreatePlaylist() : null }
+        if (creatingPlaylist.type === "rename")
+            onClickFunction = () => { return name.trim() !== "" ? handleEditPlaylist(creatingPlaylist.playlistId, false, false, editedPlaylistName) : null }
+
         return (
             <AlertDialog
-                isOpen={creatingPlaylist}
+                isOpen={creatingPlaylist.creating}
                 leastDestructiveRef={cancelRef}
-                onClose={() => setCreatingPlaylist(false)}
-            >
+                onClose={() => setCreatingPlaylist(
+                    {
+                        creating: false,
+                        type: null,
+                        playlistId: null
+                    })}
+                >
                 <AlertDialogOverlay>
                     <AlertDialogContent top="30%">
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -718,12 +810,12 @@ export default function PlatformPage({}) {
                             <Input 
                                 maxLength={maxPlaylistName}
                                 borderColor="gray.300" 
-                                value={chosenPlaylistName} 
+                                value={name} 
                                 onChange={(e) => 
-                                    setChosenPlaylistName(e.target.value)
+                                    setName(e.target.value)
                                 }/>
-                            <Text float="right" fontSize="85%" color={ chosenPlaylistName.length === maxPlaylistName ? "red.500" : "gray.800" }>  
-                                {chosenPlaylistName.length}/{maxPlaylistName} 
+                            <Text float="right" fontSize="85%" color={ name.length === maxPlaylistName ? "red.500" : "gray.800" }>  
+                                {name.length}/{maxPlaylistName} 
                             </Text>
                         </AlertDialogBody>
 
@@ -731,8 +823,12 @@ export default function PlatformPage({}) {
                         <Button 
                             ref={cancelRef} 
                             onClick={() => {
-                                setCreatingPlaylist(false)
-                                setChosenPlaylistName("")
+                                setCreatingPlaylist({
+                                    creating: false,
+                                    type: null,
+                                    playlistId: null
+                                })
+                                setName("")
                             }} 
                             _focus={{border:"none"}}>
                             Cancel
@@ -740,13 +836,13 @@ export default function PlatformPage({}) {
                         <Button 
                             colorScheme="blue"  
                             ml={3} 
-                            bgColor={chosenPlaylistName.trim() !== "" ? "" : "gray.400"}
-                            _hover={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.600" : "gray.400"}}
-                            _active={{bgColor: chosenPlaylistName.trim() !== "" ? "blue.700" : "gray.400"}}
+                            bgColor={name.trim() !== "" ? "" : "gray.400"}
+                            _hover={{bgColor: name.trim() !== "" ? "blue.600" : "gray.400"}}
+                            _active={{bgColor: name.trim() !== "" ? "blue.700" : "gray.400"}}
                             _focus={{border:"none"}}
-                            onClick={() => chosenPlaylistName.trim() !== "" ? handleCreatePlaylist() : null}
+                            onClick={() => onClickFunction()}
                         >
-                            Create Playlist
+                            {buttonText}
                         </Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>
@@ -768,16 +864,29 @@ export default function PlatformPage({}) {
                     variant=""
                 />
                 <MenuList boxShadow="md">
-                    <MenuItem icon={<BsArrowUp />}>
+                    <MenuItem icon={<BsArrowUp />} onClick={() => handleEditPlaylist(playlist._id, true, false, null)}>
                         Move Playlist Up
                     </MenuItem>
-                    <MenuItem icon={<BsArrowDown />}>
+                    <MenuItem icon={<BsArrowDown />} onClick={() => handleEditPlaylist(playlist._id, false, true, null)}>
                         Move Playlist Down
                     </MenuItem>
-                    <MenuItem icon={<EditIcon />}>
+                    <MenuItem icon={<EditIcon />} 
+                        onClick={() => {
+                            setEditedPlaylistName(playlist.name)
+                            setCreatingPlaylist({
+                                creating: true,
+                                type: "rename",
+                                playlistId: playlist._id
+                            })
+                        }}>
                         Rename Playlist
                     </MenuItem>
-                    <MenuItem icon={<BsTrash />} onClick={() => handleRemovePlaylist(playlist._id)}>
+                    <MenuItem icon={<BsTrash />} 
+                        onClick={() => setDeleteConfirmation({
+                            deleting: true,
+                            type: "playlist",
+                            playlistId: playlist._id
+                        })}>
                         Delete Playlist
                     </MenuItem>
                 </MenuList>
@@ -785,42 +894,42 @@ export default function PlatformPage({}) {
         )
     }
 
-    function renderDeletePlatformButton() {
+    function renderDeleteConfirmation() {
         return (
             is_owner ? 
                 <Center>
-                    <Button 
-                        mt="5%" 
-                        bgColor="red.600" 
-                        textColor="white" 
-                        _hover={{bgColor:"red.500"}} 
-                        _active={{bgColor:"red.400"}}
-                        _focus={{border:"none"}} 
-                        onClick={() => setDeleteConfirmation(true)}
-                        >
-                        Delete Platform
-                    </Button>
-                        
                     <AlertDialog
-                        isOpen={deleteConfirmation}
+                        isOpen={deleteConfirmation.deleting}
                         leastDestructiveRef={cancelRef}
-                        onClose={() => setDeleteConfirmation(false)}
+                        onClose={() => setDeleteConfirmation({
+                            deleting: false,
+                            type: null,
+                            playlistId: null
+                        })}
                     >
                         <AlertDialogOverlay>
                             <AlertDialogContent top="30%">
                                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                    Delete Platform
+                                    Delete {deleteConfirmation.type === "platform" ? "Platform" : "Playlist"}
                                 </AlertDialogHeader>
 
                                 <AlertDialogBody>
-                                    Are you sure you want to delete this platform? This action cannot be undone
+                                    Are you sure you want to delete this {deleteConfirmation.type === "platform" ? "platform" : "playlist"}? This action cannot be undone.
                                 </AlertDialogBody>
 
                                 <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={() => setDeleteConfirmation(false)} _focus={{border:"none"}}>
+                                <Button 
+                                    ref={cancelRef} 
+                                    onClick={() => setDeleteConfirmation({
+                                        deleting: false,
+                                        type: null,
+                                        playlistId: null
+                                    })} 
+                                    _focus={{border:"none"}}
+                                >
                                     Cancel
                                 </Button>
-                                <Button colorScheme="red" onClick={() => handleDeletePlatform()} ml={3} _focus={{border:"none"}}>
+                                <Button colorScheme="red" onClick={() => handleDelete()} ml={3} _focus={{border:"none"}}>
                                     Delete
                                 </Button>
                                 </AlertDialogFooter>
@@ -973,7 +1082,7 @@ export default function PlatformPage({}) {
                 </Box> : 
                 null
             }
-
+            {renderDeleteConfirmation()}
             {renderCreatePlaylist()}
         </Box>
     )
@@ -1099,13 +1208,16 @@ export default function PlatformPage({}) {
 
     // Handles the actual creation of a new playlist
     function handleCreatePlaylist() {
-
         // If a quiz with the chosen name already exists, display an error
         for (let i = 0; i < platform_data.playlists.length; i++)
             if (platform_data.playlists[i].name === chosenPlaylistName){
                 alert.show('Playlist with this name already exists')
                 setChosenPlaylistName("")
-                setCreatingPlaylist(false)
+                setCreatingPlaylist({
+                    creating: false,
+                    type: null,
+                    playlistId: null
+                })
                 return
             }
 
@@ -1118,18 +1230,24 @@ export default function PlatformPage({}) {
         })
 
         setChosenPlaylistName("")
-        setCreatingPlaylist(false)
+        setCreatingPlaylist({
+            creating: false,
+            type: null,
+            playlistId: null
+        })
     }
 
-    // Handles the removal of a playlist from the platform
-    function handleRemovePlaylist(playlistId) {
-        
-        // Playlist added successfully
-        removePlaylistFromPlatform({
+    function handleEditPlaylist(playlistId, moveUp, moveDown, newName) {
+        editPlaylist({
             variables: {
-                platformId: platform_data._id,
-                playlistId: playlistId
-            }
+                playlistInput: {
+                    platformId: platformId,
+                    playlistId: playlistId,
+                    name: newName,
+                    moveUp: moveUp,
+                    moveDown: moveDown
+                },
+            },
         })
     }
 }

@@ -253,7 +253,6 @@ module.exports = {
             }
         },
 
-
         // Adds quiz to the platform 
         async addQuizToPlaylist(_, { platformId, playlistId, quizId }, context) {
             try {
@@ -280,6 +279,52 @@ module.exports = {
             } catch (err) {
                 throw new Error(err);
             }
+        },
+
+        async editPlaylist(
+            _,
+            {
+                playlistInput: {
+                    platformId,
+                    playlistId,
+                    name,
+                    moveUp,
+                    moveDown
+                },
+            },
+            context
+        ) {
+            let platform = await Platform.findById(platformId);
+            let playlistIndex = -1;
+
+            // Find specified playlist index
+            for (let i = 0; i < platform.playlists.length; i++)
+                if (platform.playlists[i]._id.toString() === playlistId) {
+                    playlistIndex = i;
+                    break;
+                }
+
+            // Update name
+            if (name !== null && name !== platform.playlists[playlistIndex].name) {
+                platform.playlists[playlistIndex].name = name
+            }
+
+            // Move playlist up
+            if (moveUp && playlistIndex !== 0 && platform.playlists.length >= 2) {
+                let temp = platform.playlists[playlistIndex - 1]
+                platform.playlists[playlistIndex - 1] = platform.playlists[playlistIndex]
+                platform.playlists[playlistIndex] = temp
+            }
+
+            // Move playlist down
+            if (moveDown && playlistIndex !== platform.playlists.length - 1 && platform.playlists.length >= 2) {
+                let temp = platform.playlists[playlistIndex + 1]
+                platform.playlists[playlistIndex + 1] = platform.playlists[playlistIndex]
+                platform.playlists[playlistIndex] = temp
+            }
+            
+            platform.save()
+            return platform;
         },
 
         // Adds quiz to the platform 
@@ -321,10 +366,10 @@ module.exports = {
                     for (let j = 0; j < platform.playlists[i].quizzes.length; j++){
                         if (platform.playlists[i].quizzes[j]._id.toString() === quizId){
                             platform.playlists[i].quizzes.splice(j, 1)
-                            platform.save()
                         }
                     }
                 
+                platform.save()
                 return platform;
             } catch (err) {
                 throw new Error(err);

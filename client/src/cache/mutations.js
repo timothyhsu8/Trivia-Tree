@@ -98,6 +98,15 @@ mutation ($platformId: ID!, $playlistId: ID!, $quizId: ID!) {
 }
 `
 
+export const EDIT_PLAYLIST = gql`
+mutation ($playlistInput: PlaylistInput!) {
+    editPlaylist(playlistInput: $playlistInput) {
+        name
+        _id
+    }
+}
+`
+
 export const REMOVE_QUIZ_FROM_PLATFORM = gql`
 mutation ($platformId: ID!, $quizId: ID!) {
     removeQuizFromPlatform(platformId: $platformId, quizId: $quizId) {

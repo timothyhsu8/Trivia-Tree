@@ -1,13 +1,8 @@
 import { Box, VStack, Text, Image, Spacer, Flex, HStack, Avatar } from '@chakra-ui/react'
 import coin from '../../images/coin.png'
-import { useHistory } from 'react-router-dom';
 import '../../styles/styles.css'
-import { AuthContext } from '../../context/auth';
-import { useContext } from 'react';
 
 export default function ShopItemCard( props ) {
-    let history = useHistory();
-    const { user } = useContext(AuthContext);
     const itemData = props.item
 
     return (
@@ -19,17 +14,9 @@ export default function ShopItemCard( props ) {
             transition=".1s linear"
             _hover={{cursor:"pointer", opacity:"85%", transition:".15s linear"}} 
             _active={{opacity:"75%"}}
-            onClick={() => 
-                history.push({
-                    pathname: '/previewpage/' + user._id + '/' + props.itemType + '=' + 0,
-                    state: {
-                        itemType: props.itemType,
-                        item: itemData.item
-                    } 
-                })
-            }
+            onClick={() => props.callback(itemData)}
         >
-            <Image pos="absolute" w="100%" h="20vh" src={itemData.item} fit={ props.itemType === "backgrounds" ? "cover" : "" } borderTopRadius={props.itemType === "backgrounds" ? "5" : "0"} />
+            <Image pos="absolute" w="100%" h="20vh" src={itemData.item} fit={itemData.type === "background" ? "cover" : "" } borderTopRadius={itemData.type === "background" ? "5" : "0"} />
             <Image w="100%" h="20vh" fit="cover" borderTopRadius={5} src={itemData.template} /> 
             <Flex w="100%" h={10} borderBottomRadius={5} boxShadow="md">
                 <Box display="flex" flexDirection="column" justifyContent="center">

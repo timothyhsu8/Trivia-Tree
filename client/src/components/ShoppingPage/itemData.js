@@ -18,27 +18,30 @@ import bgAbstract from '../../images/backgrounds/abstract.jpg'
 
 export const bannerEffects =
     {
-        type: "bannerEffects",
         items: [
             {
+                type: "bannerEffect",
                 name: "Fire",
                 template: defaultBanner,
                 item: beFire,
                 price: 500
             },
             {
+                type: "bannerEffect",
                 name: "Flowers",
                 template: defaultBanner,
                 item: beFlowers,
                 price: 500
             },
             {
+                type: "bannerEffect",
                 name: "Lights",
                 template: defaultBanner,
                 item: beLights,
                 price: 500
             },
             {
+                type: "bannerEffect",
                 name: "Neon",
                 template: defaultBanner,
                 item: beNeon,
@@ -49,9 +52,9 @@ export const bannerEffects =
 
 export const iconEffects =
 {
-    type: "iconEffects",
     items: [
         {
+            type: "iconEffect",
             name: "Gold",
             template: defaultBanner,
             item: ieGold,
@@ -62,33 +65,37 @@ export const iconEffects =
 
 export const backgrounds =
     {
-        type: "backgrounds",
         items: [
             {
+                type: "background",
                 name: "Road",
                 template: null,
                 item: bgRoad,
                 price: 200
             },
             {
+                type: "background",
                 name: "Glittering",
                 template: null,
                 item: bgGlittering,
                 price: 200
             },
             {
+                type: "background",
                 name: "Stars",
                 template: null,
                 item: bgStars,
                 price: 200
             },
             {
+                type: "background",
                 name: "Plants",
                 template: null,
                 item: bgPlants,
                 price: 200
             },
             {
+                type: "background",
                 name: "Abstract",
                 template: null,
                 item: bgAbstract,
@@ -99,15 +106,16 @@ export const backgrounds =
 
 export const weeklySpecials =
     {
-        type: "weeklySpecials",
         items: [
             {
+                type: "background",
                 name: "Glittering",
                 template: null,
                 item: bgGlittering,
                 price: 100
             },
             {
+                type: "background",
                 name: "Road",
                 template: null,
                 item: bgRoad,

@@ -7,7 +7,7 @@ import {
     ADD_FEATURED_PLATFORM,
     DELETE_FEATURED_PLATFORM,
 } from '../cache/mutations';
-import { Link, Redirect, useParams, useLocation } from 'react-router-dom';
+import { Link, Redirect, useParams, useLocation, useHistory } from 'react-router-dom';
 import QuizCard from '../components/QuizCard';
 import { AuthContext } from '../context/auth';
 import { useState, useContext, createRef, useEffect } from 'react';
@@ -32,6 +32,7 @@ export default function AccountPage(props) {
 
     let { userId } = useParams();
     let isOwner = false;
+    let history = useHistory();
 
     const [firstQueryDone, setFirstQueryDone] = React.useState(false);
     const [page, setPage] = useState('user');
@@ -191,12 +192,10 @@ export default function AccountPage(props) {
 
     // If the user is previewing an item
     let preview = false
-    let itemType = ''
-    let item = ''
+    let itemData = ''
     if (location.state !== undefined){
         preview = true
-        itemType = location.state.itemType
-        item = location.state.item
+        itemData = location.state.item
     }
 
     const [updateUser] = useMutation(UPDATE_USER, {
@@ -310,8 +309,6 @@ export default function AccountPage(props) {
                     newFeaturedPlatformId: chosenFeaturedPlatform._id,
                 },
             });
-
-            console.log(data);
         }
 
         setChosenFeaturedPlatform(null);
@@ -377,8 +374,22 @@ export default function AccountPage(props) {
                     ) : (
                         <Box position='absolute' left='-150px' zIndex="2">
                             {preview ? (
-                            <Link to="/shoppingpage">
-                            Back to Shop</Link>
+                            <Button 
+                                colorScheme="blue"
+                                _hover={{cursor:"pointer"}} 
+                                _focus={{border:"none"}}
+                                onClick={() => 
+                                    history.push({
+                                        pathname: '/shoppingpage',
+                                        state: {
+                                            item: itemData,
+                                            page: location.state.prevSection,
+                                            pageNum: location.state.prevPageNum
+                                        } 
+                                    })}
+                                >
+                                Back to Shop
+                            </Button>
                             ) : 
                             <Button onClick={() => toggleEditPage(true)}>
                                 Update Page
@@ -390,7 +401,7 @@ export default function AccountPage(props) {
 
                  {/* BANNER EFFECT */}
                 <Image
-                    src={ preview && itemType === "bannerEffects" ? item : null }
+                    src={ preview && itemData.type === "bannerEffect" ? itemData.item : null }
                     w="100%"
                     h='28vh'
                     minH='200px'
@@ -404,7 +415,7 @@ export default function AccountPage(props) {
                     pos='relative'
                     bgImage={
                         "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" + 
-                        (preview && itemType === "backgrounds" ? item : banner_src) +
+                        (preview && itemData.type === "background" ? itemData.item : banner_src) +
                         "')"
                     }    
                     bgSize='cover'
@@ -428,7 +439,7 @@ export default function AccountPage(props) {
                         >
                             <Image
                                 className='squareimage'
-                                src={ preview && itemType === "iconEffects" ? item : null }
+                                src={ preview && itemData.type === "iconEffect" ? itemData.item : null }
                                 objectFit='cover'
                                 borderRadius='50%'
                             />

@@ -193,7 +193,7 @@ export default function AccountPage(props) {
     // If the user is previewing an item
     let preview = false
     let itemData = ''
-    if (location.state !== undefined){
+    if (location.state !== undefined && location.state.item !== undefined){
         preview = true
         itemData = location.state.item
     }
@@ -376,7 +376,6 @@ export default function AccountPage(props) {
                             {preview ? (
                             <Button 
                                 colorScheme="blue"
-                                _hover={{cursor:"pointer"}} 
                                 _focus={{border:"none"}}
                                 onClick={() => 
                                     history.push({

@@ -1,7 +1,7 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import { BsShopWindow } from "react-icons/bs"
+import { BsShopWindow, BsFillCartFill } from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
@@ -105,7 +105,7 @@ export default function Navbar() {
     }
 
     return(
-        <Box w="100%" h="55px" position='sticky' top='0' zIndex='9999' bgColor="red.900">
+        <Box w="100%" h="55px" position='sticky' top='0' zIndex='99' bgColor="red.900">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
                 {/* RETURN TO HOMEPAGE */}
                 <Text
@@ -167,31 +167,31 @@ export default function Navbar() {
                 <HStack overflow="hidden">
                     <Box w='5%' />
                     {/* CATEGORIES */}
-                    <Link to='/categorypage'>
+                    {/* <Link to='/categorypage'>
                         <Text className="disable-select" fontSize='105%' color='white' fontWeight='medium'>
                             Categories
                         </Text>
-                    </Link>
+                    </Link> */}
                     <Spacer />
-
-                    <Link to="/shoppingpage"> 
-                        <Icon as={BsShopWindow} color="white"></Icon>
-                    </Link>
+                    
+                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push("/shoppingpage")} _hover={{cursor:"pointer"}}>
+                        <Icon as={BsFillCartFill} mr={2} pos="relative" top={-0.5} />
+                        Shop
+                    </Text>
                     
                     <Spacer />
-
-                    {/* USER NAME */}
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" fontWeight="medium" _hover={{cursor:"pointer"}}> {username} </Text> 
-
-                    {/* PROFILE PICTURE */}
-                    <Box className='squareimage_container' w="8%" minW="30px"> 
-                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="2px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
-                    </Box>
-
-                    <Flex direction="row">
+                    <Flex direction="row" pr={10}>
                         <Image src={coin} h="20px" w="20px" position="relative" top="3px"></Image>
                         <Text fontSize="16px" position="relative" color="white" left="6px" top="1px">{currency}</Text>
                     </Flex>
+
+                    {/* USER NAME */}
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
+
+                    {/* PROFILE PICTURE */}
+                    <Box className='squareimage_container' w="8%" minW="30px"> 
+                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="1.9px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
+                    </Box>
 
                     <Box w='1%' />
 

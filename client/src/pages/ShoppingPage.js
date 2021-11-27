@@ -1,4 +1,4 @@
-import { Box, Grid, Text, Image, Center, Button, HStack, Icon, ButtonGroup, Avatar, Stack } from '@chakra-ui/react';
+import { Box, Grid, Text, Image, Center, Button, HStack, Icon, ButtonGroup, Avatar, Spinner } from '@chakra-ui/react';
 import ShopItemCard from '../components/ShoppingPage/ShopItemCard'
 import treeshop from '../images/treeshop.png'
 import coin from '../images/coin.png'
@@ -6,10 +6,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import React, { useState, useContext, useEffect} from 'react';
 import '../styles/ShoppingPage.css';
-import { bannerEffects, iconEffects, backgrounds, weeklySpecials } from '../components/ShoppingPage/itemData'
 
 import { useQuery } from '@apollo/client';
-import {  GET_USER } from '../cache/queries';
+import { GET_SHOP_ITEMS } from '../cache/queries';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { BsBookmarkStarFill, BsImageFill, BsPersonCircle, BsStars } from 'react-icons/bs';
 
@@ -21,11 +20,6 @@ export default function ShoppingPage() {
     const [pageNum, setPageNum] = useState(0);
     const [showPurchaseScreen, setShowPurchaseScreen] = useState(false)
     const [itemToPurchase, setItemToPurchase] = useState(null)
-
-    const numBannerPages = Math.ceil(bannerEffects.items.length/4)
-    const numIconPages = Math.ceil(iconEffects.items.length/4)
-    const numBackgroundPages = Math.ceil(backgrounds.items.length/4)
-    const numSpecialPages = Math.ceil(weeklySpecials.items.length/4)
 
     // Maps out information needed for the header sections at the top
     const headerSections = [
@@ -63,22 +57,40 @@ export default function ShoppingPage() {
     }, [])
 
 
-    let coins = (user === null ? null : user.currency)
-    // const {
-    //     loading,
-    //     error,
-    //     data: { getUser: userData } = {},
-    // } = useQuery(GET_USER, {
-    //     skip: !user,
-    //     fetchPolicy: 'cache-and-network',
-    //     onError(err) {
-    //         console.log(JSON.stringify(err, null, 2));
-    //     },
-    //     onCompleted({ getUser: userData }) {
-    //         username = userData.displayName;
-    //     },
-    // });
-    
+    const shopItems = useQuery(GET_SHOP_ITEMS, { fetchPolicy: 'cache-and-network' })
+    const loading = shopItems.loading
+    const error = shopItems.error
+
+    // Loading Screen
+    if (loading) {
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
+    }
+
+    // Error Screen
+    if (error) {
+        return (
+            <Center>
+                <Text fontSize="3vw" fontWeight="thin"> Sorry, something went wrong </Text>
+            </Center>
+        );
+    }
+
+    // Get item arrays for each section
+    const bannerEffects = shopItems.data.getShopItems[0]
+    const iconEffects = shopItems.data.getShopItems[1]
+    const backgrounds = shopItems.data.getShopItems[2]
+    const weeklySpecials = shopItems.data.getShopItems[3]
+
+    const numBannerPages = Math.ceil(bannerEffects.length/4)
+    const numIconPages = Math.ceil(iconEffects.length/4)
+    const numBackgroundPages = Math.ceil(backgrounds.length/4)
+    const numSpecialPages = Math.ceil(weeklySpecials.length/4)
+
+
     function totalPageCount(){
         if (page === 'bannerEffects') return numBannerPages;
         if (page === 'iconEffects') return numIconPages;
@@ -133,7 +145,7 @@ export default function ShoppingPage() {
         return (
             <Box>
                 <Grid ml="4%" mr="4%" templateColumns="1fr 1fr" alignItems="center" justifyContent="center">
-                    {itemArr.items.slice(startIndex, endIndex).map((item, key) => {
+                    {itemArr.slice(startIndex, endIndex).map((item, key) => {
                         numItemsShowing++
 
                         return (

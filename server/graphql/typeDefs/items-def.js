@@ -3,11 +3,20 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
     type Item {
         _id: ID!
-        category: String!
+        type: String!
         name: String!
-        image: String
+        template: String
+        item: String
         price: Int!
         weeklySpecial: Boolean
+    }
+
+    extend type Query {
+        getShopItems: [[Item]]
+    }
+
+    extend type Mutation {
+        purchaseItem(userId: ID!): User
     }
 
 `;

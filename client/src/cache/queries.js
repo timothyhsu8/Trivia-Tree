@@ -332,3 +332,17 @@ export const SEARCH_USERS = gql`
         }
     }
 `;
+
+export const GET_SHOP_ITEMS = gql`
+    {
+        getShopItems {
+            _id
+            type
+            name
+            template
+            item
+            price
+            weeklySpecial
+        }
+    }
+`;

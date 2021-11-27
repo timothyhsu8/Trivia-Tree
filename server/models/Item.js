@@ -2,7 +2,7 @@ const { model, Schema } = require('mongoose');
 
 const itemSchema = new Schema(
     {
-        category: {
+        type: {
             type: String,
             required: true,
         },
@@ -10,8 +10,10 @@ const itemSchema = new Schema(
             type: String,
             required: true,
         },
-        image: {
-            //another image type is string for now
+        template: {
+            type: String,
+        },
+        item: {
             type: String,
         },
         price: {

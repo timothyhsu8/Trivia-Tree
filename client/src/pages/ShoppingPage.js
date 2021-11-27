@@ -1,25 +1,39 @@
-import { Box, Grid, Text, Image, Center, Button, HStack, Icon, ButtonGroup, Avatar, Spinner } from '@chakra-ui/react';
+import { Box, Grid, Text, Image, Center, Button, HStack, Icon, ButtonGroup, Avatar, Spinner,
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, } from '@chakra-ui/react';
 import ShopItemCard from '../components/ShoppingPage/ShopItemCard'
 import treeshop from '../images/treeshop.png'
 import coin from '../images/coin.png'
 import { useHistory, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
-import React, { useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import '../styles/ShoppingPage.css';
 
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_SHOP_ITEMS } from '../cache/queries';
+import { PURCHASE_ITEM } from '../cache/mutations'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { BsBookmarkStarFill, BsImageFill, BsPersonCircle, BsStars } from 'react-icons/bs';
 
 export default function ShoppingPage() {
     let history = useHistory();
+
+    const cancelRef = useRef()
     const location = useLocation();
     const { user } = useContext(AuthContext);
     const [page, setPage] = useState('bannerEffects');
     const [pageNum, setPageNum] = useState(0);
     const [showPurchaseScreen, setShowPurchaseScreen] = useState(false)
     const [itemToPurchase, setItemToPurchase] = useState(null)
+    const [showPurchaseConfirmation, setShowPurchaseConfirmation] = useState(false)
+
+    const [dialogue, setDialogue] = useState(
+        {
+            header: "",
+            body: "",
+            reloadOnClose: false
+        }
+    )
+    const [showDialogue, setShowDialogue] = useState(false) // Used for displaying various alert messages
 
     // Maps out information needed for the header sections at the top
     const headerSections = [
@@ -44,6 +58,25 @@ export default function ShoppingPage() {
             icon: BsBookmarkStarFill,
         }
     ]
+
+    const [purchaseItem] = useMutation(PURCHASE_ITEM, {
+        onCompleted() {
+            setDialogue({
+                header: "Purchase Successful",
+                body: "Item purchased successfully.",
+                reloadOnClose: true
+            })
+            setShowDialogue(true)
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    })
+    
+    // Reloads the page after a succesful purchase
+    function reloadPage() {
+        history.go(0)
+    }
 
     // Only runs once when the page is first loaded
     useEffect(() => {
@@ -85,10 +118,148 @@ export default function ShoppingPage() {
     const backgrounds = shopItems.data.getShopItems[2]
     const weeklySpecials = shopItems.data.getShopItems[3]
 
+    // Get total pages for each item array
     const numBannerPages = Math.ceil(bannerEffects.length/4)
     const numIconPages = Math.ceil(iconEffects.length/4)
     const numBackgroundPages = Math.ceil(backgrounds.length/4)
     const numSpecialPages = Math.ceil(weeklySpecials.length/4)
+
+    // Makes sure user is logged in
+    if (user === null || user === "NoUser")
+        return
+
+    return (
+        <Box>
+            {/*Shop Banner*/}
+            <Center>
+                <Image pt={5} src={treeshop} alt={"Tree Shop Banner"} />
+            </Center>
+            
+            {
+                // Render Purchase Screen
+                showPurchaseScreen && itemToPurchase !== null ? 
+                <Box>
+                    <Grid templateColumns="5fr 4fr">
+                        <Box>
+                            <Box w="100%" minW={500} mt="10%" pos="relative" display="flex" justifyContent="center">
+                                <Image pos="absolute" w="70%" h="30vh" src={itemToPurchase.item} fit={itemToPurchase.type === "background" ? "cover" : "" } borderTopRadius={itemToPurchase.type === "background" ? "5" : "0"} />
+                                <Image w="70%" h="30vh" fit="cover" borderRadius={5} src={itemToPurchase.template} />
+                            </Box>
+                            <Center>
+                                <Button variant="outline" colorScheme="blue" mt={5} size="lg"  _focus={{border:"blue.400"}} onClick={() => previewItem()}> Preview Item </Button>
+                            </Center>
+                        </Box>
+
+                        {/* Name, Price, Purchase Buttons */}
+                        <Box>
+                            <Box mt="12%">
+                                <Text fontSize="300%" fontWeight="thin"> {itemToPurchase.name} </Text>
+                                <Text fontSize="200%" fontWeight="thin"> Banner Effect </Text>
+
+                                <HStack mt="2%">
+                                    <Avatar size="md" src={coin}/>
+                                    <Text fontSize="150%" fontWeight="thin"> {itemToPurchase.price} </Text>
+                                </HStack>
+
+                                <ButtonGroup mt="6%" spacing={10}>
+                                    <Button size="lg" colorScheme="gray" bgColor="gray.200" 
+                                        _hover={{bgColor: "gray.300"}}
+                                        _active={{bgColor: "gray.400"}}
+                                        _focus={{border:"none"}}
+                                        onClick={() => setShowPurchaseScreen(!showPurchaseScreen)}
+                                    > 
+                                        Back To Shop 
+                                    </Button>
+                                    <Button size="lg" colorScheme="blue" 
+                                        _focus={{border:"none"}} 
+                                        onClick={() => setShowPurchaseConfirmation(true)}
+                                    > 
+                                        Purchase 
+                                    </Button>
+                                </ButtonGroup>
+                            </Box>
+                        </Box>
+                    </Grid>
+                </Box>
+                :
+                // Render Shop Items
+                <Box>
+                    {/* Navigate between categories (Header Buttons) */}
+                    <Grid w='100%' h='6vh' minH='50px' templateColumns='repeat(4, 1fr)'>
+                        {headerSections.map((headerSection, key) => {
+                            return (
+                                <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
+                                    <Text
+                                        w='100%'
+                                        fontSize='130%'
+                                        fontWeight="thin"
+                                        textColor={page === headerSection.pageId ? 'blue.500' : 'gray.700'}
+                                        textAlign="center"
+                                        transition=".1s linear"
+                                        whiteSpace="nowrap"
+                                        _focus={{ boxShadow:'none' }}
+                                        _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
+                                        onClick={() => {
+                                            setPage(headerSection.pageId)
+                                            goToPage(0)
+                                        }}
+                                    >
+                                        <Icon as={headerSection.icon} pos="relative" top={-0.5}  mr={2} />
+                                        {headerSection.pageName}
+                                    </Text>
+                                    {/* <Box h="4px" mt="3%" bgColor={page === headerSection.pageId  ? "blue.500" : "gray.400" }  transition="0.15s linear"/> */}
+                                </Box>
+                            )
+                        } )}
+                    </Grid>
+
+                    <Center>
+                        <Box w="90%" h="0.75px" bgColor="gray.300" />    
+                    </Center>
+
+                    {/* Main Body */}
+                    <Box>
+                        <Grid templateColumns="1fr 15fr 1fr">
+                            {/* Left Arrow */}
+                            {
+                                pageNum === 0 ? <Box /> :
+                                    <Box onClick={() => setPageNum(pageNum - 1)} transition=".15s linear" _hover={{cursor:"pointer", bgColor:"gray.100", transition:".15s linear"}}
+                                        display="flex" flexDir="column" justifyContent="center"> 
+                                        <Center>
+                                            <Icon as={ChevronLeftIcon} boxSize={16}/>
+                                        </Center>
+                                    </Box>
+                            }
+                            
+                            {/* Shop Items */}
+                            {renderPage()}
+
+                            {/* Right Arrow */}
+                            {
+                                pageNum === totalPageCount() - 1 ? <Box /> :
+                                    <Box onClick={() => setPageNum(pageNum + 1) }  transition=".15s linear" _hover={{cursor:"pointer", bgColor:"gray.100", transition:".15s linear"}}
+                                        display="flex" flexDir="column" justifyContent="center"> 
+                                        <Center>
+                                            <Icon as={ChevronRightIcon} boxSize={16} />
+                                        </Center>
+                                    </Box>
+                            }
+                        </Grid>
+
+                        {/* Page Buttons */}
+                        <Center>
+                            <HStack mt={5}>
+                                {pageButtons(pageNum, totalPageCount())}
+                            </HStack>
+                        </Center>
+                    </Box>
+                </Box>
+            }
+
+            {renderPurchaseConfirmation()}
+            {renderDialogue()}
+        </Box>
+    )
 
 
     function totalPageCount(){
@@ -193,6 +364,7 @@ export default function ShoppingPage() {
         setShowPurchaseScreen(true)
     }
 
+    // Takes user to their account page to preview the item
     function previewItem() {
         history.push({
             pathname: '/previewpage/' + user._id + '/' + itemToPurchase.type + '=' + 0,
@@ -204,132 +376,103 @@ export default function ShoppingPage() {
         })
     }
 
-    return (
-        <Box>
-            {/*Shop Banner*/}
+    // Handles the actual purchasing of an item once the purchase is confirmed
+    function handlePurchase() {
+        // If user doesn't have funds, don't let them purchase
+        if (user.currency < itemToPurchase.price) {
+            setDialogue({
+                header: "Purchase Unsuccessful",
+                body: "Sorry, you cannot afford this item.",
+                reloadOnClose: false
+            })
+
+            setShowDialogue(true)
+            setShowPurchaseConfirmation(false)
+            return
+        }
+        
+        // Purchase Item
+        purchaseItem({
+            variables: {
+                userId: user._id,
+                itemId: itemToPurchase._id
+            },
+        })
+        setShowPurchaseConfirmation(false)
+    }
+
+    // Shows dialog for "Are you sure you want to purchase this item?"
+    function renderPurchaseConfirmation() {
+        return (
             <Center>
-                <Image pt={5} src={treeshop} alt={"Tree Shop Banner"} />
+                <AlertDialog
+                    isOpen={showPurchaseConfirmation}
+                    leastDestructiveRef={cancelRef}
+                    onClose={() => setShowPurchaseConfirmation(false)}
+                >
+                    <AlertDialogOverlay>
+                        <AlertDialogContent top="30%">
+                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                Purchase this item?
+                            </AlertDialogHeader>
+
+                            <AlertDialogFooter>
+                                <Button 
+                                    ref={cancelRef} 
+                                    onClick={() => setShowPurchaseConfirmation(false)}
+                                    _focus={{border:"none"}}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button colorScheme="yellow" onClick={() => handlePurchase()} ml={3} _focus={{border:"none"}}>
+                                    Purchase
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialogOverlay>
+                </AlertDialog>
             </Center>
-            
-            {
-                // Render Purchase Screen
-                showPurchaseScreen && itemToPurchase !== null ? 
-                <Box>
-                    <Grid templateColumns="5fr 4fr">
-                        <Box>
-                            <Box w="100%" minW={500} mt="10%" pos="relative" display="flex" justifyContent="center">
-                                <Image pos="absolute" w="70%" h="30vh" src={itemToPurchase.item} fit={itemToPurchase.type === "background" ? "cover" : "" } borderTopRadius={itemToPurchase.type === "background" ? "5" : "0"} />
-                                <Image w="70%" h="30vh" fit="cover" borderTopRadius={5} src={itemToPurchase.template} />
-                            </Box>
-                            <Center>
-                                <Button variant="outline" colorScheme="blue" mt={5} size="lg"  _focus={{border:"blue.400"}} onClick={() => previewItem()}> Preview Item </Button>
-                            </Center>
-                        </Box>
+        )
+    }
 
-                        {/* Name, Price, Purchase Buttons */}
-                        <Box>
-                            <Box mt="12%">
-                                <Text fontSize="300%" fontWeight="thin"> {itemToPurchase.name} </Text>
-                                <Text fontSize="200%" fontWeight="thin"> Banner Effect </Text>
+    // Show dialogue for 'Item Unffordable' and 'Purchase Successful'
+    function renderDialogue() {
+        return (
+            <Center>
+                <AlertDialog
+                    isOpen={showDialogue}
+                    leastDestructiveRef={cancelRef}
+                    onClose={() => {
+                        setShowDialogue(false)
+                        reloadPage()
+                    }}
+                >
+                    <AlertDialogOverlay>
+                        <AlertDialogContent top="30%">
+                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                {dialogue.header}
+                            </AlertDialogHeader>
 
-                                <HStack mt="2%">
-                                    <Avatar size="md" src={coin}/>
-                                    <Text fontSize="150%" fontWeight="thin"> {itemToPurchase.price} </Text>
-                                </HStack>
+                            <AlertDialogBody>
+                                {dialogue.body}
+                            </AlertDialogBody>
 
-                                <ButtonGroup mt="6%" spacing={10}>
-                                    <Button size="lg" colorScheme="gray" bgColor="gray.200" 
-                                        _hover={{bgColor: "gray.300"}}
-                                        _active={{bgColor: "gray.400"}}
-                                        _focus={{border:"none"}}
-                                        onClick={() => setShowPurchaseScreen(!showPurchaseScreen)}
-                                    > 
-                                        Back To Shop 
-                                    </Button>
-                                    <Button size="lg" colorScheme="blue" 
-                                        _focus={{border:"none"}} 
-                                        onClick={() => setShowPurchaseScreen(!showPurchaseScreen)}
-                                    > 
-                                        Purchase 
-                                    </Button>
-                                </ButtonGroup>
-                            </Box>
-                        </Box>
-                    </Grid>
-                </Box>
-                :
-                // Render Shop Items
-                <Box>
-                    {/* Navigate between categories (Header Buttons) */}
-                    <Grid w='100%' h='6vh' minH='50px' templateColumns='repeat(4, 1fr)'>
-                        {headerSections.map((headerSection, key) => {
-                            return (
-                                <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
-                                    <Text
-                                        w='100%'
-                                        fontSize='125%'
-                                        textColor={page === headerSection.pageId ? 'blue.500' : 'gray.700'}
-                                        textAlign="center"
-                                        transition=".1s linear"
-                                        whiteSpace="nowrap"
-                                        _focus={{ boxShadow:'none' }}
-                                        _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
-                                        onClick={() => {
-                                            setPage(headerSection.pageId)
-                                            goToPage(0)
-                                        }}
-                                    >
-                                        <Icon as={headerSection.icon} pos="relative" top={-0.5}  mr={2} />
-                                        {headerSection.pageName}
-                                    </Text>
-                                    {/* <Box h="4px" mt="3%" bgColor={page === headerSection.pageId  ? "blue.500" : "gray.400" }  transition="0.15s linear"/> */}
-                                </Box>
-                            )
-                        } )}
-                    </Grid>
-
-                    <Center>
-                        <Box w="90%" h="0.75px" bgColor="gray.300" />    
-                    </Center>
-
-                    {/* Main Body */}
-                    <Box>
-                        <Grid templateColumns="1fr 15fr 1fr">
-                            {/* Left Arrow */}
-                            {
-                                pageNum === 0 ? <Box /> :
-                                    <Box onClick={() => setPageNum(pageNum - 1)} transition=".15s linear" _hover={{cursor:"pointer", bgColor:"gray.100", transition:".15s linear"}}
-                                        display="flex" flexDir="column" justifyContent="center"> 
-                                        <Center>
-                                            <Icon as={ChevronLeftIcon} boxSize={16}/>
-                                        </Center>
-                                    </Box>
-                            }
-                            
-                            {/* Shop Items */}
-                            {renderPage()}
-
-                            {/* Right Arrow */}
-                            {
-                                pageNum === totalPageCount() - 1 ? <Box /> :
-                                    <Box onClick={() => setPageNum(pageNum + 1) }  transition=".15s linear" _hover={{cursor:"pointer", bgColor:"gray.100", transition:".15s linear"}}
-                                        display="flex" flexDir="column" justifyContent="center"> 
-                                        <Center>
-                                            <Icon as={ChevronRightIcon} boxSize={16} />
-                                        </Center>
-                                    </Box>
-                            }
-                        </Grid>
-
-                        {/* Page Buttons */}
-                        <Center>
-                            <HStack mt={5}>
-                                {pageButtons(pageNum, totalPageCount())}
-                            </HStack>
-                        </Center>
-                    </Box>
-                </Box>
-            }
-        </Box>
-    )
+                            <AlertDialogFooter>
+                                <Button 
+                                    ref={cancelRef} 
+                                    onClick={() => {
+                                        setShowDialogue(false)
+                                        reloadPage()
+                                    }}
+                                    _focus={{border:"none"}}
+                                >
+                                    Close
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialogOverlay>
+                </AlertDialog>
+            </Center>
+        )
+    }
 }

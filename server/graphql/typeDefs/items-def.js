@@ -16,7 +16,7 @@ module.exports = gql`
     }
 
     extend type Mutation {
-        purchaseItem(userId: ID!): User
+        purchaseItem(userId: ID!, itemId: ID!): Item
     }
 
 `;

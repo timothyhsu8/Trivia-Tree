@@ -192,8 +192,17 @@ export const DELETE_USER = gql`
 
 export const RATE_QUIZ = gql`
     mutation ($quizId: ID!, $rating: Int!) {
-        rateQuiz(quizId: $quizId, rating: $rating){
+        rateQuiz(quizId: $quizId, rating: $rating) {
             rating
+        }
+    }
+`;
+
+export const PURCHASE_ITEM = gql`
+    mutation ($userId: ID!, $itemId: ID!) {
+        purchaseItem(userId: $userId, itemId: $itemId) {
+            _id
+            name
         }
     }
 `;

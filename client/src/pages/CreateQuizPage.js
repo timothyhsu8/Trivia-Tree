@@ -30,12 +30,12 @@ function CreateQuizPage(props) {
     const [quizQuestions, setQuizQuestions] = useState([
         {
             question: '',
+            questionType: 1,
             answerChoices: [
-                { choice: '', id: uuidv4() },
-                { choice: '', id: uuidv4() },
+                { choice: '', id: uuidv4(), answer: false },
+                { choice: '', id: uuidv4(), amswer: false },
             ],
-            answer: '',
-            answerId: null,
+            answer: [], //this will be populated at submission
             id: uuidv4(),
         },
     ]);
@@ -54,7 +54,7 @@ function CreateQuizPage(props) {
         hiddenImageInput = createRef(null);
         img = 'Default Image';
         setInitialDone(true);
-    }, [])
+    }, []);
 
     //Have to create a ref for the initial question manually
 
@@ -96,12 +96,12 @@ function CreateQuizPage(props) {
             ...prevQuizQuestions,
             {
                 question: '',
+                questionType: 1,
                 answerChoices: [
-                    { choice: '', id: uuidv4() },
-                    { choice: '', id: uuidv4() },
+                    { choice: '', id: uuidv4(), answer: false },
+                    { choice: '', id: uuidv4(), amswer: false },
                 ],
-                answer: '',
-                answerId: null,
+                answer: [], //this will be populated at submission
                 id: id,
             },
         ]);
@@ -116,27 +116,51 @@ function CreateQuizPage(props) {
         );
     }
 
+    function updateQuestionType(value, questionId) {
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.map((quizQuestion) => {
+                if (quizQuestion.id === questionId) {
+                    let tempQuestion = { ...quizQuestion, questionType: value };
+                    if (value === 1) {
+                        let foundAnswer = false;
+                        tempQuestion.answerChoices =
+                            tempQuestion.answerChoices.map((answerChoice) => {
+                                if (answerChoice.answer && !foundAnswer) {
+                                    foundAnswer = true;
+                                    return answerChoice;
+                                } else {
+                                    return {
+                                        ...answerChoice,
+                                        answer: false,
+                                    };
+                                }
+                            });
+                    }
+                    return tempQuestion;
+                } else {
+                    return quizQuestion;
+                }
+            })
+        );
+    }
+
     function updateAnswerChoice(value, questionId, choiceId) {
         setQuizQuestions((prevQuizQuestions) =>
             prevQuizQuestions.map((quizQuestion) => {
                 if (quizQuestion.id === questionId) {
-                    let tempQuestion;
-                    if (
-                        value.trim() === '' &&
-                        quizQuestion.answerId === choiceId
-                    ) {
-                        tempQuestion = {
-                            ...quizQuestion,
-                            answerId: null,
-                            answer: '',
-                        };
-                    } else {
-                        tempQuestion = { ...quizQuestion };
-                    }
+                    let tempQuestion = { ...quizQuestion };
                     tempQuestion.answerChoices = tempQuestion.answerChoices.map(
                         (answerChoice) => {
                             if (answerChoice.id === choiceId) {
-                                return { ...answerChoice, choice: value };
+                                if (value.trim() === '') {
+                                    return {
+                                        ...answerChoice,
+                                        choice: value,
+                                        answer: false,
+                                    };
+                                } else {
+                                    return { ...answerChoice, choice: value };
+                                }
                             } else {
                                 return answerChoice;
                             }
@@ -157,7 +181,7 @@ function CreateQuizPage(props) {
                     let tempQuestion = { ...quizQuestion };
                     tempQuestion.answerChoices = [
                         ...quizQuestion.answerChoices,
-                        { choice: '', id: uuidv4() },
+                        { choice: '', id: uuidv4(), answer: false },
                     ];
                     return tempQuestion;
                 } else {
@@ -171,16 +195,7 @@ function CreateQuizPage(props) {
         setQuizQuestions((prevQuizQuestions) =>
             prevQuizQuestions.map((quizQuestion) => {
                 if (quizQuestion.id === questionId) {
-                    let tempQuestion;
-                    if (quizQuestion.answerId === choiceId) {
-                        tempQuestion = {
-                            ...quizQuestion,
-                            answerId: null,
-                            answer: '',
-                        };
-                    } else {
-                        tempQuestion = { ...quizQuestion };
-                    }
+                    let tempQuestion = { ...quizQuestion };
                     tempQuestion.answerChoices =
                         tempQuestion.answerChoices.filter(
                             (answerChoice) => answerChoice.id !== choiceId
@@ -198,11 +213,28 @@ function CreateQuizPage(props) {
             setQuizQuestions((prevQuizQuestions) =>
                 prevQuizQuestions.map((quizQuestion) => {
                     if (quizQuestion.id === questionId) {
-                        return {
-                            ...quizQuestion,
-                            answer: choice,
-                            answerId: choiceId,
-                        };
+                        let tempQuestion = { ...quizQuestion };
+                        tempQuestion.answerChoices =
+                            tempQuestion.answerChoices.map((answerChoice) => {
+                                if (answerChoice.id === choiceId) {
+                                    return {
+                                        ...answerChoice,
+                                        answer: !answerChoice.answer,
+                                    };
+                                } else {
+                                    if (quizQuestion.questionType === 1) {
+                                        return {
+                                            ...answerChoice,
+                                            answer: false,
+                                        };
+                                    } else if (
+                                        quizQuestion.questionType === 2
+                                    ) {
+                                        return answerChoice;
+                                    }
+                                }
+                            });
+                        return tempQuestion;
                     } else {
                         return quizQuestion;
                     }
@@ -248,9 +280,15 @@ function CreateQuizPage(props) {
         });
         modifiedQuizQuestions.forEach((question) => {
             delete question.id;
-            delete question.answerId;
+            question.answer = question.answerChoices.flatMap((choice) => {
+                if (choice.answer) {
+                    return choice.choice.trim();
+                } else {
+                    return [];
+                }
+            });
             question.answerChoices = question.answerChoices.map((choice) => {
-                return choice.choice;
+                return choice.choice.trim();
             });
         });
         console.log(modifiedQuizQuestions);
@@ -352,6 +390,7 @@ function CreateQuizPage(props) {
                             questionIndex={questionIndex}
                             updateQuestion={updateQuestion}
                             removeQuestion={removeQuestion}
+                            updateQuestionType={updateQuestionType}
                             updateAnswerChoice={updateAnswerChoice}
                             addAnswerChoice={addAnswerChoice}
                             removeAnswerChoice={removeAnswerChoice}

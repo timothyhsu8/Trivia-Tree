@@ -35,11 +35,10 @@ function EditQuizPage(props) {
         {
             question: '',
             answerChoices: [
-                { choice: '', id: uuidv4() },
-                { choice: '', id: uuidv4() },
+                { choice: '', id: uuidv4(), answer: false },
+                { choice: '', id: uuidv4(), answer: false },
             ],
-            answer: '',
-            answerId: null,
+            answer: [], //this will be populated at submission
             id: uuidv4(),
         },
     ]);
@@ -88,13 +87,13 @@ function EditQuizPage(props) {
             ...prevQuizQuestions,
             {
                 question: '',
+                questionType: 1,
                 answerChoices: [
-                    { choice: '', id: uuidv4() },
-                    { choice: '', id: uuidv4() },
+                    { choice: '', id: uuidv4(), answer: false },
+                    { choice: '', id: uuidv4(), amswer: false },
                 ],
-                answer: '',
-                answerId: null,
-                id: id,
+                answer: [], //this will be populated at submission
+                id: uuidv4(),
             },
         ]);
     }
@@ -108,27 +107,54 @@ function EditQuizPage(props) {
         );
     }
 
+    function updateQuestionType(value, questionId) {
+        setQuizQuestions((prevQuizQuestions) =>
+            prevQuizQuestions.map((quizQuestion) => {
+                if (quizQuestion.id === questionId) {
+                    let tempQuestion = {
+                        ...quizQuestion,
+                        questionType: value,
+                    };
+                    if (value === 1) {
+                        let foundAnswer = false;
+                        tempQuestion.answerChoices =
+                            tempQuestion.answerChoices.map((answerChoice) => {
+                                if (answerChoice.answer && !foundAnswer) {
+                                    foundAnswer = true;
+                                    return answerChoice;
+                                } else {
+                                    return {
+                                        ...answerChoice,
+                                        answer: false,
+                                    };
+                                }
+                            });
+                    }
+                    return tempQuestion;
+                } else {
+                    return quizQuestion;
+                }
+            })
+        );
+    }
+
     function updateAnswerChoice(value, questionId, choiceId) {
         setQuizQuestions((prevQuizQuestions) =>
             prevQuizQuestions.map((quizQuestion) => {
                 if (quizQuestion.id === questionId) {
-                    let tempQuestion;
-                    if (
-                        value.trim() === '' &&
-                        quizQuestion.answerId === choiceId
-                    ) {
-                        tempQuestion = {
-                            ...quizQuestion,
-                            answerId: null,
-                            answer: '',
-                        };
-                    } else {
-                        tempQuestion = { ...quizQuestion };
-                    }
+                    let tempQuestion = { ...quizQuestion };
                     tempQuestion.answerChoices = tempQuestion.answerChoices.map(
                         (answerChoice) => {
                             if (answerChoice.id === choiceId) {
-                                return { ...answerChoice, choice: value };
+                                if (value.trim() === '') {
+                                    return {
+                                        ...answerChoice,
+                                        choice: value,
+                                        answer: false,
+                                    };
+                                } else {
+                                    return { ...answerChoice, choice: value };
+                                }
                             } else {
                                 return answerChoice;
                             }
@@ -149,7 +175,7 @@ function EditQuizPage(props) {
                     let tempQuestion = { ...quizQuestion };
                     tempQuestion.answerChoices = [
                         ...quizQuestion.answerChoices,
-                        { choice: '', id: uuidv4() },
+                        { choice: '', id: uuidv4(), answer: false },
                     ];
                     return tempQuestion;
                 } else {
@@ -163,16 +189,7 @@ function EditQuizPage(props) {
         setQuizQuestions((prevQuizQuestions) =>
             prevQuizQuestions.map((quizQuestion) => {
                 if (quizQuestion.id === questionId) {
-                    let tempQuestion;
-                    if (quizQuestion.answerId === choiceId) {
-                        tempQuestion = {
-                            ...quizQuestion,
-                            answerId: null,
-                            answer: '',
-                        };
-                    } else {
-                        tempQuestion = { ...quizQuestion };
-                    }
+                    let tempQuestion = { ...quizQuestion };
                     tempQuestion.answerChoices =
                         tempQuestion.answerChoices.filter(
                             (answerChoice) => answerChoice.id !== choiceId
@@ -190,11 +207,28 @@ function EditQuizPage(props) {
             setQuizQuestions((prevQuizQuestions) =>
                 prevQuizQuestions.map((quizQuestion) => {
                     if (quizQuestion.id === questionId) {
-                        return {
-                            ...quizQuestion,
-                            answer: choice,
-                            answerId: choiceId,
-                        };
+                        let tempQuestion = { ...quizQuestion };
+                        tempQuestion.answerChoices =
+                            tempQuestion.answerChoices.map((answerChoice) => {
+                                if (answerChoice.id === choiceId) {
+                                    return {
+                                        ...answerChoice,
+                                        answer: !answerChoice.answer,
+                                    };
+                                } else {
+                                    if (quizQuestion.questionType === 1) {
+                                        return {
+                                            ...answerChoice,
+                                            answer: false,
+                                        };
+                                    } else if (
+                                        quizQuestion.questionType === 2
+                                    ) {
+                                        return answerChoice;
+                                    }
+                                }
+                            });
+                        return tempQuestion;
                     } else {
                         return quizQuestion;
                     }
@@ -244,10 +278,16 @@ function EditQuizPage(props) {
             //     question.answerChoices[index] = choice..trim();
             // });
             delete question.id;
-            delete question.answerId;
             delete question.__typename;
+            question.answer = question.answerChoices.flatMap((choice) => {
+                if (choice.answer) {
+                    return choice.choice.trim();
+                } else {
+                    return [];
+                }
+            });
             question.answerChoices = question.answerChoices.map((choice) => {
-                return choice.choice;
+                return choice.choice.trim();
             });
         });
         console.log(modifiedQuizQuestions);
@@ -302,16 +342,16 @@ function EditQuizPage(props) {
                 question.answerChoices = question.answerChoices.map(
                     (choice) => {
                         tempId = uuidv4();
-                        if (choice === question.answer[0]) {
-                            question.answerId = tempId;
-                        }
                         return {
                             choice: choice,
                             id: tempId,
+                            answer: question.answer.includes(choice),
                         };
                     }
                 );
+                question.answer = [];
             });
+            console.log(modifiedQuizQuestions);
             setQuizQuestions(modifiedQuizQuestions);
             setIcon(quiz.icon);
             setQuizType(quiz.quizInstant ? 'Instant' : 'Standard');
@@ -416,6 +456,7 @@ function EditQuizPage(props) {
                             questionIndex={questionIndex}
                             updateQuestion={updateQuestion}
                             removeQuestion={removeQuestion}
+                            updateQuestionType={updateQuestionType}
                             updateAnswerChoice={updateAnswerChoice}
                             addAnswerChoice={addAnswerChoice}
                             removeAnswerChoice={removeAnswerChoice}
@@ -748,6 +789,7 @@ const FETCH_QUIZ_QUERY = gql`
                 question
                 answer
                 answerChoices
+                questionType
             }
         }
     }

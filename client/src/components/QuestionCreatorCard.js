@@ -1,5 +1,13 @@
 import React from 'react';
-import { Input, Textarea, Text, Button, HStack } from '@chakra-ui/react';
+import {
+    Input,
+    Textarea,
+    Text,
+    Button,
+    HStack,
+    Box,
+    Select,
+} from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
 
 function QuestionCreatorCard({
@@ -7,6 +15,7 @@ function QuestionCreatorCard({
     questionIndex,
     updateQuestion,
     removeQuestion,
+    updateQuestionType,
     updateAnswerChoice,
     addAnswerChoice,
     removeAnswerChoice,
@@ -21,22 +30,42 @@ function QuestionCreatorCard({
             }}
             ref={questionRef}
         >
-            <div>
+            <Box position='relative'>
                 <Text verticalAlign='middle' display='inline' fontSize='170%'>
                     Question #{questionIndex + 1}
                 </Text>
+                <Select
+                    _hover={{ outline: 'none' }}
+                    _focus={{ outline: 'none' }}
+                    borderColor='black'
+                    borderWidth='2px'
+                    value={quizQuestion.questionType}
+                    onChange={(event) =>
+                        updateQuestionType(
+                            parseInt(event.target.value),
+                            quizQuestion.id
+                        )
+                    }
+                    width='15%'
+                    display='inline-block'
+                    marginLeft='20px'
+                >
+                    <option value={1}>Multiple Choice</option>
+                    <option value={2}>Checkboxes</option>
+                </Select>
                 <BsTrash
                     className='trashCan'
                     style={{
-                        display: 'inline',
-                        verticalAlign: 'middle',
+                        position: 'absolute',
+                        right: '10%',
+                        bottom: '10%',
                         fontSize: '180%',
-                        marginLeft: '20px',
                     }}
                     onClick={() => removeQuestion(quizQuestion.id)}
                 />
-            </div>
+            </Box>
             <Textarea
+                marginTop='20px'
                 value={quizQuestion.question}
                 onChange={(event) => {
                     updateQuestion(event.target.value, quizQuestion.id);
@@ -63,7 +92,7 @@ function QuestionCreatorCard({
                             marginRight='20px'
                             colorScheme='green'
                             background={
-                                quizQuestion.answerId === answerChoice.id &&
+                                answerChoice.answer &&
                                 answerChoice.choice.trim() !== ''
                                     ? 'rgba(124, 252, 0, 0.5)'
                                     : 'transparent'
@@ -88,7 +117,7 @@ function QuestionCreatorCard({
                                 )
                             }
                             backgroundColor={
-                                quizQuestion.answerId === answerChoice.id &&
+                                answerChoice.answer &&
                                 answerChoice.choice.trim() !== ''
                                     ? 'rgba(124, 252, 0, 0.5)'
                                     : 'transparent'
@@ -145,13 +174,16 @@ function areEqual(prevProps, nextProps) {
         prevProps.quizQuestion.question === nextProps.quizQuestion.question &&
         prevProps.quizQuestion.answerChoices.length ===
             nextProps.quizQuestion.answerChoices.length &&
-        prevProps.quizQuestion.answerId === nextProps.quizQuestion.answerId &&
-        prevProps.questionIndex === nextProps.questionIndex;
+        prevProps.questionIndex === nextProps.questionIndex &&
+        prevProps.quizQuestion.questionType ===
+            nextProps.quizQuestion.questionType;
     if (quickStatement) {
         for (let i = 0; i < nextProps.quizQuestion.answerChoices.length; i++) {
             if (
                 prevProps.quizQuestion.answerChoices[i].choice !==
-                nextProps.quizQuestion.answerChoices[i].choice
+                    nextProps.quizQuestion.answerChoices[i].choice ||
+                prevProps.quizQuestion.answerChoices[i].answer !==
+                    nextProps.quizQuestion.answerChoices[i].answer
             ) {
                 return false;
             }

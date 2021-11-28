@@ -15,7 +15,7 @@ export default function PostQuizAnswersCard(props) {
     let question = props.question
     let questionTitle = props.question.question
     let answer = question.answer 
-    if(answer.toString().trim() !== props.answer.toString().trim()) {
+    if(answer.concat().sort().toString().trim() !== props.answer.concat().sort().toString().trim()) {
         color = "red"
     }
     
@@ -42,8 +42,8 @@ export default function PostQuizAnswersCard(props) {
 
                 { showDetails ? 
                 <Box width={["80vw","80vw","80vw","61.2vw"]} h="100px" bg='#D3D3D3' borderRight="1px" borderLeft="1px" borderBottom="1px">  {/* Gradebox */}
-                    <Text color={color} pt="4px" className="answer_text">Your Answer:  {props.answer.join(', ')}</Text>
-                    <Text pt="4px" className="answer_text">Correct Answer: {answer.join(', ')}</Text>
+                    <Text color={color} pt="4px" className="answer_text">Your Answer:  {props.answer.concat().sort().join(', ')}</Text>
+                    <Text pt="4px" className="answer_text">Correct Answer: {answer.concat().sort().join(', ')}</Text>
                 </Box>
                 : null}
 

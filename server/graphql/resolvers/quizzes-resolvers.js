@@ -68,11 +68,10 @@ module.exports = {
                 throw new Error('Quiz title cannot be blank');
             }
 
-            const valid = questions.forEach((question) => {
+            questions.forEach((question) => {
                 if (question.question.trim() === '') {
                     throw new Error('A question cannot be blank');
                 }
-                let answerMatch = false;
 
                 question.answer.forEach((answer) => {
                     if (answer.trim() === '') {
@@ -85,6 +84,8 @@ module.exports = {
                         'A question must have at least two choices'
                     );
                 }
+
+                let answerMatch = false;
                 question.answerChoices.forEach((choice) => {
                     if (choice.trim() === '') {
                         throw new Error('An answer choice cannot be blank');
@@ -291,9 +292,9 @@ module.exports = {
             });
 
             let imageUrl;
-            if (icon === 'No Image') {
+            if (icon === 'Same Image') {
                 imageUrl =
-                    'https://www.atlantawatershed.org/wp-content/uploads/2017/06/default-placeholder.png';
+                    quiz.icon;
             } else {
                 await cloudinary.uploader.upload(icon, (error, result) => {
                     if (error) {

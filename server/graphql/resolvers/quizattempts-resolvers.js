@@ -41,9 +41,26 @@ module.exports = {
       let questionsCorrect = 0; 
 
 
-      for(let i = 0; i < questions.length; i++){
-        if(answerChoices[i][0].trim() === answers[i][0].trim())
-          questionsCorrect++;
+      for (let i = 0; i < questions.length; i++) {
+        if (questions[i].questionType === 1) {
+          if (answerChoices[i][0].trim() === answers[i][0].trim())
+            questionsCorrect++;
+        } else if (questions[i].questionType === 2) {
+          if (answerChoices[i].length === answers[i].length) {
+            let correct = true;
+            // .concat() to not mutate arguments but not sure if this is required
+            const arr1 = answerChoices[i].concat().sort();
+            const arr2 = answers[i].concat().sort();
+            for (let i = 0; i < arr1.length; i++) {
+              if (arr1[i] !== arr2[i]) {
+                correct = false;
+              }
+            }
+            if (correct) {
+              questionsCorrect++;
+            }
+          }
+        }
       }
 
 

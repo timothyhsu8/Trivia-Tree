@@ -57,6 +57,7 @@ export default function QuizTakingPage({}) {
 
     const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: quizId },
+        fetchPolicy: 'cache-and-network'
     });
 
     

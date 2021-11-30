@@ -36,7 +36,7 @@ export default function QuizTakingPage({}) {
             if(quizTimer == 0)
                 return () => clearInterval(interval);
         }
-    }, []);
+    }, [quizTimerPulled]);
     
     useEffect(() => {
         if(quizTimer == -1)

@@ -45,6 +45,12 @@ export const GET_QUIZ = gql`
             numRatings
             averageScore
             medianScore
+            comments {
+                comment
+                replies {
+                    reply
+                }
+            }
         }
     }
 `;
@@ -75,6 +81,12 @@ export const GET_QUIZ_ATTEMPT = gql`
                 numFavorites
                 averageScore
                 medianScore
+                comments {
+                    comment
+                    replies {
+                        reply
+                    }
+                }
             }
             score
             numCorrect

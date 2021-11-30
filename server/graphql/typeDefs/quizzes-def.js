@@ -38,6 +38,15 @@ module.exports = gql`
     type Comment {
         user: User
         comment: String!
+        replies: [Reply!]
+        createdAt: String
+    }
+
+    type Reply {
+        user: User
+        reply: String!
+        createdAt: String
+        
     }
 
     input QuizInput {

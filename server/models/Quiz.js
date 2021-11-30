@@ -20,6 +20,19 @@ const questionSchema = new Schema({
     },
 });
 
+const replySchema = new Schema({
+    user: {
+        //every comment is tied to a user
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    reply: {
+        type: String,
+        required: true,
+    }
+}, { timestamps: true });
+
 const commentSchema = new Schema({
     user: {
         //every comment is tied to a user
@@ -31,7 +44,11 @@ const commentSchema = new Schema({
         type: String,
         required: true,
     },
-});
+    replies: {
+        type: [replySchema]
+    }
+}, { timestamps: true });
+
 
 const quizSchema = new Schema(
     {
@@ -96,7 +113,8 @@ const quizSchema = new Schema(
         },
         comments: {
             type: [commentSchema],
-        },
+            default: []
+       },
         icon: {
             //quiz image still not sure what type this should be
             type: String,

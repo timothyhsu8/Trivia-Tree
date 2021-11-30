@@ -405,13 +405,9 @@ export default function AccountPage(props) {
                 </Box>
 
                 {/* BANNER EFFECT */}
-                {preview ? (
+                {preview && itemData.type === 'bannerEffect' ? (
                     <Image
-                        src={
-                            preview && itemData.type === 'bannerEffect'
-                                ? itemData.item
-                                : null
-                        }
+                        src={itemData.item}
                         w='100%'
                         h='28vh'
                         minH='200px'
@@ -485,7 +481,7 @@ export default function AccountPage(props) {
                     width='25%'
                 >
                     {/* Profile Picture Effect */}
-                    {preview ? (
+                    {preview && itemData.type === 'iconEffect' ? (
                         <Box
                             pos='absolute'
                             className='squareimage_container'
@@ -495,11 +491,7 @@ export default function AccountPage(props) {
                         >
                             <Image
                                 className='squareimage'
-                                src={
-                                    preview && itemData.type === 'iconEffect'
-                                        ? itemData.item
-                                        : null
-                                }
+                                src={itemData.item}
                                 objectFit='cover'
                                 borderRadius='50%'
                             />

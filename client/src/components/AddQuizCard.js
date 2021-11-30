@@ -5,6 +5,7 @@ import '../styles/styles.css'
 export default function AddQuizCard( props ) {
 
     let width = props.width
+    let height = props.height;
     let title_fontsize = props.title_fontsize
     let callback = props.callback
 
@@ -13,6 +14,7 @@ export default function AddQuizCard( props ) {
             pos="relative"
             className="disable-select"
             w={width}
+            h={height}
             minW="80px" 
             padding="0.5%" 
             margin="0.5%" 

@@ -36,8 +36,12 @@ export default function QuizCard( props ) {
     let numFavorites = quiz_data.numFavorites
     let isEditing = props.isEditing ? true:false;
     let is_owner = false
+    let isFeaturedQuiz = false
     if (props.is_owner) {
         is_owner = true
+    }
+    if (props.isFeaturedQuiz) {
+        isFeaturedQuiz = true
     }
 
     // Removes this quiz from a platform
@@ -152,23 +156,28 @@ export default function QuizCard( props ) {
                         onClick={(event) => {
                             console.log("HEY")
                             event.stopPropagation()
-                        }}/>
-
-                    <Popover>
-                        <PopoverTrigger>
-                            <Icon as={DeleteIcon} _hover={{color:"gray.500", transition:"0.1s linear"}} transition="0.1s linear"
-                                onClick={(event) => { event.stopPropagation() }}/>   
-                        </PopoverTrigger>
-                        <PopoverContent onClick={(event) => event.stopPropagation()}>
-                            <PopoverCloseButton />
-                            <PopoverBody> Remove this quiz from the platform? </PopoverBody>
-                            <PopoverFooter>
-                                <Center>
-                                    <Button colorScheme="red" onClick={() => handleRemoveQuizFromPlatform()}> Yes, remove it </Button>
-                                </Center>
-                            </PopoverFooter>
-                        </PopoverContent>
-                    </Popover>
+                        }} />
+                    
+                    {isFeaturedQuiz ? <Icon as={DeleteIcon} _hover={{ color: "gray.500", transition: "0.1s linear" }} transition="0.1s linear"
+                                    onClick={(event) => {
+                                        event.stopPropagation()
+                                        quizToDelete()}} /> :
+                        <Popover>
+                            <PopoverTrigger>
+                                <Icon as={DeleteIcon} _hover={{ color: "gray.500", transition: "0.1s linear" }} transition="0.1s linear"
+                                    onClick={(event) => { event.stopPropagation() }} />
+                            </PopoverTrigger>
+                            <PopoverContent onClick={(event) => event.stopPropagation()}>
+                                <PopoverCloseButton />
+                                <PopoverBody> Remove this quiz from the platform? </PopoverBody>
+                                <PopoverFooter>
+                                    <Center>
+                                        <Button colorScheme="red" onClick={() => handleRemoveQuizFromPlatform()}> Yes, remove it </Button>
+                                    </Center>
+                                </PopoverFooter>
+                            </PopoverContent>
+                        </Popover>
+                    }
                 </VStack>
                 :
                 null

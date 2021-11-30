@@ -52,6 +52,8 @@ export default function Homepage() {
     const platform_data = platforms.data.getPlatforms
     const user_data = users.data.getUsers
 
+    console.log(quiz_data)
+
     return (
         <Box>
             {/* HEADER */}

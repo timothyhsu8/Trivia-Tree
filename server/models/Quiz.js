@@ -77,8 +77,9 @@ const quizSchema = new Schema(
         description: {
             type: String,
         },
-        categories: {
-            type: [String],
+        category: {
+            type: String,
+            default: "Other"
         },
         tags: {
             type: [String],

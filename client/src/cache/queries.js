@@ -11,6 +11,7 @@ export const GET_QUIZZES = gql`
             }
             icon
             description
+            category
             quizTimer
             numAttempts
             numFavorites
@@ -37,6 +38,7 @@ export const GET_QUIZ = gql`
             }
             icon
             description
+            category
             quizTimer
             numQuestions
             numAttempts
@@ -135,6 +137,7 @@ export const GET_LEADERBOARD = gql`
             _id
             user {
                 displayName
+                iconImage
             }
             score
         }

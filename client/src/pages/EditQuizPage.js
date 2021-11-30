@@ -31,6 +31,7 @@ function EditQuizPage(props) {
     const [setup, setSetUp] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [category, setCategory] = useState('Other');
     const [quizQuestions, setQuizQuestions] = useState([
         {
             question: '',
@@ -298,6 +299,7 @@ function EditQuizPage(props) {
                     title: title.trim(),
                     questions: modifiedQuizQuestions,
                     description: description.trim(),
+                    category: category,
                     icon: icon,
                     isTimerForQuiz: timeType === 'Quiz' ? true : false,
                     quizTimer: quizTimer,
@@ -332,6 +334,7 @@ function EditQuizPage(props) {
             hiddenImageInput = createRef(null);
             setTitle(quiz.title);
             setDescription(quiz.description);
+            setCategory(quiz.category);
             let modifiedQuizQuestions = quiz.questions.map((question) => {
                 return JSON.parse(JSON.stringify(question));
             });
@@ -447,6 +450,38 @@ function EditQuizPage(props) {
                         width='50%'
                     />
                     <Text marginLeft='10px'>Quiz Description</Text>
+                    <HStack>
+                        <Text paddingTop="20px" fontSize="24px">Category: </Text>
+                        <Select
+                        _hover={{ outline: 'none' }}
+                        _focus={{ outline: 'none' }}
+                        borderColor='black'
+                        borderWidth='2px'
+                        value={category}
+                        width='30%'
+                        display='inline-block'
+                        marginLeft='20px'
+                        paddingTop="20px"
+                        onChange={(event) => {setCategory(event.target.value)}}
+                        >
+                        <option value={"Other"}>Other</option>
+                        <option value={"Anime"}>Anime</option>
+                        <option value={"Art"}>Art</option>
+                        <option value={"Books"}>Books</option>
+                        <option value={"Food"}>Food</option>
+                        <option value={"Geography"}>Geography</option>
+                        <option value={"History"}>History</option>
+                        <option value={"Languages"}>Languages</option>
+                        <option value={"Math"}>Math</option>
+                        <option value={"Movies and TV"}>Movies and TV</option>
+                        <option value={"Music"}>Music</option>
+                        <option value={"Science"}>Science</option>
+                        <option value={"Sports"}>Sports</option>
+                        <option value={"Stony Brook"}>Stony Brook</option>
+                        <option value={"Technology"}>Technology</option>
+                        <option value={"Video Games"}>Video Games</option>
+                        </Select>
+                    </HStack>
                 </div>
                 <div className='question'>
                     {quizQuestions.map((quizQuestion, questionIndex) => (
@@ -776,6 +811,7 @@ const FETCH_QUIZ_QUERY = gql`
             _id
             title
             description
+            category
             user {
                 _id
             }

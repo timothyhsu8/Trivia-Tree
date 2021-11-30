@@ -9,7 +9,7 @@ module.exports = gql`
         questions: [Question!]!
         numQuestions: Int!
         description: String
-        categories: [String]
+        category: String
         tags: [String]
         isTimerForQuiz: Boolean
         quizTimer: String
@@ -54,6 +54,7 @@ module.exports = gql`
         title: String
         questions: [QuestionInput]
         description: String
+        category: String
         icon: String
         isTimerForQuiz: Boolean
         quizTimer: String

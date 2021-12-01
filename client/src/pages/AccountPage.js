@@ -86,6 +86,14 @@ export default function AccountPage(props) {
         }
     )
 
+    const [iconEffect, setIconEffect] = useState(
+        {
+            name: "No Icon Effect",
+            item: null,
+            _id: "uninitialized"
+        }
+    )
+
     const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
         React.useState(false);
     const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] =
@@ -185,7 +193,7 @@ export default function AccountPage(props) {
         setBannerEffectPreview(item)
 
         // If user doesn't already have a banner effect applied
-        if (userData.bannerEffect === null) {
+        if (userData.bannerEffect === null || userData.bannerEffect === undefined) {
             if (item.item !== null)
                 setUnsavedChanges(true)
             else 
@@ -196,6 +204,28 @@ export default function AccountPage(props) {
         
         // If user already had a banner effect applied
         if (userData.bannerEffect._id === item._id){
+            setUnsavedChanges(false)
+            return
+        }
+
+        setUnsavedChanges(true)
+    }
+
+    function updateIconEffect(item) {
+        setIconEffect(item)
+
+        // If user doesn't already have a banner effect applied
+        if (userData.iconEffect === null || userData.iconEffect === undefined) {
+            if (item.item !== null)
+                setUnsavedChanges(true)
+            else 
+                setUnsavedChanges(false)
+                
+            return
+        }
+        
+        // If user already had a banner effect applied
+        if (userData.iconEffect._id === item._id){
             setUnsavedChanges(false)
             return
         }
@@ -220,12 +250,23 @@ export default function AccountPage(props) {
         setUnsavedChanges(false);
 
         // Reset Banner Effect
-        if (userData.bannerEffect !== null)
+        if (userData.bannerEffect !== null && userData.bannerEffect !== undefined)
             setBannerEffectPreview(userData.bannerEffect)
 
         else 
             setBannerEffectPreview({
                 name: "No Banner Effect",
+                item: null,
+                _id: "none"
+            })
+
+        // Reset Banner Effect
+        if (userData.iconEffect !== null && userData.iconEffect !== undefined)
+            setIconEffect(userData.iconEffect)
+
+        else 
+            setIconEffect({
+                name: "No Icon Effect",
                 item: null,
                 _id: "none"
             })
@@ -299,7 +340,8 @@ export default function AccountPage(props) {
                     iconImage: pfp_src,
                     bannerImage: banner_src,
                     bio: bio,
-                    bannerEffectId: bannerEffectPreview.item !== null ? bannerEffectPreview._id : null
+                    bannerEffectId: bannerEffectPreview.item !== null ? bannerEffectPreview._id : null,
+                    iconEffectId: iconEffect.item !== null ? iconEffect._id : null
                 },
             },
         });
@@ -352,8 +394,9 @@ export default function AccountPage(props) {
         );
     }
 
+    // Initializes banner effect as the one they own
     if (bannerEffectPreview._id === "uninitialized") {
-        if (userData.bannerEffect === null ) {
+        if (userData.bannerEffect === null || userData.bannerEffect === undefined) {
             setBannerEffectPreview({
                 name: "No Banner Effect",
                 item: null,
@@ -363,6 +406,21 @@ export default function AccountPage(props) {
 
         else {
             setBannerEffectPreview(userData.bannerEffect)
+        }
+    }
+
+    // Initializes icon effect as the one they own
+    if (iconEffect._id === "uninitialized") {
+        if (userData.iconEffect === null || userData.iconEffect === undefined) {
+            setIconEffect({
+                name: "No Icon Effect",
+                item: null,
+                _id: "none"
+            })
+        }
+
+        else {
+            setIconEffect(userData.iconEffect)
         }
     }
 
@@ -569,75 +627,103 @@ export default function AccountPage(props) {
                     ></Box>
                 )}
                 
+        
                 {/* PROFILE PICTURE AND NAME */}
                 <HStack
                     position='absolute'
                     top='18%'
-                    left='2%'
+                    left='3%'
                     transform='translateY(-50%)'
-                    width='25%'
+                    width='12%'
+                    spacing={0}
                 >
-                    {/* Profile Picture Effect */}
-                    {preview && itemData.type === 'iconEffect' ? (
-                        <Box
-                            pos='absolute'
-                            className='squareimage_container'
-                            w='30%'
-                            minW='100px'
-                            zIndex='1'
-                        >
-                            <Image
-                                className='squareimage'
-                                src={itemData.item}
-                                objectFit='cover'
-                                borderRadius='50%'
-                            />
-                        </Box>
-                    ) : null}
+
+                    {/* Icon Effect */}
+                    {renderIconEffect()}
 
                     {/* Profile Picture */}
-                    <input
-                        type='file'
-                        style={{ display: 'none' }}
-                        ref={hiddenPFPInput}
-                        onChange={(event) => updatePFP(event)}
-                    />
                     {isOwner && !preview ? (
-                        <Tooltip
-                            label='Edit Platform Icon'
-                            placement='top'
-                            fontSize='100%'
-                            bgColor={bannerEditBG}
-                        >
-                            <Box
-                                className='squareimage_container'
-                                w='48%'
-                                // minW='100px'
-                                minW='75px'
-                                minH='75px'
-                            >
-                                <Image
-                                    className='squareimage'
-                                    src={pfp_src}
-                                    objectFit='cover'
-                                    borderRadius='50%'
-                                    onClick={() =>
-                                        hiddenPFPInput.current.click()
-                                    }
-                                    _hover={{
-                                        cursor: 'pointer',
-                                        filter: 'brightness(65%)',
-                                        transition: '0.15s linear',
-                                    }}
-                                    transition='0.15s linear'
-                                />
+                        <Popover placement="right-start">
+                            <PopoverTrigger>
+                                <Box w="100%">
+                                    <Tooltip
+                                        label='Edit Platform Icon'
+                                        placement='top'
+                                        fontSize='100%'
+                                        bgColor={bannerEditBG}
+                                    >
+                                        <Box
+                                            className='squareimage_container'
+                                            w='100%'
+                                            minW='75px'
+                                            minH='75px'
+                                        >
+                                            <Image
+                                                className='squareimage'
+                                                src={pfp_src}
+                                                objectFit='cover'
+                                                borderRadius='50%'
+                                                _hover={{
+                                                    cursor: 'pointer',
+                                                    filter: 'brightness(65%)',
+                                                    transition: '0.15s linear',
+                                                }}
+                                                transition='0.15s linear'
+                                            />
+                                        </Box>
+                                    </Tooltip>
+                                </Box>
+                            </PopoverTrigger>
+                            <Box>
+                                <PopoverContent>
+                                    <PopoverCloseButton />
+                                    <PopoverHeader fontWeight="medium"> Edit Icon </PopoverHeader>
+                                    <PopoverBody>
+                                        <Stack>
+                                            <HStack>
+                                                <Text> Icon Image: </Text>
+                                                <input
+                                                    type='file'
+                                                    style={{ display: 'none' }}
+                                                    ref={hiddenPFPInput}
+                                                    onChange={(event) => updatePFP(event)}
+                                                />
+                                                <Button 
+                                                    variant="outline" 
+                                                    colorScheme="blue"
+                                                    _focus={{}}
+                                                    onClick={() => hiddenPFPInput.current.click()}
+                                                > 
+                                                    Upload Image 
+                                                </Button>
+                                            </HStack>
+                                            <HStack>
+                                                <Text> Icon Effect: </Text>
+                                                <Menu>
+                                                    <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                                        { iconEffect.name }
+                                                    </MenuButton>
+                                                    <MenuList>
+                                                        <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                                        {
+                                                            userData.ownedIconEffects.map((item, key) => {
+                                                                return (
+                                                                    <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                                )
+                                                            })
+                                                        }
+                                                    </MenuList>
+                                                </Menu>
+                                            </HStack>
+                                        </Stack>
+                                    </PopoverBody>
+                                </PopoverContent>
                             </Box>
-                        </Tooltip>
+                        </Popover>
                     ) : (
                         <Box
                             className='squareimage_container'
-                            w='48%'
-                            // minW='100px'
+                            w='100%'
                             minW='75px'
                             minH='75px'
                         >
@@ -654,11 +740,13 @@ export default function AccountPage(props) {
                     <Text
                         pos='absolute'
                         bottom='30%'
-                        left='55%'
+                        left='110%'
                         fontSize='2.5vw'
                         as='b'
                         color='black'
                         w='100%'
+                        pointerEvents="none"
+                        whiteSpace="nowrap"
                     >
                         {username}
                     </Text>
@@ -997,7 +1085,7 @@ export default function AccountPage(props) {
         let item_src = null
 
         // If user is previewing an item from the shop, use the previewed banner effect
-        if (preview)
+        if (preview && itemData.type === "bannerEffect")
             item_src = itemData.item
 
         // If user is previewing an item from their account, use the previewed banner effect
@@ -1010,11 +1098,44 @@ export default function AccountPage(props) {
                     src={item_src}
                     w="100%"
                     h='28vh'
-                    minH='200px'
+                    minH='150px'
                     pos='absolute'
                     zIndex="1"
                     pointerEvents="none"
                 />
+            )
+        }
+    }
+
+    // Renders the icon effect
+    function renderIconEffect() {
+        let item_src = null
+
+        // If user is previewing an item from the shop, use the previewed banner effect
+        if (preview && itemData.type === "iconEffect")
+            item_src = itemData.item
+
+        // If user is previewing an item from their account, use the previewed banner effect
+        else
+            item_src = iconEffect.item
+        
+        if (item_src !== null) {
+            return (
+                <Box
+                    pos='absolute'
+                    className='squareimage_container'
+                    w='100%'
+                    minW='75px'
+                    pointerEvents="none"
+                    zIndex='1'
+                >
+                    <Image
+                        className='squareimage'
+                        src={item_src}
+                        objectFit='cover'
+                        borderRadius='50%'
+                    />
+                </Box>
             )
         }
     }

@@ -90,6 +90,12 @@ module.exports = {
                 .populate({
                     path: 'ownedBannerEffects'
                 })
+                .populate({
+                    path: 'iconEffect'
+                })
+                .populate({
+                    path: 'ownedIconEffects'
+                })
                 .exec();
             return user;
         },
@@ -108,7 +114,7 @@ module.exports = {
     Mutation: {
         async updateUser(
             _,
-            { userInput: { userId, iconImage, bannerImage, bio, bannerEffectId } },
+            { userInput: { userId, iconImage, bannerImage, bio, bannerEffectId, iconEffectId } },
             context
         ) {
             try {
@@ -147,13 +153,18 @@ module.exports = {
                 if (bannerEffect === undefined)
                     bannerEffect = null
 
+                let iconEffect = await Item.findById(iconEffectId);
+                if (iconEffect === undefined)
+                    iconEffect = null
+
                 user = await User.findByIdAndUpdate(
                     userId,
                     {
                         iconImage: profileURL,
                         bannerImage: bannerURL,
                         bio,
-                        bannerEffect: bannerEffect
+                        bannerEffect: bannerEffect,
+                        iconEffect: iconEffect
                     },
                     { new: true }
                 )

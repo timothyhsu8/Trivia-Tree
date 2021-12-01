@@ -379,6 +379,16 @@ export const GET_USER = gql`
                 name
                 item
             }
+            iconEffect {
+                _id
+                name
+                item
+            }
+            ownedIconEffects {
+                _id
+                name
+                item
+            }
             darkMode
         }
     }

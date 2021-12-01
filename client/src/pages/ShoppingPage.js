@@ -1,5 +1,5 @@
 import { Box, Grid, Text, Image, Center, Button, HStack, Icon, ButtonGroup, Avatar, Spinner,
-    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, } from '@chakra-ui/react';
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorModeValue} from '@chakra-ui/react';
 import ShopItemCard from '../components/ShoppingPage/ShopItemCard'
 import treeshop from '../images/treeshop.png'
 import coin from '../images/coin.png'
@@ -93,6 +93,10 @@ export default function ShoppingPage() {
     const shopItems = useQuery(GET_SHOP_ITEMS, { fetchPolicy: 'cache-and-network' })
     const loading = shopItems.loading
     const error = shopItems.error
+
+    //Dark mode styling
+    const shopCategoryButtonBG=useColorModeValue('blue.500', 'blue.200')
+    const shopCategoryButtonBG2=useColorModeValue('gray.700', 'gray.300')
 
     // Loading Screen
     if (loading) {
@@ -193,7 +197,7 @@ export default function ShoppingPage() {
                                         w='100%'
                                         fontSize='130%'
                                         fontWeight="thin"
-                                        textColor={page === headerSection.pageId ? 'blue.500' : 'gray.700'}
+                                        textColor={page === headerSection.pageId ? shopCategoryButtonBG : shopCategoryButtonBG2}
                                         textAlign="center"
                                         transition=".1s linear"
                                         whiteSpace="nowrap"

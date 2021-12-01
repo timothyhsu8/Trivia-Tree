@@ -1,5 +1,5 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
-    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode } from "@chakra-ui/react"
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { BsShopWindow, BsFillCartFill } from "react-icons/bs"
 import { config } from '../util/constants';
@@ -113,6 +113,9 @@ export default function Navbar() {
         }
     }
 
+    //Dark mode styling
+    const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
+
     return(
         <Box w="100%" h="55px" position='sticky' top='0' zIndex='99' bgColor="red.900">
             <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
@@ -143,7 +146,7 @@ export default function Navbar() {
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
+                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" color="black" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>;
                         })}
@@ -156,6 +159,7 @@ export default function Navbar() {
                         borderRadius="0px" 
                         placeholder="Search for a quiz..." 
                         bgColor="white"
+                        color="black"
                         _focus={{boxShadow:"none"}}
                     />
 
@@ -248,7 +252,7 @@ export default function Navbar() {
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent top="30%">
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        <AlertDialogHeader color='black' fontSize="lg" fontWeight="bold">
                             Choose A Platform Name
                         </AlertDialogHeader>
 

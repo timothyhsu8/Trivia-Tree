@@ -160,6 +160,26 @@ export const GET_POST_RECOMMENDATIONS = gql`
     }
 `;
 
+export const GET_USER_RECOMMENDATIONS = gql`
+    query GetUserRecommendations($user_id: ID!) {
+        getUserRecommendations(user_id: $user_id) {
+            _id
+            title
+            user {
+                _id
+                displayName
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
+        }
+    }
+`;
 
 export const GET_PLATFORMS = gql`
     {

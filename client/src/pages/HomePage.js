@@ -3,7 +3,7 @@ import { config } from '../util/constants';
 import { AuthContext } from '../context/auth';
 import { Box, Text, VStack, Flex, Spinner, Center, Heading, Grid, useColorMode } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_QUIZZES, GET_PLATFORMS, GET_USERS, GET_USER } from "../cache/queries";
+import { GET_QUIZZES, GET_PLATFORMS, GET_USERS, GET_USER, GET_USER_RECOMMENDATIONS} from "../cache/queries";
 import { Link } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import QuizCard from '../components/QuizCard';
@@ -16,10 +16,13 @@ import * as mutations from '../cache/mutations';
 export default function Homepage() {
           
     let icon_src = quizImage
+    let recommendation_list = [];
     const { user } = useContext(AuthContext);
+
+    console.log(user)
     
     const [currentSection, setCurrentSection] = useState("FEATURED")
-    const sections = ["FEATURED", "SUBSCRIPTIONS", "FAVORITED", "NEW", "BEST"]
+    const sections = ["FEATURED", "RECOMMENDATIONS", "FAVORITED", "NEW", "BEST"]
 
     // Fetch quiz/platform data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
@@ -45,6 +48,14 @@ export default function Homepage() {
         onCompleted({ getUser: userData }) {
             setDarkMode(userData.darkMode);
         },
+    });
+    const {
+        data: { getUserRecommendations: userRecommendations } = {},
+    } = useQuery(GET_USER_RECOMMENDATIONS, {
+        variables: {user_id: userId },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        }
     });
     const [darkMode, setDarkMode] = useState("");
     //console.log(darkMode)
@@ -103,6 +114,9 @@ export default function Homepage() {
     const platform_data = platforms.data.getPlatforms
     const user_data = users.data.getUsers
 
+
+    recommendation_list = userRecommendations;
+
     return (
         <Box>
             {/* HEADER */}
@@ -130,22 +144,42 @@ export default function Homepage() {
             </Center>
 
             {/* QUIZZES */}
+            {currentSection == "RECOMMENDATIONS" ? 
             <Box mt="1%" ml="2%" mr="2%">
-                <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
-                <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                    {quiz_data.map((quiz, key) => {
-                        return <QuizCard 
-                            quiz={quiz} 
-                            width="7.3%" 
-                            title_fontsize="95%" 
-                            author_fontsize="85%" 
-                            include_author={true}
-                            char_limit={30} 
-                            key={key}
-                        />
-                    })}
-                </Flex>
+            <Text fontSize="150%" ml="1%" fontWeight="medium"> Recommended Quizzes </Text>
+            <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                {recommendation_list.map((quiz, key) => {
+                    return <QuizCard 
+                        quiz={quiz} 
+                        width="7.3%" 
+                        title_fontsize="95%" 
+                        author_fontsize="85%" 
+                        include_author={true}
+                        char_limit={30} 
+                        key={key}
+                    />
+                })}
+            </Flex>
             </Box>
+            :
+            <Box mt="1%" ml="2%" mr="2%">
+            <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
+            <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                {quiz_data.map((quiz, key) => {
+                    return <QuizCard 
+                        quiz={quiz} 
+                        width="7.3%" 
+                        title_fontsize="95%" 
+                        author_fontsize="85%" 
+                        include_author={true}
+                        char_limit={30} 
+                        key={key}
+                    />
+                })}
+            </Flex>
+            </Box>
+            }
+
             <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
 
 

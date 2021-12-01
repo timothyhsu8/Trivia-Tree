@@ -24,9 +24,6 @@ export default function SettingsPage(props) {
     let {userId} = useParams();
     let history = useHistory();
 
-
-
-
     const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [darkMode, setDarkMode] = useState("");

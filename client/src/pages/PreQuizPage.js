@@ -108,7 +108,7 @@ export default function PreQuizPage({}) {
 
     return ( 
         <Box>
-            <Grid h="845px" templateRows="repeat(6, 1fr)" bgColor="white" paddingTop="10px"> 
+            <Grid h="650px" templateRows="repeat(6, 1fr)" bgColor="white" paddingTop="10px"> 
 
                 {/* Title and Image */}
                 <GridItem rowSpan={2} colSpan={6} borderBottom="1px solid" borderColor="gray.300" overflow="hidden">
@@ -178,7 +178,7 @@ export default function PreQuizPage({}) {
                             rightIcon={<BsFillPlayCircleFill/>} 
                             variant="solid" 
                             position="relative" 
-                            top="265px" 
+                            top="205px" 
                             h="60px" 
                             fontSize="25px"
                             onClick={() => history.push('/quiztakingpage/' + quiz._id)}

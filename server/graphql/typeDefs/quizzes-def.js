@@ -79,6 +79,7 @@ module.exports = gql`
         getQuizzes: [Quiz]
         getQuiz(quizId: ID!): Quiz
         searchQuizzes(searchText: String!): [Quiz]
+        getPostRecommendations(quiz_id: ID): [Quiz]
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz

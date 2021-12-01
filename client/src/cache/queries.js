@@ -144,6 +144,23 @@ export const GET_LEADERBOARD = gql`
     }
 `;
 
+export const GET_POST_RECOMMENDATIONS = gql`
+    query GetPostRecommendations($quiz_id: ID!) {
+        getPostRecommendations(quiz_id: $quiz_id) {
+            _id
+            title
+            icon
+            user {
+                _id
+                displayName
+            }
+            numFavorites
+            numAttempts
+        }
+    }
+`;
+
+
 export const GET_PLATFORMS = gql`
     {
         getPlatforms {

@@ -45,6 +45,35 @@ module.exports = {
                 throw new Error(err);
             }
         },
+        async getPostRecommendations(_, { quiz_id }) {
+            const quiz = await Quiz.findById(quiz_id);
+            let category = quiz.category;
+            const quizRecommendations = await Quiz.find({category:category}).populate('user').exec();
+
+
+        
+            for(let i = 0; i < quizRecommendations.length; i++){
+                if(quiz_id == quizRecommendations[i]._id){
+                    quizRecommendations.splice(i, 1);
+                    break;
+                }
+            }
+
+            let finalQuizRecommendations = [];
+
+            let count = 0;
+            let random = 0;
+
+            while(count < 4 && quizRecommendations.length > 0){
+                random = getRandomInt(0, quizRecommendations.length); //random integer greater than or equal to 0 and less than quizlength
+                finalQuizRecommendations.push(quizRecommendations[random]);
+                quizRecommendations.splice(random,1);
+                count++;
+            }
+
+            return finalQuizRecommendations;
+
+        }
     },
     Mutation: {
         async createQuiz(
@@ -433,3 +462,9 @@ module.exports = {
         },
     },
 };
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+  }

@@ -9,6 +9,7 @@ import quizicon from '../images/quizicon.png';
 import coin from '../images/coin.png';
 import quizImage from '../images/defaultquiz.jpeg';
 import LeaderboardCard from '../components/LeaderboardEntryCard';
+import QuizCard from '../components/QuizCard';
 import {IoMdClock} from "react-icons/io"
 import {BsStarFill} from "react-icons/bs"
 import { useQuery, useMutation } from '@apollo/client';
@@ -30,7 +31,8 @@ export default function PostQuizPage() {
     let answerChoices = null; 
     let coinsEarned = null;
     let icon_src = null; 
-
+    let user_icon = null;
+    let quiz_recommendations = [];
     let { quizId, quizAttemptId } = useParams();
 
     const [rating, setRating] = useState(0)
@@ -79,6 +81,12 @@ export default function PostQuizPage() {
         }
     });
 
+    const {data:data3, loading:loading3} = useQuery(queries.GET_POST_RECOMMENDATIONS, {
+        fetchPolicy: 'network-only',
+        variables: { quiz_id: quizId },
+    });
+
+
     function calculateBetterScore(userScore, averageScore, attempts) {
         if (attempts === 1) {
             return 'No comparisons possible, you are the first to take this quiz'
@@ -113,6 +121,10 @@ export default function PostQuizPage() {
         return <div></div>;
     }
 
+    if (loading3) {
+        return <div></div>;
+    }
+
     if (error) {
         console.log(error)
     }
@@ -142,7 +154,14 @@ export default function PostQuizPage() {
         questions = data2.getQuiz.questions
         icon_src = data2.getQuiz.icon == null ? quizImage : data2.getQuiz.icon
         console.log(data2.getQuiz);
+        user_icon = data2.getQuiz.user.iconImage
 
+    }
+
+    if (data3) {
+        // console.log(leaderboard)
+        quiz_recommendations = data3.getPostRecommendations;
+        console.log(quiz_recommendations)
     }
 
     function handleRating(rate) {
@@ -172,20 +191,15 @@ export default function PostQuizPage() {
                 >
                     {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
                     <div className="SecretSauce"> 
-                        <Image width={["100px","100px","100px","200px"]} height={["100px","100px","100px","200px"]} src={icon_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
+                        <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
                         <Box className="containerDown" paddingLeft="30px">  
-                            <Box width={["200px","200px","200px","800px"]}>
+                            <Box>
                             <Flex direction="row" position="relative">  
-                                <Text as="b" className="title" lineHeight={["40px","40px","40px","80px"]} fontSize="2.5vw">{quizTitle}</Text> 
-                                { subbed ? 
-                                <Image display="none" width={["32px","32px","32px","70px"]} h={["32px","32px","32px","70px"]} marginLeft="20px" transform="translateY(-35%)" mt="30px" src={heartF} borderRadius="0" onClick={onClickSubscribe}></Image>
-                                : 
-                                <Image display="none" w="70px" h="70px" mt="30px" src={heartE} borderRadius="0" marginLeft="20px" transform="translateY(-35%)" onClick={onClickSubscribe}></Image>
-                                }
+                                <Text as="b" className="title" fontSize="2.5vw">{quizTitle}</Text> 
                             </Flex>    
                             </Box>
                             <Flex direction="row" position="relative">
-                                <Image w="100px" h="100px" src={userImage} objectFit="cover" borderRadius="50%" border="solid"></Image>
+                                <Image w="100px" h="100px" src={user_icon} objectFit="cover" borderRadius="50%" border="solid"></Image>
                                 <Flex direction="column" position="relative"> 
                                     <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
                                     <Text fontSize="24" left="10px" top="15px" position="relative">{creator}</Text>
@@ -193,12 +207,6 @@ export default function PostQuizPage() {
                             </Flex>
                         </Box>
                                             
-                        {/*used a little absolute positioning */}
-                        <div className="containerDown">
-                            <Box w={["100vw","100px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px' position="relative" left="500px" top="25px">
-                                <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  mt={["10px","10px","0px","0px"]} fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
-                            </Box>
-                        </div>
                     </div>
             </Box>
             </Box>
@@ -212,10 +220,50 @@ export default function PostQuizPage() {
                     {/* Can move everything down a little*/}
                     <Box className='containerAcross'>
                         <Box className='containerDown'>
+                        <div className='containerAcrossMe'>
+                        {/*w=10vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
+                        <Box width={["10vw","0vw","10vw","18vw"]}></Box>
+                        <Box
+                            w='200px'
+                            h='40px'
+                            bg={showResults ? 'grey': '#D3D3D3'}
+                            borderRadius='5px'
+                            position="relative"
+                            _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
+                        >
+                            {/* for horizontal line*/}
+                            <a
+                                href='#results'
+                                className='center button black'
+                                onClick={onClickResults}
+                            >
+                                View Results
+                            </a>
+                        </Box>
+                        {/*w=0.2vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
+                        <Box
+                            ml='5px'
+                            w='200px'
+                            h='40px'
+                            bg={showResults ? '#D3D3D3': 'grey'}
+                            borderRadius='5px'
+                            position="relative"
+                            _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
+                        >
+                            {' '}
+                            {/* for horizontal line*/}
+                            <a
+                                href='#answers'
+                                className='center button black'
+                                onClick={onClickAnswers}
+                            >
+                                View Answers
+                            </a>
+                        </Box>
+                    </div>
                             <Box borderBottom='1px'>
-                                {' '}
+
                                 {/* for horizontal line*/}
-                                <br></br>
                                 <br></br>
                             </Box>
 
@@ -225,20 +273,20 @@ export default function PostQuizPage() {
                                         {/*Statbox Part I and II*/}    
                                         <Box
                                             width={["48vw","48vw","48vw","37vw"]}
-                                            h='370px'
+                                            h='320px'
                                             bg='#373535'
                                             borderLeftRadius='20px'
                                             padding="20px"
                                             paddingTop="50px"
                                         >
-                                            <Flex direction = "column">
+                                            <Flex direction = "column" position="relative" bottom="30px" right="50px">
                                                 <Text fontSize="40px" left="120px" position="relative" color="white">You scored: {numCorrect}/{quiz.numQuestions} = {quizScore}%</Text>
                                                 <Text fontSize="20px" left="190px" position="relative" color="white">The average score is {quiz.averageScore}</Text>
                                                 <Text fontSize="20px" left="140px" position="relative" color="white">{calculateBetterScore(quizScore, quiz.averageScore, quiz.numAttempts)}</Text>
-                                                <Text fontSize="30px" left="200px" top="20px" position="relative" color="white">
+                                                <Text fontSize="30px" left="175px" top="20px" position="relative" color="white">
                                                     Rate Quiz &nbsp;
                                                     <Icon pos="relative" as={StarIcon} bottom="5px" boxSize="8" color="yellow.500"/>
-                                                    &nbsp;{data2.getQuiz.rating ? data2.getQuiz.rating : 'No ratings yet'}
+                                                    &nbsp;{data2.getQuiz.rating ? data2.getQuiz.rating : 'N/A'}
                                                 </Text>
                                                 <Box position="relative" left="170px" top="35px" marginRight="20px">
                                                     {
@@ -254,23 +302,23 @@ export default function PostQuizPage() {
                                         </Box>
                                         <Box
                                             width={["38vw","38vw","38vw","28vw"]}
-                                            h='370px'
+                                            h='320px'
                                             bg='#D3D3D3'
                                             borderRightRadius='20px'
                                         >
                                             <Flex direction="row">
-                                                <Icon as={IoMdClock} h="100px" w="100px" position="relative" left="50px" top="25px" ></Icon>
-                                                <Text fontSize="28px" position="relative" left="70px" top="55px">{elapsedTime}</Text>
+                                                <Icon as={IoMdClock} h="80px" w="80px" position="relative" left="30px" top="25px" ></Icon>
+                                                <Text fontSize="28px" position="relative" left="50px" top="45px">{elapsedTime}</Text>
                                             </Flex>
 
                                             <Flex direction="row">
-                                                <Image src={quizicon} h="100px" w="100px" position="relative" left="50px" top="25px"></Image>
-                                                <Text fontSize="28px" position="relative" left="70px" top="60px">Attempt Number {attemptNumber}</Text>
+                                                <Image src={quizicon} h="80px" w="80px" position="relative" left="30px" top="25px"></Image>
+                                                <Text fontSize="28px" position="relative" left="50px" top="50px">Attempt Number {attemptNumber}</Text>
                                             </Flex>
 
                                             <Flex direction="row">
-                                                <Image src={coin} h="100px" w="100px" position="relative" left="50px" top="35px"></Image>
-                                                <Text fontSize="28px" position="relative" left="70px" top="65px">{coinsEarned == 0 ? 'No Coins Given' : coinsEarned}</Text>
+                                                <Image src={coin} h="80px" w="80px" position="relative" left="30px" top="35px"></Image>
+                                                <Text fontSize="28px" position="relative" left="50px" top="55px">{coinsEarned == 0 ? 'No Coins Given' : coinsEarned}</Text>
                                             </Flex>
 
                                         </Box>
@@ -295,9 +343,32 @@ export default function PostQuizPage() {
                         </Box>
                         
                         <div className="fadeshow1">
-                        <Box pos="absolute" className='containerDown' paddingLeft="70px" transform="translateY(-15%)">
+                        <Box pos="absolute" className='containerDown' paddingLeft="50px" transform="translateY(-15%)">
                             {/* Statbox */}
-                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" borderTopRadius="20%">
+                            <Box w='28vw' bg='#D3D3D3' borderRadius="2%" h='220px' position="relative" bottom="100px">
+            
+                                        <Box mt="1%" ml="2%" mr="2%">
+                                            <Text fontSize="100%" ml="1%" fontWeight="medium"> Recommended Quizzes </Text>
+                                            <Flex mt="0.5%" spacing="10%" display="flex" flexWrap="wrap" >
+                                                {quiz_recommendations.map((quiz, key) => {
+                                                    return <QuizCard 
+                                                        quiz={quiz} 
+                                                        width="7.3%" 
+                                                        title_fontsize="75%" 
+                                                        author_fontsize="65%" 
+                                                        include_author={true}
+                                                        char_limit={30} 
+                                                        key={key}
+                                                    />
+                                                })}
+                                            </Flex>
+                                        </Box>
+
+                            </Box>
+                            <Box w="402px" h="40px" bg='#165CAF' borderRadius='5px' position="absolute" top="80px" _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}>
+                                <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  lineHeight="1" fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
+                            </Box>
+                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" position="relative" bottom="63px" borderTopRadius="20%">
                                 {' '}
                                 {/* leaderboards Heading*/}
                                 <h1 className='leaderboard_title'>
@@ -305,7 +376,7 @@ export default function PostQuizPage() {
                                 </h1>
                             </Box>{/*w=2vw, w=16vw, h=3.5vw */}
                             {/*w=2vw, w=16vw, h=31.5vw */}
-                            <Box w='28vw' bg='#D3D3D3' borderBottomRadius="2%" h='600px' paddingTop="20px">
+                            <Box w='28vw' bg='#D3D3D3' borderBottomRadius="2%" h='300px' position="relative" bottom="63px" paddingTop="10px">
                                 {leaderboard.map((entry, index) => {
                                     return (
                                         <LeaderboardCard 
@@ -322,46 +393,6 @@ export default function PostQuizPage() {
                     
                     {/*h=4.2vw */}
                     
-                
-                    <div className='containerAcrossMe'>
-                        {/*w=10vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
-                        <Box width={["10vw","0vw","10vw","18vw"]}></Box>
-                        <Box
-                            w='200px'
-                            h='40px'
-                            bg={showResults ? 'grey': '#D3D3D3'}
-                            borderRadius='5px'
-                        >
-                            {/* for horizontal line*/}
-                            <a
-                                href='#results'
-                                className='center button white'
-                                onClick={onClickResults}
-                            >
-                                View Results
-                            </a>
-                        </Box>
-                        {/*w=0.2vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
-                        <Box
-                            ml='5px'
-                            w='200px'
-                            h='40px'
-                            bg={showResults ? '#D3D3D3': 'grey'}
-                            borderRadius='5px'
-                        >
-                            {' '}
-                            {/* for horizontal line*/}
-                            <a
-                                href='#answers'
-                                className='center button black'
-                                onClick={onClickAnswers}
-                            >
-                                View Answers
-                            </a>
-                        </Box>
-                    </div>
-                    {/*h=4.2vw*/}
-                    <Box h='60px'></Box>
                 </Box>
                 </div>
             </Box>

@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 
+import { ColorModeScript } from '@chakra-ui/react'
+import theme from './theme'
+
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
@@ -14,6 +17,7 @@ const client = new ApolloClient({
 
 ReactDOM.render(
     <React.StrictMode>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <ApolloProvider client={client}>
             <App />
         </ApolloProvider>

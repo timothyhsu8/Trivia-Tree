@@ -1,9 +1,9 @@
-import { React, useContext, useState } from 'react';
+import { React, useContext, useState, useEffect } from 'react';
 import { config } from '../util/constants';
 import { AuthContext } from '../context/auth';
-import { Box, Text, VStack, Flex, Spinner, Center, Heading, Grid } from '@chakra-ui/react';
-import { useQuery } from '@apollo/client';
-import { GET_QUIZZES, GET_PLATFORMS, GET_USERS } from "../cache/queries";
+import { Box, Text, VStack, Flex, Spinner, Center, Heading, Grid, useColorMode } from '@chakra-ui/react';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_QUIZZES, GET_PLATFORMS, GET_USERS, GET_USER } from "../cache/queries";
 import { Link } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import QuizCard from '../components/QuizCard';
@@ -11,7 +11,10 @@ import '../styles/styles.css'
 import PlatformCard from '../components/PlatformCard';
 import UserCard from '../components/UserCard';
 
+import * as mutations from '../cache/mutations';
+
 export default function Homepage() {
+          
     let icon_src = quizImage
     const { user } = useContext(AuthContext);
     
@@ -25,6 +28,54 @@ export default function Homepage() {
 
     const loading = quizzes.loading || platforms.loading || users.loading
     const error = quizzes.error || platforms.error || users.error
+
+    //I am sorry for this but to recognize dark mode on login from any account. Needs to check user info. 
+    let userId = null;
+    if (user !== null && user !== "NoUser"){
+        userId = user._id
+    }
+    const {
+        data: { getUser: userData } = {},
+    } = useQuery(GET_USER, {
+        fetchPolicy: 'cache-and-network',
+        variables: { _id: userId },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+        onCompleted({ getUser: userData }) {
+            setDarkMode(userData.darkMode);
+        },
+    });
+    const [darkMode, setDarkMode] = useState("");
+    //console.log(darkMode)
+    const { colorMode, toggleColorMode } = useColorMode()
+    //console.log(colorMode)
+    function initialDark(){
+        //If dark when light, make dark
+        if(darkMode==true && colorMode=="light"){
+            toggleColorMode()
+            setDarkMode(false)
+            saveChanges()
+        }
+    }
+    const { refreshUserData } = useContext(AuthContext);
+    const [updateSettings] = useMutation(mutations.UPDATE_SETTINGS, {
+        onCompleted() {
+            refreshUserData();
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
+    //I dunno if this is bad...
+    useEffect(() => {
+        initialDark()
+    }, [darkMode])
+    async function saveChanges() {
+        const {data} = await updateSettings({ variables: {settingInput:{ darkMode:darkMode}}});
+        return;
+    }
+    //Changes for dark mode end here
 
     // Loading Screen
     if (loading) {
@@ -51,8 +102,6 @@ export default function Homepage() {
     const quiz_data = quizzes.data.getQuizzes
     const platform_data = platforms.data.getPlatforms
     const user_data = users.data.getUsers
-
-    console.log(quiz_data)
 
     return (
         <Box>

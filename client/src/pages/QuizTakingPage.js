@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { Box, Center, Text, Grid, VStack, Button, Image, Avatar } from '@chakra-ui/react';
+import { Box, Center, Text, Grid, VStack, Button, Image, Avatar, useColorModeValue, useColorMode } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
@@ -28,6 +28,17 @@ export default function QuizTakingPage({}) {
     const [quizTimerPulled, setQuizTimerPulled] = useState(false);
     const [timeRunningOut, setTimeRunningOut] = useState(false);
     
+    //Dark mode styling
+    const quizTimerBoxBG=useColorModeValue("gray.400", "gray.600")
+    const quizTimerSideBG=useColorModeValue("gray.100", "gray.300")
+    const authorTextColor=useColorModeValue("blue.600","blue.400")
+    const quizTimerTextColor=useColorModeValue("gray.800","gray.800")
+    const highlightChosenQText=useColorModeValue("gray.200","gray.600")
+    const whiteBlackText=useColorModeValue("white","white")
+    const nonChosenQText=useColorModeValue("black","white")
+    const notChosenQBG=useColorModeValue("gray.100","gray.500")
+    const hoverAnswerBG=useColorModeValue("blue.100","blue.900")
+    const answerChosenBG=useColorModeValue("blue.100","blue.700")
     useEffect(() => {
         if(quizTimer != -1){
             const interval = setInterval(() => {
@@ -158,7 +169,7 @@ export default function QuizTakingPage({}) {
     function getAnswerColor(questionType, currentQuestionNumber, choice) {
         // If question type is select one answer
         if (questionType === 1){
-            return userAnswers[currentQuestionNumber-1] === choice ? "blue.100" : ""
+            return userAnswers[currentQuestionNumber-1] === choice ? answerChosenBG : ""
         }
 
         // If question type is select multiple answers
@@ -214,7 +225,7 @@ export default function QuizTakingPage({}) {
             <Grid templateColumns='1fr 6fr'>
                 
                 {/* SIDEBAR */}
-                <Box h='100vh' bgColor='gray.100' boxShadow="md">
+                <Box h='100vh' bgColor={quizTimerBoxBG} boxShadow="md">
 
                     {/* QUIZ ICON */}
                     <Center pt="5%">
@@ -228,13 +239,13 @@ export default function QuizTakingPage({}) {
 
                     {/* QUIZ AUTHOR */}
                     <Center>
-                        <Text fontSize='120%' color="blue.600"> {quiz.user.displayName} </Text>
+                        <Text fontSize='120%' color={authorTextColor}> {quiz.user.displayName} </Text>
                     </Center>
 
                     {/* QUIZ TIMER */}
                     <Center pt="6%">
-                        <Box w='70%' h='5vh' bgColor='gray.100' border="1px solid" borderColor="gray.400" borderRadius="15">
-                        <Text fontSize='170%' textAlign='center' color={ timeRunningOut ? "red.500" : "gray.800" }>
+                        <Box w='70%' h='5vh' bgColor={quizTimerSideBG} border="1px solid" borderColor={quizTimerBoxBG} borderRadius="15">
+                        <Text fontSize='170%' textAlign='center' color={ timeRunningOut ? "red.500" : quizTimerTextColor }>
                             {quizDone ? "Quiz Ended" : quizTimerDisplay}
                         </Text>
                         </Box>
@@ -246,14 +257,14 @@ export default function QuizTakingPage({}) {
                             return (
                                 <Button 
                                     key = {index}
-                                    bgColor= { index+1 === currentQuestionNumber ? 'blue.400' : 'gray.100' }
+                                    bgColor= { index+1 === currentQuestionNumber ? 'blue.400' : notChosenQBG }
                                     borderRadius="0" 
                                     fontSize='0.9vw' 
                                     onClick={() => {setCurrentQuestionNumber(index+1)}}
-                                    _hover={{ bgColor: index+1 === currentQuestionNumber ? 'blue.400' : 'gray.200'}}
+                                    _hover={{ bgColor: index+1 === currentQuestionNumber ? 'blue.400' : highlightChosenQText}}
                                     _focus={{border:"none"}}
                                 >
-                                    <Text key = {index} color={ index+1 === currentQuestionNumber ? 'white' : 'gray.600' }>
+                                    <Text key = {index} color={ index+1 === currentQuestionNumber ? whiteBlackText : nonChosenQText }>
                                         {index + 1}
                                     </Text>
                                 </Button>
@@ -290,7 +301,7 @@ export default function QuizTakingPage({}) {
                                     fontSize='1.5vw'
                                     _focus={{border:"1px"}}
                                     onClick={() => { updateUserAnswers(currentQuestionNumber, choice, quiz.questions[currentQuestionNumber-1].questionType) }}
-                                    _hover={{ bg: "blue.100" }}
+                                    _hover={{ bg: hoverAnswerBG }}
                                     _active={{ opacity: "75%" }}
                                 >
                                     {choices[index]}

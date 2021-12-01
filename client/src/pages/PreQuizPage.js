@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Text, Grid, Button, Image, GridItem,Icon, Avatar, Stack} from "@chakra-ui/react"
+import { Box, Flex, HStack, Text, Grid, Button, Image, GridItem,Icon, Avatar, Stack, } from "@chakra-ui/react"
 import { useQuery, useMutation} from '@apollo/client';
 import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
@@ -108,7 +108,7 @@ export default function PreQuizPage({}) {
 
     return ( 
         <Box>
-            <Grid h="845px" templateRows="repeat(6, 1fr)" bgColor="white" paddingTop="10px"> 
+            <Grid h="845px" templateRows="repeat(6, 1fr)" paddingTop="10px"> 
 
                 {/* Title and Image */}
                 <GridItem rowSpan={2} colSpan={6} borderBottom="1px solid" borderColor="gray.300" overflow="hidden">

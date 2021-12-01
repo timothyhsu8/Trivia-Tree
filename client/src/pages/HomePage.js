@@ -182,48 +182,7 @@ export default function Homepage() {
                     })}
                 </Grid>
             </Box>
-
-            <Center marginTop='70vh'>
-                {user !== 'NoUser' ? (
-                    <div>
-                        <Heading marginBottom='20px'>
-                            {'Hello, ' + user.displayName}
-                        </Heading>
-                        <Center>
-                            <img
-                                style={{ ce: 'center' }}
-                                src={user.iconImage}
-                            />
-                        </Center>
-                        <Center>
-                            <Heading marginTop='20px'>
-                                <a href={`${config.API_URL}/auth/logout`}>
-                                    Logout
-                                </a>
-                            </Heading>
-                        </Center>
-                    </div>
-                ) : (
-                    <Heading>
-                        <a href={`${config.API_URL}/auth/google`}>
-                            Login with Google
-                        </a>
-                    </Heading>
-                )}
-            </Center>
-            <div>
-                <VStack marginTop='50px'>
-                    <Link style={{ fontSize: '25px' }} to='/quizzes'>
-                        Quizzes with CRUD
-                    </Link>
-                    <Link style={{ fontSize: '25px' }} to='/loginpage'>
-                        Login Page
-                    </Link>
-                    <Link style={{ fontSize: '25px' }} to='/platformpage'>
-                        Platform Page
-                    </Link>
-                </VStack>
-            </div>
+            <Box h="15vh" />
         </Box>
     );
 }

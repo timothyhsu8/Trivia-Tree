@@ -9,6 +9,7 @@ import { useContext, useState, useRef, useEffect } from 'react';
 import coin from '../images/coin.png';
 import { useMutation, gql } from '@apollo/client';
 import guestImage from '../images/guest.png';
+import logo from '../images/logo.png';
 import '../styles/styles.css'
 
 export default function Navbar() {
@@ -114,32 +115,30 @@ export default function Navbar() {
     }
 
     return(
-        <Box w="100%" h="55px" position='sticky' top='0' zIndex='99' bgColor="red.900">
-            <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
+        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="red.900">
+            <Grid h="100%" templateColumns="2fr 3fr 2fr" pos="relative">
                 {/* RETURN TO HOMEPAGE */}
-                <Text
-                    className='disable-select'
-                    onClick={() => history.push('/')}
-                    display='inline-block'
-                    _hover={{
-                        cursor: 'pointer',
-                        opacity: '80%',
-                        transition: 'opacity 0.2s linear',
-                    }}
-                    transition='opacity 0.2s linear'
-                    ml='2%'
-                    color='white'
-                    fontSize='200%'
-                    whiteSpace="nowrap"
-                >
-                    Trivia Tree
-                </Text>
+                <Box display="flex" flexDirection="column" justifyContent="center">
+                    <Image
+                        w={230}
+                        minW={230}
+                        src={logo}
+                        className='disable-select'
+                        onClick={() => history.push('/')}
+                        display='inline-block'
+                        _hover={{
+                            cursor: 'pointer',
+                        }}
+                        transition='opacity 0.2s linear'
+                        ml='2%'
+                    />
+                </Box>
                 
                 {/* SEARCH */}
                 <Grid
                     h='50px'
                     pos='relative'
-                    top='3%'
+                    top='9%'
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}

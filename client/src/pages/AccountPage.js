@@ -14,6 +14,17 @@ import {
     Select,
     HStack,
     Tooltip,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverCloseButton,
+    PopoverHeader,
+    PopoverBody,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    Stack
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -39,6 +50,7 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 
 let profileImg = null;
@@ -65,6 +77,13 @@ export default function AccountPage(props) {
     const [userTitle, setUserTitle] = React.useState('');
     const [pfp_src, setPFP] = useState(''); //String path
     const [banner_src, setBanner] = useState(''); //String path
+    const [bannerEffectPreview, setBannerEffectPreview] = useState(
+        {
+            name: "No Banner Effect",
+            item: null,
+            _id: "uninitialized"
+        }
+    )
 
     const [backgroundNum, setBackground] = useState(''); //Int bg
     const background = ['white', 'red', 'blue', 'green'];
@@ -178,6 +197,28 @@ export default function AccountPage(props) {
         }
     }
 
+    function updateBannerEffect(item) {
+        setBannerEffectPreview(item)
+
+        // If user doesn't already have a banner effect applied
+        if (userData.bannerEffect === null) {
+            if (item.item !== null)
+                setUnsavedChanges(true)
+            else 
+                setUnsavedChanges(false)
+                
+            return
+        }
+        
+        // If user already had a banner effect applied
+        if (userData.bannerEffect._id === item._id){
+            setUnsavedChanges(false)
+            return
+        }
+
+        setUnsavedChanges(true)
+    }
+
     function cancelEditing() {
         profileImg = 'Same Image';
         bannerImg = 'Same Image';
@@ -193,6 +234,17 @@ export default function AccountPage(props) {
         }
         setEditBio(false);
         setUnsavedChanges(false);
+
+        // Reset Banner Effect
+        if (userData.bannerEffect !== null)
+            setBannerEffectPreview(userData.bannerEffect)
+
+        else 
+            setBannerEffectPreview({
+                name: "No Banner Effect",
+                item: null,
+                _id: "none"
+            })
     }
 
     const {
@@ -263,6 +315,7 @@ export default function AccountPage(props) {
                     iconImage: pfp_src,
                     bannerImage: banner_src,
                     bio: bio,
+                    bannerEffectId: bannerEffectPreview.item !== null ? bannerEffectPreview._id : null
                 },
             },
         });
@@ -300,6 +353,20 @@ export default function AccountPage(props) {
                 </Text>
             </Center>
         );
+    }
+
+    if (bannerEffectPreview._id === "uninitialized") {
+        if (userData.bannerEffect === null ) {
+            setBannerEffectPreview({
+                name: "No Banner Effect",
+                item: null,
+                _id: "none"
+            })
+        }
+
+        else {
+            setBannerEffectPreview(userData.bannerEffect)
+        }
     }
 
     async function handleAddFeaturedQuiz() {
@@ -403,57 +470,90 @@ export default function AccountPage(props) {
                         </Button>
                     ) : null}
                 </Box>
-
+                
                 {/* BANNER EFFECT */}
-                {preview && itemData.type === 'bannerEffect' ? (
-                    <Image
-                        src={itemData.item}
-                        w='100%'
-                        h='28vh'
-                        minH='200px'
-                        pos='absolute'
-                        zIndex='1'
-                    />
-                ) : null}
+                { renderBannerEffect() }
+
                 {/* BANNER */}
-                <input
-                    type='file'
-                    accept='image/*'
-                    style={{ display: 'none' }}
-                    ref={hiddenBannerInput}
-                    onChange={(event) => updateBanner(event)}
-                />
                 {isOwner && !preview ? (
-                    <Tooltip
-                        label='Edit Profile Banner'
-                        placement='bottom'
-                        fontSize='100%'
-                        bgColor='gray.800'
-                    >
-                        <Box
-                            h='28vh'
-                            minH='150px'
-                            pos='relative'
-                            bgImage={
-                                "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                                (preview && itemData.type === 'background'
-                                    ? itemData.item
-                                    : banner_src) +
-                                "')"
-                            }
-                            // bgImg={banner_src}
-                            bgSize='cover'
-                            bgPosition='center'
-                            borderRadius='10px'
-                            onClick={() => hiddenBannerInput.current.click()}
-                            _hover={{
-                                cursor: 'pointer',
-                                filter: 'brightness(65%)',
-                                transition: '0.15s linear',
-                            }}
-                            transition='0.15s linear'
-                        ></Box>
-                    </Tooltip>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Box>
+                                    <Tooltip
+                                        label='Edit Banner'
+                                        placement='bottom'
+                                        fontSize='100%'
+                                        bgColor='gray.800'
+                                    >
+                                    <Box
+                                        h='28vh'
+                                        minH='150px'
+                                        pos='relative'
+                                        bgImage={
+                                            "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
+                                            (preview && itemData.type === 'background'
+                                                ? itemData.item
+                                                : banner_src) +
+                                            "')"
+                                        }
+                                        bgSize='cover'
+                                        bgPosition='center'
+                                        borderRadius='10px'
+                                        _hover={{
+                                            cursor: 'pointer',
+                                            filter: 'brightness(65%)',
+                                            transition: '0.15s linear',
+                                        }}
+                                        transition='0.15s linear'
+                                    />
+                                    </Tooltip>
+                                </Box>
+                            </PopoverTrigger>
+                            <PopoverContent >
+                                <PopoverCloseButton />
+                                <PopoverHeader fontWeight="medium"> Edit Banner </PopoverHeader>
+                                <PopoverBody>
+                                    <Stack>
+                                        <HStack>
+                                            <Text> Banner Image: </Text>
+                                            <input
+                                                type='file'
+                                                accept='image/*'
+                                                style={{ display: 'none' }}
+                                                ref={hiddenBannerInput}
+                                                onChange={(event) => updateBanner(event)}
+                                            />
+                                            <Button 
+                                                variant="outline" 
+                                                colorScheme="blue"
+                                                _focus={{}}
+                                                onClick={() => hiddenBannerInput.current.click()}
+                                            > 
+                                                Upload Image 
+                                            </Button>
+                                        </HStack>
+                                        <HStack>
+                                            <Text> Banner Effect: </Text>
+                                            <Menu>
+                                                <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                                    { bannerEffectPreview.name }
+                                                </MenuButton>
+                                                <MenuList>
+                                                    <MenuItem onClick={() => updateBannerEffect({name: "No Banner Effect", item: null, _id: "none"})}> No Banner Effect </MenuItem>
+                                                    {
+                                                        userData.ownedBannerEffects.map((item, key) => {
+                                                            return (
+                                                                <MenuItem key={key} onClick={() => updateBannerEffect(item)}> {item.name} </MenuItem>
+                                                            )
+                                                        })
+                                                    }
+                                                </MenuList>
+                                            </Menu>
+                                        </HStack>
+                                    </Stack>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover>
                 ) : (
                     <Box
                         h='28vh'
@@ -466,12 +566,12 @@ export default function AccountPage(props) {
                                 : banner_src) +
                             "')"
                         }
-                        // bgImg={banner_src}
                         bgSize='cover'
                         bgPosition='center'
                         borderRadius='10px'
                     ></Box>
                 )}
+                
                 {/* PROFILE PICTURE AND NAME */}
                 <HStack
                     position='absolute'
@@ -576,6 +676,7 @@ export default function AccountPage(props) {
                         {userTitle}{' '}
                     </Text>
                 </HStack>
+                
                 {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
                 <Grid pt='1%' templateColumns='4fr 1fr' marginTop='10px'>
                     {/* FEATURED QUIZZES/PLATFORMS */}
@@ -891,6 +992,33 @@ export default function AccountPage(props) {
                 )}
             </Box>
         );
+    }
+
+    // Renders the banner effect
+    function renderBannerEffect() {
+        let item_src = null
+
+        // If user is previewing an item from the shop, use the previewed banner effect
+        if (preview)
+            item_src = itemData.item
+
+        // If user is previewing an item from their account, use the previewed banner effect
+        else
+            item_src = bannerEffectPreview.item
+        
+        if (item_src !== null){
+            return (
+                <Image
+                    src={item_src}
+                    w="100%"
+                    h='28vh'
+                    minH='200px'
+                    pos='absolute'
+                    zIndex="1"
+                    pointerEvents="none"
+                />
+            )
+        }
     }
 
     // Render Badges

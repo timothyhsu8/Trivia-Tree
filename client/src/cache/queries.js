@@ -332,6 +332,16 @@ export const GET_USER = gql`
                     displayName
                 }
             }
+            bannerEffect {
+                _id
+                name
+                item
+            }
+            ownedBannerEffects {
+                _id
+                name
+                item
+            }
             darkMode
         }
     }

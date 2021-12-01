@@ -1,6 +1,7 @@
 const User = require('../../models/User');
 const Platform = require('../../models/Platform');
 const Quiz = require('../../models/Quiz');
+const Item = require('../../models/Item');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
 
@@ -83,6 +84,12 @@ module.exports = {
                         { path: 'followers', model: 'User' },
                     ],
                 })
+                .populate({
+                    path: 'bannerEffect'
+                })
+                .populate({
+                    path: 'ownedBannerEffects'
+                })
                 .exec();
             return user;
         },
@@ -101,7 +108,7 @@ module.exports = {
     Mutation: {
         async updateUser(
             _,
-            { userInput: { userId, iconImage, bannerImage, bio } },
+            { userInput: { userId, iconImage, bannerImage, bio, bannerEffectId } },
             context
         ) {
             try {
@@ -135,12 +142,18 @@ module.exports = {
                         }
                     );
                 }
+
+                let bannerEffect = await Item.findById(bannerEffectId);
+                if (bannerEffect === undefined)
+                    bannerEffect = null
+
                 user = await User.findByIdAndUpdate(
                     userId,
                     {
                         iconImage: profileURL,
                         bannerImage: bannerURL,
                         bio,
+                        bannerEffect: bannerEffect
                     },
                     { new: true }
                 )

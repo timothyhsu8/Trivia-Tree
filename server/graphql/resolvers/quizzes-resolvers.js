@@ -73,6 +73,35 @@ module.exports = {
 
             return finalQuizRecommendations;
 
+        },
+        async getUserRecommendations(_, { user_id }) {
+            let recommendationList = [];
+
+            const user = await User.findById(user_id);
+            let recommendationArray = user.recommendationArray;
+            
+            let quizzes = await Quiz.find().populate('user').exec();
+            shuffle(quizzes);
+
+
+            let random = 0;
+            let category = '';
+
+            count = 0;
+            while(count < 10){
+                random = getRandomInt(0, recommendationArray.length);
+                category = recommendationArray[random];
+                for(let i = 0; i < quizzes.length; i++){
+                    if(quizzes[i].category == category){
+                        recommendationList.push(quizzes[i]);
+                        quizzes.splice(i,1);
+                        break;
+                    }
+                }
+                count++;
+            }
+
+            return recommendationList;
         }
     },
     Mutation: {
@@ -468,3 +497,14 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
   }
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}

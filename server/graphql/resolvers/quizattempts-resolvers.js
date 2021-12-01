@@ -28,7 +28,8 @@ module.exports = {
       const quiz = await Quiz.findById(quiz_id).exec();
       quiz.numAttempts = quiz.numAttempts + 1;
 
-      let questions = quiz.questions
+      let questions = quiz.questions;
+      let category = quiz.category;
 
       let coinsEarned = 0; 
 
@@ -95,13 +96,18 @@ module.exports = {
         const quizAttempts = await QuizAttempt.find({quiz:quiz, user:user})
         attemptNumber = quizAttempts.length + 1; 
 
+        recommendationArray = user.recommendationArray;
+        recommendationArray.push(category);
+        user.recommendationArray = recommendationArray;
+
         if(attemptNumber === 1){
           coinsEarned = questionsCorrect * 10;
           user.currency += coinsEarned;
-          user.save();
           // console.log(user)
           // console.log(user.currency)
         }
+
+        user.save();
       }
 
 

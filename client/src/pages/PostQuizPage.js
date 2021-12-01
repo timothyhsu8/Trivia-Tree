@@ -365,12 +365,12 @@ export default function PostQuizPage() {
                                                 })}
                                             </Flex>
                                         </Box>
+                                        <Box w="100%" h="40px" bg='#165CAF' borderRadius='5px' position="absolute" top="180px" _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}>
+                                            <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  lineHeight="1" fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
+                                        </Box>
 
                             </Box>
-                            <Box w="402px" h="40px" bg='#165CAF' borderRadius='5px' position="absolute" top="80px" _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}>
-                                <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  lineHeight="1" fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
-                            </Box>
-                            <Box w='28vw' h='50px' bg='gray.800' lineHeight="2" position="relative" bottom="63px" borderTopRadius="20%">
+                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" position="relative" bottom="63px" borderTopRadius="20%">
                                 {' '}
                                 {/* leaderboards Heading*/}
                                 <h1 className='leaderboard_title'>

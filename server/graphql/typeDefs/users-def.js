@@ -33,6 +33,7 @@ module.exports = gql`
         iconImage: String
         bannerImage: String
         bio: String
+        bannerEffectId: ID
     }
 
     input SettingInput {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, createRef } from 'react';
-import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner } from "@chakra-ui/react"
+import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
 import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
@@ -50,8 +50,19 @@ export default function SettingsPage(props) {
     const hiddenImageInput = createRef(null);
 
 
+    const { colorMode, toggleColorMode } = useColorMode()
+    function initialDark(){
+        if(darkMode==true && colorMode=="light"){
+            toggleColorMode()
+        }
+        if(darkMode==false && colorMode=="dark"){
+            toggleColorMode()
+        }
+    }
+
     async function saveChanges() {
         const {data} = await updateSettings({ variables: {settingInput:{userId:userId, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
+        initialDark()
         return;
     }
 

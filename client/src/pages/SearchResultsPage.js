@@ -1,5 +1,5 @@
 import { Box, Grid, Text, Center, VStack, Select, Spinner, Button, NumberInput, NumberInputField, Flex, Spacer, HStack,
-    IconButton, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Tag, TagLabel } from "@chakra-ui/react"
+    IconButton, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Tag, TagLabel, useColorModeValue } from "@chakra-ui/react"
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries";
@@ -32,6 +32,9 @@ export default function SearchResultsPage() {
 
     const loading = quizzes.loading || platforms.loading || users.loading
     const error = quizzes.error || platforms.error || users.error
+
+    //Dark mode styling
+    //const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
 
     // Loading Screen
     if (loading) {

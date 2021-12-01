@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon } from "@chakra-ui/react"
+import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon, useColorModeValue } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import userImage from '../images/guest.png';
 import '../styles/postpage.css';
@@ -80,6 +80,8 @@ export default function PostQuizPage() {
             console.log(data2);
         }
     });
+    //Dark mode styling
+    const whiteBlackText=useColorModeValue("white", "black")
 
     const {data:data3, loading:loading3} = useQuery(queries.GET_POST_RECOMMENDATIONS, {
         fetchPolicy: 'network-only',
@@ -368,7 +370,7 @@ export default function PostQuizPage() {
                             <Box w="402px" h="40px" bg='#165CAF' borderRadius='5px' position="absolute" top="80px" _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}>
                                 <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  lineHeight="1" fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
                             </Box>
-                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" position="relative" bottom="63px" borderTopRadius="20%">
+                            <Box w='28vw' h='50px' bg='gray.800' lineHeight="2" position="relative" bottom="63px" borderTopRadius="20%">
                                 {' '}
                                 {/* leaderboards Heading*/}
                                 <h1 className='leaderboard_title'>

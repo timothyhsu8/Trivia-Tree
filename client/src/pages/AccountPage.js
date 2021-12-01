@@ -24,7 +24,8 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    Stack
+    Stack,
+    useColorModeValue,
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -85,8 +86,6 @@ export default function AccountPage(props) {
         }
     )
 
-    const [backgroundNum, setBackground] = useState(''); //Int bg
-    const background = ['white', 'red', 'blue', 'green'];
     const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
         React.useState(false);
     const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] =
@@ -145,21 +144,6 @@ export default function AccountPage(props) {
         setUserTitle(value);
     }
 
-    function changeBackground(event) {
-        event.preventDefault();
-        console.log(event.target[0].value);
-        setBackground(event.target[0].value);
-    }
-
-    function listCreator(numberOfRows, background) {
-        //Takes number of rows to make a variable number of rows of categories
-        //Takes an images array and text array to fill the rows with
-        let list = [];
-        for (let i = 0; i < numberOfRows; i++) {
-            list.push(<option value={background[i]}>{background[i]}</option>);
-        }
-        return list;
-    }
 
     function updatePFP(event) {
         if (
@@ -320,6 +304,19 @@ export default function AccountPage(props) {
             },
         });
     }
+
+
+    //Dark mode styling
+    const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
+    const platformsButtonBG=useColorModeValue('gray.200', 'gray.500')
+    const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
+    const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
+    const accountButtonsText=useColorModeValue('blue', 'light blue')
+    const accountButtonsText2=useColorModeValue('black', 'white')
+    const whiteBlackBG=useColorModeValue('white', 'gray.700')
+    const basicTextColor=useColorModeValue('white', 'black')
+    const cancelButtonBG=useColorModeValue('gray.500', 'gray.500')
+    const selectButtonBG=useColorModeValue('blue.500', 'blue.500')
 
     // Loading Screen - Wait for userData and user
     if ((loading || !user) && !firstQueryDone) {
@@ -483,7 +480,7 @@ export default function AccountPage(props) {
                                         label='Edit Banner'
                                         placement='bottom'
                                         fontSize='100%'
-                                        bgColor='gray.800'
+                                        bgColor={bannerEditBG}
                                     >
                                     <Box
                                         h='28vh'
@@ -610,7 +607,7 @@ export default function AccountPage(props) {
                             label='Edit Platform Icon'
                             placement='top'
                             fontSize='100%'
-                            bgColor='gray.800'
+                            bgColor={bannerEditBG}
                         >
                             <Box
                                 className='squareimage_container'
@@ -684,7 +681,7 @@ export default function AccountPage(props) {
                         <VStack spacing='1.5vh'>
                             <Box
                                 w='100%'
-                                bgColor='gray.200'
+                                bgColor={platformsButtonBG}
                                 borderRadius='10'
                                 overflowX='auto'
                                 minH='10.5vw'
@@ -741,7 +738,7 @@ export default function AccountPage(props) {
                             </Box>
                             <Box
                                 w='100%'
-                                bgColor='gray.200'
+                                bgColor={platformsButtonBG}
                                 borderRadius='10'
                                 overflowX='auto'
                                 minH='12vw'
@@ -806,11 +803,11 @@ export default function AccountPage(props) {
                             label='Edit Profile Bio'
                             placement='top'
                             fontSize='100%'
-                            bgColor='gray.800'
+                            bgColor={bannerEditBG}
                         >
                             <Box
                                 minWidth='100px'
-                                bgColor='gray.200'
+                                bgColor={platformsButtonBG}
                                 borderRadius='10'
                                 overflow='hidden'
                                 onClick={() => {
@@ -829,7 +826,7 @@ export default function AccountPage(props) {
                                 </Text>
                                 {editBio ? (
                                     <Textarea
-                                        backgroundColor='white'
+                                        backgroundColor={whiteBlackBG}
                                         value={bio}
                                         onChange={(event) =>
                                             updateBio(event.target.value)
@@ -851,7 +848,7 @@ export default function AccountPage(props) {
                     ) : (
                         <Box
                             minWidth='100px'
-                            bgColor='gray.200'
+                            bgColor={platformsButtonBG}
                             borderRadius='10'
                             overflow='hidden'
                         >
@@ -875,11 +872,12 @@ export default function AccountPage(props) {
         );
     }
 
+    
     // Render Platforms
     function renderPlatforms() {
         return (
             <Box>
-                <Box bgColor='gray.200' borderRadius='10'>
+                <Box bgColor={platformsButtonBG} borderRadius='10'>
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Platforms
                     </Text>
@@ -904,7 +902,7 @@ export default function AccountPage(props) {
                         })}
                     </Flex>
                 </Box>
-                <Box mt='10px' bgColor='gray.200' borderRadius='10'>
+                <Box mt='10px' bgColor={platformsButtonBG} borderRadius='10'>
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Followed Platforms
                     </Text>
@@ -937,7 +935,7 @@ export default function AccountPage(props) {
     function renderQuizzes() {
         return (
             <Box>
-                <Box bgColor='gray.200' borderRadius='10'>
+                <Box bgColor={platformsButtonBG} borderRadius='10'>
                     <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                         User's Quizzes
                     </Text>
@@ -958,7 +956,7 @@ export default function AccountPage(props) {
                 </Box>
 
                 {userData.favoritedQuizzes.length > 0 ? (
-                    <Box mt='10px' bgColor='gray.200' borderRadius='10'>
+                    <Box mt='10px' bgColor={platformsButtonBG} borderRadius='10'>
                         <Text
                             pl='1.5%'
                             pt='1%'
@@ -1024,7 +1022,7 @@ export default function AccountPage(props) {
     // Render Badges
     function renderBadges() {
         return (
-            <Box bgColor='gray.200' borderRadius='10'>
+            <Box bgColor={platformsButtonBG} borderRadius='10'>
                 <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
                     All Badges
                 </Text>
@@ -1054,7 +1052,7 @@ export default function AccountPage(props) {
                     w='100%'
                     h='100vh'
                     zIndex='1'
-                    bgColor='rgba(0, 0, 0, 0.9)'
+                    bgColor={mainBG}
                     transition='0.2s linear'
                 >
                     {/* QUIZ CARDS */}
@@ -1074,7 +1072,7 @@ export default function AccountPage(props) {
                                     title_fontsize='92%'
                                     include_author={false}
                                     char_limit={35}
-                                    font_color='white'
+                                    font_color={basicTextColor}
                                     show_stats={false}
                                     chosenQuiz={chosenFeaturedQuiz}
                                     setChosenQuiz={setChosenFeaturedQuiz}
@@ -1092,7 +1090,7 @@ export default function AccountPage(props) {
                         right='-83%'
                     >
                         <Button
-                            bgColor='gray.500'
+                            bgColor={cancelButtonBG}
                             textColor='white'
                             fontSize='120%'
                             pt='1.3%'
@@ -1170,7 +1168,7 @@ export default function AccountPage(props) {
                         right='-83%'
                     >
                         <Button
-                            bgColor='gray.500'
+                            bgColor={cancelButtonBG}
                             textColor='white'
                             fontSize='120%'
                             pt='1.3%'
@@ -1187,7 +1185,7 @@ export default function AccountPage(props) {
 
                         {/* Finish selecting a quiz */}
                         <Button
-                            bgColor='blue.500'
+                            bgColor={selectButtonBG}
                             textColor='white'
                             fontSize='120%'
                             pt='1.3%'
@@ -1218,8 +1216,8 @@ export default function AccountPage(props) {
                         <Button
                             height='100%'
                             fontSize='115%'
-                            bgColor='white'
-                            textColor={page === 'user' ? 'blue' : 'black'}
+                            bgColor={accountButtonsBG}
+                            textColor={page === 'user' ? {accountButtonsText} : {accountButtonsText2}}
                             onClick={() => setPage('user')}
                             _focus={{ boxShadow: 'none' }}
                         >
@@ -1229,8 +1227,8 @@ export default function AccountPage(props) {
                         <Button
                             height='100%'
                             fontSize='115%'
-                            bgColor='white'
-                            textColor={page === 'platforms' ? 'blue' : 'black'}
+                            bgColor={accountButtonsBG}
+                            textColor={page === 'platforms' ? {accountButtonsText} : {accountButtonsText2}}
                             onClick={() => setPage('platforms')}
                             _focus={{ boxShadow: 'none' }}
                         >
@@ -1240,8 +1238,8 @@ export default function AccountPage(props) {
                         <Button
                             height='100%'
                             fontSize='115%'
-                            bgColor='white'
-                            textColor={page === 'quizzes' ? 'blue' : 'black'}
+                            bgColor={accountButtonsBG}
+                            textColor={page === 'quizzes' ? {accountButtonsText} : {accountButtonsText2}}
                             onClick={() => setPage('quizzes')}
                             _focus={{ boxShadow: 'none' }}
                         >
@@ -1251,8 +1249,8 @@ export default function AccountPage(props) {
                         <Button
                             height='100%'
                             fontSize='115%'
-                            bgColor='white'
-                            textColor={page === 'badges' ? 'blue' : 'black'}
+                            bgColor={accountButtonsBG}
+                            textColor={page === 'badges' ? {accountButtonsText} : {accountButtonsText2}}
                             onClick={() => setPage('badges')}
                             _focus={{ boxShadow: 'none' }}
                         >
@@ -1271,7 +1269,7 @@ export default function AccountPage(props) {
                     h='7vh'
                     pos='fixed'
                     bottom='0'
-                    bgColor='gray.200'
+                    bgColor={platformsButtonBG}
                     borderTop='1px solid'
                     borderColor='gray.300'
                 >

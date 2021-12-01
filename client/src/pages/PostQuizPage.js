@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon } from "@chakra-ui/react"
+import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon, useColorModeValue } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import userImage from '../images/guest.png';
 import '../styles/postpage.css';
@@ -78,6 +78,8 @@ export default function PostQuizPage() {
             console.log(data2);
         }
     });
+    //Dark mode styling
+    const whiteBlackText=useColorModeValue("white", "black")
 
     function calculateBetterScore(userScore, averageScore, attempts) {
         if (attempts === 1) {
@@ -297,7 +299,7 @@ export default function PostQuizPage() {
                         <div className="fadeshow1">
                         <Box pos="absolute" className='containerDown' paddingLeft="70px" transform="translateY(-15%)">
                             {/* Statbox */}
-                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" borderTopRadius="20%">
+                            <Box w='28vw' h='50px' bg='gray.800' lineHeight="2" borderTopRadius="20%">
                                 {' '}
                                 {/* leaderboards Heading*/}
                                 <h1 className='leaderboard_title'>

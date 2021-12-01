@@ -1,11 +1,11 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
-    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from "@chakra-ui/react"
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { BsShopWindow, BsFillCartFill } from "react-icons/bs"
 import { config } from '../util/constants';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import coin from '../images/coin.png';
 import { useMutation, gql } from '@apollo/client';
 import guestImage from '../images/guest.png';
@@ -14,7 +14,7 @@ import '../styles/styles.css'
 export default function Navbar() {
     const { user } = useContext(AuthContext);
     let userId = null;
-    
+
     const cancelRef = useRef()
     const [searchType, setSearchType] = useState('All')
     const [searchText, setSearchText] = useState("")
@@ -101,6 +101,15 @@ export default function Navbar() {
                     search: searchText,
                 },
             });
+        }
+    }
+    
+
+    //If logging out in dark mode, change to light mode. 
+    const { colorMode, toggleColorMode } = useColorMode()
+    function initialDark(){
+        if(colorMode=="dark"){
+            toggleColorMode()
         }
     }
 
@@ -219,7 +228,7 @@ export default function Navbar() {
                                     <Box>
                                         <MenuItem onClick={() => history.push('/rewardspage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem>
                                         <a href={`${config.API_URL}/auth/logout`}>
-                                            <MenuItem fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
+                                            <MenuItem onClick={() => initialDark()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
                                         </a>
                                     </Box>
                                     : 

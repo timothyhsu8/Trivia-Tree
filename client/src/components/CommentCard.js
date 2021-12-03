@@ -1,23 +1,54 @@
 import { useState } from 'react';
-import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid, Button, Center, Stack, Tag, TagLabel} from '@chakra-ui/react';
+import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid, Button, Center, Stack, Tag, TagLabel, Flex, Input} from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { BsTrash } from 'react-icons/bs';
+import { ArrowDownIcon, ArrowForwardIcon } from '@chakra-ui/icons'
+import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
+import * as mutations from '../cache/mutations';
+import ReplyCard from './ReplyCard.js'
 
 export default function CommentCard( props ) {    
     let comment = props.comment
     let comment_id = props.comment._id
+    let replies = props.comment.replies;
     let timeAgo = getTimeAgo(props.comment.createdAt);
     let usersComment = false;
+    let quiz_id = props.quiz_id
     if(comment.user._id == props.user_id){
         usersComment = true;
     }
 
+
+    const [AddReply] = useMutation(mutations.ADD_REPLY);
+    const [DeleteReply] = useMutation(mutations.DELETE_REPLY);
+
     const[deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const[showReply, setShowReply] = useState(false)
+
+    const [reply, setReply] = useState('');
+    const handleReplyChange = (event) => setReply(event.target.value);
 
     function handleDeleteComment() {
         setDeleteConfirmation(false)
         props.handleDeleteComment(comment_id)
+    }
+
+    async function handleAddReply(){
+        console.log(reply);
+        const {data} = await AddReply({ variables: {
+            quiz_id: quiz_id, user_id: props.user_id, comment_id: comment_id, reply:reply
+        }});
+        setReply("");
+        props.refetch();
+    }
+
+    async function handleDeleteReply(reply_id){
+        console.log(reply_id);
+        const {data} = await DeleteReply({ variables: {
+            quiz_id: quiz_id, user_id: props.user_id, comment_id: comment_id, reply_id: reply_id
+        }});
+        props.refetch();
     }
 
     return (
@@ -34,30 +65,30 @@ export default function CommentCard( props ) {
         //     <Text as="b" fontSize="2.5vw">{comment.comment}</Text> 
         // </Box>
 
-        <HStack
-        h="12vh" 
+        <Flex
+        direction="row"
+        h="auto" 
         w="60vw"
         minH="80px"
-        top="50%" 
+        marginTop="2%"
+        marginBottom="2%"
+        marginLeft="2%"
         spacing="1.5%"
         borderBottom="1px" 
         borderColor="gray.400" 
         dipslay="flex" 
-        alignItems="center" 
-        _hover={{bgColor:"gray.200", 
-        cursor:"pointer", 
-        transition:"background-color 0.2s linear"}} 
+        alignItems="left"  
         transition="background-color 0.1s linear"
         overflow="hidden"
         onMouseLeave={() => setDeleteConfirmation(false)}
         >
         {/* USER ICON */}
-        <Box className='squareimage_container' w="5%" minW="55px" ml="2.8%"> 
-            <Image className="squareimage" src={comment.user.iconImage} objectFit="cover" borderRadius="50%"></Image>
+        <Box className='squareimage_container' h="60px" w="30px" w="5%" minW="55px" marginRight="10px"> 
+            <Image className="squareimage" src={comment.user.iconImage} borderRadius="50%"></Image>
         </Box>
 
         {/* USER NAME */}
-        <Stack spacing="0.5" direction="column">
+        <Flex spacing="0.1" direction="column">
             <HStack>
                 <Text w="fit-content" fontSize="12px">
                     {comment.user.displayName}
@@ -106,10 +137,51 @@ export default function CommentCard( props ) {
                 : ''}
             </HStack>
             <Text fontSize="100%" fontWeight="medium"> {comment.comment}</Text>
+            <HStack>
+                {showReply ? 
+                <Button leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}>
+                        Hide Replies
+                </Button> 
+                
+                :
+                <Button leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)}>
+                        View Replies
+                </Button>
+                }
+            </HStack>
+
+                {!showReply ? "":
+                    <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="20px">
+                        {replies.map((reply, key) => {
+                            return (
+                                <ReplyCard
+                                    reply={reply}
+                                    quiz_id={quiz_id}
+                                    user_id={props.user_id}
+                                    key={key}
+                                    logged_in={props.logged_in}
+                                    handleDeleteReply={handleDeleteReply}
+ 
+                                />
+                            )
+                        })}
+                    </Flex>
+                }
+
+                {showReply && props.logged_in ? 
+                    <HStack borderBottom="1px" borderColor="gray.400" paddingTop="5px" paddingBottom="10px">
+                        <Image src={props.player_icon} alt="pfp" className="round_image" position="relative" />
+                        <Input value={reply} onChange={handleReplyChange} size="xs" variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"/>
+                        <Button w="140px" colorScheme='blue' variant='solid' size="xs" marginLeft="20px" onClick={handleAddReply}>
+                            Reply
+                        </Button>
+                    </HStack>
+                : ""}
+                
 
             {/* <Text fontSize="110%"> {platform.followers.length} Followers </Text> */}
-        </Stack>
-        </HStack>
+        </Flex>
+        </Flex>
     )
 }
 

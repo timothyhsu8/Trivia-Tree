@@ -1,5 +1,6 @@
 const Quiz = require('../../models/Quiz');
 const Comment = require('../../models/Comment')
+const Reply = require('../../models/Reply')
 const User = require('../../models/User');
 const QuizAttempt = require('../../models/QuizAttempt');
 const Platform = require('../../models/Platform');
@@ -24,7 +25,19 @@ module.exports = {
             try {
                 const quiz = await Quiz.findById(quizId)
                     .populate('user')
-                    .populate({path:'comments', populate:{path:'user'}})
+                    .populate({
+                        path:'comments', 
+                        populate:{path:'user'}})
+                    .populate({
+                        path: 'comments',
+                        populate: {
+                            path: 'replies',
+                            populate: {
+                                path: 'user',
+                                model: 'User'
+                        }
+                    }
+                })
                     .exec();
                 if (quiz) {
                     return quiz;
@@ -511,6 +524,50 @@ module.exports = {
             for(let i = 0; i < comments.length; i++){
                 if(comments[i]._id == comment_id){
                     comments.splice(i,1);
+                    break;
+                }
+            }
+
+            quiz.comments = comments; 
+
+            quiz.save();
+            return quiz;
+        },
+        async addReply(_, { quiz_id, user_id, comment_id, reply }) {
+            const quiz = await Quiz.findById(quiz_id);
+
+            const newReply = new Reply({
+                user: user_id,
+                reply: reply
+            });
+
+            let comments = quiz.comments; 
+
+            for(let i = 0; i < comments.length; i++){
+                if(comments[i]._id == comment_id){
+                    comments[i].replies.push(newReply)
+                    break
+                }
+            }
+
+            quiz.comments = comments; 
+
+            quiz.save();
+
+            return quiz;
+        },
+        async deleteReply(_, { quiz_id, user_id, comment_id, reply_id}) {
+            const quiz = await Quiz.findById(quiz_id);
+            let comments = quiz.comments;
+
+            for(let i = 0; i < comments.length; i++){
+                if(comments[i]._id == comment_id){
+                    for(let j = 0; j < comments[i].replies.length; j++){
+                        if(comments[i].replies[j]._id == reply_id){
+                            comments[i].replies.splice(j,1);
+                            break;
+                        }
+                    }
                     break;
                 }
             }

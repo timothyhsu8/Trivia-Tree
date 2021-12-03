@@ -94,5 +94,7 @@ module.exports = gql`
         rateQuiz(quizId: ID!, rating: Int!): Quiz
         addComment(quiz_id: ID!, user_id: ID!, comment: String!): Quiz
         deleteComment(quiz_id: ID!, user_id: ID!, comment_id: ID!): Quiz
+        addReply(quiz_id: ID!, user_id: ID!, comment_id: ID!, reply: String!): Quiz
+        deleteReply(quiz_id: ID!, user_id: ID!, comment_id: ID!, reply_id: ID!): Quiz
     }
 `;

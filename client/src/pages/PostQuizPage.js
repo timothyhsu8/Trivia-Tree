@@ -180,6 +180,7 @@ export default function PostQuizPage() {
     if (data2) {
         questions = data2.getQuiz.questions
         comments = data2.getQuiz.comments
+        comments = reverseArr(comments)
         icon_src = data2.getQuiz.icon == null ? quizImage : data2.getQuiz.icon
         console.log(data2.getQuiz);
         user_icon = data2.getQuiz.user.iconImage
@@ -236,7 +237,7 @@ export default function PostQuizPage() {
                 >
                     {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
                     <div className="SecretSauce"> 
-                        <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%" border="solid"></Image> 
+                        <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%"></Image> 
                         <Box className="containerDown" paddingLeft="30px">  
                             <Box>
                             <Flex direction="row" position="relative">  
@@ -244,7 +245,7 @@ export default function PostQuizPage() {
                             </Flex>    
                             </Box>
                             <Flex direction="row" position="relative">
-                                <Image w="100px" h="100px" src={user_icon} objectFit="cover" borderRadius="50%" border="solid"></Image>
+                                <Image w="100px" h="100px" src={user_icon} objectFit="cover" borderRadius="50%"></Image>
                                 <Flex direction="column" position="relative"> 
                                     <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
                                     <Text fontSize="24" left="10px" top="15px" position="relative">{creator}</Text>
@@ -421,11 +422,10 @@ export default function PostQuizPage() {
                                         paddingLeft="15px"
                                         paddingRight="15px"
                                         overflow="scroll"
-                                        marginBottom="20px"
                                     >
                                         <Text marginBottom="20px" borderBottom="1px" fontSize="22px">Comments ({comments.length})</Text>
                                         {logged_in ? 
-                                        <Flex direction="row">
+                                        <Flex direction="row" borderBottom="1px" borderColor="gray.400">
                                             <Image src={player_icon} alt="pfp" className="round_image_larger" position="relative" bottom="10px" />
                                             <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"/>
                                             <Button w="140px" colorScheme='blue' variant='solid' size="md" marginLeft="20px" onClick={handleAddComment}>
@@ -434,14 +434,17 @@ export default function PostQuizPage() {
                                         </Flex>
                                         : ""}
 
-                                        <Flex direction="column" mt="1%" spacing="15%" display="flex" flexWrap="wrap">
+                                        <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="20px">
                                                     {comments.map((comment, key) => {
                                                         return (
                                                             <CommentCard
                                                                 comment={comment}
                                                                 logged_in={logged_in}
                                                                 user_id={user_id}
+                                                                player_icon={player_icon}
                                                                 handleDeleteComment={handleDeleteComment}
+                                                                refetch={refetch}
+                                                                quiz_id={quizId}
                                                             />
                                                         )
                                                     })}
@@ -543,4 +546,12 @@ function convertTimeStringForDisplay(quizTimerString){
             result += seconds + ' Seconds '
 
     return result;
+}
+
+function reverseArr(input) {
+    var ret = new Array;
+    for(var i = input.length-1; i >= 0; i--) {
+        ret.push(input[i]);
+    }
+    return ret;
 }

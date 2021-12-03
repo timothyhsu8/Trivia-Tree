@@ -223,4 +223,22 @@ mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!) {
 }
 `;
 
+export const ADD_REPLY = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!, $reply: String!) {
+    addReply(quiz_id: $quiz_id, user_id: $user_id, comment_id: $comment_id, reply: $reply) {
+        _id
+    }
+}
+`;
+
+export const DELETE_REPLY = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!, $reply_id: ID!) {
+    deleteReply(quiz_id: $quiz_id, user_id: $user_id, comment_id: $comment_id, reply_id: $reply_id) {
+        _id
+    }
+}
+`;
+
+
+
 

@@ -56,7 +56,14 @@ export const GET_QUIZ = gql`
                 }
                 comment
                 replies {
+                    _id
+                    user {
+                        _id
+                        displayName
+                        iconImage
+                    }
                     reply
+                    createdAt
                 }
                 createdAt
             }

@@ -154,7 +154,7 @@ export default function QuizCard( props ) {
                 <VStack pos="absolute" right="2%" transition="0.2s linear">
                     <Icon as={EditIcon} _hover={{color:"gray.500", transition:"0.1s linear"}} transition="0.1s linear" 
                         onClick={(event) => {
-                            console.log("HEY")
+                            history.push('/editQuiz/' + quiz_data._id)
                             event.stopPropagation()
                         }} />
                     

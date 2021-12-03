@@ -47,6 +47,8 @@ export const GET_QUIZ = gql`
             numRatings
             averageScore
             medianScore
+            quizInstant
+            quizShuffled
             comments {
                 _id
                 user {

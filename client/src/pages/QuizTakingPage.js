@@ -7,17 +7,15 @@ import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import '../styles/styles.css'
 
-
-
 export default function QuizTakingPage({}) {
     let { quizId } = useParams();
     const { user } = useContext(AuthContext);
-    let quiz = null;
     let quizAttempt = null;
     let numQuestions = null; 
     let history = useHistory();
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
+    const [quiz, setQuiz] = useState(null);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
     const [userAnswers, setUserAnswers] = useState(() => []);
     const [totalTime, setTotalTime] = useState(0);
@@ -27,6 +25,7 @@ export default function QuizTakingPage({}) {
     const [quizTimerDisplay, setQuizTimerDisplay] = useState("No Timer");
     const [quizTimerPulled, setQuizTimerPulled] = useState(false);
     const [timeRunningOut, setTimeRunningOut] = useState(false);
+    const [finishedInit, setFinishedInit] = useState(false);
     
     //Dark mode styling
     const quizTimerBoxBG=useColorModeValue("gray.100", "gray.600")
@@ -66,27 +65,35 @@ export default function QuizTakingPage({}) {
 
     }, [quizTimer]);
 
-    const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
+    const { data: {getQuiz: quizData} = {}, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
         variables: { quizId: quizId },
-        fetchPolicy: 'cache-and-network'
+        fetchPolicy: 'network-only',
+        onCompleted({getQuiz: quizData}) {
+            if(quizData.quizTimer != null){
+                if(!quizTimerPulled){
+                    setQuizTimerDisplay(quizData.quizTimer);
+                    let totalSeconds = convertTimeToSeconds(quizData.quizTimer);
+                    setQuizTimer(totalSeconds)
+                    setQuizTimerPulled(true); 
+                }
+            }
+            let tempQuiz = JSON.parse(JSON.stringify(quizData));
+            if (quizData.quizShuffled) {
+                let modifiedQuizQuestions = quizData.questions.map((question, index) => {
+                    let tempQuestion = JSON.parse(JSON.stringify(question));
+                    tempQuestion.index = index;
+                    return tempQuestion;
+                });
+                shuffle(modifiedQuizQuestions);
+                tempQuiz.questions = modifiedQuizQuestions;
+            }
+            setQuiz(tempQuiz);
+            setFinishedInit(true);
+        }
     });
 
-    
-
-    if (loading) {
+    if (loading || !finishedInit) {
         return <div></div>;
-    }
-    
-    if (data) {
-        quiz = data.getQuiz;
-        if(quiz.quizTimer != null){
-            if(!quizTimerPulled){
-                setQuizTimerDisplay(quiz.quizTimer);
-                let totalSeconds = convertTimeToSeconds(quiz.quizTimer);
-                setQuizTimer(totalSeconds)
-                setQuizTimerPulled(true); 
-            }
-        }
     }
 
     let quizID = quiz._id;
@@ -100,7 +107,6 @@ export default function QuizTakingPage({}) {
     for (let i = 0; i < quiz.numQuestions; i++)
         questionNumber.push('Question' + i + 1);
 
-
     const submitQuiz = async () => {
         console.log(totalTime)
         console.log(quizTimer)
@@ -112,7 +118,13 @@ export default function QuizTakingPage({}) {
             if(newAnswers[i] == undefined)
                 newAnswers[i] = '';
         }
-
+        if (quiz.quizShuffled) {
+            let tempAnswers = [];
+            quiz.questions.forEach((question, index) => {
+                tempAnswers[question.index] = newAnswers[index];
+            })
+            newAnswers = tempAnswers;
+        }
         let user_id = null; 
         if(user !== 'NoUser'){
             user_id = user._id
@@ -367,4 +379,15 @@ export default function QuizTakingPage({}) {
             </Grid>
         </Box>
     );
+}
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
 }

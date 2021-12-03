@@ -19,17 +19,18 @@ export default function Homepage() {
     let recommendation_list = [];
     const { user } = useContext(AuthContext);
 
-    console.log(user)
+    // console.log(user)
     
     const [currentSection, setCurrentSection] = useState("FEATURED")
     const sections = ["FEATURED", "RECOMMENDATIONS", "FAVORITED", "NEW", "BEST"]
+    const [initialLoad, setInitialLoad] = useState(false);
 
     // Fetch quiz/platform data from the backend
     const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
     const platforms = useQuery(GET_PLATFORMS, { fetchPolicy: 'cache-and-network' })
     const users = useQuery(GET_USERS, { fetchPolicy: 'cache-and-network' })
 
-    const loading = quizzes.loading || platforms.loading || users.loading
+    const doneLoading = !quizzes.loading && !platforms.loading && !users.loading
     const error = quizzes.error || platforms.error || users.error
 
     //I am sorry for this but to recognize dark mode on login from any account. Needs to check user info. 
@@ -39,7 +40,9 @@ export default function Homepage() {
     }
     const {
         data: { getUser: userData } = {},
-    } = useQuery(GET_USER, {
+    } = useQuery(GET_USER,
+        (!user || user === 'NoUser') ?
+        {skip: true} : {
         fetchPolicy: 'cache-and-network',
         variables: { _id: userId },
         onError(err) {
@@ -47,11 +50,13 @@ export default function Homepage() {
         },
         onCompleted({ getUser: userData }) {
             setDarkMode(userData.darkMode);
-        },
+        }
     });
     const {
         data: { getUserRecommendations: userRecommendations } = {},
-    } = useQuery(GET_USER_RECOMMENDATIONS, {
+    } = useQuery(GET_USER_RECOMMENDATIONS,
+        (!user || user === 'NoUser') ?
+        {skip: true} : {
         variables: {user_id: userId },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -89,12 +94,16 @@ export default function Homepage() {
     //Changes for dark mode end here
 
     // Loading Screen
-    if (loading) {
+    if (!doneLoading && !initialLoad) {
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
             </Center>
         );
+    } else {
+        if (!initialLoad) {
+            setInitialLoad(true);
+        }
     }
 
     // Error Screen

@@ -395,7 +395,7 @@ export default function PostQuizPage() {
 
                             {/* ANSWERS SECTION */}
                              {showAnswers ?
-                                <Box paddingTop="150px" h="350px" overflow="scroll">
+                                <Box paddingTop="150px" h="350px" overflowY='scroll'>
                                     <Box className='answerbox' position='relative' bottom="100px">
                                         {questions.map((question, index) => {
                                         return (
@@ -422,6 +422,7 @@ export default function PostQuizPage() {
                                         paddingLeft="15px"
                                         paddingRight="15px"
                                         overflow="scroll"
+                                        marginBottom="20px"
                                     >
                                         <Text marginBottom="20px" borderBottom="1px" fontSize="22px">Comments ({comments.length})</Text>
                                         {logged_in ? 

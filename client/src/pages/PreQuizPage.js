@@ -35,7 +35,9 @@ export default function PreQuizPage({}) {
     
 
     const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId:quizId }, onCompleted() {
+        variables: { quizId:quizId }, 
+        fetchPolicy: 'cache-and-network',
+        onCompleted() {
             if (logged_in){
                 for(let i = 0; i < user.favoritedQuizzes.length; i++){
                     if(user.favoritedQuizzes[i] == quiz._id){
@@ -141,7 +143,7 @@ export default function PreQuizPage({}) {
                         
                         <HStack spacing={3}>
                             <Icon as={BsShuffle} w={iconSize} h={iconSize} position="relative"/> 
-                            <Text fontSize={iconTextSize} as="b"> Ordered Questions </Text>
+                            <Text fontSize={iconTextSize} as="b"> {quiz.quizShuffled ? "Shuffled Question" : "Ordered Questions"} </Text>
                         </HStack>
                     </Grid>
 

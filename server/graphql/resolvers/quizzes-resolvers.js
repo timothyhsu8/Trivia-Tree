@@ -1,4 +1,5 @@
 const Quiz = require('../../models/Quiz');
+const Comment = require('../../models/Comment')
 const User = require('../../models/User');
 const QuizAttempt = require('../../models/QuizAttempt');
 const Platform = require('../../models/Platform');
@@ -23,6 +24,7 @@ module.exports = {
             try {
                 const quiz = await Quiz.findById(quizId)
                     .populate('user')
+                    .populate({path:'comments', populate:{path:'user'}})
                     .exec();
                 if (quiz) {
                     return quiz;
@@ -87,7 +89,7 @@ module.exports = {
             let random = 0;
             let category = '';
 
-            count = 0;
+            let count = 0;
             while(count < 10){
                 random = getRandomInt(0, recommendationArray.length);
                 category = recommendationArray[random];
@@ -489,6 +491,35 @@ module.exports = {
 
             return quiz;
         },
+        async addComment(_, { quiz_id, user_id, comment }) {
+            const quiz = await Quiz.findById(quiz_id);
+            const newComment = new Comment({
+                user: user_id,
+                comment: comment,
+                replies: []
+            });
+
+            quiz.comments.push(newComment);
+            quiz.save();
+            return quiz;
+        },
+        async deleteComment(_, { quiz_id, user_id, comment_id }) {
+            const quiz = await Quiz.findById(quiz_id);
+            console.log(comment_id)
+            let comments = quiz.comments;
+
+            for(let i = 0; i < comments.length; i++){
+                if(comments[i]._id == comment_id){
+                    comments.splice(i,1);
+                    break;
+                }
+            }
+
+            quiz.comments = comments; 
+
+            quiz.save();
+            return quiz;
+        }
     },
 };
 

@@ -12,6 +12,7 @@ module.exports = gql`
         numCorrect: Int!
         attemptNumber: Int
         coinsEarned: Int
+        comments: Comment
     }
 
     input QuizAttemptInput {

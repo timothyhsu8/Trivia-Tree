@@ -48,10 +48,17 @@ export const GET_QUIZ = gql`
             averageScore
             medianScore
             comments {
+                _id
+                user {
+                    _id
+                    displayName
+                    iconImage
+                }
                 comment
                 replies {
                     reply
                 }
+                createdAt
             }
         }
     }
@@ -62,7 +69,9 @@ export const GET_QUIZ_ATTEMPT = gql`
         getQuizAttempt(_id: $_id) {
             _id
             user {
+                _id
                 displayName
+                iconImage
             }
             quiz {
                 _id
@@ -97,6 +106,12 @@ export const GET_QUIZ_ATTEMPT = gql`
             elapsedTime
             attemptNumber
             coinsEarned
+            comments {
+                user {
+                    displayName
+                }
+                comment
+            }
         }
     }
 `;

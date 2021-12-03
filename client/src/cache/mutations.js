@@ -207,4 +207,20 @@ export const PURCHASE_ITEM = gql`
     }
 `;
 
+export const ADD_COMMENT = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment: String!) {
+    addComment(quiz_id: $quiz_id, user_id: $user_id, comment: $comment) {
+        _id
+    }
+}
+`;
+
+export const DELETE_COMMENT = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!) {
+    deleteComment(quiz_id: $quiz_id, user_id: $user_id, comment_id: $comment_id) {
+        _id
+    }
+}
+`;
+
 

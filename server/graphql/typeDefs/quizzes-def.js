@@ -36,6 +36,7 @@ module.exports = gql`
     }
 
     type Comment {
+        _id: ID!
         user: User
         comment: String!
         replies: [Reply!]
@@ -43,6 +44,7 @@ module.exports = gql`
     }
 
     type Reply {
+        _id: ID!
         user: User
         reply: String!
         createdAt: String
@@ -90,5 +92,7 @@ module.exports = gql`
         favoriteQuiz(quizId: ID!, userId: ID!): Boolean
         unfavoriteQuiz(quizId: ID!, userId: ID!): Boolean
         rateQuiz(quizId: ID!, rating: Int!): Quiz
+        addComment(quiz_id: ID!, user_id: ID!, comment: String!): Quiz
+        deleteComment(quiz_id: ID!, user_id: ID!, comment_id: ID!): Quiz
     }
 `;

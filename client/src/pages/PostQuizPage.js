@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon, useColorModeValue } from "@chakra-ui/react"
+import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon, useColorModeValue, Input} from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import userImage from '../images/guest.png';
 import '../styles/postpage.css';
@@ -10,6 +10,7 @@ import coin from '../images/coin.png';
 import quizImage from '../images/defaultquiz.jpeg';
 import LeaderboardCard from '../components/LeaderboardEntryCard';
 import QuizCard from '../components/QuizCard';
+import CommentCard from '../components/CommentCard';
 import {IoMdClock} from "react-icons/io"
 import {BsStarFill} from "react-icons/bs"
 import { useQuery, useMutation } from '@apollo/client';
@@ -21,6 +22,7 @@ import { StarIcon } from '@chakra-ui/icons'
 import { Rating, RatingView } from 'react-simple-star-rating'
 
 export default function PostQuizPage() {
+    let logged_in = false;
     let quizScore = null; 
     let elapsedTime = null;
     let attemptNumber = null; 
@@ -32,7 +34,10 @@ export default function PostQuizPage() {
     let coinsEarned = null;
     let icon_src = null; 
     let user_icon = null;
+    let player_icon = null;
     let quiz_recommendations = [];
+    let user_id = null;
+    let comments = null;
     let { quizId, quizAttemptId } = useParams();
 
     const [rating, setRating] = useState(0)
@@ -43,15 +48,28 @@ export default function PostQuizPage() {
         }
     });
 
+    const [AddComment] = useMutation(mutations.ADD_COMMENT);
+    const [DeleteComment] = useMutation(mutations.DELETE_COMMENT);
+    const [comment, setComment] = React.useState('');
+    const handleCommentChange = (event) => setComment(event.target.value);
+
     
     const [showResults, setShowResults] = React.useState(true);
     const onClickResults = () => {
         setShowResults(true);
         setShowAnswers(false);
+        setShowComments(false);
     };
     const [showAnswers, setShowAnswers] = React.useState(false);
     const onClickAnswers = () => {
         setShowAnswers(true);
+        setShowResults(false);
+        setShowComments(false);
+    };
+    const [showComments, setShowComments] = React.useState(false);
+    const onClickComments = () => {
+        setShowComments(true);
+        setShowAnswers(false);
         setShowResults(false);
     };
 
@@ -84,14 +102,15 @@ export default function PostQuizPage() {
     const whiteBlackText=useColorModeValue("white", "black")
 
     const {data:data3, loading:loading3} = useQuery(queries.GET_POST_RECOMMENDATIONS, {
-        fetchPolicy: 'network-only',
-        variables: { quiz_id: quizId },
+        fetchPolicy: 'catch-first', //does this stop it
+        variables: { quiz_id: quizId }
     });
+
 
 
     function calculateBetterScore(userScore, averageScore, attempts) {
         if (attempts === 1) {
-            return 'No comparisons possible, you are the first to take this quiz'
+            return <Text fontSize="10px"> No comparisons possible, you are the first to take this quiz </Text>
         }
         //First we have to calculate the average when the user's score is factored out
         let adjustedAverage = ((averageScore * attempts) - userScore) / (attempts - 1);
@@ -135,6 +154,12 @@ export default function PostQuizPage() {
         quizAttempt = data.getQuizAttempt
         quiz = quizAttempt.quiz
         quizScore = quizAttempt.score;
+        if(quizAttempt.user != null){
+            logged_in=true;
+            player_icon = quizAttempt.user.iconImage;
+            user_id = quizAttempt.user._id;
+        }
+
         elapsedTime = quizAttempt.elapsedTime;
         elapsedTime = convertTimeStringForDisplay(elapsedTime)
         attemptNumber = quizAttempt.attemptNumber; 
@@ -154,6 +179,7 @@ export default function PostQuizPage() {
 
     if (data2) {
         questions = data2.getQuiz.questions
+        comments = data2.getQuiz.comments
         icon_src = data2.getQuiz.icon == null ? quizImage : data2.getQuiz.icon
         console.log(data2.getQuiz);
         user_icon = data2.getQuiz.user.iconImage
@@ -171,6 +197,23 @@ export default function PostQuizPage() {
         const {data} = rateQuiz({variables: {quizId: quizId, rating: rate }});
         // Some logic
         setIsRated(true);
+    }
+
+    async function handleAddComment(){
+        console.log(comment);
+        const {data} = await AddComment({ variables: {
+            quiz_id: quizId, user_id: user_id, comment: comment
+        }});
+        setComment("");
+        refetch();
+    }
+
+    async function handleDeleteComment(comment_id){
+        console.log(comment_id);
+        const {data} = await DeleteComment({ variables: {
+            quiz_id: quizId, user_id: user_id, comment_id: comment_id
+        }});
+        refetch();
     }
 
     let quizTitle = quiz.title;
@@ -224,7 +267,7 @@ export default function PostQuizPage() {
                         <Box className='containerDown'>
                         <div className='containerAcrossMe'>
                         {/*w=10vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
-                        <Box width={["10vw","0vw","10vw","18vw"]}></Box>
+                        <Box width={["10vw","0vw","10vw","14vw"]}></Box>
                         <Box
                             w='200px'
                             h='40px'
@@ -247,7 +290,7 @@ export default function PostQuizPage() {
                             ml='5px'
                             w='200px'
                             h='40px'
-                            bg={showResults ? '#D3D3D3': 'grey'}
+                            bg={showAnswers ? 'grey': '#D3D3D3'}
                             borderRadius='5px'
                             position="relative"
                             _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
@@ -262,6 +305,25 @@ export default function PostQuizPage() {
                                 View Answers
                             </a>
                         </Box>
+                        <Box
+                            ml='5px'
+                            w='200px'
+                            h='40px'
+                            bg={showComments ? 'grey': '#D3D3D3'}
+                            borderRadius='5px'
+                            position="relative"
+                            _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
+                        >
+                            {' '}
+                            {/* for horizontal line*/}
+                            <a
+                                href='#comments'
+                                className='center button black'
+                                onClick={onClickComments}
+                            >
+                                View Comments
+                            </a>
+                        </Box>
                     </div>
                             <Box borderBottom='1px'>
 
@@ -269,9 +331,10 @@ export default function PostQuizPage() {
                                 <br></br>
                             </Box>
 
+                            {/* RESULTS SECTION */}
                             {showResults ? 
                                 <Box className='results'>
-                                    <Box className='containerAcross' paddingTop="35px">
+                                    <Box className='containerAcross' paddingTop="35px" h="340">
                                         {/*Statbox Part I and II*/}    
                                         <Box
                                             width={["48vw","48vw","48vw","37vw"]}
@@ -327,8 +390,11 @@ export default function PostQuizPage() {
                                     </Box>
                                     <Box h={["50px"]}></Box>
                                 </Box>
-                             : 
-                                <Box paddingTop="150px">
+                             : ""}
+
+                            {/* ANSWERS SECTION */}
+                             {showAnswers ?
+                                <Box paddingTop="150px" h="350px" overflow="scroll">
                                     <Box className='answerbox' position='relative' bottom="100px">
                                         {questions.map((question, index) => {
                                         return (
@@ -341,7 +407,48 @@ export default function PostQuizPage() {
                                         })}
                                     </Box>
                                 </Box>
-                            }
+                            : ""}
+
+                            {/* COMMENTS SECTION */}
+                            {showComments ?
+                            <Flex direction="column" className='containerAcross' paddingTop="35px">
+                                    <Box
+                                        width="65vw"
+                                        h='100%'
+                                        bg='#D3D3D3'
+                                        borderRadius='10px'
+                                        paddingTop="20px"
+                                        paddingLeft="15px"
+                                        paddingRight="15px"
+                                        overflow="scroll"
+                                        marginBottom="20px"
+                                    >
+                                        <Text marginBottom="20px" borderBottom="1px" fontSize="22px">Comments ({comments.length})</Text>
+                                        {logged_in ? 
+                                        <Flex direction="row">
+                                            <Image src={player_icon} alt="pfp" className="round_image_larger" position="relative" bottom="10px" />
+                                            <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"/>
+                                            <Button w="140px" colorScheme='blue' variant='solid' size="md" marginLeft="20px" onClick={handleAddComment}>
+                                            Comment
+                                            </Button>
+                                        </Flex>
+                                        : ""}
+
+                                        <Flex direction="column" mt="1%" spacing="15%" display="flex" flexWrap="wrap">
+                                                    {comments.map((comment, key) => {
+                                                        return (
+                                                            <CommentCard
+                                                                comment={comment}
+                                                                logged_in={logged_in}
+                                                                user_id={user_id}
+                                                                handleDeleteComment={handleDeleteComment}
+                                                            />
+                                                        )
+                                                    })}
+                                        </Flex>
+                                    </Box>
+                            </Flex>
+                            : ""}
                         </Box>
                         
                         <div className="fadeshow1">

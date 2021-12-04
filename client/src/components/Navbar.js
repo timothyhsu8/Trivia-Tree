@@ -1,9 +1,9 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import { BsShopWindow, BsFillCartFill } from "react-icons/bs"
+import { BsFillCartFill, BsFillFileEarmarkTextFill } from "react-icons/bs"
 import { config } from '../util/constants';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import { useContext, useState, useRef, useEffect } from 'react';
 import coin from '../images/coin.png';
@@ -186,7 +186,7 @@ export default function Navbar() {
                     </Link> */}
                     <Spacer />
                     
-                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push("/shoppingpage")} _hover={{cursor:"pointer"}}>
+                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} _hover={{cursor:"pointer"}}>
                         <Icon as={BsFillCartFill} mr={2} pos="relative" top={-0.5} />
                         Shop
                     </Text>
@@ -214,7 +214,9 @@ export default function Navbar() {
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (
                                     <Box>
-                                        <MenuItem onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz   </MenuItem>
+                                        <MenuItem onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> 
+                                            Create Quiz   
+                                        </MenuItem>
                                         <MenuItem onClick={() => setChoosePlatformName(true)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                                         <MenuItem onClick={() => history.push('/quizmanager')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
                                         <MenuItem onClick={() => history.push('/platformmanager/' + user._id)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>

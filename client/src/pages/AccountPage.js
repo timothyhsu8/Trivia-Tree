@@ -26,6 +26,7 @@ import {
     MenuItem,
     Stack,
     useColorModeValue,
+    Icon
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -51,6 +52,7 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
+import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 
@@ -353,7 +355,7 @@ export default function AccountPage(props) {
     const platformsButtonBG=useColorModeValue('gray.200', 'gray.500')
     const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
     const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
-    const accountButtonsText=useColorModeValue('blue', 'light blue')
+    const accountButtonsText=useColorModeValue('blue.500', 'light blue')
     const accountButtonsText2=useColorModeValue('black', 'white')
     const whiteBlackBG=useColorModeValue('white', 'gray.700')
     const basicTextColor=useColorModeValue('white', 'black')
@@ -423,6 +425,30 @@ export default function AccountPage(props) {
             setIconEffect(userData.iconEffect)
         }
     }
+
+    // Maps out information needed for the header sections at the top
+    const headerSections = [
+        {
+            pageName: userData.displayName,
+            pageId: 'user',
+            icon: BsPersonCircle
+        },
+        {
+            pageName: "Platforms",
+            pageId: 'platforms',
+            icon: BsFillHouseDoorFill
+        },
+        {
+            pageName: "Quizzes",
+            pageId: 'quizzes',
+            icon: BsFillFileEarmarkTextFill
+        },
+        {
+            pageName: "Badges",
+            pageId: 'badges',
+            icon: BsBookmarkStarFill,
+        }
+    ]
 
     async function handleAddFeaturedQuiz() {
         setIsAddingFeaturedQuiz(false);
@@ -763,7 +789,7 @@ export default function AccountPage(props) {
                 </HStack>
                 
                 {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
-                <Grid pt='1%' templateColumns='4fr 1fr' marginTop='10px'>
+                <Grid templateColumns='4fr 1fr' marginTop={3}>
                     {/* FEATURED QUIZZES/PLATFORMS */}
                     <Box w='98.5%' borderRadius='10'>
                         <VStack spacing='1.5vh'>
@@ -904,9 +930,9 @@ export default function AccountPage(props) {
                                 }}
                             >
                                 <Text
-                                    pl='4%'
-                                    pt='2%'
-                                    fontSize='130%'
+                                    pl={3}
+                                    pt={2}
+                                    fontSize='120%'
                                     fontWeight='medium'
                                 >
                                     {' '}
@@ -922,10 +948,9 @@ export default function AccountPage(props) {
                                     />
                                 ) : (
                                     <Text
-                                        pl='4%'
-                                        pr='4%'
-                                        pt='3%'
-                                        fontSize='100%'
+                                        pl={3}
+                                        pt={1}
+                                        pr={3}
                                     >
                                         {' '}
                                         {bio}{' '}
@@ -941,15 +966,19 @@ export default function AccountPage(props) {
                             overflow='hidden'
                         >
                             <Text
-                                pl='4%'
-                                pt='2%'
-                                fontSize='130%'
+                                pl={3}
+                                pt={2}
+                                fontSize='120%'
                                 fontWeight='medium'
                             >
                                 {' '}
                                 Biography{' '}
                             </Text>{' '}
-                            <Text pl='4%' pr='4%' pt='3%' fontSize='100%'>
+                            <Text 
+                                pl={3}
+                                pt={1}
+                                pr={3}
+                            >
                                 {' '}
                                 {bio}{' '}
                             </Text>
@@ -1032,8 +1061,8 @@ export default function AccountPage(props) {
                             return (
                                 <QuizCard
                                     quiz={quiz}
-                                    width='10%'
-                                    title_fontsize='0.8vw'
+                                    width='8.0%'
+                                    title_fontsize='95%'
                                     include_author={false}
                                     char_limit={35}
                                     key={key}
@@ -1063,8 +1092,8 @@ export default function AccountPage(props) {
                                 return (
                                     <QuizCard
                                         quiz={quiz}
-                                        width='10%'
-                                        title_fontsize='0.8vw'
+                                        width='8.0%'
+                                        title_fontsize='95%'
                                         include_author={false}
                                         char_limit={35}
                                         key={key}
@@ -1172,7 +1201,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='1'
+                    zIndex='2'
                     bgColor={mainBG}
                     transition='0.2s linear'
                 >
@@ -1249,7 +1278,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='1'
+                    zIndex='2'
                     bgColor='rgba(0, 0, 0, 0.9)'
                     transition='0.2s linear'
                 >
@@ -1334,7 +1363,30 @@ export default function AccountPage(props) {
                         minH='50px'
                         templateColumns='1fr 1fr 1fr 1fr'
                     >
-                        <Button
+                        {
+                            headerSections.map((section, key) => {
+                                return (
+                                    <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
+                                        <Text
+                                            key={key}
+                                            w='100%'
+                                            fontSize='125%'
+                                            textColor={ page === section.pageId ? accountButtonsText : accountButtonsText2 }
+                                            textAlign="center"
+                                            transition=".1s linear"
+                                            whiteSpace="nowrap"
+                                            _focus={{ boxShadow:'none' }}
+                                            _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
+                                            onClick={() => setPage(section.pageId)}
+                                        >
+                                            <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
+                                            { section.pageName }
+                                        </Text>
+                                    </Box>
+                                )
+                            })
+                        }
+                        {/* <Button
                             height='100%'
                             fontSize='115%'
                             bgColor={accountButtonsBG}
@@ -1377,7 +1429,7 @@ export default function AccountPage(props) {
                         >
                             {' '}
                             Badges{' '}
-                        </Button>
+                        </Button> */}
                     </Grid>
                     {renderPage()}
                 </Box>

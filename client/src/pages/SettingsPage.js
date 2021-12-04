@@ -36,7 +36,7 @@ export default function SettingsPage(props) {
         },
         onCompleted() {
             refreshUserData();
-            history.go(0)
+            // history.go(0)
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -45,6 +45,9 @@ export default function SettingsPage(props) {
     const [deleteUser] = useMutation(mutations.DELETE_USER, {
         onCompleted() {
             refreshUserData();
+            if(colorMode=="dark"){
+                toggleColorMode();
+            }
             history.push('/');
         }
     });

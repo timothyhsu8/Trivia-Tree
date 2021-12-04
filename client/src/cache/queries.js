@@ -27,6 +27,7 @@ export const GET_QUIZ = gql`
             _id
             title
             user {
+                _id
                 displayName
                 iconImage
             }

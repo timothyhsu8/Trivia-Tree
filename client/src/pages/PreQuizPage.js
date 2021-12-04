@@ -4,7 +4,7 @@ import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
-import { ViewIcon } from '@chakra-ui/icons'
+import { ViewIcon, EditIcon } from '@chakra-ui/icons'
 import { BsHeart, BsHeartFill, BsShuffle, BsQuestionLg, BsFillPlayCircleFill, BsAlarm } from "react-icons/bs"
 import { IoRibbonSharp } from "react-icons/io5";
 import * as queries from '../cache/queries';
@@ -28,6 +28,7 @@ export default function PreQuizPage({}) {
     const [FavoriteQuiz] = useMutation(mutations.FAVORITE_QUIZ);
     const [UnfavoriteQuiz] = useMutation(mutations.UNFAVORITE_QUIZ);
     const [isFavorited, setIsFavorited] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
 
     let quiz = null;
     let iconSize = "50px"
@@ -37,7 +38,7 @@ export default function PreQuizPage({}) {
     const { data, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
         variables: { quizId:quizId }, 
         fetchPolicy: 'cache-and-network',
-        onCompleted() {
+        onCompleted({getQuiz: quizData}) {
             if (logged_in){
                 for(let i = 0; i < user.favoritedQuizzes.length; i++){
                     if(user.favoritedQuizzes[i] == quiz._id){
@@ -61,6 +62,9 @@ export default function PreQuizPage({}) {
         console.log(quiz)
     }
 
+    if (user && quiz && (user._id === quiz.user._id) && !isOwner) {
+        setIsOwner(true);
+    }
     let quizTitle = quiz.title;
     let quizAuthor = quiz.user.displayName; 
     let quizDescription = quiz.description;
@@ -155,10 +159,13 @@ export default function PreQuizPage({}) {
                         
                         <HStack spacing={3}>
                             <Icon as={IoRibbonSharp} w={iconSize} h={iconSize} position="relative"/> 
-                            <Text fontSize={iconTextSize} as="b"> Standard Quiz </Text>
+                            <Text fontSize={iconTextSize} as="b"> {quiz.quizInstant ? "Instant Quiz" : "Standard Quiz"} </Text>
                         </HStack>
                     </Grid>
                 </GridItem>
+                {quiz.quizInstant ?
+                    <Text ml='8%' fontSize='20px' color='red.400' fontWeight='bold'>Alert: This is an instant quiz, attempting to leave the quiz with any finalized questions will submit your quiz</Text>
+                    : null}
 
                 {/* Other Info */}
                 <GridItem rowStart={3} rowSpan={4} colSpan={2} borderLeft="1px" borderColor="gray.300">
@@ -187,6 +194,21 @@ export default function PreQuizPage({}) {
                         > 
                             Start Quiz 
                         </Button>
+                        {isOwner ? 
+                        <Button 
+                            mt='15px'
+                            w="fit-content" 
+                            colorScheme="green" 
+                            rightIcon={<EditIcon/>} 
+                            variant="solid" 
+                            position="relative" 
+                            top="205px" 
+                            h="60px" 
+                            fontSize="25px"
+                            onClick={() => history.push('/editQuiz/' + quiz._id)}
+                        > 
+                            Edit Quiz 
+                        </Button> : null}
                     </Flex>
                 </GridItem>
             </Grid>

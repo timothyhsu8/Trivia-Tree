@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext} from 'react';
-import { Box, Center, Text, Grid, VStack, Button, Image, Avatar, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import React, { useState, useEffect, useContext, useLayoutEffect} from 'react';
+import { Box, Center, Text, Grid, VStack, Button, Image, Avatar, useColorModeValue, useColorMode, HStack } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Prompt } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import '../styles/styles.css'
 
@@ -11,7 +11,7 @@ export default function QuizTakingPage({}) {
     let { quizId } = useParams();
     const { user } = useContext(AuthContext);
     let quizAttempt = null;
-    let numQuestions = null; 
+    let numQuestions = null;
     let history = useHistory();
 
     const [SubmitQuiz] = useMutation(mutations.SUBMIT_QUIZ);
@@ -26,6 +26,8 @@ export default function QuizTakingPage({}) {
     const [quizTimerPulled, setQuizTimerPulled] = useState(false);
     const [timeRunningOut, setTimeRunningOut] = useState(false);
     const [finishedInit, setFinishedInit] = useState(false);
+    const [finalizedQuestions, setFinalizedQuestions] = useState(() => []);
+    const [isNormalSubmit, setNormalSubmit] = useState(false);
     
     //Dark mode styling
     const quizTimerBoxBG=useColorModeValue("gray.100", "gray.600")
@@ -65,47 +67,15 @@ export default function QuizTakingPage({}) {
 
     }, [quizTimer]);
 
-    const { data: {getQuiz: quizData} = {}, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
-        variables: { quizId: quizId },
-        fetchPolicy: 'network-only',
-        onCompleted({getQuiz: quizData}) {
-            if(quizData.quizTimer != null){
-                if(!quizTimerPulled){
-                    setQuizTimerDisplay(quizData.quizTimer);
-                    let totalSeconds = convertTimeToSeconds(quizData.quizTimer);
-                    setQuizTimer(totalSeconds)
-                    setQuizTimerPulled(true); 
-                }
+    useEffect(() => {
+        if (quiz && quiz.quizInstant && finalizedQuestions.includes(true)) {
+            window.onbeforeunload = () => {
+                submitQuizWithoutRedirect();
             }
-            let tempQuiz = JSON.parse(JSON.stringify(quizData));
-            if (quizData.quizShuffled) {
-                let modifiedQuizQuestions = quizData.questions.map((question, index) => {
-                    let tempQuestion = JSON.parse(JSON.stringify(question));
-                    tempQuestion.index = index;
-                    return tempQuestion;
-                });
-                shuffle(modifiedQuizQuestions);
-                tempQuiz.questions = modifiedQuizQuestions;
-            }
-            setQuiz(tempQuiz);
-            setFinishedInit(true);
+        } else {
+            window.onbeforeunload = undefined
         }
-    });
-
-    if (loading || !finishedInit) {
-        return <div></div>;
-    }
-
-    let quizID = quiz._id;
-    let question = quiz.questions[currentQuestionNumber-1].question;
-    let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
-    let questionNumber = [];
-    let questionType = quiz.questions[currentQuestionNumber-1].questionType;
-    numQuestions = quiz.numQuestions;
-
-
-    for (let i = 0; i < quiz.numQuestions; i++)
-        questionNumber.push('Question' + i + 1);
+    }, [finalizedQuestions])
 
     const submitQuiz = async () => {
         console.log(totalTime)
@@ -150,7 +120,81 @@ export default function QuizTakingPage({}) {
         
     }
 
+    const submitQuizWithoutRedirect = async () => {
+        console.log(quiz);
+        console.log(totalTime)
+        console.log(quizTimer)
+        let elapsedTimeTemp = totalTime - quizTimer;
+        console.log(elapsedTimeTemp)
+        let elapsedTime = convertSecondsToString(elapsedTimeTemp)
+        let newAnswers = [...userAnswers];
+        for(let i = 0; i < quiz.numQuestions; i++){
+            if(newAnswers[i] == undefined)
+                newAnswers[i] = '';
+        }
+        if (quiz.quizShuffled) {
+            let tempAnswers = [];
+            quiz.questions.forEach((question, index) => {
+                tempAnswers[question.index] = newAnswers[index];
+            })
+            newAnswers = tempAnswers;
+        }
+        let user_id = null; 
+        if(user !== 'NoUser'){
+            user_id = user._id
+        }
+        const {loading, error, data} = await SubmitQuiz({ variables: {
+            quizAttemptInput: { quiz_id: quizID, answerChoices: newAnswers, elapsedTime, user_id: user_id},
+        } });
+        
+    }
+
+    const { data: {getQuiz: quizData} = {}, loading, error, refetch } = useQuery(queries.GET_QUIZ, {
+        variables: { quizId: quizId },
+        fetchPolicy: 'network-only',
+        onCompleted({getQuiz: quizData}) {
+            if(quizData.quizTimer != null){
+                if(!quizTimerPulled){
+                    setQuizTimerDisplay(quizData.quizTimer);
+                    let totalSeconds = convertTimeToSeconds(quizData.quizTimer);
+                    setQuizTimer(totalSeconds)
+                    setQuizTimerPulled(true); 
+                }
+            }
+            let tempQuiz = JSON.parse(JSON.stringify(quizData));
+            if (quizData.quizShuffled) {
+                let modifiedQuizQuestions = quizData.questions.map((question, index) => {
+                    let tempQuestion = JSON.parse(JSON.stringify(question));
+                    tempQuestion.index = index;
+                    return tempQuestion;
+                });
+                shuffle(modifiedQuizQuestions);
+                tempQuiz.questions = modifiedQuizQuestions;
+            }
+            setQuiz(tempQuiz);
+            setFinishedInit(true);
+        }
+    });
+
+    if (loading || !finishedInit) {
+        return <div></div>;
+    }
+
+    let quizID = quiz._id;
+    let question = quiz.questions[currentQuestionNumber-1].question;
+    let choices = quiz.questions[currentQuestionNumber-1].answerChoices;
+    let questionNumber = [];
+    let questionType = quiz.questions[currentQuestionNumber-1].questionType;
+    numQuestions = quiz.numQuestions;
+
+
+    for (let i = 0; i < quiz.numQuestions; i++)
+        questionNumber.push('Question' + i + 1);
+
     function updateUserAnswers(question_num, choice, questionType) {
+        if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
+            return;
+        }
         question_num = question_num - 1
         const newAnswers = [...userAnswers];
 
@@ -177,11 +221,29 @@ export default function QuizTakingPage({}) {
         }
     }
 
+    function handleFinalizeQuestion() {
+        let tempArr = [...finalizedQuestions];
+        tempArr[currentQuestionNumber - 1] = true;
+        setFinalizedQuestions(tempArr);
+    }
+
     // Determines the color of the answer buttons
     function getAnswerColor(questionType, currentQuestionNumber, choice) {
         // If question type is select one answer
         if (questionType === 1){
-            return userAnswers[currentQuestionNumber-1] === choice ? answerChosenBG : ""
+            if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
+                if (userAnswers[currentQuestionNumber - 1] === choice) {
+                    if (userAnswers[currentQuestionNumber - 1].toString() !== quiz.questions[currentQuestionNumber - 1].answer.toString().trim()) {
+                        return 'red.400'
+                    } else {
+                        return 'green.200'
+                    }
+                } else {
+                    return ""
+                }
+            } else {
+                return userAnswers[currentQuestionNumber-1] === choice ? answerChosenBG : ""
+            }
         }
 
         // If question type is select multiple answers
@@ -190,7 +252,63 @@ export default function QuizTakingPage({}) {
             if (userAnswers[currentQuestionNumber-1] === undefined)
                 return ""
 
-            return userAnswers[currentQuestionNumber-1].includes(choice) ? "blue.100" : ""
+            if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
+                if (userAnswers[currentQuestionNumber - 1].includes(choice)) {
+                    if (!quiz.questions[currentQuestionNumber - 1].answer.includes(choice)) {
+                        return 'red.400'
+                    } else {
+                        return 'green.200'
+                    }
+                } else {
+                    return ""
+                }
+            } else {
+                return userAnswers[currentQuestionNumber-1].includes(choice) ? "blue.100" : ""
+            }
+        }
+    }
+    
+    function getBorder(questionType, currentQuestionNumber, choice) {
+        // If question type is select one answer
+        if (questionType === 1){
+            if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
+                if (userAnswers[currentQuestionNumber - 1] === choice) {
+                    if (userAnswers[currentQuestionNumber - 1].toString() !== quiz.questions[currentQuestionNumber - 1].answer.toString().trim()) {
+                        return '1px solid black'
+                    } else {
+                        return '1px solid black'
+                    }
+                } else if (quiz.questions[currentQuestionNumber - 1].answer.toString().trim() === choice) {
+                    return '4px dashed green'
+                } else {
+                    return "1px solid black"
+                }
+            } else {
+                return '1px solid black'
+            }
+        }
+
+        // If question type is select multiple answers
+        else if (questionType === 2){
+            // Array hasn't been created yet, set color to gray
+            if (userAnswers[currentQuestionNumber-1] === undefined)
+                return "1px solid black"
+
+                if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
+                    if (userAnswers[currentQuestionNumber - 1].includes(choice)) {
+                        if (!quiz.questions[currentQuestionNumber - 1].answer.includes(choice)) {
+                            return '1px solid black'
+                        } else {
+                            return '1px solid black'
+                        }
+                    } else if (quiz.questions[currentQuestionNumber - 1].answer.includes(choice)) {
+                        return '4px dashed green'
+                    } else {
+                        return "1px solid black"
+                    }
+                } else {
+                    return '1px solid black'
+                }
         }
     }
 
@@ -234,6 +352,17 @@ export default function QuizTakingPage({}) {
 
     return (
         <Box data-testid='main-component'>
+            <Prompt
+                when={quiz.quizInstant && finalizedQuestions.includes(true) && !isNormalSubmit}
+                // message='You have unsaved changes, are you sure you want to leave?'
+                message={(location, action) => {
+                    if (action) {
+                        submitQuizWithoutRedirect();
+                    }
+                
+                    return true;
+                  }}
+            />
             <Grid templateColumns='1fr 6fr'>
                 
                 {/* SIDEBAR */}
@@ -307,14 +436,17 @@ export default function QuizTakingPage({}) {
                                     variant="outline"
                                     colorScheme="blue"
                                     key={index}
+                                    cursor={quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true ? 'default' : 'pointer'}
                                     w='60%'
                                     h='10vh'
-                                    bgColor = {getAnswerColor(quiz.questions[currentQuestionNumber-1].questionType, currentQuestionNumber, choice)}
+                                    bgColor={getAnswerColor(quiz.questions[currentQuestionNumber-1].questionType, currentQuestionNumber, choice)}
+                                    border={getBorder(quiz.questions[currentQuestionNumber-1].questionType, currentQuestionNumber, choice)}
+                                    borderColor={getBorder(quiz.questions[currentQuestionNumber-1].questionType, currentQuestionNumber, choice)}
                                     fontSize='1.5vw'
-                                    _focus={{border:"1px"}}
+                                    _focus={'none'}
                                     onClick={() => { updateUserAnswers(currentQuestionNumber, choice, quiz.questions[currentQuestionNumber-1].questionType) }}
-                                    _hover={{ bg: hoverAnswerBG }}
-                                    _active={{ opacity: "75%" }}
+                                    _hover={quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true ? 'none' : {bg: hoverAnswerBG}}
+                                    _active={quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true ? 'none' : {opacity: '75%'}}
                                 >
                                     {choices[index]}
                                 </Button>
@@ -323,8 +455,7 @@ export default function QuizTakingPage({}) {
                     </VStack>
 
                     {/* NEXT QUESTION BUTTON */}
-                    {
-                        currentQuestionNumber == quiz.numQuestions ? 
+                        {currentQuestionNumber == quiz.numQuestions && (quiz.quizInstant ? finalizedQuestions[currentQuestionNumber - 1] === true : true) ? 
                         <Center pt='20'>
                         <Button
                             w='20%'
@@ -332,7 +463,10 @@ export default function QuizTakingPage({}) {
                             bgColor='red.500'
                             fontSize='1.3vw'
                             textColor='white'
-                            onClick={submitQuiz}
+                            onClick={() => {
+                                setNormalSubmit(true)
+                                submitQuiz()
+                            }}
                             _hover={{ bg: "red.600" }}
                         >
                             Submit Quiz
@@ -340,18 +474,48 @@ export default function QuizTakingPage({}) {
                         </Center> 
                         :
                         <Center pt='20'>
+                        <VStack w='100%' spacing='15px'>
+                        {/* <Center pt='20'> */}
                         <Button
                             w='20%'
                             h='7vh'
                             bgColor='purple.600'
                             fontSize='1.3vw'
                             textColor='white'
-                            onClick={() => {setCurrentQuestionNumber(currentQuestionNumber+1)}}
+                            onClick={() => {
+                                if (quiz.quizInstant) {
+                                    if (finalizedQuestions[currentQuestionNumber - 1] === true) {
+                                        setCurrentQuestionNumber(currentQuestionNumber+1)
+                                    } else {
+                                        handleFinalizeQuestion();
+                                    }
+                                } else {
+                                    setCurrentQuestionNumber(currentQuestionNumber+1)
+                                }
+                            }}
                             _hover={{ bg: "purple.800" }}
                         >
-                            Next Question
+                            {!quiz.quizInstant ? ('Next Question') : finalizedQuestions[currentQuestionNumber - 1] === true ? 'Next Question' : 'Finalize Question'}
                         </Button>
-                        </Center> 
+                        {/* </Center> */}
+                        {currentQuestionNumber == quiz.numQuestions && quiz.quizInstant && !finalizedQuestions[currentQuestionNumber - 1] ? 
+                            <Button
+                                w='20%'
+                                h='7vh'
+                                bgColor='red.500'
+                                fontSize='1.3vw'
+                                textColor='white'
+                                onClick={() => {
+                                    setNormalSubmit(true)
+                                    submitQuiz()
+                                }}
+                                _hover={{ bg: "red.600" }}
+                            >
+                                Submit Quiz
+                            </Button>
+                            : null}
+                        </VStack>
+                        </Center>
                     }
 
                     {/* {

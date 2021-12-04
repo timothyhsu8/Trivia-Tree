@@ -384,35 +384,41 @@ function CreateQuizPage(props) {
                     />
                     <Text marginLeft='10px'>Quiz Description</Text>
                     <HStack>
-                        <Text paddingTop="20px" fontSize="24px">Category: </Text>
+                        <Text paddingTop='20px' fontSize='24px'>
+                            Category:{' '}
+                        </Text>
                         <Select
-                        _hover={{ outline: 'none' }}
-                        _focus={{ outline: 'none' }}
-                        borderColor='black'
-                        borderWidth='2px'
-                        value={category}
-                        width='30%'
-                        display='inline-block'
-                        marginLeft='20px'
-                        paddingTop="20px"
-                        onChange={(event) => {setCategory(event.target.value)}}
+                            _hover={{ outline: 'none' }}
+                            _focus={{ outline: 'none' }}
+                            borderColor='black'
+                            borderWidth='2px'
+                            value={category}
+                            width='30%'
+                            display='inline-block'
+                            marginLeft='20px'
+                            paddingTop='20px'
+                            onChange={(event) => {
+                                setCategory(event.target.value);
+                            }}
                         >
-                        <option value={"Other"}>Other</option>
-                        <option value={"Anime"}>Anime</option>
-                        <option value={"Art"}>Art</option>
-                        <option value={"Books"}>Books</option>
-                        <option value={"Food"}>Food</option>
-                        <option value={"Geography"}>Geography</option>
-                        <option value={"History"}>History</option>
-                        <option value={"Languages"}>Languages</option>
-                        <option value={"Math"}>Math</option>
-                        <option value={"Movies and TV"}>Movies and TV</option>
-                        <option value={"Music"}>Music</option>
-                        <option value={"Science"}>Science</option>
-                        <option value={"Sports"}>Sports</option>
-                        <option value={"Stony Brook"}>Stony Brook</option>
-                        <option value={"Technology"}>Technology</option>
-                        <option value={"Video Games"}>Video Games</option>
+                            <option value={'Other'}>Other</option>
+                            <option value={'Anime'}>Anime</option>
+                            <option value={'Art'}>Art</option>
+                            <option value={'Books'}>Books</option>
+                            <option value={'Food'}>Food</option>
+                            <option value={'Geography'}>Geography</option>
+                            <option value={'History'}>History</option>
+                            <option value={'Languages'}>Languages</option>
+                            <option value={'Math'}>Math</option>
+                            <option value={'Movies and TV'}>
+                                Movies and TV
+                            </option>
+                            <option value={'Music'}>Music</option>
+                            <option value={'Science'}>Science</option>
+                            <option value={'Sports'}>Sports</option>
+                            <option value={'Stony Brook'}>Stony Brook</option>
+                            <option value={'Technology'}>Technology</option>
+                            <option value={'Video Games'}>Video Games</option>
                         </Select>
                     </HStack>
                 </div>
@@ -605,102 +611,34 @@ function CreateQuizPage(props) {
                                     borderWidth: '1px',
                                 }}
                             />
-                            <RadioGroup onChange={setTimeType} value={timeType}>
+                            <div
+                                style={{
+                                    marginTop: '5px',
+                                    position: 'relative',
+                                }}
+                            >
+                                <Text
+                                    fontSize='1.4vw'
+                                    marginLeft='auto'
+                                    marginRight='auto'
+                                >
+                                    Quiz Timer
+                                </Text>
                                 <div
                                     style={{
-                                        marginTop: '5px',
-                                        position: 'relative',
+                                        position: 'absolute',
+                                        top: '8px',
+                                        left: '80%',
+                                        height: 'fit-content',
                                     }}
-                                >
-                                    <Text
-                                        fontSize='1.4vw'
-                                        marginLeft='auto'
-                                        marginRight='auto'
-                                    >
-                                        Quiz Timer
-                                    </Text>
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '8px',
-                                            left: '80%',
-                                            height: 'fit-content',
-                                        }}
-                                    >
-                                        <Radio
-                                            value='Quiz'
-                                            _focus={{ outline: 'none' }}
-                                            colorScheme='gray'
-                                            size='lg'
-                                        />
-                                    </div>
-                                </div>
-                                <Center marginTop='10px'>
-                                    <TimeField
-                                        className='timer'
-                                        value={quizTimer}
-                                        onChange={(event) =>
-                                            setQuizTimer(event.target.value)
-                                        }
-                                        showSeconds
-                                        style={{
-                                            border: 'solid',
-                                            borderColor: 'black',
-                                            borderWidth: '2px',
-                                            borderRadius: '10px',
-                                            background: 'none',
-                                            width: '5.1vw',
-                                            fontSize: '1.2vw',
-                                            textAlign: 'center',
-                                        }}
-                                    />
-                                </Center>
-                                <hr
-                                    style={{
-                                        width: '90%',
-                                        marginLeft: 'auto',
-                                        marginRight: 'auto',
-                                        marginTop: '15px',
-                                        borderColor: 'black',
-                                        borderWidth: '1px',
-                                    }}
-                                />
-                                <div
-                                    style={{
-                                        marginTop: '5px',
-                                        position: 'relative',
-                                    }}
-                                >
-                                    <Text
-                                        fontSize='1.4vw'
-                                        marginLeft='auto'
-                                        marginRight='auto'
-                                    >
-                                        Question Timer
-                                    </Text>
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '8px',
-                                            left: '80%',
-                                            height: 'fit-content',
-                                        }}
-                                    >
-                                        <Radio
-                                            value='Question'
-                                            _focus={{ outline: 'none' }}
-                                            colorScheme='gray'
-                                            size='lg'
-                                        />
-                                    </div>
-                                </div>
-                            </RadioGroup>
-                            <Center marginTop='10px' marginBottom='15px'>
+                                ></div>
+                            </div>
+                            <Center marginTop='10px' mb='10px'>
                                 <TimeField
                                     className='timer'
-                                    value={questionTimer}
+                                    value={quizTimer}
                                     onChange={(event) =>
-                                        setQuestionTimer(event.target.value)
+                                        setQuizTimer(event.target.value)
                                     }
                                     showSeconds
                                     style={{

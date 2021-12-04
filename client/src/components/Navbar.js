@@ -113,9 +113,7 @@ export default function Navbar() {
             toggleColorMode()
         }
     }
-
-    //Dark mode styling
-    const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
+    
 
     return(
         <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="red.900">
@@ -186,20 +184,27 @@ export default function Navbar() {
                     </Link> */}
                     <Spacer />
                     
+                    <div className="fadeshow3">
+
                     <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} _hover={{cursor:"pointer"}}>
                         <Icon as={BsFillCartFill} mr={2} pos="relative" top={-0.5} />
                         Shop
                     </Text>
+                    </div>
                     
                     <Spacer />
+                    
+                    <div className="fadeshow2">
                     <Flex direction="row" pr={10}>
                         <Image src={coin} h="20px" w="20px" position="relative" top="3px"></Image>
                         <Text fontSize="16px" position="relative" color="white" left="6px" top="1px">{currency}</Text>
                     </Flex>
+                    </div>
 
                     {/* USER NAME */}
+                    <div className="fadeshow1">
                     <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
-
+                    </div>
                     {/* PROFILE PICTURE */}
                     <Box className='squareimage_container' w="8%" minW="30px"> 
                         <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="1.9px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>

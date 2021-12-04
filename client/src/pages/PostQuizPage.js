@@ -113,7 +113,9 @@ export default function PostQuizPage() {
             return <Text fontSize="10px"> No comparisons possible, you are the first to take this quiz </Text>
         }
         //First we have to calculate the average when the user's score is factored out
+        console.log(averageScore);
         let adjustedAverage = ((averageScore * attempts) - userScore) / (attempts - 1);
+        adjustedAverage = Math.round(adjustedAverage * 10) / 10;
         let increase = userScore - adjustedAverage;
         let percentIncrease;
         if (adjustedAverage === 0) {
@@ -123,10 +125,11 @@ export default function PostQuizPage() {
             percentIncrease = ((Math.abs(increase)) / adjustedAverage) * 100;
         }
         percentIncrease = Math.round(percentIncrease * 100) / 100;
+        console.log(percentIncrease)
         if (increase >= 0) {
-            return `You did better than ${percentIncrease}% of Quiztakers`
+            return `You ${percentIncrease}% better than other Quiztakers`
         } else {
-            return `You did worse than ${percentIncrease}% of Quiztakers`
+            return `You ${percentIncrease}% worse than other Quiztakers`
         }
     }
 

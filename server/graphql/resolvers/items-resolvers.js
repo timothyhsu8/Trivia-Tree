@@ -26,32 +26,36 @@ module.exports = {
 
 	Mutation: {
 		async purchaseItem(_, { userId, itemId }, context) {
-            const user = await User.findById(userId);
-			const item = await Item.findById(itemId);
-			
-			// Checks if user can afford the item
-			if (user.currency < item.price){
-				throw new Error('You cannot afford this item');
-			}			
-			
-			let itemArray = []
-			if (item.type === "bannerEffect") 
-				itemArray = user.ownedBannerEffects
-			if (item.type === "iconEffect") 
-				itemArray = user.ownedIconEffects
-			if (item.type === "background") 
-				itemArray = user.ownedBackgrounds
-			
-			itemArray.forEach(item => {
-				if (item._id.toString() === itemId)
-					throw new Error('You already own this item')
-			})
+			try {
+				const user = await User.findById(userId);
+				const item = await Item.findById(itemId);
+				
+				// Checks if user can afford the item
+				if (user.currency < item.price){
+					throw new Error('You cannot afford this item');
+				}			
+				
+				let itemArray = []
+				if (item.type === "bannerEffect") 
+					itemArray = user.ownedBannerEffects
+				if (item.type === "iconEffect") 
+					itemArray = user.ownedIconEffects
+				if (item.type === "background") 
+					itemArray = user.ownedBackgrounds
+				
+				itemArray.forEach(item => {
+					if (item._id.toString() === itemId)
+						throw new Error('You already own this item')
+				})
 
-			user.currency = user.currency - item.price
-			itemArray.push(item)
-            user.save();
+				user.currency = user.currency - item.price
+				itemArray.push(item)
+				user.save();
 
-			return item
+				return item
+			} catch (err) {
+                throw new Error(err);
+            }
         },
 	}
 };

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import { ViewIcon } from '@chakra-ui/icons'
 import { BsHeart } from "react-icons/bs"
+import grayBg from '../images/gray.png'
 import '../styles/styles.css'
 
 export default function UserCard( props ) {
@@ -29,7 +30,7 @@ export default function UserCard( props ) {
             onClick={() => history.push('/accountpage/' + user_data._id)}
         >
             <Box className='squareimage_container' w="75%"> 
-                <Image className="squareimage" src={icon_src} alt="Quiz Icon" objectFit="cover" borderRadius="50%"></Image>
+                <Image className="squareimage" src={icon_src} fallbackSrc={grayBg} objectFit="cover" borderRadius="50%"></Image>
             </Box>
 
             {/* QUIZ TITLE */}

@@ -13,8 +13,6 @@ import PostQuizPage from './pages/PostQuizPage';
 import PreQuizPage from './pages/PreQuizPage';
 import SettingsPage from './pages/SettingsPage';
 import { AuthProvider } from './context/auth';
-import Quizzes from './pages/Quizzes';
-import Quiz from './pages/Quiz';
 import SearchResultsPage from './pages/SearchResultsPage';
 import LoginPage from './pages/LoginPage';
 import CreateQuizPage from './pages/CreateQuizPage';
@@ -28,6 +26,7 @@ import EditQuizPage from './pages/EditQuizPage';
 import { positions, Provider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import QuizManagerPage from './pages/QuizManagerPage';
+import NoMatchPage from './pages/NoMatchPage';
 
 function App() {
     const options = {
@@ -47,8 +46,6 @@ function App() {
                         <Navbar/>
                         <Switch>
                             <Route exact path='/' component={Homepage} />
-                            <Route exact path='/quizzes' component={Quizzes} />
-                            <Route exact path='/quiz/:quizId' component={Quiz} />
                             <Route
                                 exact
                                 path='/createQuiz'
@@ -86,6 +83,7 @@ function App() {
                             <Route path='/rewardspage' component={RewardsPage}></Route>
                             <Route path='/platformmanager/:userId' component={PlatformManagerPage}></Route>
                             <Route path='/quizmanager' component={QuizManagerPage}></Route>
+                            <Route path='*' component={NoMatchPage} />
                         </Switch>
                     </Router>
                 </Provider>

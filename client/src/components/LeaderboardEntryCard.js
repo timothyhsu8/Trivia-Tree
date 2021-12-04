@@ -6,7 +6,7 @@ import '../styles/postpage.css';
 export default function LeaderboardEntryCard(props) {
     /*Edit the mt/mb to change the spacing between elements */
     //Dark mode styling
-    const whiteBlackText=useColorModeValue("white", "black")
+    const whiteBlackText=useColorModeValue("black", "white")
     return ( 
             <Box ml="15px" mr="26px" mt="5px" mb="18px" display="flex" alignItems="center" justifyContent="space-between">
                 <Box>

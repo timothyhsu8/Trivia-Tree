@@ -12,7 +12,7 @@ import quizImage from '../images/defaultquiz.jpeg';
 import { ViewIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons'
 import { BsHeartFill } from "react-icons/bs"
 import '../styles/styles.css'
-import { REMOVE_QUIZ_FROM_PLATFORM } from '../cache/mutations';
+import { REMOVE_QUIZ_FROM_PLATFORM, REMOVE_QUIZ_FROM_PLAYLIST } from '../cache/mutations';
 
 export default function QuizCard( props ) {
     let history = useHistory();
@@ -54,6 +54,16 @@ export default function QuizCard( props ) {
         },
     })
 
+    const [removeQuizFromPlaylist] = useMutation(REMOVE_QUIZ_FROM_PLAYLIST, {
+        onCompleted() {
+            history.go(0)
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    })
+
+
     // Call function to remove quiz from a platform
     function handleRemoveQuizFromPlatform() {
         removeQuizFromPlatform({
@@ -64,14 +74,24 @@ export default function QuizCard( props ) {
         })
     }
 
-    // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
-    
-    if (quiz_title.length > char_limit)
-        quiz_title = quiz_title.slice(0, char_limit) + "..."
+    // Call function to remove quiz from a playlist
+    function handleRemoveQuizFromPlaylist() {
+        removeQuizFromPlaylist({
+            variables: {
+                platformId: props.platform_id,
+                playlistId: props.playlist_id,
+                quizId: quiz_data._id
+            }
+        })
+    }
 
     function quizToDelete() {
         props.handleDeleteFeaturedQuiz(quiz_data)
     }
+
+    // quiz_title = "Longatitle areallyalongtite long title really really long title title title" // FOR TESTING: long titles
+    if (quiz_title.length > char_limit)
+        quiz_title = quiz_title.slice(0, char_limit) + "..."
 
     return (
         <Box 
@@ -154,14 +174,15 @@ export default function QuizCard( props ) {
                 <VStack pos="absolute" right="2%" transition="0.2s linear">
                     <Icon as={EditIcon} _hover={{color:"gray.500", transition:"0.1s linear"}} transition="0.1s linear" 
                         onClick={(event) => {
-                            console.log("HEY")
+                            history.push('/editQuiz/' + quiz_data._id)
                             event.stopPropagation()
                         }} />
                     
                     {isFeaturedQuiz ? <Icon as={DeleteIcon} _hover={{ color: "gray.500", transition: "0.1s linear" }} transition="0.1s linear"
                                     onClick={(event) => {
                                         event.stopPropagation()
-                                        quizToDelete()}} /> :
+                                        quizToDelete()}
+                                    }/> :
                         <Popover>
                             <PopoverTrigger>
                                 <Icon as={DeleteIcon} _hover={{ color: "gray.500", transition: "0.1s linear" }} transition="0.1s linear"
@@ -169,10 +190,14 @@ export default function QuizCard( props ) {
                             </PopoverTrigger>
                             <PopoverContent onClick={(event) => event.stopPropagation()}>
                                 <PopoverCloseButton />
-                                <PopoverBody> Remove this quiz from the platform? </PopoverBody>
+                                <PopoverBody> Remove this quiz from the { props.from_playlist ? "playlist?" : "platform?" } </PopoverBody>
                                 <PopoverFooter>
                                     <Center>
-                                        <Button colorScheme="red" onClick={() => handleRemoveQuizFromPlatform()}> Yes, remove it </Button>
+                                        <Button colorScheme="red" 
+                                            onClick={() => props.from_playlist ? handleRemoveQuizFromPlaylist() : handleRemoveQuizFromPlatform()}
+                                        > 
+                                            Yes, remove it 
+                                        </Button>
                                     </Center>
                                 </PopoverFooter>
                             </PopoverContent>

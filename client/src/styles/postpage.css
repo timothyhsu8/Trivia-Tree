@@ -161,3 +161,13 @@ hr{
     border-radius: 50%;
     
   }
+
+  .round_image_larger{
+    display: inline-block;
+    position: relative;
+    width: 65px;
+    height: 55px;
+    overflow: hidden;
+    border-radius: 50%;
+    
+  }

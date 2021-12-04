@@ -1,8 +1,7 @@
 import React from 'react';
 import { useState, createRef } from 'react';
-import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode } from "@chakra-ui/react"
+import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode, Avatar } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
-import '../styles/postpage.css';
 import moon from '../images/moon.jpg';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_QUIZZES, GET_USER } from '../cache/queries';
@@ -16,6 +15,7 @@ import {
     useParams
 } from 'react-router-dom';
 import { subscribe } from 'graphql';
+import '../styles/postpage.css';
 
 export default function SettingsPage(props) {
     const { user, refreshUserData } = useContext(AuthContext);
@@ -36,6 +36,7 @@ export default function SettingsPage(props) {
         },
         onCompleted() {
             refreshUserData();
+            history.go(0)
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -58,7 +59,7 @@ export default function SettingsPage(props) {
     }
 
     async function saveChanges() {
-        const {data} = await updateSettings({ variables: {settingInput:{userId:userId, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
+        const { data } = await updateSettings({ variables: {settingInput:{userId:userId, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
         initialDark()
         return;
     }
@@ -143,170 +144,86 @@ export default function SettingsPage(props) {
     }
 
     return(
-        /*Top Title Section with hr line*/
         <Box> 
-            <Box h="50px"></Box>
-            <Grid templateColumns="0.4fr 13fr 0.2fr">
-                <Box></Box>
-                <Box className="containerDown">
-                    <Text as="b" className="title" lineHeight="0" fontSize={["20px","20px","20px","30px"]}>Settings</Text>    
-                    {' '}
-                    {/* for horizontal line*/}
-                    <br></br>
-                    <hr />
-                    <br></br>
-                </Box>
-            </Grid>
+            <Center>
+                {/* Main section */}
+                <Grid w="50%" mt={20} templateColumns="1fr 1fr">
+                    {/* Left Section */}
+                    <Grid h={500} templateRows="1fr 1fr 1fr 1fr 1fr">  
+                        {/* Display Name */}
+                        <Text display="flex" flexDirection="column" justifyContent="center"> Display Name: </Text>
 
-                
-            
-            {/*Main section*/}
-            <Box className="containerAcross">     
-            <Box w={["20px","20px","100px","150px"]}></Box>    
-            <Grid templateColumns=" 2fr 1fr">
+                        {/* Email */}
+                        <Text display="flex" flexDirection="column" justifyContent="center"> Email: </Text>
 
-                {/*Main section Left*/}
-                {/*Main section of Labels and Delete Account Button*/}
-                {/*Main section Left*/}
-                <Box>
-                    {/* HEADER AND BANNER {["1000px","1000px","1000px","1000px"]}*/}
-                    <Grid>
-                        {/* BANNER */}
-                        <Box
-                            bgSize="cover" 
-                            bgPosition="center"
-                            borderRadius="10">
-                                {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
-                                <div className="SecretSauce"> 
-                                    <Box className="containerDown">  
-                                    {/*lineHeight={["40px","40px","40px","80px"]}  fontSize={["20px","20px","20px","30px"]}*/}
-                                    
-                                    {/*Display Name {["250px","250px","250px","250px"]}  fontSize={["20px","20px","20px","30px"]}*/}
+                        {/* Theme Type */}
+                        <Text display="flex" flexDirection="column" justifyContent="center"> Theme: </Text>
+                            
+                        {/* Profile Picture */}
+                        <Text display="flex" flexDirection="column" justifyContent="center"> Profile Picture: </Text>
 
-                                    <Text mt="5px" w={["175px","175px","200px","250px"]} fontSize={["20px","20px","20px","30px"]}>Display Name:</Text>
-                                            
-
-                                    
-                                    {/*Email*/}
-                                    <Box h="40px"></Box>
-                                        <Text className="title"  fontSize={["20px","20px","20px","30px"]}>Email:</Text>
-
-                                    {/*Theme Type*/}
-                                    <Box h="40px"></Box>
-                                    <Text className="title" fontSize={["20px","20px","20px","30px"]}>Theme:</Text>
-                                        
-
-                                    {/*Profile Picture*/}
-                                    <Box h={["45px","45px","45px","35px",]}></Box>
-                                    <Box className="containerAcross">  
-                                        <HStack marginTop='30px' >
-                                        <Text fontSize={["20px","20px","20px","30px"]} >Profile Picture:</Text>
-                                        </HStack>
-                                        
-                                    </Box>
-                                    
-                                    
-                                    </Box>
-
-                                    
-                                    
-                                    {/*used a little absolute positioning */}
-                                    
-                                </div>
-                                
-                                <Box ></Box>
-
-                                <Box position="absolute" bottom="0">    
-                                    <Button w="200px" h="50px" borderRadius='5px' onClick={deleteAccount}>Delete Account</Button>  
-                                </Box>
+                        {/* Delete Account Button */}
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Button w="fit-content" colorScheme="red" size="md" onClick={deleteAccount}>Delete Account</Button>  
                         </Box>
-                      
-                        
-                    </Grid>
+                    </Grid>                  
                     
-                </Box>
 
-
-
-
-                {/*Main section Right*/}
-                {/*Main section of All the Parts that Update Data and the save button*/}
-                {/*Main section Right*/}
-                <Box>
-                <Input
-                    onBlur={(event) => updateDisplayName(event)}
-                    placeholder={displayName}
-                    variant='flushed'
-                    borderColor='black'
-                    borderBottomWidth='3px'
-                    _focus={{ borderColor: 'black' }}
-                    fontSize={["20px","20px","20px","30px"]}
-                    height='fit-content'
-                    width='80%'
-                /> 
-
-                <Box h="40px"></Box>
-                <Text fontSize={["20px","20px","20px","30px"]}>{email}</Text>
-
-                <Box h="40px"></Box>        
-                <RadioGroup onChange={(event) => updateDarkMode(event)} value={darkMode}>
-                    <Stack direction="row">
-                        <Radio value={false} ><Text className="title" fontSize={["20px","20px","20px","30px"]}>Light Mode</Text></Radio>
-                        <Radio value={true}><Text className="title" fontSize={["20px","20px","20px","30px"]}>Dark Mode</Text></Radio>
-                    </Stack>
-                </RadioGroup>
-
-                <Box h="40px"></Box>
-                
-                <HStack marginTop='0px'>
-                    {/*Stolen from the Create Quiz Page*/}
-                    <Button
-                        _focus={{ outline: 'none' }}
-                        marginTop='10px'
-                        fontSize='160%'
-                        width='fit-content'
-                        borderColor='black'
-                        border='solid'
-                        borderWidth='2px'
-                        onClick={() => hiddenImageInput.current.click()}
-                    >
-                        <Text fontSize={["20px","20px","20px","30px"]} >Upload Image</Text>
-                    </Button>
-                    <input
-                        type='file'
-                        style={{ display: 'none' }}
-                        ref={hiddenImageInput}
-                        onChange={(event) => updateIcon(event)}
-                    />
-                    <img
-                        style={{
-                        maxHeight: '100px',
-                        maxWidth: '100px',
-                        objectFit: 'contain',
-                        width: 'auto',
-                        height: 'auto',
-                        display: 'block',
-                        }}
-                        // borderRadius='20px'
-                        src={iconImage}
-                    />
-                    </HStack>
-
-                <Box h="100px"></Box>
-
-                    <Box position="absolute" bottom="0" className="containerRight">
-                        <Box className="containerAcross">
-                                        
-                            <Box w={["200px","200px","200px","200px"]} h="50px" bg='#165CAF' borderRadius='5px'>
-                                <Link to='/' className="center button white" onClick={saveChanges}><Text  mt={["0px","0px","0px","0px"]} fontSize={["23px","23px","23px","23px"]}>Save Changes</Text></Link>  
-                            </Box>
-                            <Box w="30px"></Box>
+                    {/* Right Section */}
+                    <Grid h={500} templateRows="1fr 1fr 1fr 1fr 1fr">
+                        {/* Display Name */}
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Input
+                                value={ displayName }
+                                onChange={(e) => setDisplayName(e.target.value)}
+                                borderColor="gray.300"
+                                width='80%'
+                            /> 
                         </Box>
-                    </Box>
-                </Box>
-            </Grid>
-            </Box>    
 
-            </Box>
+                        {/* Email */}
+                        <Text display="flex" flexDirection="column" justifyContent="center"> { email } </Text>
+
+                        {/* Dark Mode */}
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <RadioGroup onChange={(event) => updateDarkMode(event)} value={darkMode} whiteSpace="nowrap">
+                                <Stack direction="row" spacing={10}>
+                                    <Radio value={false}>
+                                        Light Mode
+                                    </Radio>
+                                    <Radio value={true}>
+                                        Dark Mode
+                                    </Radio>
+                                </Stack>
+                            </RadioGroup>
+                        </Box>
+
+                        {/* Profile Picture */}
+                        <HStack spacing={10}>
+                            <Button
+                                variant="outline"
+                                _focus={{ outline: 'none' }}
+                                width='fit-content'
+                                borderColor="gray.300"
+                                onClick={() => hiddenImageInput.current.click()}
+                            >
+                                Upload Image
+                            </Button>
+                            <input
+                                type='file'
+                                style={{ display: 'none' }}
+                                ref={hiddenImageInput}
+                                onChange={(event) => updateIcon(event)}
+                            />
+                            <Avatar maxW="80px" maxH="80px" w="auto" h="auto" borderRadius={5} src={iconImage} />
+                        </HStack>
+
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Button w="fit-content" colorScheme="blue" onClick={saveChanges}> Save Changes </Button>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Center>
+        </Box>
     );
 }

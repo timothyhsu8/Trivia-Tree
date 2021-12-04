@@ -1,14 +1,15 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import { BsShopWindow, BsFillCartFill } from "react-icons/bs"
+import { BsFillCartFill, BsFillFileEarmarkTextFill } from "react-icons/bs"
 import { config } from '../util/constants';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import { useContext, useState, useRef, useEffect } from 'react';
 import coin from '../images/coin.png';
 import { useMutation, gql } from '@apollo/client';
 import guestImage from '../images/guest.png';
+import logo from '../images/logo.png';
 import '../styles/styles.css'
 
 export default function Navbar() {
@@ -115,32 +116,30 @@ export default function Navbar() {
     
 
     return(
-        <Box w="100%" h="55px" position='sticky' top='0' zIndex='99' bgColor="red.900">
-            <Grid templateColumns="2fr 3fr 2fr" pos="relative" top="6%">
+        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="red.900">
+            <Grid h="100%" templateColumns="2fr 3fr 2fr" pos="relative">
                 {/* RETURN TO HOMEPAGE */}
-                <Text
-                    className='disable-select'
-                    onClick={() => history.push('/')}
-                    display='inline-block'
-                    _hover={{
-                        cursor: 'pointer',
-                        opacity: '80%',
-                        transition: 'opacity 0.2s linear',
-                    }}
-                    transition='opacity 0.2s linear'
-                    ml='2%'
-                    color='white'
-                    fontSize='200%'
-                    whiteSpace="nowrap"
-                >
-                    Trivia Tree
-                </Text>
+                <Box display="flex" flexDirection="column" justifyContent="center">
+                    <Image
+                        w={230}
+                        minW={230}
+                        src={logo}
+                        className='disable-select'
+                        onClick={() => history.push('/')}
+                        display='inline-block'
+                        _hover={{
+                            cursor: 'pointer',
+                        }}
+                        transition='opacity 0.2s linear'
+                        ml='2%'
+                    />
+                </Box>
                 
                 {/* SEARCH */}
                 <Grid
                     h='50px'
                     pos='relative'
-                    top='3%'
+                    top='9%'
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
@@ -186,7 +185,8 @@ export default function Navbar() {
                     <Spacer />
                     
                     <div className="fadeshow3">
-                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push("/shoppingpage")} _hover={{cursor:"pointer"}}>
+
+                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} _hover={{cursor:"pointer"}}>
                         <Icon as={BsFillCartFill} mr={2} pos="relative" top={-0.5} />
                         Shop
                     </Text>
@@ -219,7 +219,9 @@ export default function Navbar() {
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (
                                     <Box>
-                                        <MenuItem onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Quiz   </MenuItem>
+                                        <MenuItem onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> 
+                                            Create Quiz   
+                                        </MenuItem>
                                         <MenuItem onClick={() => setChoosePlatformName(true)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
                                         <MenuItem onClick={() => history.push('/quizmanager')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
                                         <MenuItem onClick={() => history.push('/platformmanager/' + user._id)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>

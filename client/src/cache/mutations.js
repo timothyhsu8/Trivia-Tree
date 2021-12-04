@@ -98,6 +98,15 @@ mutation ($platformId: ID!, $playlistId: ID!, $quizId: ID!) {
 }
 `
 
+export const REMOVE_QUIZ_FROM_PLAYLIST = gql`
+mutation ($platformId: ID!, $playlistId: ID!, $quizId: ID!) {
+    removeQuizFromPlaylist(platformId: $platformId, playlistId: $playlistId, quizId: $quizId) {
+        name
+        _id
+    }
+}
+`
+
 export const EDIT_PLAYLIST = gql`
 mutation ($playlistInput: PlaylistInput!) {
     editPlaylist(playlistInput: $playlistInput) {
@@ -206,5 +215,39 @@ export const PURCHASE_ITEM = gql`
         }
     }
 `;
+
+export const ADD_COMMENT = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment: String!) {
+    addComment(quiz_id: $quiz_id, user_id: $user_id, comment: $comment) {
+        _id
+    }
+}
+`;
+
+export const DELETE_COMMENT = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!) {
+    deleteComment(quiz_id: $quiz_id, user_id: $user_id, comment_id: $comment_id) {
+        _id
+    }
+}
+`;
+
+export const ADD_REPLY = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!, $reply: String!) {
+    addReply(quiz_id: $quiz_id, user_id: $user_id, comment_id: $comment_id, reply: $reply) {
+        _id
+    }
+}
+`;
+
+export const DELETE_REPLY = gql`
+mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!, $reply_id: ID!) {
+    deleteReply(quiz_id: $quiz_id, user_id: $user_id, comment_id: $comment_id, reply_id: $reply_id) {
+        _id
+    }
+}
+`;
+
+
 
 

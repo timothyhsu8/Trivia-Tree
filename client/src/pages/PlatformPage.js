@@ -3,7 +3,7 @@ import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, T
     Menu, MenuButton, IconButton, MenuList, MenuItem } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
-import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, EDIT_PLAYLIST,
+import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, REMOVE_QUIZ_FROM_PLAYLIST, EDIT_PLAYLIST,
     ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
@@ -495,13 +495,13 @@ export default function PlatformPage({}) {
                 <Box>
                     {platform_data.playlists.map((playlist, key) => {
                         return (
-                            <Box w="100%" borderRadius="10" overflowX="auto" key={key}>
+                            <Box w="100%" borderRadius="10" key={key}>
                                 {/* <Icon as={BsThreeDotsVertical} mt={3} float="right" boxSize={6} _hover={{cursor:"pointer"}} /> */}
                                 {renderPlaylistDropdown(playlist)}
 
+                                 {/* Card for adding a quiz, if platform owner is viewing */}
                                 <HStack pt="0.5%">
                                     <Text pl="1.5%" fontSize="125%" fontWeight="medium"> {playlist.name} </Text>
-                                    {/* Card for adding a quiz, if platform owner is viewing */}
                                     {is_owner ? 
                                         <Tag className="disable-select" variant="subtle" colorScheme="orange"
                                             _hover={{cursor:"pointer", opacity:"85%"}}
@@ -516,8 +516,9 @@ export default function PlatformPage({}) {
                                         null
                                     }
                                 </HStack>
+
+                                {/* QUIZ CARDS */}
                                 <Flex ml="1%" spacing="4%" display="flex" flexWrap="wrap" >
-                                    {/* QUIZ CARDS */}
                                     {playlist.quizzes.slice(0).reverse().map((quiz, key) => {
                                         return <QuizCard 
                                             quiz={quiz} 
@@ -527,6 +528,8 @@ export default function PlatformPage({}) {
                                             char_limit={35}  
                                             key={key}
                                             is_owner={is_owner}
+                                            playlist_id={playlist._id}
+                                            from_playlist={true}
                                             platform_id={platform_data._id}
                                         />
                                     })}

@@ -14,7 +14,19 @@ import {
     Select,
     HStack,
     Tooltip,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverCloseButton,
+    PopoverHeader,
+    PopoverBody,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    Stack,
     useColorModeValue,
+    Icon
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -40,6 +52,8 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
+import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 
 let profileImg = null;
@@ -66,6 +80,21 @@ export default function AccountPage(props) {
     const [userTitle, setUserTitle] = React.useState('');
     const [pfp_src, setPFP] = useState(''); //String path
     const [banner_src, setBanner] = useState(''); //String path
+    const [bannerEffectPreview, setBannerEffectPreview] = useState(
+        {
+            name: "No Banner Effect",
+            item: null,
+            _id: "uninitialized"
+        }
+    )
+
+    const [iconEffect, setIconEffect] = useState(
+        {
+            name: "No Icon Effect",
+            item: null,
+            _id: "uninitialized"
+        }
+    )
 
     const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
         React.useState(false);
@@ -162,6 +191,50 @@ export default function AccountPage(props) {
         }
     }
 
+    function updateBannerEffect(item) {
+        setBannerEffectPreview(item)
+
+        // If user doesn't already have a banner effect applied
+        if (userData.bannerEffect === null || userData.bannerEffect === undefined) {
+            if (item.item !== null)
+                setUnsavedChanges(true)
+            else 
+                setUnsavedChanges(false)
+                
+            return
+        }
+        
+        // If user already had a banner effect applied
+        if (userData.bannerEffect._id === item._id){
+            setUnsavedChanges(false)
+            return
+        }
+
+        setUnsavedChanges(true)
+    }
+
+    function updateIconEffect(item) {
+        setIconEffect(item)
+
+        // If user doesn't already have a banner effect applied
+        if (userData.iconEffect === null || userData.iconEffect === undefined) {
+            if (item.item !== null)
+                setUnsavedChanges(true)
+            else 
+                setUnsavedChanges(false)
+                
+            return
+        }
+        
+        // If user already had a banner effect applied
+        if (userData.iconEffect._id === item._id){
+            setUnsavedChanges(false)
+            return
+        }
+
+        setUnsavedChanges(true)
+    }
+
     function cancelEditing() {
         profileImg = 'Same Image';
         bannerImg = 'Same Image';
@@ -177,6 +250,28 @@ export default function AccountPage(props) {
         }
         setEditBio(false);
         setUnsavedChanges(false);
+
+        // Reset Banner Effect
+        if (userData.bannerEffect !== null && userData.bannerEffect !== undefined)
+            setBannerEffectPreview(userData.bannerEffect)
+
+        else 
+            setBannerEffectPreview({
+                name: "No Banner Effect",
+                item: null,
+                _id: "none"
+            })
+
+        // Reset Banner Effect
+        if (userData.iconEffect !== null && userData.iconEffect !== undefined)
+            setIconEffect(userData.iconEffect)
+
+        else 
+            setIconEffect({
+                name: "No Icon Effect",
+                item: null,
+                _id: "none"
+            })
     }
 
     const {
@@ -247,6 +342,8 @@ export default function AccountPage(props) {
                     iconImage: pfp_src,
                     bannerImage: banner_src,
                     bio: bio,
+                    bannerEffectId: bannerEffectPreview.item !== null ? bannerEffectPreview._id : null,
+                    iconEffectId: iconEffect.item !== null ? iconEffect._id : null
                 },
             },
         });
@@ -258,7 +355,7 @@ export default function AccountPage(props) {
     const platformsButtonBG=useColorModeValue('gray.200', 'gray.500')
     const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
     const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
-    const accountButtonsText=useColorModeValue('blue', 'light blue')
+    const accountButtonsText=useColorModeValue('blue.500', 'light blue')
     const accountButtonsText2=useColorModeValue('black', 'white')
     const whiteBlackBG=useColorModeValue('white', 'gray.700')
     const basicTextColor=useColorModeValue('white', 'black')
@@ -298,6 +395,60 @@ export default function AccountPage(props) {
             </Center>
         );
     }
+
+    // Initializes banner effect as the one they own
+    if (bannerEffectPreview._id === "uninitialized") {
+        if (userData.bannerEffect === null || userData.bannerEffect === undefined) {
+            setBannerEffectPreview({
+                name: "No Banner Effect",
+                item: null,
+                _id: "none"
+            })
+        }
+
+        else {
+            setBannerEffectPreview(userData.bannerEffect)
+        }
+    }
+
+    // Initializes icon effect as the one they own
+    if (iconEffect._id === "uninitialized") {
+        if (userData.iconEffect === null || userData.iconEffect === undefined) {
+            setIconEffect({
+                name: "No Icon Effect",
+                item: null,
+                _id: "none"
+            })
+        }
+
+        else {
+            setIconEffect(userData.iconEffect)
+        }
+    }
+
+    // Maps out information needed for the header sections at the top
+    const headerSections = [
+        {
+            pageName: userData.displayName,
+            pageId: 'user',
+            icon: BsPersonCircle
+        },
+        {
+            pageName: "Platforms",
+            pageId: 'platforms',
+            icon: BsFillHouseDoorFill
+        },
+        {
+            pageName: "Quizzes",
+            pageId: 'quizzes',
+            icon: BsFillFileEarmarkTextFill
+        },
+        {
+            pageName: "Badges",
+            pageId: 'badges',
+            icon: BsBookmarkStarFill,
+        }
+    ]
 
     async function handleAddFeaturedQuiz() {
         setIsAddingFeaturedQuiz(false);
@@ -400,57 +551,90 @@ export default function AccountPage(props) {
                         </Button>
                     ) : null}
                 </Box>
-
+                
                 {/* BANNER EFFECT */}
-                {preview && itemData.type === 'bannerEffect' ? (
-                    <Image
-                        src={itemData.item}
-                        w='100%'
-                        h='28vh'
-                        minH='200px'
-                        pos='absolute'
-                        zIndex='1'
-                    />
-                ) : null}
+                { renderBannerEffect() }
+
                 {/* BANNER */}
-                <input
-                    type='file'
-                    accept='image/*'
-                    style={{ display: 'none' }}
-                    ref={hiddenBannerInput}
-                    onChange={(event) => updateBanner(event)}
-                />
                 {isOwner && !preview ? (
-                    <Tooltip
-                        label='Edit Profile Banner'
-                        placement='bottom'
-                        fontSize='100%'
-                        bgColor={bannerEditBG}
-                    >
-                        <Box
-                            h='28vh'
-                            minH='150px'
-                            pos='relative'
-                            bgImage={
-                                "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                                (preview && itemData.type === 'background'
-                                    ? itemData.item
-                                    : banner_src) +
-                                "')"
-                            }
-                            // bgImg={banner_src}
-                            bgSize='cover'
-                            bgPosition='center'
-                            borderRadius='10px'
-                            onClick={() => hiddenBannerInput.current.click()}
-                            _hover={{
-                                cursor: 'pointer',
-                                filter: 'brightness(65%)',
-                                transition: '0.15s linear',
-                            }}
-                            transition='0.15s linear'
-                        ></Box>
-                    </Tooltip>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Box>
+                                    <Tooltip
+                                        label='Edit Banner'
+                                        placement='bottom'
+                                        fontSize='100%'
+                                        bgColor={bannerEditBG}
+                                    >
+                                    <Box
+                                        h='28vh'
+                                        minH='150px'
+                                        pos='relative'
+                                        bgImage={
+                                            "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
+                                            (preview && itemData.type === 'background'
+                                                ? itemData.item
+                                                : banner_src) +
+                                            "')"
+                                        }
+                                        bgSize='cover'
+                                        bgPosition='center'
+                                        borderRadius='10px'
+                                        _hover={{
+                                            cursor: 'pointer',
+                                            filter: 'brightness(65%)',
+                                            transition: '0.15s linear',
+                                        }}
+                                        transition='0.15s linear'
+                                    />
+                                    </Tooltip>
+                                </Box>
+                            </PopoverTrigger>
+                            <PopoverContent >
+                                <PopoverCloseButton />
+                                <PopoverHeader fontWeight="medium"> Edit Banner </PopoverHeader>
+                                <PopoverBody>
+                                    <Stack>
+                                        <HStack>
+                                            <Text> Banner Image: </Text>
+                                            <input
+                                                type='file'
+                                                accept='image/*'
+                                                style={{ display: 'none' }}
+                                                ref={hiddenBannerInput}
+                                                onChange={(event) => updateBanner(event)}
+                                            />
+                                            <Button 
+                                                variant="outline" 
+                                                colorScheme="blue"
+                                                _focus={{}}
+                                                onClick={() => hiddenBannerInput.current.click()}
+                                            > 
+                                                Upload Image 
+                                            </Button>
+                                        </HStack>
+                                        <HStack>
+                                            <Text> Banner Effect: </Text>
+                                            <Menu>
+                                                <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                                    { bannerEffectPreview.name }
+                                                </MenuButton>
+                                                <MenuList>
+                                                    <MenuItem onClick={() => updateBannerEffect({name: "No Banner Effect", item: null, _id: "none"})}> No Banner Effect </MenuItem>
+                                                    {
+                                                        userData.ownedBannerEffects.map((item, key) => {
+                                                            return (
+                                                                <MenuItem key={key} onClick={() => updateBannerEffect(item)}> {item.name} </MenuItem>
+                                                            )
+                                                        })
+                                                    }
+                                                </MenuList>
+                                            </Menu>
+                                        </HStack>
+                                    </Stack>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover>
                 ) : (
                     <Box
                         h='28vh'
@@ -463,81 +647,109 @@ export default function AccountPage(props) {
                                 : banner_src) +
                             "')"
                         }
-                        // bgImg={banner_src}
                         bgSize='cover'
                         bgPosition='center'
                         borderRadius='10px'
                     ></Box>
                 )}
+                
+        
                 {/* PROFILE PICTURE AND NAME */}
                 <HStack
                     position='absolute'
                     top='18%'
-                    left='2%'
+                    left='3%'
                     transform='translateY(-50%)'
-                    width='25%'
+                    width='12%'
+                    spacing={0}
                 >
-                    {/* Profile Picture Effect */}
-                    {preview && itemData.type === 'iconEffect' ? (
-                        <Box
-                            pos='absolute'
-                            className='squareimage_container'
-                            w='30%'
-                            minW='100px'
-                            zIndex='1'
-                        >
-                            <Image
-                                className='squareimage'
-                                src={itemData.item}
-                                objectFit='cover'
-                                borderRadius='50%'
-                            />
-                        </Box>
-                    ) : null}
+
+                    {/* Icon Effect */}
+                    {renderIconEffect()}
 
                     {/* Profile Picture */}
-                    <input
-                        type='file'
-                        style={{ display: 'none' }}
-                        ref={hiddenPFPInput}
-                        onChange={(event) => updatePFP(event)}
-                    />
                     {isOwner && !preview ? (
-                        <Tooltip
-                            label='Edit Platform Icon'
-                            placement='top'
-                            fontSize='100%'
-                            bgColor={bannerEditBG}
-                        >
-                            <Box
-                                className='squareimage_container'
-                                w='48%'
-                                // minW='100px'
-                                minW='75px'
-                                minH='75px'
-                            >
-                                <Image
-                                    className='squareimage'
-                                    src={pfp_src}
-                                    objectFit='cover'
-                                    borderRadius='50%'
-                                    onClick={() =>
-                                        hiddenPFPInput.current.click()
-                                    }
-                                    _hover={{
-                                        cursor: 'pointer',
-                                        filter: 'brightness(65%)',
-                                        transition: '0.15s linear',
-                                    }}
-                                    transition='0.15s linear'
-                                />
+                        <Popover placement="right-start">
+                            <PopoverTrigger>
+                                <Box w="100%">
+                                    <Tooltip
+                                        label='Edit Platform Icon'
+                                        placement='top'
+                                        fontSize='100%'
+                                        bgColor={bannerEditBG}
+                                    >
+                                        <Box
+                                            className='squareimage_container'
+                                            w='100%'
+                                            minW='75px'
+                                            minH='75px'
+                                        >
+                                            <Image
+                                                className='squareimage'
+                                                src={pfp_src}
+                                                objectFit='cover'
+                                                borderRadius='50%'
+                                                _hover={{
+                                                    cursor: 'pointer',
+                                                    filter: 'brightness(65%)',
+                                                    transition: '0.15s linear',
+                                                }}
+                                                transition='0.15s linear'
+                                            />
+                                        </Box>
+                                    </Tooltip>
+                                </Box>
+                            </PopoverTrigger>
+                            <Box>
+                                <PopoverContent>
+                                    <PopoverCloseButton />
+                                    <PopoverHeader fontWeight="medium"> Edit Icon </PopoverHeader>
+                                    <PopoverBody>
+                                        <Stack>
+                                            <HStack>
+                                                <Text> Icon Image: </Text>
+                                                <input
+                                                    type='file'
+                                                    style={{ display: 'none' }}
+                                                    ref={hiddenPFPInput}
+                                                    onChange={(event) => updatePFP(event)}
+                                                />
+                                                <Button 
+                                                    variant="outline" 
+                                                    colorScheme="blue"
+                                                    _focus={{}}
+                                                    onClick={() => hiddenPFPInput.current.click()}
+                                                > 
+                                                    Upload Image 
+                                                </Button>
+                                            </HStack>
+                                            <HStack>
+                                                <Text> Icon Effect: </Text>
+                                                <Menu>
+                                                    <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                                        { iconEffect.name }
+                                                    </MenuButton>
+                                                    <MenuList>
+                                                        <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                                        {
+                                                            userData.ownedIconEffects.map((item, key) => {
+                                                                return (
+                                                                    <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                                )
+                                                            })
+                                                        }
+                                                    </MenuList>
+                                                </Menu>
+                                            </HStack>
+                                        </Stack>
+                                    </PopoverBody>
+                                </PopoverContent>
                             </Box>
-                        </Tooltip>
+                        </Popover>
                     ) : (
                         <Box
                             className='squareimage_container'
-                            w='48%'
-                            // minW='100px'
+                            w='100%'
                             minW='75px'
                             minH='75px'
                         >
@@ -554,11 +766,13 @@ export default function AccountPage(props) {
                     <Text
                         pos='absolute'
                         bottom='30%'
-                        left='55%'
+                        left='110%'
                         fontSize='2.5vw'
                         as='b'
                         color='black'
                         w='100%'
+                        pointerEvents="none"
+                        whiteSpace="nowrap"
                     >
                         {username}
                     </Text>
@@ -573,8 +787,9 @@ export default function AccountPage(props) {
                         {userTitle}{' '}
                     </Text>
                 </HStack>
+                
                 {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
-                <Grid pt='1%' templateColumns='4fr 1fr' marginTop='10px'>
+                <Grid templateColumns='4fr 1fr' marginTop={3}>
                     {/* FEATURED QUIZZES/PLATFORMS */}
                     <Box w='98.5%' borderRadius='10'>
                         <VStack spacing='1.5vh'>
@@ -715,9 +930,9 @@ export default function AccountPage(props) {
                                 }}
                             >
                                 <Text
-                                    pl='4%'
-                                    pt='2%'
-                                    fontSize='130%'
+                                    pl={3}
+                                    pt={2}
+                                    fontSize='120%'
                                     fontWeight='medium'
                                 >
                                     {' '}
@@ -733,10 +948,9 @@ export default function AccountPage(props) {
                                     />
                                 ) : (
                                     <Text
-                                        pl='4%'
-                                        pr='4%'
-                                        pt='3%'
-                                        fontSize='100%'
+                                        pl={3}
+                                        pt={1}
+                                        pr={3}
                                     >
                                         {' '}
                                         {bio}{' '}
@@ -752,15 +966,19 @@ export default function AccountPage(props) {
                             overflow='hidden'
                         >
                             <Text
-                                pl='4%'
-                                pt='2%'
-                                fontSize='130%'
+                                pl={3}
+                                pt={2}
+                                fontSize='120%'
                                 fontWeight='medium'
                             >
                                 {' '}
                                 Biography{' '}
                             </Text>{' '}
-                            <Text pl='4%' pr='4%' pt='3%' fontSize='100%'>
+                            <Text 
+                                pl={3}
+                                pt={1}
+                                pr={3}
+                            >
                                 {' '}
                                 {bio}{' '}
                             </Text>
@@ -843,8 +1061,8 @@ export default function AccountPage(props) {
                             return (
                                 <QuizCard
                                     quiz={quiz}
-                                    width='10%'
-                                    title_fontsize='0.8vw'
+                                    width='8.0%'
+                                    title_fontsize='95%'
                                     include_author={false}
                                     char_limit={35}
                                     key={key}
@@ -874,8 +1092,8 @@ export default function AccountPage(props) {
                                 return (
                                     <QuizCard
                                         quiz={quiz}
-                                        width='10%'
-                                        title_fontsize='0.8vw'
+                                        width='8.0%'
+                                        title_fontsize='95%'
                                         include_author={false}
                                         char_limit={35}
                                         key={key}
@@ -889,6 +1107,66 @@ export default function AccountPage(props) {
                 )}
             </Box>
         );
+    }
+
+    // Renders the banner effect
+    function renderBannerEffect() {
+        let item_src = null
+
+        // If user is previewing an item from the shop, use the previewed banner effect
+        if (preview && itemData.type === "bannerEffect")
+            item_src = itemData.item
+
+        // If user is previewing an item from their account, use the previewed banner effect
+        else
+            item_src = bannerEffectPreview.item
+        
+        if (item_src !== null){
+            return (
+                <Image
+                    src={item_src}
+                    w="100%"
+                    h='28vh'
+                    minH='150px'
+                    pos='absolute'
+                    zIndex="1"
+                    pointerEvents="none"
+                />
+            )
+        }
+    }
+
+    // Renders the icon effect
+    function renderIconEffect() {
+        let item_src = null
+
+        // If user is previewing an item from the shop, use the previewed banner effect
+        if (preview && itemData.type === "iconEffect")
+            item_src = itemData.item
+
+        // If user is previewing an item from their account, use the previewed banner effect
+        else
+            item_src = iconEffect.item
+        
+        if (item_src !== null) {
+            return (
+                <Box
+                    pos='absolute'
+                    className='squareimage_container'
+                    w='100%'
+                    minW='75px'
+                    pointerEvents="none"
+                    zIndex='1'
+                >
+                    <Image
+                        className='squareimage'
+                        src={item_src}
+                        objectFit='cover'
+                        borderRadius='50%'
+                    />
+                </Box>
+            )
+        }
     }
 
     // Render Badges
@@ -923,7 +1201,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='1'
+                    zIndex='2'
                     bgColor={mainBG}
                     transition='0.2s linear'
                 >
@@ -1000,7 +1278,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='1'
+                    zIndex='2'
                     bgColor='rgba(0, 0, 0, 0.9)'
                     transition='0.2s linear'
                 >
@@ -1085,7 +1363,30 @@ export default function AccountPage(props) {
                         minH='50px'
                         templateColumns='1fr 1fr 1fr 1fr'
                     >
-                        <Button
+                        {
+                            headerSections.map((section, key) => {
+                                return (
+                                    <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
+                                        <Text
+                                            key={key}
+                                            w='100%'
+                                            fontSize='125%'
+                                            textColor={ page === section.pageId ? accountButtonsText : accountButtonsText2 }
+                                            textAlign="center"
+                                            transition=".1s linear"
+                                            whiteSpace="nowrap"
+                                            _focus={{ boxShadow:'none' }}
+                                            _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
+                                            onClick={() => setPage(section.pageId)}
+                                        >
+                                            <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
+                                            { section.pageName }
+                                        </Text>
+                                    </Box>
+                                )
+                            })
+                        }
+                        {/* <Button
                             height='100%'
                             fontSize='115%'
                             bgColor={accountButtonsBG}
@@ -1128,7 +1429,7 @@ export default function AccountPage(props) {
                         >
                             {' '}
                             Badges{' '}
-                        </Button>
+                        </Button> */}
                     </Grid>
                     {renderPage()}
                 </Box>

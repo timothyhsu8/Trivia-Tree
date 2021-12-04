@@ -14,6 +14,7 @@ module.exports = gql`
         bio: String
         currency: Int
         ownedBannerEffects: [Item]
+        ownedIconEffects: [Item]
         ownedBackgrounds: [Item]
         quizzesMade: [Quiz]
         quizzesTaken: [Quiz]
@@ -26,6 +27,7 @@ module.exports = gql`
         darkMode: Boolean
         favoritedQuizzes: [Quiz]
         createdAt: String
+        recommendationArray: [String]
     }
 
     input UserInput {
@@ -33,6 +35,8 @@ module.exports = gql`
         iconImage: String
         bannerImage: String
         bio: String
+        bannerEffectId: ID
+        iconEffectId: ID
     }
 
     input SettingInput {

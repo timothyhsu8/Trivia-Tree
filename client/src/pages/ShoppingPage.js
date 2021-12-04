@@ -130,7 +130,9 @@ export default function ShoppingPage() {
 
     // Makes sure user is logged in
     if (user === null || user === "NoUser")
-        return
+        return (
+            <Box />
+        )
 
     return (
         <Box>
@@ -325,7 +327,7 @@ export default function ShoppingPage() {
 
                         return (
                             <Center>
-                                <ShopItemCard item={item} key={key} callback={itemClicked} />
+                                <ShopItemCard item={item} key={key} isOwned={itemIsOwned(item)} callback={itemClicked} />
                             </Center>
                         )
                     })}
@@ -349,6 +351,29 @@ export default function ShoppingPage() {
         }
     }
     
+    // Searches user array to check if they already own a shop item (Makes shop item unpurchasable)
+    function itemIsOwned(item) {
+        if (item.type === "bannerEffect") {
+            for (const ownedItem of user.ownedBannerEffects) 
+                if (ownedItem === item._id)
+                    return true
+        }
+        
+        else if (item.type === "iconEffect"){
+            for (const ownedItem of user.ownedIconEffects) 
+                if (ownedItem === item._id)
+                    return true
+        }
+
+        else if (item.type === "background") {
+            for (const ownedItem of user.ownedBackgrounds)
+                if (ownedItem === item._id)
+                    return true
+        }
+
+        return false
+    }
+
     // Jumps to a page (Page numbers at the bottom)
     function goToPage(pageNum) {
         setPageNum(pageNum)

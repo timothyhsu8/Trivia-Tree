@@ -27,6 +27,7 @@ export const GET_QUIZ = gql`
             _id
             title
             user {
+                _id
                 displayName
                 iconImage
             }
@@ -47,11 +48,27 @@ export const GET_QUIZ = gql`
             numRatings
             averageScore
             medianScore
+            quizInstant
+            quizShuffled
             comments {
+                _id
+                user {
+                    _id
+                    displayName
+                    iconImage
+                }
                 comment
                 replies {
+                    _id
+                    user {
+                        _id
+                        displayName
+                        iconImage
+                    }
                     reply
+                    createdAt
                 }
+                createdAt
             }
         }
     }
@@ -62,7 +79,9 @@ export const GET_QUIZ_ATTEMPT = gql`
         getQuizAttempt(_id: $_id) {
             _id
             user {
+                _id
                 displayName
+                iconImage
             }
             quiz {
                 _id
@@ -97,6 +116,12 @@ export const GET_QUIZ_ATTEMPT = gql`
             elapsedTime
             attemptNumber
             coinsEarned
+            comments {
+                user {
+                    displayName
+                }
+                comment
+            }
         }
     }
 `;
@@ -140,6 +165,43 @@ export const GET_LEADERBOARD = gql`
                 iconImage
             }
             score
+        }
+    }
+`;
+
+export const GET_POST_RECOMMENDATIONS = gql`
+    query GetPostRecommendations($quiz_id: ID!) {
+        getPostRecommendations(quiz_id: $quiz_id) {
+            _id
+            title
+            icon
+            user {
+                _id
+                displayName
+            }
+            numFavorites
+            numAttempts
+        }
+    }
+`;
+
+export const GET_USER_RECOMMENDATIONS = gql`
+    query GetUserRecommendations($user_id: ID!) {
+        getUserRecommendations(user_id: $user_id) {
+            _id
+            title
+            user {
+                _id
+                displayName
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
         }
     }
 `;
@@ -331,6 +393,26 @@ export const GET_USER = gql`
                 user {
                     displayName
                 }
+            }
+            bannerEffect {
+                _id
+                name
+                item
+            }
+            ownedBannerEffects {
+                _id
+                name
+                item
+            }
+            iconEffect {
+                _id
+                name
+                item
+            }
+            ownedIconEffects {
+                _id
+                name
+                item
             }
             darkMode
         }

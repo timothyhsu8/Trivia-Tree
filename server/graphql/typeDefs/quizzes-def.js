@@ -36,6 +36,7 @@ module.exports = gql`
     }
 
     type Comment {
+        _id: ID!
         user: User
         comment: String!
         replies: [Reply!]
@@ -43,6 +44,7 @@ module.exports = gql`
     }
 
     type Reply {
+        _id: ID!
         user: User
         reply: String!
         createdAt: String
@@ -79,6 +81,8 @@ module.exports = gql`
         getQuizzes: [Quiz]
         getQuiz(quizId: ID!): Quiz
         searchQuizzes(searchText: String!): [Quiz]
+        getPostRecommendations(quiz_id: ID): [Quiz]
+        getUserRecommendations(user_id: ID): [Quiz]
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz
@@ -88,5 +92,9 @@ module.exports = gql`
         favoriteQuiz(quizId: ID!, userId: ID!): Boolean
         unfavoriteQuiz(quizId: ID!, userId: ID!): Boolean
         rateQuiz(quizId: ID!, rating: Int!): Quiz
+        addComment(quiz_id: ID!, user_id: ID!, comment: String!): Quiz
+        deleteComment(quiz_id: ID!, user_id: ID!, comment_id: ID!): Quiz
+        addReply(quiz_id: ID!, user_id: ID!, comment_id: ID!, reply: String!): Quiz
+        deleteReply(quiz_id: ID!, user_id: ID!, comment_id: ID!, reply_id: ID!): Quiz
     }
 `;

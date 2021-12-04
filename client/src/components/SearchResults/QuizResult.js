@@ -4,10 +4,6 @@ import quizImage from '../../images/defaultquiz.jpeg';
 import { BsHeartFill, BsFillAlarmFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
-// Placeholder data since we don't have this information yet
-let quiz_rating = 5
-let quiz_platform = "No Platform"
-
 export default function QuizResult( {quiz} ) {
 
     return (
@@ -67,11 +63,6 @@ export default function QuizResult( {quiz} ) {
                         &nbsp;{ quiz.rating !== null ? quiz.rating : "No Rating" }
                     </Text>
                 </Center>
-
-                {/* PLATFORM */}
-                {/* <Center>
-                    <Text top="50%" fontSize="1.8vh" color="blue.500" > {quiz_platform} </Text> 
-                </Center> */}
 
                 {/* CREATOR */}
                 <Center>

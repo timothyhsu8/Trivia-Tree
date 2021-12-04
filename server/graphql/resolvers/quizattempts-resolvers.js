@@ -16,7 +16,7 @@ module.exports = {
 
     async getLeaderboard(_, {quiz_id}) {
       const quiz = await Quiz.findById(quiz_id).exec();
-      const quizAttempts = await QuizAttempt.find({quiz:quiz, attemptNumber:1}).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).sort( { score: -1 } ).limit(10)
+      const quizAttempts = await QuizAttempt.find({quiz:quiz, attemptNumber:1}).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).sort( { score: -1 } ).limit(5)
 
       return quizAttempts;
     }
@@ -28,7 +28,7 @@ module.exports = {
       const quiz = await Quiz.findById(quiz_id).exec();
       quiz.numAttempts = quiz.numAttempts + 1;
 
-      let questions = quiz.questions
+      let questions = quiz.questions;
 
       let coinsEarned = 0; 
 
@@ -98,10 +98,18 @@ module.exports = {
         if(attemptNumber === 1){
           coinsEarned = questionsCorrect * 10;
           user.currency += coinsEarned;
-          user.save();
           // console.log(user)
           // console.log(user.currency)
         }
+        
+        let category = quiz.category;
+        if(category != "Other"){
+          recommendationArray = user.recommendationArray;
+          recommendationArray.push(category);
+          user.recommendationArray = recommendationArray;
+        }
+
+        user.save();
       }
 
 

@@ -1,10 +1,26 @@
 /* GENERAL STYLES THAT CAN BE APPLIED TO ALL PAGES */
-
+/*Allows the navbar able to be shrunk a lot without losing the dropdown*/
+@media only screen and (max-width: 75em) {
+    .fadeshow1 {
+        display: none;
+    }
+}
+@media only screen and (max-width: 60em) {
+    .fadeshow2 {
+        display: none;
+    }
+}
+@media only screen and (max-width: 40em) {
+    .fadeshow3 {
+        display: none;
+    }
+}
 /* Allows for dynamically sized square images */
 .squareimage_container {
     position: relative;
 }
   
+
 .squareimage_container:before {
     content: "";
     display: block;

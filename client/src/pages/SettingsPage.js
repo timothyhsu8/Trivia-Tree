@@ -42,7 +42,12 @@ export default function SettingsPage(props) {
             console.log(JSON.stringify(err, null, 2));
         },
     });
-    const [deleteUser] = useMutation(mutations.DELETE_USER);
+    const [deleteUser] = useMutation(mutations.DELETE_USER, {
+        onCompleted() {
+            refreshUserData();
+            history.push('/');
+        }
+    });
      
 
     const hiddenImageInput = createRef(null);

@@ -297,9 +297,18 @@ module.exports = {
             user.save();
         },
         async deleteUser(_, { userId }, context) {
-            const user = await User.findById(userId);
-
-            console.log(user);
+            try {
+                const user = await User.findById(userId);
+                if (!user._id.equals(context.req.user._id)) {
+                    throw new Error('You cannot delete someone elses account');
+                }
+                await user.delete();
+                await Quiz.deleteMany({ user: user._id });
+                await Platform.deleteMany({user: user._id});
+                console.log(user);
+            } catch (err) {
+                throw new Error(err);
+            }
         },
     },
 };

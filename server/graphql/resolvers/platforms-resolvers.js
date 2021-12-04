@@ -146,8 +146,6 @@ module.exports = {
             if (name.length > 35) {
                 throw new Error('Platform name cannot be greater than 35 characters');
             }
-
-            // if name has special characters
             
             // Update icon if the user changed it
             let imageUrl;
@@ -204,9 +202,11 @@ module.exports = {
         async deletePlatform(_, { platformId }, context) {
             try {
                 const platform = await Platform.findById(platformId);
+
                 if (!platform.user.equals(context.req.user._id)) {
                     throw new Error('You are not the creator of this platform');
                 }
+
                 await User.findByIdAndUpdate(context.req.user._id, {
                     $pull: { platformsMade: platform._id },
                 });
@@ -241,11 +241,19 @@ module.exports = {
             try {
                 const platform = await Platform.findById(platformId)
                 
+                if (platform === undefined)
+                    throw new Error('Platform does not exist');
+
+                if (!platform.user.equals(context.req.user._id)) 
+                    throw new Error('You are not the creator of this platform');
+
+                // Remove playlist from platform
                 for (let i = 0; i < platform.playlists.length; i++)
                     if(platform.playlists[i]._id.toString() === playlistId) {
                         platform.playlists.splice(i, 1)
-                        platform.save()
                     }
+                
+                platform.save()
     
                 return platform;
             } catch (err) {
@@ -258,6 +266,15 @@ module.exports = {
             try {
                 const platform = await Platform.findById(platformId);
                 const quiz = await Quiz.findById(quizId);
+
+                if (platform === undefined)
+                    throw new Error('Platform does not exist');
+
+                if (!platform.user.equals(context.req.user._id)) 
+                    throw new Error('You are not the creator of this platform');
+
+                if (quiz === undefined)
+                    throw new Error('Quiz does not exist');
 
                 // If quiz doesn't already exist on the platform, add it
                 for (let i = 0; i < platform.quizzes.length; i++) {
@@ -272,6 +289,40 @@ module.exports = {
                 for (let i = 0; i < platform.playlists.length; i++) 
                     if (platform.playlists[i]._id.toString() === playlistId) 
                         platform.playlists[i].quizzes.push(quiz)
+                
+                platform.save()
+
+                return platform;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+
+         // Adds quiz to the platform 
+         async removeQuizFromPlaylist(_, { platformId, playlistId, quizId }, context) {
+            try {
+                const platform = await Platform.findById(platformId);
+
+                if (platform === undefined)
+                    throw new Error('Platform does not exist');
+
+                if (!platform.user.equals(context.req.user._id)) {
+                    throw new Error('You are not the creator of this platform');
+                }
+
+                // Find playlist
+                let playlist = null
+                for (let i = 0; i < platform.playlists.length; i++) 
+                    if (platform.playlists[i]._id.toString() === playlistId)
+                        playlist = platform.playlists[i]
+
+                if (playlist === null)
+                    throw new Error('Could not find playlist');
+                
+                // Remove quiz from playlist
+                for (let i = 0; i < playlist.quizzes.length; i++)
+                    if (playlist.quizzes[i]._id.toString() === quizId)
+                        playlist.quizzes.splice(i, 1)
                 
                 platform.save()
 
@@ -338,9 +389,10 @@ module.exports = {
                     populate: { path: 'platform', model: 'Platform' },
                 })
                 .exec()
-                // if (!platform.user.equals(context.req.user._id)) {
-                //     throw new Error('You are not the creator of this platform');
-                // }
+                
+                if (!platform.user.equals(context.req.user._id)) {
+                    throw new Error('You are not the creator of this platform');
+                }
 
                 return platform;
             } catch (err) {

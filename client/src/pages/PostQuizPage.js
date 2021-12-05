@@ -18,6 +18,7 @@ import { useParams } from 'react-router-dom';
 import PostQuizAnswersCard from '../components/PostQuizAnswersCard';
 import { StarIcon } from '@chakra-ui/icons'
 import { Rating, RatingView } from 'react-simple-star-rating'
+import { BsAlarm, BsChatSquareDotsFill, BsCheck2, BsCheck2Square, BsFillFileTextFill, BsFillFilterSquareFill, BsPerson, BsStopwatch, BsTrophy } from 'react-icons/bs';
 
 export default function PostQuizPage() {
     let history = useHistory();
@@ -110,18 +111,21 @@ export default function PostQuizPage() {
             text: "Results",
             page: "#results",
             isShowing: showResults,
+            icon: BsFillFilterSquareFill,
             clickFunction: onClickResults
         },
         {
             text: "Answers",
             page: "#answers",
             isShowing: showAnswers,
+            icon: BsCheck2Square,
             clickFunction: onClickAnswers
         },
         {
             text: "Comments",
             page: "#comments",
             isShowing: showComments,
+            icon: BsChatSquareDotsFill,
             clickFunction: onClickComments
         }
     ]
@@ -243,7 +247,7 @@ export default function PostQuizPage() {
     return(
         <Box>    
             {/* HEADER/BANNER */}
-            <Grid templateColumns="5fr 2fr" mt="50px">
+            <Grid templateColumns="1fr 0.45fr" mt="50px">
                 {/* Left Side of Page (Quiz Title / Results / Answers / Comments) */}
                 <Box>
                     <Box>
@@ -294,6 +298,7 @@ export default function PostQuizPage() {
                                                     className='center button black'
                                                     onClick={ button.clickFunction }
                                                 >
+                                                    <Icon as={button.icon} pos="relative" boxSize={4} top={0.5} mr={2}/>
                                                     { button.text } { button.page === "#comments" ? `(${comments.length})` : "" }
                                                 </a>
                                             </Box>
@@ -389,7 +394,7 @@ export default function PostQuizPage() {
                             <Box
                                 width="90%"
                                 mt='15px'
-                                paddingLeft={10}
+                                paddingLeft={14}
                                 paddingRight="15px"
                             >
                                 <Text marginBottom="20px" borderBottom="1px" borderColor="gray.300" fontSize="22px">Comments ({comments.length})</Text>
@@ -461,13 +466,51 @@ export default function PostQuizPage() {
                         </Stack>
                         
                         {/* Leaderboard */}
-                        <Box w="95%">
+                        <Box w="95%" minW="430px" overflow="hidden">
                             <Box h='50px' bg='gray.800' color="white" lineHeight="2" position="relative" borderTopRadius={6}>
-                                <h1 className='leaderboard_title'>
+                                <Text className='leaderboard_title'>
                                     Leaderboard
-                                </h1>
+                                </Text>
                             </Box>
-                            <Box bg='gray.100' borderBottomRadius="2%" h='300px' position="relative" paddingTop="10px">
+                            <Box borderBottomRadius="2%" h='350px' position="relative" paddingTop="10px" border="1px" borderColor="gray.300">
+                                <Grid h={8} templateColumns="0.2fr 0.40fr 0.2fr 0.2fr" fontWeight="medium">
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Center>
+                                            <Text>
+                                                <Icon as={BsTrophy} pos="relative" top={-0.4}  mr={2}/>
+                                                Rank
+                                            </Text>
+                                        </Center>
+                                    </Box>
+                                    
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Text>
+                                            <Icon as={BsPerson} pos="relative" top={-0.4}  mr={2}/>
+                                            Name
+                                        </Text>
+                                    </Box>
+
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Center>
+                                            <Text>
+                                                <Icon as={BsAlarm} pos="relative" top={-0.4}  mr={2}/>
+                                                Time
+                                            </Text>
+                                        </Center>
+                                    </Box>
+
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Center>
+                                            <Text>
+                                                <Icon as={BsCheck2Square} pos="relative" top={-0.4}  mr={2}/>
+                                                Score
+                                            </Text>
+                                        </Center>
+                                    </Box>
+                                </Grid>
+                                
+                                <Box h="1px" mt={1} mb={1} bgColor="gray.300" />
+
                                 {leaderboard.map((entry, index) => {
                                     return (
                                         <LeaderboardCard 

@@ -100,6 +100,10 @@ function getTimeAgo(creationDate) {
     // Get difference in time between now and the creation date
     let time_diff_ms= Math.abs(new Date() - creationDate)
     
+    // For brand comments quizzes ('A few seconds ago')
+    if (parseInt(time_diff_ms) < 5000)
+        return "A few seconds ago"
+
     // Format as 'x weeks ago'
     let weeks_ago = parseInt(time_diff_ms / (7*24*60*60*1000))
     if (weeks_ago !== 0)

@@ -140,12 +140,9 @@ export default function CommentCard( props ) {
                         </Button> 
                     
                     :
-                        replies.length !== 0 ?
                         <Button color="blue.500" leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)} _focus={{}}>
                             View Replies ({ replies.length })
                         </Button>
-                        :
-                        ''
                     }
                 </HStack>
 
@@ -170,7 +167,7 @@ export default function CommentCard( props ) {
                     {showReply && props.logged_in ? 
                         <HStack paddingTop="5px" paddingBottom="10px">
                             <Avatar src={props.player_icon} size="sm"/>
-                            <Input value={reply} onChange={handleReplyChange} size="sm" variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
+                            <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
                                 borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
                             <Button w="100px" colorScheme='blue' variant='solid' size="sm" marginLeft="20px" onClick={handleAddReply}>
                                 Reply
@@ -187,6 +184,10 @@ function getTimeAgo(creationDate) {
     // Get difference in time between now and the creation date
     let time_diff_ms= Math.abs(new Date() - creationDate)
     
+    // For brand comments quizzes ('A few seconds ago')
+    if (parseInt(time_diff_ms) < 5000)
+        return "A few seconds ago"
+
     // Format as 'x weeks ago'
     let weeks_ago = parseInt(time_diff_ms / (7*24*60*60*1000))
     if (weeks_ago !== 0)

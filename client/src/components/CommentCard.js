@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid, Button, Center, Stack, Tag, TagLabel, Flex, Input} from '@chakra-ui/react';
+import { Text, Image, HStack, Button, Flex, Input, Avatar } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { BsTrash } from 'react-icons/bs';
@@ -9,6 +9,7 @@ import * as mutations from '../cache/mutations';
 import ReplyCard from './ReplyCard.js'
 
 export default function CommentCard( props ) {    
+    let history = useHistory();
     let comment = props.comment
     let comment_id = props.comment._id
     let replies = props.comment.replies;
@@ -66,121 +67,118 @@ export default function CommentCard( props ) {
         // </Box>
 
         <Flex
-        direction="row"
-        h="auto" 
-        w="60vw"
-        minH="80px"
-        marginTop="2%"
-        marginBottom="2%"
-        marginLeft="2%"
-        spacing="1.5%"
-        borderBottom="1px" 
-        borderColor="gray.400" 
-        dipslay="flex" 
-        alignItems="left"  
-        transition="background-color 0.1s linear"
-        overflow="hidden"
-        onMouseLeave={() => setDeleteConfirmation(false)}
+            direction="row"
+            h="auto" 
+            w="60vw"
+            mt={5}
+            minH="80px"
+            marginLeft={6}
+            borderBottom="1px" 
+            borderColor="gray.300" 
+            dipslay="flex" 
+            alignItems="left"  
+            transition="background-color 0.1s linear"
+            overflow="hidden"
         >
-        {/* USER ICON */}
-        <Box className='squareimage_container' h="60px" w="30px" w="5%" minW="55px" marginRight="10px"> 
-            <Image className="squareimage" src={comment.user.iconImage} borderRadius="50%"></Image>
-        </Box>
+            {/* USER ICON */}
+            <Avatar src={comment.user.iconImage} _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + comment.user._id)}/>
 
-        {/* USER NAME */}
-        <Flex spacing="0.1" direction="column">
-            <HStack>
-                <Text w="fit-content" fontSize="12px">
-                    {comment.user.displayName}
-                </Text>
-                <Text w="fit-content" fontSize="10px">
-                    {timeAgo}
-                </Text>
-                {usersComment ? 
+            {/* USER NAME */}
+            <Flex ml={3} spacing="0.1" direction="column">
                 <HStack>
-                    <BsTrash
-                        className='trashCan'
-                        style={{
-                        display: 'inline',
-                        verticalAlign: 'middle',
-                        fontSize: '70%',
-                        }}
-                        onClick={() =>
-                        setDeleteConfirmation(true)
-                        }
-                    /> 
-                    {deleteConfirmation ? 
-                        <HStack>
-                            <Button 
-                            size="xs" 
-                            variant='link' 
-                            colorScheme="black" 
+                    <Text w="fit-content" fontSize="12px" _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + comment.user._id)}>
+                        {comment.user.displayName}
+                    </Text>
+                    <Text w="fit-content" fontSize="10px">
+                        {timeAgo}
+                    </Text>
+                    {usersComment ? 
+                    <HStack>
+                        <BsTrash
+                            className='trashCan'
+                            style={{
+                            display: 'inline',
+                            verticalAlign: 'middle',
+                            fontSize: '70%',
+                            }}
                             onClick={() =>
-                                setDeleteConfirmation(false)
-                            }> 
-                            Cancel
-                            </Button>
+                            setDeleteConfirmation(true)
+                            }
+                        /> 
+                        {deleteConfirmation ? 
+                            <HStack>
+                                <Button 
+                                size="xs" 
+                                variant='link' 
+                                colorScheme="black" 
+                                onClick={() =>
+                                    setDeleteConfirmation(false)
+                                }> 
+                                Cancel
+                                </Button>
 
-                            <Button 
-                            size="xs" 
-                            variant='link' 
-                            colorScheme="red"
-                            onClick={() =>
-                                handleDeleteComment()
-                            }>  
-                            Delete Comment
-                            </Button>
-                            
-                        </HStack>
-                        :''}
-                </HStack>
-                : ''}
-            </HStack>
-            <Text fontSize="100%" fontWeight="medium"> {comment.comment}</Text>
-            <HStack>
-                {showReply ? 
-                <Button leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}>
-                        Hide Replies
-                </Button> 
-                
-                :
-                <Button leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)}>
-                        View Replies
-                </Button>
-                }
-            </HStack>
-
-                {!showReply ? "":
-                    <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="20px">
-                        {replies.map((reply, key) => {
-                            return (
-                                <ReplyCard
-                                    reply={reply}
-                                    quiz_id={quiz_id}
-                                    user_id={props.user_id}
-                                    key={key}
-                                    logged_in={props.logged_in}
-                                    handleDeleteReply={handleDeleteReply}
- 
-                                />
-                            )
-                        })}
-                    </Flex>
-                }
-
-                {showReply && props.logged_in ? 
-                    <HStack borderBottom="1px" borderColor="gray.400" paddingTop="5px" paddingBottom="10px">
-                        <Image src={props.player_icon} alt="pfp" className="round_image" position="relative" />
-                        <Input value={reply} onChange={handleReplyChange} size="xs" variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"/>
-                        <Button w="140px" colorScheme='blue' variant='solid' size="xs" marginLeft="20px" onClick={handleAddReply}>
-                            Reply
-                        </Button>
+                                <Button 
+                                size="xs" 
+                                variant='link' 
+                                colorScheme="red"
+                                onClick={() =>
+                                    handleDeleteComment()
+                                }>  
+                                Delete Comment
+                                </Button>
+                                
+                            </HStack>
+                            :''}
                     </HStack>
-                : ""}
-                
+                    : ''}
+                </HStack>
+                <Text fontSize="100%"> {comment.comment}</Text>
+                <HStack>
+                    {showReply ? 
+                        <Button color="blue.500" leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
+                            Hide Replies
+                        </Button> 
+                    
+                    :
+                        replies.length !== 0 ?
+                        <Button color="blue.500" leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)} _focus={{}}>
+                            View Replies ({ replies.length })
+                        </Button>
+                        :
+                        ''
+                    }
+                </HStack>
 
-            {/* <Text fontSize="110%"> {platform.followers.length} Followers </Text> */}
-        </Flex>
+                    {!showReply ? "":
+                        <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="20px">
+                            {replies.map((reply, key) => {
+                                return (
+                                    <ReplyCard
+                                        reply={reply}
+                                        quiz_id={quiz_id}
+                                        user_id={props.user_id}
+                                        key={key}
+                                        logged_in={props.logged_in}
+                                        handleDeleteReply={handleDeleteReply}
+    
+                                    />
+                                )
+                            })}
+                        </Flex>
+                    }
+
+                    {showReply && props.logged_in ? 
+                        <HStack paddingTop="5px" paddingBottom="10px">
+                            <Avatar src={props.player_icon} size="sm"/>
+                            <Input value={reply} onChange={handleReplyChange} size="sm" variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
+                                borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
+                            <Button w="100px" colorScheme='blue' variant='solid' size="sm" marginLeft="20px" onClick={handleAddReply}>
+                                Reply
+                            </Button>
+                        </HStack>
+                    : ""}
+                    
+            </Flex>
         </Flex>
     )
 }
@@ -214,5 +212,5 @@ function getTimeAgo(creationDate) {
     if (seconds_ago !== 0)
         return seconds_ago + " seconds ago"
 
-    return "Undefined Date"
+    return "A few seconds ago"
 }

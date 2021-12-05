@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Box, Center, Text, Grid, VStack, Button, Image, Badge, propNames} from "@chakra-ui/react"
+import React from 'react'
+import { Box, Text, Stack, Image, HStack } from "@chakra-ui/react"
 
 import '../styles/postpage.css';
 
@@ -10,40 +9,56 @@ export default function PostQuizAnswersCard(props) {
 
     const [showDetails, setShowDetails] = React.useState(false)
     const onClickDetails = () => {setShowDetails(!showDetails);}
-    var color = 'green'
+    var bgcolor = 'blue.500'
 
     let question = props.question
     let questionTitle = props.question.question
     let answer = question.answer 
     if(answer.concat().sort().toString().trim() !== props.answer.concat().sort().toString().trim()) {
-        color = "red"
+        bgcolor = "red.500"
     }
     
 
     /*Edit the mt/mb to change the spacing between elements */
     return ( 
         <Box className="containerAcross">
+            {/* Arrow */}
             { showDetails ? 
-                <Box w="25px" h="40px" ml="15px" mt="10px" mb="26px">
-                <img src={down_arrow} alt="Right Pointing Arrow" className="round_image" onClick={onClickDetails}/>
+                <Box ml="15px" mt="10px" mb="26px">
+                    <Image src={down_arrow} alt="Right Pointing Arrow" className="round_image" onClick={onClickDetails} _hover={{cursor:"pointer"}}/>
                 </Box>
             : 
-                <Box w="25px" h="40px" ml="15px" mt="10px" mb="26px">
-                <img src={right_arrow} alt="Down Pointing Arrow" className="round_image" onClick={onClickDetails}/>
+                <Box ml="15px" mt="14px" mb="26px">
+                    <Image src={right_arrow} alt="Down Pointing Arrow" className="round_image" onClick={onClickDetails} _hover={{cursor:"pointer"}}/>
                 </Box>
             
             }
             
-            <Box ml="15px" w="100%" mb="26px" display="flex" alignItems="center" justifyContent="space-between" className="containerDown">
-                <Box width={["80vw","80vw","80vw","61.2vw"]} h="45px" bg={color} border="1px">  {/* Gradebox */}
-                    <Text color="white" pt="4px" className="answer_text">{props.place}.   {questionTitle} </Text>
+            {/* Question Box */}
+            <Box className="containerDown" w="100%" p={2}>
+                <Box width={["80vw","80vw","80vw","61.2vw"]} h="45px" bg={bgcolor} borderRadius={5} _hover={{cursor:"pointer", opacity:"85%", transition:".15s linear"}} 
+                    _active={{opacity:"75%"}}    transition=".1s linear" onClick={onClickDetails}>  {/* Gradebox */}
+                    <Box h="100%" display="flex" flexDirection="column" justifyContent="center">
+                        <Text color="white" fontWeight="medium" pl={4}>
+                            {props.place}.   {questionTitle} 
+                        </Text>
+                    </Box>
                 </Box>
 
-
+                {/* Show Correct Answer */}
                 { showDetails ? 
-                <Box width={["80vw","80vw","80vw","61.2vw"]} h="100px" bg='#D3D3D3' borderRight="1px" borderLeft="1px" borderBottom="1px">  {/* Gradebox */}
-                    <Text color={color} pt="4px" className="answer_text">Your Answer:  {props.answer.concat().sort().join(', ')}</Text>
-                    <Text pt="4px" className="answer_text">Correct Answer: {answer.concat().sort().join(', ')}</Text>
+                <Box width={["80vw","80vw","80vw","61.2vw"]} borderRight="1px" borderLeft="1px" borderBottom="1px" borderBottomRadius={10} borderColor="gray.300">  {/* Gradebox */}
+                    <Stack p={2}>
+                        <HStack>
+                            <Text color={bgcolor}> Your Answer: </Text>
+                            <Text color={bgcolor} fontWeight="medium"> {props.answer.concat().sort().join(', ')} </Text>
+                        </HStack>
+                        
+                        <HStack>
+                            <Text> Correct Answer: </Text>
+                            <Text fontWeight="medium"> {answer.concat().sort().join(', ')} </Text>
+                        </HStack>
+                    </Stack>
                 </Box>
                 : null}
 

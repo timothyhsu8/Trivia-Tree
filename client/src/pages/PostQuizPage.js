@@ -171,8 +171,15 @@ export default function PostQuizPage() {
         return <div></div>;
     }
 
-    if (error) {
-        console.log(error)
+    if (error || error1 || error2) {
+        return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    This quiz does not exist{' '}
+                </Text>
+            </Center>
+            )
     }
 
     if(data){

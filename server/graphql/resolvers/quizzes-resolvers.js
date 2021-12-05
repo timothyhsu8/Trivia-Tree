@@ -1,6 +1,6 @@
 const Quiz = require('../../models/Quiz');
-const Comment = require('../../models/Comment')
-const Reply = require('../../models/Reply')
+const Comment = require('../../models/Comment');
+const Reply = require('../../models/Reply');
 const User = require('../../models/User');
 const QuizAttempt = require('../../models/QuizAttempt');
 const Platform = require('../../models/Platform');
@@ -26,18 +26,19 @@ module.exports = {
                 const quiz = await Quiz.findById(quizId)
                     .populate('user')
                     .populate({
-                        path:'comments', 
-                        populate:{path:'user'}})
+                        path: 'comments',
+                        populate: { path: 'user' },
+                    })
                     .populate({
                         path: 'comments',
                         populate: {
                             path: 'replies',
                             populate: {
                                 path: 'user',
-                                model: 'User'
-                        }
-                    }
-                })
+                                model: 'User',
+                            },
+                        },
+                    })
                     .exec();
                 if (quiz) {
                     return quiz;
@@ -63,12 +64,12 @@ module.exports = {
         async getPostRecommendations(_, { quiz_id }) {
             const quiz = await Quiz.findById(quiz_id);
             let category = quiz.category;
-            const quizRecommendations = await Quiz.find({category:category}).populate('user').exec();
+            const quizRecommendations = await Quiz.find({ category: category })
+                .populate('user')
+                .exec();
 
-
-        
-            for(let i = 0; i < quizRecommendations.length; i++){
-                if(quiz_id == quizRecommendations[i]._id){
+            for (let i = 0; i < quizRecommendations.length; i++) {
+                if (quiz_id == quizRecommendations[i]._id) {
                     quizRecommendations.splice(i, 1);
                     break;
                 }
@@ -79,37 +80,35 @@ module.exports = {
             let count = 0;
             let random = 0;
 
-            while(count < 4 && quizRecommendations.length > 0){
+            while (count < 4 && quizRecommendations.length > 0) {
                 random = getRandomInt(0, quizRecommendations.length); //random integer greater than or equal to 0 and less than quizlength
                 finalQuizRecommendations.push(quizRecommendations[random]);
-                quizRecommendations.splice(random,1);
+                quizRecommendations.splice(random, 1);
                 count++;
             }
 
             return finalQuizRecommendations;
-
         },
         async getUserRecommendations(_, { user_id }) {
             let recommendationList = [];
 
             const user = await User.findById(user_id);
             let recommendationArray = user.recommendationArray;
-            
+
             let quizzes = await Quiz.find().populate('user').exec();
             shuffle(quizzes);
-
 
             let random = 0;
             let category = '';
 
             let count = 0;
-            while(count < 10){
+            while (count < 10) {
                 random = getRandomInt(0, recommendationArray.length);
                 category = recommendationArray[random];
-                for(let i = 0; i < quizzes.length; i++){
-                    if(quizzes[i].category == category){
+                for (let i = 0; i < quizzes.length; i++) {
+                    if (quizzes[i].category == category) {
                         recommendationList.push(quizzes[i]);
-                        quizzes.splice(i,1);
+                        quizzes.splice(i, 1);
                         break;
                     }
                 }
@@ -117,7 +116,7 @@ module.exports = {
             }
 
             return recommendationList;
-        }
+        },
     },
     Mutation: {
         async createQuiz(
@@ -369,8 +368,7 @@ module.exports = {
 
             let imageUrl;
             if (icon === 'Same Image') {
-                imageUrl =
-                    quiz.icon;
+                imageUrl = quiz.icon;
             } else {
                 await cloudinary.uploader.upload(icon, (error, result) => {
                     if (error) {
@@ -408,15 +406,12 @@ module.exports = {
                     throw new Error('You are not the creator of this quiz');
                 }
                 await quiz.delete();
-                await User.findOneAndUpdate(
-                    { quizzesMade: quiz._id },
-                    {
-                        $pull: {
-                            quizzesMade: quiz._id,
-                            featuredQuizzes: quiz._id,
-                        },
-                    }
-                );
+                await User.findByIdAndUpdate(context.req.user._id, {
+                    $pull: {
+                        quizzesMade: quiz._id,
+                        featuredQuizzes: quiz._id,
+                    },
+                });
                 await User.updateMany(
                     {
                         $or: [
@@ -433,9 +428,17 @@ module.exports = {
                 );
                 await QuizAttempt.deleteMany({ quiz: quiz._id });
                 await Platform.updateMany(
-                    { quizzes: quiz._id },
                     {
-                        $pull: { quizzes: quiz._id },
+                        playlists: {
+                            $elemMatch: {
+                                quizzes: quiz._id,
+                            },
+                        },
+                    },
+                    {
+                        $pull: {
+                            'playlists.$.quizzes': quiz._id,
+                        },
                     }
                 );
                 return quiz;
@@ -509,7 +512,7 @@ module.exports = {
             const newComment = new Comment({
                 user: user_id,
                 comment: comment,
-                replies: []
+                replies: [],
             });
 
             quiz.comments.push(newComment);
@@ -518,17 +521,17 @@ module.exports = {
         },
         async deleteComment(_, { quiz_id, user_id, comment_id }) {
             const quiz = await Quiz.findById(quiz_id);
-            console.log(comment_id)
+            console.log(comment_id);
             let comments = quiz.comments;
 
-            for(let i = 0; i < comments.length; i++){
-                if(comments[i]._id == comment_id){
-                    comments.splice(i,1);
+            for (let i = 0; i < comments.length; i++) {
+                if (comments[i]._id == comment_id) {
+                    comments.splice(i, 1);
                     break;
                 }
             }
 
-            quiz.comments = comments; 
+            quiz.comments = comments;
 
             quiz.save();
             return quiz;
@@ -538,33 +541,33 @@ module.exports = {
 
             const newReply = new Reply({
                 user: user_id,
-                reply: reply
+                reply: reply,
             });
 
-            let comments = quiz.comments; 
+            let comments = quiz.comments;
 
-            for(let i = 0; i < comments.length; i++){
-                if(comments[i]._id == comment_id){
-                    comments[i].replies.push(newReply)
-                    break
+            for (let i = 0; i < comments.length; i++) {
+                if (comments[i]._id == comment_id) {
+                    comments[i].replies.push(newReply);
+                    break;
                 }
             }
 
-            quiz.comments = comments; 
+            quiz.comments = comments;
 
             quiz.save();
 
             return quiz;
         },
-        async deleteReply(_, { quiz_id, user_id, comment_id, reply_id}) {
+        async deleteReply(_, { quiz_id, user_id, comment_id, reply_id }) {
             const quiz = await Quiz.findById(quiz_id);
             let comments = quiz.comments;
 
-            for(let i = 0; i < comments.length; i++){
-                if(comments[i]._id == comment_id){
-                    for(let j = 0; j < comments[i].replies.length; j++){
-                        if(comments[i].replies[j]._id == reply_id){
-                            comments[i].replies.splice(j,1);
+            for (let i = 0; i < comments.length; i++) {
+                if (comments[i]._id == comment_id) {
+                    for (let j = 0; j < comments[i].replies.length; j++) {
+                        if (comments[i].replies[j]._id == reply_id) {
+                            comments[i].replies.splice(j, 1);
                             break;
                         }
                     }
@@ -572,11 +575,11 @@ module.exports = {
                 }
             }
 
-            quiz.comments = comments; 
+            quiz.comments = comments;
 
             quiz.save();
             return quiz;
-        }
+        },
     },
 };
 
@@ -584,7 +587,7 @@ function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
+}
 
 function shuffle(a) {
     var j, x, i;

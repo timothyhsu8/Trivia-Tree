@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Text, Grid, Button, Image, GridItem,Icon, Avatar, Stack, } from "@chakra-ui/react"
+import { Box, Flex, HStack, Text, Grid, Button, Center, Image, GridItem,Icon, Avatar, Stack, } from "@chakra-ui/react"
 import { useQuery, useMutation} from '@apollo/client';
 import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
@@ -39,6 +39,7 @@ export default function PreQuizPage({}) {
         variables: { quizId:quizId }, 
         fetchPolicy: 'cache-and-network',
         onCompleted({getQuiz: quizData}) {
+            console.log(quizData);
             if (logged_in){
                 for(let i = 0; i < user.favoritedQuizzes.length; i++){
                     if(user.favoritedQuizzes[i] == quiz._id){
@@ -50,16 +51,43 @@ export default function PreQuizPage({}) {
                     }
                 }
             }         
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
         }
     });
 
     if (loading) {
         return <div></div>;
     }
+
+    if (error) {
+        if (error.message === "Error: Quiz not found") {
+            return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    This quiz does not exist{' '}
+                </Text>
+            </Center>
+            )
+        } else {
+            return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    Sorry, something went wrong{' '}
+                </Text>
+            </Center>
+            );
+        }
+    }
     
     if (data) {
         quiz = data.getQuiz;
         console.log(quiz)
+    } else {
+        return <div></div>;
     }
 
     if (user && quiz && (user._id === quiz.user._id) && !isOwner) {

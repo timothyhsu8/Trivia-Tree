@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid, Button, Center, Stack, Tag, TagLabel, Flex, Input} from '@chakra-ui/react';
-import { useHistory } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
+import { Text, Avatar, HStack, Button, Stack, Flex} from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
-import { ArrowDownIcon, ArrowForwardIcon } from '@chakra-ui/icons'
-import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
-import * as mutations from '../cache/mutations';
+import { useHistory } from 'react-router-dom';
 
-export default function ReplyCard( props ) {    
+export default function ReplyCard( props ) {   
+    let history = useHistory();
     let reply = props.reply
     let reply_id = props.reply._id
     let timeAgo = getTimeAgo(props.reply.createdAt);
@@ -28,32 +25,29 @@ export default function ReplyCard( props ) {
 
     return (
         <Flex
-        direction="row"
-        h="auto" 
-        w="50vw"
-        marginTop="2%"
-        paddingBottom="1%"
-        marginLeft="2%"
-        borderBottom="1px" 
-        borderColor="gray.400" 
-        dipslay="flex" 
-        alignItems="left"  
-        transition="background-color 0.1s linear"
-        overflow="hidden"
-        onMouseLeave={() => setDeleteConfirmation(false)}
+            direction="row"
+            h="auto" 
+            w="55vw"
+            marginTop="2%"
+            paddingBottom="1%"
+            marginLeft="2%"
+            borderBottom="1px" 
+            borderColor="gray.200" 
+            dipslay="flex" 
+            alignItems="left"  
+            transition="background-color 0.1s linear"
+            overflow="hidden"
         >
         {/* USER ICON */}
-        <Box className='squareimage_container' h="30px" w="25px" marginRight="10px"> 
-            <Image className="squareimage" src={reply.user.iconImage} borderRadius="50%"></Image>
-        </Box>
+        <Avatar src={reply.user.iconImage} size="sm" _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + reply.user._id)}/>
 
         {/* USER NAME */}
-        <Stack spacing="0.1" direction="column">
+        <Stack pl={2} spacing="0.1" direction="column">
             <HStack>
-                <Text w="fit-content" fontSize="10px">
+                <Text w="fit-content" fontSize="12px" _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + reply.user._id)}>
                     {reply.user.displayName}
                 </Text>
-                <Text w="fit-content" fontSize="8px">
+                <Text w="fit-content" fontSize="10px">
                     {timeAgo}
                 </Text>
                 {usersReply ? 
@@ -96,7 +90,7 @@ export default function ReplyCard( props ) {
                 </HStack>
                 : ''}
             </HStack>
-            <Text fontSize="50%" fontWeight="medium"> {reply.reply}</Text>
+            <Text> {reply.reply} </Text>
         </Stack>
         </Flex>
     )
@@ -131,5 +125,5 @@ function getTimeAgo(creationDate) {
     if (seconds_ago !== 0)
         return seconds_ago + " seconds ago"
 
-    return "Undefined Date"
+    return "A few seconds ago"
 }

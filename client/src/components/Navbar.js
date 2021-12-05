@@ -231,7 +231,7 @@ export default function Navbar() {
                                 }
                                 
                                 {/* Settings Page Button */}
-                                <MenuItem onClick={() => history.push(user !== "NoUser" ? '/settingspage/' + userId :'/loginpage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
+                                <MenuItem onClick={() => history.push(user !== "NoUser" ? '/settingspage' : '/loginpage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
                                 
                                 {/* Rewards Button / Logout Button */}
                                 {logged_in === true ? 

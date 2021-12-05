@@ -60,7 +60,7 @@ function App() {
                                 path='/quiztakingpage/:quizId'
                                 component={QuizTakingPage}
                             />
-                            <Route path='/settingspage/:userId' component={SettingsPage} />
+                            <Route exact path='/settingspage' component={SettingsPage} />
                             <Route path='/categorypage' component={CategoryPage} />
                             <Route path='/accountpage/:userId' component={AccountPage} />
                             <Route path='/previewpage/:userId' component={AccountPage} />

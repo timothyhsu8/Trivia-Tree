@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState, createRef } from 'react';
 import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode, Avatar } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
@@ -21,13 +21,13 @@ export default function SettingsPage(props) {
     const { user, refreshUserData } = useContext(AuthContext);
     let profileImg = 'Same Image';
 
-    let {userId} = useParams();
     let history = useHistory();
 
     const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [darkMode, setDarkMode] = useState("");
     const [iconImage, setIconImage] = useState("");
+    const [initDone, setInitDone] = useState(false);
     const [updateSettings] = useMutation(mutations.UPDATE_SETTINGS, {
         context:{
             headers: {
@@ -49,6 +49,9 @@ export default function SettingsPage(props) {
                 toggleColorMode();
             }
             history.push('/');
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
         }
     });
      
@@ -66,8 +69,14 @@ export default function SettingsPage(props) {
         }
     }
 
+    useEffect(() => {
+        if (user && user === 'NoUser') {
+            history.push('/loginpage');
+        }
+    }, [user]);
+
     async function saveChanges() {
-        const { data } = await updateSettings({ variables: {settingInput:{userId:userId, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
+        const { data } = await updateSettings({ variables: {settingInput:{userId:user._id, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
         initialDark()
         return;
     }
@@ -111,9 +120,11 @@ export default function SettingsPage(props) {
         loading,
         error,
         data: { getUser: userData } = {},
-    } = useQuery(GET_USER, {
+    } = useQuery(GET_USER,
+        (!user || user === 'NoUser') ?
+        {skip: true} : {
         fetchPolicy: 'cache-and-network',
-        variables: { _id: userId },
+        variables: { _id: user._id },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
         },
@@ -122,10 +133,11 @@ export default function SettingsPage(props) {
             setDisplayName(userData.displayName);
             setDarkMode(userData.darkMode);
             setIconImage(userData.iconImage);
+            setInitDone(true);
         },
     });
 
-    if (loading) {
+    if (loading || !initDone) {
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -147,7 +159,7 @@ export default function SettingsPage(props) {
     
     async function deleteAccount() {
         console.log(userData._id)
-        const {data} = await deleteUser({ variables: {userId:userId}});
+        const {data} = await deleteUser({ variables: {userId: user._id}});
         //history.push('/')
     }
 

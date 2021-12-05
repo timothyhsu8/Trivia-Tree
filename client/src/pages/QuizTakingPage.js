@@ -176,6 +176,17 @@ export default function QuizTakingPage({}) {
         }
     });
 
+    if (error) {
+        return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    This quiz does not exist{' '}
+                </Text>
+            </Center>
+            )
+    }
+
     if (loading || !finishedInit) {
         return <div></div>;
     }
@@ -353,7 +364,7 @@ export default function QuizTakingPage({}) {
     return (
         <Box data-testid='main-component'>
             <Prompt
-                when={quiz.quizInstant && finalizedQuestions.includes(true) && !isNormalSubmit}
+                when={quiz && quiz.quizInstant && finalizedQuestions.includes(true) && !isNormalSubmit}
                 // message='You have unsaved changes, are you sure you want to leave?'
                 message={(location, action) => {
                     if (action) {

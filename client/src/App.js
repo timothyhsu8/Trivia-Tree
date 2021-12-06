@@ -15,6 +15,7 @@ import SettingsPage from './pages/SettingsPage';
 import { AuthProvider } from './context/auth';
 import SearchResultsPage from './pages/SearchResultsPage';
 import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 import CreateQuizPage from './pages/CreateQuizPage';
 import CategoryPage from './pages/CategoryPage';
 import ShoppingPage from './pages/ShoppingPage';
@@ -79,6 +80,7 @@ function App() {
                                 component={SearchResultsPage}
                             />
                             <Route path='/loginpage' component={LoginPage}></Route>
+                            <Route path='/signuppage' component={SignUpPage}></Route>
                             <Route path='/shoppingpage' component={ShoppingPage}></Route>
                             <Route path='/rewardspage' component={RewardsPage}></Route>
                             <Route path='/platformmanager/:userId' component={PlatformManagerPage}></Route>

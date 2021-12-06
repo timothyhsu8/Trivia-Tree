@@ -11,7 +11,15 @@ router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/failure' }),
     (req, res) => {
-        res.redirect(`${process.env.CLIENT_URL}`);
+        let creationDate = new Date(req.user.createdAt).getTime();
+        let time_diff_ms= Math.abs(new Date() - creationDate)
+        
+        if(time_diff_ms < 10000){
+            res.redirect(`${process.env.CLIENT_URL}/signuppage`)
+        }
+        else{
+            res.redirect(`${process.env.CLIENT_URL}`);
+        }
     }
 );
 

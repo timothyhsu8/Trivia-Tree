@@ -302,6 +302,9 @@ export default function AccountPage(props) {
                 setFirstQueryDone(true);
             }
         },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        }
     });
 
     // If the user is previewing an item

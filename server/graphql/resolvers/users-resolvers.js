@@ -4,6 +4,7 @@ const Quiz = require('../../models/Quiz');
 const Item = require('../../models/Item');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
+const QuizAttempt = require('../../models/QuizAttempt');
 
 module.exports = {
     Query: {
@@ -85,16 +86,16 @@ module.exports = {
                     ],
                 })
                 .populate({
-                    path: 'bannerEffect'
+                    path: 'bannerEffect',
                 })
                 .populate({
-                    path: 'ownedBannerEffects'
+                    path: 'ownedBannerEffects',
                 })
                 .populate({
-                    path: 'iconEffect'
+                    path: 'iconEffect',
                 })
                 .populate({
-                    path: 'ownedIconEffects'
+                    path: 'ownedIconEffects',
                 })
                 .exec();
             return user;
@@ -114,7 +115,16 @@ module.exports = {
     Mutation: {
         async updateUser(
             _,
-            { userInput: { userId, iconImage, bannerImage, bio, bannerEffectId, iconEffectId } },
+            {
+                userInput: {
+                    userId,
+                    iconImage,
+                    bannerImage,
+                    bio,
+                    bannerEffectId,
+                    iconEffectId,
+                },
+            },
             context
         ) {
             try {
@@ -150,12 +160,10 @@ module.exports = {
                 }
 
                 let bannerEffect = await Item.findById(bannerEffectId);
-                if (bannerEffect === undefined)
-                    bannerEffect = null
+                if (bannerEffect === undefined) bannerEffect = null;
 
                 let iconEffect = await Item.findById(iconEffectId);
-                if (iconEffect === undefined)
-                    iconEffect = null
+                if (iconEffect === undefined) iconEffect = null;
 
                 user = await User.findByIdAndUpdate(
                     userId,
@@ -164,7 +172,7 @@ module.exports = {
                         bannerImage: bannerURL,
                         bio,
                         bannerEffect: bannerEffect,
-                        iconEffect: iconEffect
+                        iconEffect: iconEffect,
                     },
                     { new: true }
                 )
@@ -303,9 +311,71 @@ module.exports = {
                     throw new Error('You cannot delete someone elses account');
                 }
                 await user.delete();
+                await Quiz.find({ user: user._id }).then(function (quizess) {
+                    quizess.forEach(async (quizData) => {
+                        console.log(quizData._id);
+                        await QuizAttempt.deleteMany({ quiz: quizData._id });
+                        await User.updateMany(
+                            {
+                                $or: [
+                                    { favoritedQuizzes: quizData._id },
+                                    { quizzesTaken: quizData._id },
+                                ],
+                            },
+                            {
+                                $pull: {
+                                    favoritedQuizzes: quizData._id,
+                                    quizzesTaken: quizData._id,
+                                },
+                            }
+                        );
+                    });
+                });
+                await QuizAttempt.deleteMany({ user: user._id });
                 await Quiz.deleteMany({ user: user._id });
-                await Platform.deleteMany({user: user._id});
-                console.log(user);
+                await Platform.find({ user: user._id }).then(function (
+                    platforms
+                ) {
+                    platforms.forEach(async (platformData) => {
+                        console.log(platformData._id);
+                        await User.updateMany(
+                            {
+                                following: platformData._id,
+                            },
+                            {
+                                $pull: {
+                                    following: platformData._id,
+                                },
+                            }
+                        );
+                    });
+                });
+                await Platform.deleteMany({ user: user._id });
+                await Quiz.updateMany(
+                    {
+                        comments: { $elemMatch: { user: user._id } },
+                    },
+                    {
+                        $pull: {
+                            comments: { user: user._id },
+                        },
+                    }
+                );
+                await Quiz.updateMany(
+                    {
+                        comments: {
+                            $elemMatch: {
+                                replies: { $elemMatch: { user: user._id } },
+                            },
+                        },
+                    },
+                    {
+                        $pull: {
+                            'comments.$.replies': { user: user._id },
+                        },
+                    }
+                );
+                // console.log(user);
             } catch (err) {
                 throw new Error(err);
             }

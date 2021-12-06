@@ -1,10 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import { Box, Flex, Center, Text, Grid, VStack, Button, Image, GridItem, Icon, useColorModeValue, Input} from "@chakra-ui/react"
-import { Link } from 'react-router-dom';
+import { Box, Flex, Center, Text, Stack, VStack, Button, Image, Avatar, Icon, useColorModeValue, Input, HStack, Grid } from "@chakra-ui/react"
+import { Link, useHistory } from 'react-router-dom';
 import userImage from '../images/guest.png';
 import '../styles/postpage.css';
-import moon from '../images/moon.jpg';
 import quizicon from '../images/quizicon.png';
 import coin from '../images/coin.png';
 import quizImage from '../images/defaultquiz.jpeg';
@@ -12,7 +11,6 @@ import LeaderboardCard from '../components/LeaderboardEntryCard';
 import QuizCard from '../components/QuizCard';
 import CommentCard from '../components/CommentCard';
 import {IoMdClock} from "react-icons/io"
-import {BsStarFill} from "react-icons/bs"
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
@@ -20,8 +18,10 @@ import { useParams } from 'react-router-dom';
 import PostQuizAnswersCard from '../components/PostQuizAnswersCard';
 import { StarIcon } from '@chakra-ui/icons'
 import { Rating, RatingView } from 'react-simple-star-rating'
+import { BsAlarm, BsChatSquareDotsFill, BsCheck2, BsCheck2Square, BsFillFileTextFill, BsFillFilterSquareFill, BsPerson, BsStopwatch, BsTrophy } from 'react-icons/bs';
 
 export default function PostQuizPage() {
+    let history = useHistory();
     let logged_in = false;
     let quizScore = null; 
     let elapsedTime = null;
@@ -106,7 +106,29 @@ export default function PostQuizPage() {
         variables: { quiz_id: quizId }
     });
 
-
+    const buttons = [
+        {
+            text: "Results",
+            page: "#results",
+            isShowing: showResults,
+            icon: BsFillFilterSquareFill,
+            clickFunction: onClickResults
+        },
+        {
+            text: "Answers",
+            page: "#answers",
+            isShowing: showAnswers,
+            icon: BsCheck2Square,
+            clickFunction: onClickAnswers
+        },
+        {
+            text: "Comments",
+            page: "#comments",
+            isShowing: showComments,
+            icon: BsChatSquareDotsFill,
+            clickFunction: onClickComments
+        }
+    ]
 
     function calculateBetterScore(userScore, averageScore, attempts) {
         if (attempts === 1) {
@@ -149,8 +171,15 @@ export default function PostQuizPage() {
         return <div></div>;
     }
 
-    if (error) {
-        console.log(error)
+    if (error || error1 || error2) {
+        return (
+            <Center>
+                <Text fontSize='3vw' fontWeight='thin'>
+                    {' '}
+                    This quiz does not exist{' '}
+                </Text>
+            </Center>
+            )
     }
 
     if(data){
@@ -221,278 +250,274 @@ export default function PostQuizPage() {
     }
 
     let quizTitle = quiz.title;
-    let user = "None";
-    let pfp_src = quizImage;
-    let heartE = "data:image/png;base64,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";
-    let heartF = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Heart_coraz%C3%B3n.svg/1200px-Heart_coraz%C3%B3n.svg.png";
-    //let author = quiz.user.displayName;
 
     return(
-        /*Go to line 145 for answers page*/
         <Box>    
             {/* HEADER/BANNER */}
-            <Box mt="50px">
-                {/* BANNER */}
-                <Box
-                    bgSize="cover" 
-                    bgPosition="center"
-                    borderRadius="10"
-                >
-                    {/* PROFILE PICTURE AND NAME className="fadeshow1" for image?*/}
-                    <div className="SecretSauce"> 
-                        <Image w="175px" h="175px" src={icon_src} objectFit="cover" borderRadius="10%"></Image> 
-                        <Box className="containerDown" paddingLeft="30px">  
-                            <Box>
-                            <Flex direction="row" position="relative">  
-                                <Text as="b" className="title" fontSize="2.5vw">{quizTitle}</Text> 
-                            </Flex>    
-                            </Box>
-                            <Flex direction="row" position="relative">
-                                <Image w="100px" h="100px" src={user_icon} objectFit="cover" borderRadius="50%"></Image>
-                                <Flex direction="column" position="relative"> 
-                                    <Text fontSize="26" as="b" left="10px" top="15px" position="relative" >Creator</Text>
-                                    <Text fontSize="24" left="10px" top="15px" position="relative">{creator}</Text>
-                                </Flex>
-                            </Flex>
-                        </Box>
-                                            
-                    </div>
-            </Box>
-            </Box>
-           
+            <Grid templateColumns="1fr 0.45fr" mt="50px">
+                {/* Left Side of Page (Quiz Title / Results / Answers / Comments) */}
+                <Box>
+                    <Box>
+                        {/* PROFILE PICTURE */}
+                        <HStack spacing={10}>
+                            <Image w="175px" h="175px" ml={10} src={icon_src} objectFit="cover" borderRadius="10%"></Image> 
+                            <Stack>
+                                {/* Quiz Title */}
+                                <Text as="b" className="title" fontSize="260%">{quizTitle}</Text> 
 
-
-            {/*Part II: Main Body*/}
-                <div className="SecretSauce">
-                <Box className='containerDown' >
-                    {' '}
-                    {/* Can move everything down a little*/}
-                    <Box className='containerAcross'>
-                        <Box className='containerDown'>
-                        <div className='containerAcrossMe'>
-                        {/*w=10vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
-                        <Box width={["10vw","0vw","10vw","14vw"]}></Box>
-                        <Box
-                            w='200px'
-                            h='40px'
-                            bg={showResults ? 'grey': '#D3D3D3'}
-                            borderRadius='5px'
-                            position="relative"
-                            _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
-                        >
-                            {/* for horizontal line*/}
-                            <a
-                                href='#results'
-                                className='center button black'
-                                onClick={onClickResults}
-                            >
-                                View Results
-                            </a>
-                        </Box>
-                        {/*w=0.2vw, w=8vw, h=2.8vw, borderLR=0.2, borderTB=0.35 */}
-                        <Box
-                            ml='5px'
-                            w='200px'
-                            h='40px'
-                            bg={showAnswers ? 'grey': '#D3D3D3'}
-                            borderRadius='5px'
-                            position="relative"
-                            _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
-                        >
-                            {' '}
-                            {/* for horizontal line*/}
-                            <a
-                                href='#answers'
-                                className='center button black'
-                                onClick={onClickAnswers}
-                            >
-                                View Answers
-                            </a>
-                        </Box>
-                        <Box
-                            ml='5px'
-                            w='200px'
-                            h='40px'
-                            bg={showComments ? 'grey': '#D3D3D3'}
-                            borderRadius='5px'
-                            position="relative"
-                            _hover={{bgColor:"darkgrey", cursor:"pointer", transition:"0.15s linear"}}
-                        >
-                            {' '}
-                            {/* for horizontal line*/}
-                            <a
-                                href='#comments'
-                                className='center button black'
-                                onClick={onClickComments}
-                            >
-                                View Comments
-                            </a>
-                        </Box>
-                    </div>
-                            <Box borderBottom='1px'>
-
-                                {/* for horizontal line*/}
-                                <br></br>
-                            </Box>
-
-                            {/* RESULTS SECTION */}
-                            {showResults ? 
-                                <Box className='results'>
-                                    <Box className='containerAcross' paddingTop="35px" h="340">
-                                        {/*Statbox Part I and II*/}    
-                                        <Box
-                                            width={["48vw","48vw","48vw","37vw"]}
-                                            h='320px'
-                                            bg='#373535'
-                                            borderLeftRadius='20px'
-                                            padding="20px"
-                                            paddingTop="50px"
-                                        >
-                                            <Flex direction = "column" position="relative" bottom="30px" right="50px">
-                                                <Text fontSize="40px" left="120px" position="relative" color="white">You scored: {numCorrect}/{quiz.numQuestions} = {quizScore}%</Text>
-                                                <Text fontSize="20px" left="190px" position="relative" color="white">The average score is {quiz.averageScore}</Text>
-                                                <Text fontSize="20px" left="140px" position="relative" color="white">{calculateBetterScore(quizScore, quiz.averageScore, quiz.numAttempts)}</Text>
-                                                <Text fontSize="30px" left="175px" top="20px" position="relative" color="white">
-                                                    Rate Quiz &nbsp;
-                                                    <Icon pos="relative" as={StarIcon} bottom="5px" boxSize="8" color="yellow.500"/>
-                                                    &nbsp;{data2.getQuiz.rating ? data2.getQuiz.rating : 'N/A'}
-                                                </Text>
-                                                <Box position="relative" left="170px" top="35px" marginRight="20px">
-                                                    {
-                                                        !isRated ? 
-                                                        <Rating onClick={handleRating} ratingValue={rating} size={50}/>
-                                                        :
-                                                        <RatingView ratingValue={rating} size={50}/>
-                                                    }
-                                                    
-                                                </Box>
-                                                { isRated ? <Text fontSize="20px" left="210px" top="30px" position="relative" color="white">Thank you for rating!</Text> : ""}
-                                            </Flex>
-                                        </Box>
-                                        <Box
-                                            width={["38vw","38vw","38vw","28vw"]}
-                                            h='320px'
-                                            bg='#D3D3D3'
-                                            borderRightRadius='20px'
-                                        >
-                                            <Flex direction="row">
-                                                <Icon as={IoMdClock} h="80px" w="80px" position="relative" left="30px" top="25px" ></Icon>
-                                                <Text fontSize="28px" position="relative" left="50px" top="45px">{elapsedTime}</Text>
-                                            </Flex>
-
-                                            <Flex direction="row">
-                                                <Image src={quizicon} h="80px" w="80px" position="relative" left="30px" top="25px"></Image>
-                                                <Text fontSize="28px" position="relative" left="50px" top="50px">Attempt Number {attemptNumber}</Text>
-                                            </Flex>
-
-                                            <Flex direction="row">
-                                                <Image src={coin} h="80px" w="80px" position="relative" left="30px" top="35px"></Image>
-                                                <Text fontSize="28px" position="relative" left="50px" top="55px">{coinsEarned == 0 ? 'No Coins Given' : coinsEarned}</Text>
-                                            </Flex>
-
-                                        </Box>
-                                    </Box>
-                                    <Box h={["50px"]}></Box>
-                                </Box>
-                             : ""}
-
-                            {/* ANSWERS SECTION */}
-                             {showAnswers ?
-                                <Box paddingTop="150px" h="350px" overflowY='scroll'>
-                                    <Box className='answerbox' position='relative' bottom="100px">
-                                        {questions.map((question, index) => {
+                                {/* Quiz Creator */}
+                                <HStack spacing={3}>
+                                    <Avatar w="80px" h="80px" src={user_icon} _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + data2.getQuiz.user._id)}/>
+                                    <Flex direction="column"> 
+                                        <Text fontSize="24" fontWeight="bold"> Creator </Text>
+                                        <Text fontSize="22" _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + data2.getQuiz.user._id)}> { creator } </Text>
+                                    </Flex>
+                                </HStack>
+                            </Stack>
+                        </HStack>
+    
+                        <Center>
+                            <Box w="95%" mt={4} h="1px" bgColor="gray.300" />
+                        </Center>
+                    </Box>
+                
+                    <Box>
+                        {/* Buttons for View Results / View Answers / View Comments */}
+                        <Center>
+                            <HStack mb={1} mt={10} mb={5}>
+                                {
+                                    buttons.map((button, key) => {
                                         return (
-                                            <PostQuizAnswersCard
-                                                place={index+1}
-                                                question={question}
-                                                answer={answerChoices[index]}
-                                            />    
+                                            <Box
+                                                key={key}
+                                                w='200px'
+                                                h='40px'
+                                                color={button.isShowing ? 'white': 'gray.500'}
+                                                bg={button.isShowing ? 'gray.600': 'gray.200'}
+                                                borderRadius='5px'
+                                                position="relative"
+                                                transition="0.1s linear"
+                                                _hover={{opacity:'80%', cursor:"pointer", transition:"0.15s linear"}}
+                                            >
+                                                {/* for horizontal line*/}
+                                                <a
+                                                    href={button.page}
+                                                    className='center button black'
+                                                    onClick={ button.clickFunction }
+                                                >
+                                                    <Icon as={button.icon} pos="relative" boxSize={4} top={0.5} mr={2}/>
+                                                    { button.text } { button.page === "#comments" ? `(${comments.length})` : "" }
+                                                </a>
+                                            </Box>
                                         )
-                                        })}
+                                    })
+                                }
+                            </HStack>
+                        </Center>
+            
+                        {/* RESULTS SECTION */}
+                        {showResults ? 
+                            <Center>
+                                <Box className='containerAcross'>
+                                    {/* You Scored, Rate Quiz */}
+                                    <Box
+                                        width={["48vw","48vw","48vw","37vw"]}
+                                        h='350px'
+                                        bg='#373535'
+                                        paddingTop={33}
+                                        borderLeftRadius='20px'
+                                    >
+                                        <VStack>
+                                            <Text fontSize="40px" color="white"> You scored: {numCorrect}/{quiz.numQuestions} = {quizScore}%</Text>
+                                            <Text fontWeight="thin" fontSize="20px" color="white"> The average score is {quiz.averageScore}</Text>
+                                            <Text fontWeight="thin" fontSize="20px" color="white">{calculateBetterScore(quizScore, quiz.averageScore, quiz.numAttempts)}</Text>
+                                            <Text fontSize="30px" top="20px" color="white">
+                                                Rate Quiz &nbsp;
+                                                <Icon pos="relative" as={StarIcon} bottom="5px" boxSize="8" color="yellow.500"/>
+                                                &nbsp;{data2.getQuiz.rating ? data2.getQuiz.rating : 'N/A'}
+                                            </Text>
+                                            <Box>
+                                                {
+                                                    !isRated ? 
+                                                    <Rating onClick={handleRating} ratingValue={rating} size={50}/>
+                                                    :
+                                                    <RatingView ratingValue={rating} size={50}/>
+                                                }
+                                                
+                                            </Box>
+                                            { isRated ? <Text fontSize="20px" color="white">Thank you for rating!</Text> : ""}
+                                        </VStack>
+                                    </Box>
+
+                                    {/* Time Taken, Attempt #, Coins Gained */}
+                                    <Box
+                                        width={["38vw","38vw","38vw","28vw"]}
+                                        h='350px'
+                                        bg='#E3E3E3'
+                                        borderRightRadius='20px'
+                                    >
+                                        <Box h="100%" display="flex" flexDirection="column" justifyContent="center">
+                                            <Stack spacing={4} pl={8}>
+                                                <Flex direction="row">
+                                                    <Icon as={IoMdClock} h="80px" w="80px" position="relative" top="-16px" mr={3}></Icon>
+                                                    <Text fontSize="28px">{elapsedTime}</Text>
+                                                </Flex>
+
+                                                <Flex direction="row">
+                                                    <Image src={quizicon} h="80px" w="80px" position="relative" top="-16px" mr={3}></Image>
+                                                    <Text fontSize="28px">Attempt {attemptNumber}</Text>
+                                                </Flex>
+
+                                                <Flex direction="row">
+                                                    <Image src={coin} h="80px" w="80px" position="relative" top="-16px" mr={3}></Image>
+                                                    <Text fontSize="28px">{coinsEarned == 0 ? 'No Coins Given' : coinsEarned}</Text>
+                                                </Flex>
+                                            </Stack>
+                                        </Box>
                                     </Box>
                                 </Box>
+                            </Center>
                             : ""}
 
-                            {/* COMMENTS SECTION */}
-                            {showComments ?
-                            <Flex direction="column" className='containerAcross' paddingTop="35px">
-                                    <Box
-                                        width="65vw"
-                                        h='100%'
-                                        bg='#D3D3D3'
-                                        borderRadius='10px'
-                                        paddingTop="20px"
-                                        paddingLeft="15px"
-                                        paddingRight="15px"
-                                        overflow="scroll"
-                                        marginBottom="20px"
-                                    >
-                                        <Text marginBottom="20px" borderBottom="1px" fontSize="22px">Comments ({comments.length})</Text>
-                                        {logged_in ? 
-                                        <Flex direction="row" borderBottom="1px" borderColor="gray.400">
-                                            <Image src={player_icon} alt="pfp" className="round_image_larger" position="relative" bottom="10px" />
-                                            <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"/>
-                                            <Button w="140px" colorScheme='blue' variant='solid' size="md" marginLeft="20px" onClick={handleAddComment}>
-                                            Comment
-                                            </Button>
-                                        </Flex>
-                                        : ""}
-
-                                        <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="20px">
-                                                    {comments.map((comment, key) => {
-                                                        return (
-                                                            <CommentCard
-                                                                comment={comment}
-                                                                logged_in={logged_in}
-                                                                user_id={user_id}
-                                                                player_icon={player_icon}
-                                                                handleDeleteComment={handleDeleteComment}
-                                                                refetch={refetch}
-                                                                quiz_id={quizId}
-                                                            />
-                                                        )
-                                                    })}
-                                        </Flex>
-                                    </Box>
-                            </Flex>
-                            : ""}
-                        </Box>
-                        
-                        <div className="fadeshow1">
-                        <Box pos="absolute" className='containerDown' paddingLeft="50px" transform="translateY(-15%)">
-                            {/* Statbox */}
-                            <Box w='28vw' bg='#D3D3D3' borderRadius="2%" h='220px' position="relative" bottom="100px">
-            
-                                        <Box mt="1%" ml="2%" mr="2%">
-                                            <Text fontSize="100%" ml="1%" fontWeight="medium"> Recommended Quizzes </Text>
-                                            <Flex mt="0.5%" spacing="10%" display="flex" flexWrap="wrap" >
-                                                {quiz_recommendations.map((quiz, key) => {
-                                                    return <QuizCard 
-                                                        quiz={quiz} 
-                                                        width="7.3%" 
-                                                        title_fontsize="75%" 
-                                                        author_fontsize="65%" 
-                                                        include_author={true}
-                                                        char_limit={30} 
-                                                        key={key}
-                                                    />
-                                                })}
-                                            </Flex>
-                                        </Box>
-                                        <Box w="100%" h="40px" bg='#165CAF' borderRadius='5px' position="absolute" top="180px" _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}>
-                                            <Link to={'/prequizpage/' + quiz._id} className="center button white"><Text  lineHeight="1" fontSize={["0vw","15px","23px","23px"]}  >Retry Quiz</Text></Link>  
-                                        </Box>
-
+                        {/* ANSWERS SECTION */}
+                        {showAnswers ?
+                            <Box paddingLeft={8}>
+                                <Box className='answerbox'>
+                                    {questions.map((question, index) => {
+                                    return (
+                                        <PostQuizAnswersCard
+                                            place={index+1}
+                                            question={question}
+                                            answer={answerChoices[index]}
+                                        />    
+                                    )
+                                    })}
+                                </Box>
                             </Box>
-                            <Box w='28vw' h='50px' bg='gray.800' color="white" lineHeight="2" position="relative" bottom="63px" borderTopRadius="20%">
-                                {' '}
-                                {/* leaderboards Heading*/}
-                                <h1 className='leaderboard_title'>
+                        : ""}
+
+                        {/* COMMENTS SECTION */}
+                        {showComments ?
+                            <Box
+                                width="90%"
+                                mt='15px'
+                                paddingLeft={14}
+                                paddingRight="15px"
+                            >
+                                <Text marginBottom="20px" borderBottom="1px" borderColor="gray.300" fontSize="22px">Comments ({comments.length})</Text>
+                                { logged_in ? 
+                                    <Flex direction="row">
+                                        <Avatar src={player_icon}/>
+                                        <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"
+                                            _hover={{pointer:"cursor", bgColor:"gray.200"}}
+                                            _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/>
+                                        <Button w="140px" colorScheme='blue' size="md" marginLeft="20px" onClick={handleAddComment}>
+                                            Comment
+                                        </Button>
+                                    </Flex>
+                                : ""}
+
+                                <Flex direction="column" display="flex" flexWrap="wrap">
+                                    {comments.map((comment, key) => {
+                                        return (
+                                            <CommentCard
+                                                comment={comment}
+                                                logged_in={logged_in}
+                                                user_id={user_id}
+                                                player_icon={player_icon}
+                                                handleDeleteComment={handleDeleteComment}
+                                                refetch={refetch}
+                                                quiz_id={quizId}
+                                                key={key}
+                                            />
+                                        )
+                                    })}
+                                </Flex>
+                            </Box>
+                        : ""}
+                    </Box>
+                </Box>
+
+                {/* Right Side of Page (Recommendations / Leaderboard) */}
+                <Box>
+                    <Stack spacing={10}>
+                        {/* Recommended Quizzes */}
+                        <Stack w="95%" bg='gray.100' borderRadius="2%" >
+                            <Box mt="1%" ml="2%" mr="2%">
+                                <Text fontSize="125%" mt={2} ml="1%" fontWeight="medium" textColor="gray.700"> Recommended Quizzes </Text>
+                                <Flex mt="0.5%" spacing="10%" display="flex" flexWrap="wrap" >
+                                    {quiz_recommendations.map((quiz, key) => {
+                                        return <QuizCard 
+                                            quiz={quiz} 
+                                            width="7.5%" 
+                                            title_fontsize="80%" 
+                                            author_fontsize="75%" 
+                                            include_author={true}
+                                            char_limit={30} 
+                                            key={key}
+                                        />
+                                    })}
+                                </Flex>
+                            </Box>
+                            <Button 
+                                w="100%" 
+                                h="40px" 
+                                color="white"
+                                bg='#165CAF' 
+                                borderRadius='5px' 
+                                _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}
+                                onClick={() => history.push('/prequizpage/' + quiz._id)}
+                            >
+                                Retry Quiz
+                            </Button>
+                        </Stack>
+                        
+                        {/* Leaderboard */}
+                        <Box w="95%" minW="430px" overflow="hidden">
+                            <Box h='50px' bg='gray.800' color="white" lineHeight="2" position="relative" borderTopRadius={6}>
+                                <Text className='leaderboard_title'>
                                     Leaderboard
-                                </h1>
-                            </Box>{/*w=2vw, w=16vw, h=3.5vw */}
-                            {/*w=2vw, w=16vw, h=31.5vw */}
-                            <Box w='28vw' bg='#D3D3D3' borderBottomRadius="2%" h='300px' position="relative" bottom="63px" paddingTop="10px">
+                                </Text>
+                            </Box>
+                            <Box borderBottomRadius="2%" h='350px' position="relative" paddingTop="10px" border="1px" borderColor="gray.300">
+                                <Grid h={8} templateColumns="0.2fr 0.40fr 0.2fr 0.2fr" fontWeight="medium">
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Center>
+                                            <Text>
+                                                <Icon as={BsTrophy} pos="relative" top={-0.4}  mr={2}/>
+                                                Rank
+                                            </Text>
+                                        </Center>
+                                    </Box>
+                                    
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Text>
+                                            <Icon as={BsPerson} pos="relative" top={-0.4}  mr={2}/>
+                                            Name
+                                        </Text>
+                                    </Box>
+
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Center>
+                                            <Text>
+                                                <Icon as={BsAlarm} pos="relative" top={-0.4}  mr={2}/>
+                                                Time
+                                            </Text>
+                                        </Center>
+                                    </Box>
+
+                                    <Box display="flex" flexDirection="column" justifyContent="center">
+                                        <Center>
+                                            <Text>
+                                                <Icon as={BsCheck2Square} pos="relative" top={-0.4}  mr={2}/>
+                                                Score
+                                            </Text>
+                                        </Center>
+                                    </Box>
+                                </Grid>
+                                
+                                <Box h="1px" mt={1} mb={1} bgColor="gray.300" />
+
                                 {leaderboard.map((entry, index) => {
                                     return (
                                         <LeaderboardCard 
@@ -504,14 +529,10 @@ export default function PostQuizPage() {
                                 })}
                             </Box>
                         </Box>
-                        </div>
-                    </Box>
-                    
-                    {/*h=4.2vw */}
-                    
+                    </Stack>
                 </Box>
-                </div>
-            </Box>
+            </Grid>
+        </Box>
     );
 }
 

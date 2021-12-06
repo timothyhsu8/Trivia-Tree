@@ -208,8 +208,18 @@ module.exports = {
                 }
 
                 await User.findByIdAndUpdate(context.req.user._id, {
-                    $pull: { platformsMade: platform._id },
+                    $pull: { platformsMade: platform._id, featuredPlatforms: platform._id },
                 });
+                await User.updateMany(
+                    {
+                        following: platform._id,
+                    },
+                    {
+                        $pull: {
+                            following: platform._id,
+                        },
+                    }
+                );
                 await platform.delete();
                 return platform;
             } catch (err) {

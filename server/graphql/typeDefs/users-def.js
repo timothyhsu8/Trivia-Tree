@@ -46,6 +46,13 @@ module.exports = gql`
         darkMode: Boolean
     }
 
+    input SignUpInput {
+        userId: ID!
+        displayName: String!
+        iconImage: String
+        categoriesSelected: [String]
+    }
+
     extend type Query {
         getUsers: [User]
         getUser(_id: ID!): User
@@ -60,5 +67,6 @@ module.exports = gql`
         deleteFeaturedPlatform(userId: ID!, deleteFeaturedPlatformId: ID!): Platform
         resetPlatformsMadeApollo(userId: ID!): User
         deleteUser(userId: ID!): Boolean
+        finishSignUp(signUpInput: SignUpInput): User
     }
 `;

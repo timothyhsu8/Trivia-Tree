@@ -245,6 +245,64 @@ module.exports = {
                 .exec();
             return user;
         },
+        async finishSignUp(
+            _,
+            { signUpInput: { userId, displayName, iconImage, categoriesSelected } },
+            context
+        ) {
+            let user = await User.findById(userId);
+
+            let newRecommendationArray = user.recommendationArray;
+
+            for(let i = 0; i < categoriesSelected.length; i++){
+                let j = 0;
+                while(j < 5){
+                    newRecommendationArray.push(categoriesSelected[i]);
+                    j++;
+                }
+            }
+
+            user.recommendationArray = newRecommendationArray;
+
+            user.save();
+
+            let profileImageType = context.req.headers.profileimagetype;
+            let profileURL = iconImage;
+            if (profileImageType === 'New Image') {
+                await cloudinary.uploader.upload(iconImage, (error, result) => {
+                    if (error) {
+                        throw new Error('Could not upload image');
+                    }
+                    profileURL = result.secure_url;
+                });
+            }
+            user = await User.findByIdAndUpdate(
+                userId,
+                {
+                    displayName,
+                    iconImage: profileURL
+                },
+                { new: true }
+            )
+                .populate({
+                    path: 'quizzesMade',
+                    populate: { path: 'user', model: 'User' },
+                })
+                .populate({
+                    path: 'featuredQuizzes',
+                    populate: { path: 'user', model: 'User' },
+                })
+                .populate({
+                    path: 'platformsMade',
+                    populate: { path: 'user', model: 'User' },
+                })
+                .populate({
+                    path: 'featuredPlatforms',
+                    populate: { path: 'user', model: 'User' },
+                })
+                .exec();
+            return user;
+        },
         async addFeaturedQuiz(_, { userId, newFeaturedQuizId }, context) {
             const quiz = await Quiz.findById(newFeaturedQuizId);
             const user = await User.findById(userId);

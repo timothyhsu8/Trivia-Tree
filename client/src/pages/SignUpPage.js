@@ -1,5 +1,6 @@
 import { Box, Grid, Text, Image, Center, Button, VStack, Input, HStack, Avatar} from '@chakra-ui/react';
 import { React, useContext, useState, useEffect, createRef} from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
@@ -8,7 +9,9 @@ import categories from '../util/categories'
 import ChooseCategoryCard from '../components/ChooseCategoryCard';
 
 export default function SignUpPage({}) {
-    const { user } = useContext(AuthContext);
+    let history = useHistory();
+
+    const { user, refreshUserData} = useContext(AuthContext);
 
     const [section, setSection] = useState(1)
     const [displayName, setDisplayName] = useState('');
@@ -22,7 +25,20 @@ export default function SignUpPage({}) {
 
     const handleDisplayNameChange = (event) => setDisplayName(event.target.value);
 
-
+    const [finishSignUp] = useMutation(mutations.FINISH_SIGNUP, {
+        context:{
+            headers: {
+                profileimagetype: profileImg
+            }
+        },
+        onCompleted() {
+            refreshUserData();
+            // history.go(0)
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        },
+    });
 
     if(user == null){
         return <Box></Box>;
@@ -53,7 +69,7 @@ export default function SignUpPage({}) {
     function handleCategorySelected(event){
         console.log(event.target)
         let category = event.target.alt;
-        let newCategories = categoriesSelected;
+        let newCategories = JSON.parse(JSON.stringify(categoriesSelected));
         let removeCategory = false;
 
         for(let i = 0; i < newCategories.length; i++){
@@ -69,7 +85,11 @@ export default function SignUpPage({}) {
         }
 
         setCategoriesSelected(newCategories);
-        console.log(categoriesSelected)
+    }
+
+    async function handleFinishSignup(){
+        const { data } = await finishSignUp({ variables: {signUpInput:{userId:user._id, displayName:displayName, iconImage:iconImage, categoriesSelected:categoriesSelected}}});
+        history.push('/');
     }
     
     
@@ -143,7 +163,7 @@ export default function SignUpPage({}) {
                     <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(2)}}>
                         Previous
                     </Button>
-                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg">
+                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={handleFinishSignup}>
                         Finish
                     </Button>
                 </HStack>

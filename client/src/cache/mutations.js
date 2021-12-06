@@ -248,6 +248,17 @@ mutation ($quiz_id: ID!, $user_id: ID!, $comment_id: ID!, $reply_id: ID!) {
 }
 `;
 
+export const FINISH_SIGNUP = gql`
+    mutation ($signUpInput: SignUpInput!) {
+        finishSignUp(signUpInput: $signUpInput){
+            _id
+            displayName
+            iconImage
+            recommendationArray
+        }
+    }
+`;
+
 
 
 

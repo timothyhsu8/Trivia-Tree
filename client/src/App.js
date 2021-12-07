@@ -46,7 +46,7 @@ function App() {
                     <Router>
                         <Navbar/>
                         <Switch>
-                            <Route exact path='/' component={LoginPage} />
+                            <Route exact path='/' component={Homepage} />
                             <Route
                                 exact
                                 path='/createQuiz'
@@ -79,7 +79,7 @@ function App() {
                                 path='/searchresultspage'
                                 component={SearchResultsPage}
                             />
-                            <Route path='/homepage' component={Homepage}></Route>
+                            <Route path='/loginpage' component={LoginPage}></Route>
                             <Route path='/signuppage' component={SignUpPage}></Route>
                             <Route path='/shoppingpage' component={ShoppingPage}></Route>
                             <Route path='/rewardspage' component={RewardsPage}></Route>

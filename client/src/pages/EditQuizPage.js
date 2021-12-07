@@ -262,7 +262,7 @@ function EditQuizPage(props) {
             },
         },
         onCompleted() {
-            props.history.push('/homepage');
+            props.history.push('/');
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -323,11 +323,11 @@ function EditQuizPage(props) {
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
-            props.history.push(homepage);
+            props.history.push('/');
         },
         onCompleted({ getQuiz: quiz }) {
             if (user === 'NoUser' || user._id !== quiz.user._id) {
-                props.history.push('/homepage');
+                props.history.push('/');
             }
             refs = {};
             img = 'Same Image';

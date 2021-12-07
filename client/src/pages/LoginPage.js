@@ -1,22 +1,8 @@
 import { Box, Grid, Text, Image, Center, Button } from '@chakra-ui/react';
 import treeicon from '../images/triviatree_icon.png'
-import { React, useContext, useState, useEffect } from 'react';
 import { config } from '../util/constants';
-import { AuthContext } from '../context/auth';
-import { useParams, useHistory, Prompt } from 'react-router-dom';
 
 export default function LoginPage({}) {
-    const { user } = useContext(AuthContext);
-    let history = useHistory();
-
-    function continueGuest(){
-        history.push('/homepage');
-    }
-
-    if(user != null && user != "NoUser"){
-        history.push('/homepage');
-    }
-
     return (
         <Box>
             <Grid templateColumns="2fr 3fr">
@@ -49,11 +35,6 @@ export default function LoginPage({}) {
                                 Login with Google
                             </Button>
                         </a>
-                    
-                        <Button onClick={continueGuest} w="55%" h="7vh" mt="6%" fontSize="1.1vw" border="1px solid" borderColor="gray.300" borderRadius="10" _focus={{boxShadow:"none"}}>
-                                Continue as Guest
-                         </Button>
-
                     </Box>
                 </Box>
 

@@ -127,7 +127,7 @@ export default function SignUpPage({}) {
 
     async function handleFinishSignup(){
         const { data } = await finishSignUp({ variables: {signUpInput:{userId:user._id, displayName:displayName, iconImage:iconImage, categoriesSelected:categoriesSelected}}});
-        history.push('/homepage');
+        history.push('/');
     }
     
     

@@ -71,7 +71,7 @@ export default function SettingsPage(props) {
 
     useEffect(() => {
         if (user && user === 'NoUser') {
-            history.push('/');
+            history.push('/loginpage');
         }
     }, [user]);
 
@@ -160,6 +160,7 @@ export default function SettingsPage(props) {
     async function deleteAccount() {
         console.log(userData._id)
         const {data} = await deleteUser({ variables: {userId: user._id}});
+        //history.push('/')
     }
 
     return(

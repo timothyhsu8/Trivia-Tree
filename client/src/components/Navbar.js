@@ -96,7 +96,7 @@ export default function Navbar() {
 
         else {
             history.push({
-                pathname: '/',
+                pathname: '/loginpage',
                 state: {
                     // location state
                     search: searchText,
@@ -125,7 +125,7 @@ export default function Navbar() {
                         minW={230}
                         src={logo}
                         className='disable-select'
-                        onClick={() => history.push('/homepage')}
+                        onClick={() => history.push('/')}
                         display='inline-block'
                         _hover={{
                             cursor: 'pointer',
@@ -186,7 +186,7 @@ export default function Navbar() {
                     
                     <div className="fadeshow3">
 
-                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push( logged_in ? "/shoppingpage" : "/")} _hover={{cursor:"pointer"}}>
+                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} _hover={{cursor:"pointer"}}>
                         <Icon as={BsFillCartFill} mr={2} pos="relative" top={-0.5} />
                         Shop
                     </Text>
@@ -231,7 +231,7 @@ export default function Navbar() {
                                 }
                                 
                                 {/* Settings Page Button */}
-                                <MenuItem onClick={() => history.push(user !== "NoUser" ? '/settingspage' : '/')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
+                                <MenuItem onClick={() => history.push(user !== "NoUser" ? '/settingspage' : '/loginpage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
                                 
                                 {/* Rewards Button / Logout Button */}
                                 {logged_in === true ? 

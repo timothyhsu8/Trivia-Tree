@@ -881,7 +881,7 @@ export default function AccountPage(props) {
                                             return (
                                                 <PlatformCard
                                                     platform={platform}
-                                                    width='15%'
+                                                    width='25%'
                                                     // minWidth='200px'
                                                     img_height='50px'
                                                     char_limit={44}

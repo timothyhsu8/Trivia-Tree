@@ -48,7 +48,7 @@ export default function SettingsPage(props) {
             if(colorMode=="dark"){
                 toggleColorMode();
             }
-            history.push('/homepage');
+            history.push('/');
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -160,7 +160,6 @@ export default function SettingsPage(props) {
     async function deleteAccount() {
         console.log(userData._id)
         const {data} = await deleteUser({ variables: {userId: user._id}});
-        //history.push('/')
     }
 
     return(

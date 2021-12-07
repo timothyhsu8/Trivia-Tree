@@ -147,9 +147,9 @@ export default function ShoppingPage() {
                 <Box>
                     <Grid templateColumns="5fr 4fr">
                         <Box>
-                            <Box w="100%" minW={500} mt="10%" pos="relative" display="flex" justifyContent="center">
-                                <Image pos="absolute" w="70%" h="30vh" src={itemToPurchase.item} fit={itemToPurchase.type === "background" ? "cover" : "" } borderTopRadius={itemToPurchase.type === "background" ? "5" : "0"} />
-                                <Image w="70%" h="30vh" fit="cover" borderRadius={5} src={itemToPurchase.template} />
+                            <Box w="100%" minW={500} mt="12%" pos="relative" display="flex" justifyContent="center">
+                                <Image pos="absolute" w="70%" h="25vh" src={itemToPurchase.item} fit={itemToPurchase.type === "background" ? "cover" : "" } borderTopRadius={itemToPurchase.type === "background" ? "5" : "0"} />
+                                <Image w="70%" h="25vh" fit="cover" borderRadius={5} src={itemToPurchase.template} />
                             </Box>
                             <Center>
                                 <Button variant="outline" colorScheme="blue" mt={5} size="lg"  _focus={{border:"blue.400"}} onClick={() => previewItem()}> Preview Item </Button>

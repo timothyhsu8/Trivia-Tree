@@ -9,7 +9,7 @@ export default function ShopItemCard( props ) {
     return (
         <VStack 
             pos="relative"
-            w="75%"
+            w="82%"
             mt={5}
             spacing={0}
             transition=".1s linear"

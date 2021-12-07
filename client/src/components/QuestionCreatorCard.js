@@ -9,6 +9,7 @@ import {
     Select,
 } from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
+import { AddIcon } from '@chakra-ui/icons';
 
 function QuestionCreatorCard({
     quizQuestion,
@@ -24,72 +25,79 @@ function QuestionCreatorCard({
 }) {
     // console.log('Rendering question ' + (questionIndex + 1));
     return (
-        <div
+        <Box
+            mr={10}
+            border="1px"
+            boxShadow="sm"
+            borderRadius={8}
+            borderColor="gray.200"
+            padding={4}
             style={{
                 marginTop: questionIndex === 0 ? '30px' : '30px',
             }}
             ref={questionRef}
         >
             <Box position='relative'>
-                <Text verticalAlign='middle' display='inline' fontSize='170%'>
-                    Question #{questionIndex + 1}
-                </Text>
-                <Select
-                    _hover={{ outline: 'none' }}
-                    _focus={{ outline: 'none' }}
-                    borderColor='black'
-                    borderWidth='2px'
-                    value={quizQuestion.questionType}
-                    onChange={(event) =>
-                        updateQuestionType(
-                            parseInt(event.target.value),
-                            quizQuestion.id
-                        )
-                    }
-                    width='15%'
-                    display='inline-block'
-                    marginLeft='20px'
-                >
-                    <option value={1}>Multiple Choice</option>
-                    <option value={2}>Checkboxes</option>
-                </Select>
+                <HStack spacing={4}>
+                    <Text verticalAlign='middle' display='inline' fontSize='110%' fontWeight="medium">
+                        Question #{questionIndex + 1}
+                    </Text>
+                    <Select
+                        w='fit-content'
+                        _hover={{ outline: 'none' }}
+                        _focus={{ outline: 'none' }}
+                        borderColor='gray.400'
+                        borderWidth='1px'
+                        value={quizQuestion.questionType}
+                        onChange={(event) =>
+                            updateQuestionType(
+                                parseInt(event.target.value),
+                                quizQuestion.id
+                            )
+                        }
+                        display='inline-block'
+                        marginLeft='20px'
+                    >
+                        <option value={1}>Multiple Choice</option>
+                        <option value={2}>Select All That Apply</option>
+                    </Select>
+                </HStack>
                 <BsTrash
                     className='trashCan'
                     style={{
                         position: 'absolute',
-                        right: '10%',
+                        right: '1%',
                         bottom: '10%',
-                        fontSize: '180%',
+                        fontSize: '120%',
                     }}
                     onClick={() => removeQuestion(quizQuestion.id)}
                 />
             </Box>
-            <Textarea
+            <Input
                 marginTop='20px'
                 value={quizQuestion.question}
                 onChange={(event) => {
                     updateQuestion(event.target.value, quizQuestion.id);
                 }}
-                placeholder='Enter Question'
-                height='fit-content'
-                overflow='auto'
-                borderColor='black'
-                borderWidth='3px'
-                _focus={{ borderColor: 'black' }}
-                _hover={{ borderColor: 'black' }}
-                fontSize='160%'
+                placeholder='Question Title'
+                borderColor="gray.400"
+                padding={2}
+                variant="flushed"
+                _focus={{ borderColor: 'blue.500', bgColor:"gray.100" }}
+                _hover={{ borderColor: 'blue.500', bgColor:"gray.100" }}
+                fontSize='110%'
                 width='90%'
             />
             <div>
                 {quizQuestion.answerChoices.map((answerChoice) => (
                     <HStack key={answerChoice.id} style={{ marginTop: '20px' }}>
                         <Button
-                            border='solid'
-                            borderColor='black'
+                            border='1px'
+                            borderColor='gray.500'
                             display='inline'
                             verticalAlign='middle'
                             marginLeft='20px'
-                            marginRight='20px'
+                            marginRight='10px'
                             colorScheme='green'
                             background={
                                 answerChoice.answer &&
@@ -122,15 +130,18 @@ function QuestionCreatorCard({
                                     ? 'rgba(124, 252, 0, 0.5)'
                                     : 'transparent'
                             }
-                            borderRadius='10px'
-                            placeholder='Enter Answer Choice'
+                            // borderRadius='10px'
+                            placeholder='Answer Choice'
                             variant='flushed'
-                            borderColor='black'
-                            borderBottomWidth='3px'
-                            _focus={{
-                                borderColor: 'black',
+                            borderColor='gray.400'
+                            borderBottomWidth='1px'
+                            _hover={{
+                                bgColor: "gray.100"
                             }}
-                            fontSize='150%'
+                            _focus={{
+                                borderColor: 'blue.500',
+                            }}
+                            fontSize='100%'
                             height='fit-content'
                             display='inline'
                             verticalAlign='middle'
@@ -141,7 +152,7 @@ function QuestionCreatorCard({
                             style={{
                                 display: 'inline',
                                 verticalAlign: 'middle',
-                                fontSize: '150%',
+                                fontSize: '110%',
                                 marginLeft: '20px',
                             }}
                             onClick={() =>
@@ -154,18 +165,18 @@ function QuestionCreatorCard({
                     </HStack>
                 ))}
                 <Button
+                    size="sm"
+                    leftIcon={<AddIcon />}
+                    colorScheme="twitter"
                     _focus={{ outline: 'none' }}
-                    marginLeft='70px'
+                    marginLeft='60px'
                     marginTop='20px'
-                    borderColor='black'
-                    border='solid'
-                    borderWidth='2px'
                     onClick={() => addAnswerChoice(quizQuestion.id)}
                 >
                     Add Answer Choice
                 </Button>
             </div>
-        </div>
+        </Box>
     );
 }
 

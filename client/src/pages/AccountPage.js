@@ -26,7 +26,8 @@ import {
     MenuItem,
     Stack,
     useColorModeValue,
-    Icon
+    Icon,
+    Avatar
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -55,6 +56,9 @@ import SelectPlatformCard from '../components/SelectPlatformCard';
 import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
+import gold_badge from '../images/gold_badge.png'
+import silver_badge from '../images/silver_badge.png'
+import bronze_badge from '../images/silver_badge.png'
 
 let profileImg = null;
 let bannerImg = null;
@@ -452,6 +456,8 @@ export default function AccountPage(props) {
             icon: BsBookmarkStarFill,
         }
     ]
+
+    const badges = ["gold", "gold", "gold", "silver", "silver", "bronze"]
 
     async function handleAddFeaturedQuiz() {
         setIsAddingFeaturedQuiz(false);
@@ -1175,26 +1181,41 @@ export default function AccountPage(props) {
     // Render Badges
     function renderBadges() {
         return (
-            <Box bgColor={platformsButtonBG} borderRadius='10'>
-                <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                    All Badges
+            <Box>
+                <Text pl='1.5%' pt='1%' fontSize='150%' fontWeight='bold'>
+                    Badges
                 </Text>
                 <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                    {userData.quizzesMade.map((quiz, key) => {
+                    {badges.map((badge, key) => {
                         return (
-                            <QuizCard
-                                quiz={quiz}
-                                width='10%'
-                                title_fontsize='0.8vw'
-                                include_author={false}
-                                char_limit={35}
-                                key={key}
-                            />
+                            <Box key={key}>
+                                { renderBadgeIcon(badge) }
+                            </Box>
                         );
                     })}
                 </Flex>
             </Box>
         );
+    }
+
+    function renderBadgeIcon(badge) {
+        let badge_src = null
+
+        if (badge === "gold")
+            badge_src = gold_badge
+
+        if (badge === "silver")
+            badge_src = silver_badge
+
+        if (badge === "bronze")
+            badge_src = bronze_badge
+
+        return (
+            <VStack>
+                <Image w={120} h={120} src={badge_src} border="1px" borderColor="gray.100" boxShadow="md" bgColor="white" borderRadius={10} mt={5} ml={5} mr={5} />
+                <Text fontSize="105%" fontWeight="medium"> Quiz Master </Text>
+            </VStack>
+        )
     }
 
     return (

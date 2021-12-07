@@ -268,7 +268,7 @@ function CreateQuizPage(props) {
             },
         },
         onCompleted() {
-            props.history.push('/');
+            props.history.push('/homepage');
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));

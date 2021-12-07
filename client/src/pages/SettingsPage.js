@@ -48,7 +48,7 @@ export default function SettingsPage(props) {
             if(colorMode=="dark"){
                 toggleColorMode();
             }
-            history.push('/');
+            history.push('/homepage');
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -71,7 +71,7 @@ export default function SettingsPage(props) {
 
     useEffect(() => {
         if (user && user === 'NoUser') {
-            history.push('/loginpage');
+            history.push('/');
         }
     }, [user]);
 

@@ -160,7 +160,7 @@ export default function PlatformPage({}) {
     // Deletes platform
     const [deletePlatform] = useMutation(DELETE_PLATFORM, {
         onCompleted() {
-            history.push('/');
+            history.push('/homepage');
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));

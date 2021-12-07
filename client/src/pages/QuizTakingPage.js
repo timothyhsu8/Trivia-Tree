@@ -396,7 +396,7 @@ export default function QuizTakingPage({}) {
 
                     {/* QUIZ TIMER */}
                     <Center pt="6%">
-                        <Box w='70%' h='5vh' bgColor={quizTimerSideBG} border="1px solid" borderColor="gray.400" borderRadius="15">
+                        <Box w='70%' h='6vh' bgColor={quizTimerSideBG} border="1px solid" borderColor="gray.400" borderRadius="15">
                         <Text fontSize='170%' textAlign='center' color={ timeRunningOut ? "red.500" : quizTimerTextColor }>
                             {quizDone ? "Quiz Ended" : quizTimerDisplay}
                         </Text>

@@ -68,5 +68,6 @@ module.exports = gql`
         resetPlatformsMadeApollo(userId: ID!): User
         deleteUser(userId: ID!): Boolean
         finishSignUp(signUpInput: SignUpInput): User
+        updateDarkMode(userId: ID!, darkMode: Boolean!): User
     }
 `;

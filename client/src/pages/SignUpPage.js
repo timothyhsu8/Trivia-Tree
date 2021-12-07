@@ -1,4 +1,4 @@
-import { Box, Grid, Text, Image, Center, Button, VStack, Input, HStack, Avatar} from '@chakra-ui/react';
+import { Box, Grid, Text, Image, Center, Button, VStack, Input, HStack, Avatar, useColorModeValue, Stack, Radio, RadioGroup, useColorMode} from '@chakra-ui/react';
 import { React, useContext, useState, useEffect, createRef} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
@@ -16,12 +16,25 @@ export default function SignUpPage({}) {
     const [section, setSection] = useState(1)
     const [displayName, setDisplayName] = useState('');
     const [iconImage, setIconImage] = useState("");
+    const [darkMode, setDarkMode] = useState("");
     const [categoriesSelected, setCategoriesSelected] = useState([]);
     const [pulledData, setPulledData] = useState(false);
+
+
+    const { colorMode, toggleColorMode } = useColorMode()
+    function initialDark(){
+        if(darkMode==true && colorMode=="dark"){
+            toggleColorMode()
+        }
+        if(darkMode==false && colorMode=="light"){
+            toggleColorMode()
+        }
+    }
 
     let profileImg = 'Same Image';
 
     const hiddenImageInput = createRef(null);
+    console.log(colorMode)
 
     const handleDisplayNameChange = (event) => setDisplayName(event.target.value);
 
@@ -40,12 +53,20 @@ export default function SignUpPage({}) {
         },
     });
 
+    const [updateDarkMode] = useMutation(mutations.UPDATE_DARK_MODE, {
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        }
+    });
+
+
     if(user == null){
         return <Box></Box>;
     }
     else if(!pulledData){
         setDisplayName(user.displayName)
         setIconImage(user.iconImage)
+        setDarkMode(user.darkMode)
         setPulledData(true)
     }
 
@@ -87,6 +108,23 @@ export default function SignUpPage({}) {
         setCategoriesSelected(newCategories);
     }
 
+    async function handleUpdateDarkMode(event) {
+        if(event == "true"){
+            setDarkMode(true)
+            const { data } = await updateDarkMode({ variables: {userId:user._id, darkMode: true}});
+            refreshUserData();
+            initialDark()
+        }
+        else{
+            setDarkMode(false)
+            console.log(darkMode)
+            const { data } = await updateDarkMode({ variables: {userId:user._id, darkMode: false}});
+            refreshUserData();
+            initialDark()
+        }
+
+    }
+
     async function handleFinishSignup(){
         const { data } = await finishSignUp({ variables: {signUpInput:{userId:user._id, displayName:displayName, iconImage:iconImage, categoriesSelected:categoriesSelected}}});
         history.push('/');
@@ -102,7 +140,7 @@ export default function SignUpPage({}) {
                 <Center fontSize="xl">(Display names can be changed later in the settings)</Center>
                 <Center position="relative" top="40px">
                     <Box borderRadius="10px" bgColor="#E3E3E3" w="600px" h="180px">
-                    <Center><Input value={displayName} onChange={handleDisplayNameChange} marginTop="65px" variant='filled' placeholder='Choose a display name...' w="80%"
+                    <Center><Input value={displayName} onChange={handleDisplayNameChange} marginTop="65px" variant='filled' placeholder='Choose a display name...' w="80%" textColor="black"
                         _hover={{pointer:"cursor", bgColor:"gray.200"}}
                         _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/></Center>
                     </Box>
@@ -149,6 +187,35 @@ export default function SignUpPage({}) {
             : ""}
 
             {section == 3 ? 
+            <VStack position="relative" top="80px">
+                <Center borderBottom="1px" fontSize="3xl">Toggle Between Dark and Light Mode</Center>
+                <Center fontSize="lg">(Mode can be changed later in the settings)</Center>
+                <HStack spacing={10} position="relative" top="40px">
+                    <Box display="flex" flexDirection="column" justifyContent="center">
+                            <RadioGroup onChange={(event) => handleUpdateDarkMode(event)} value={darkMode} whiteSpace="nowrap">
+                                <Stack direction="row" spacing={10}>
+                                    <Radio value={false}>
+                                        Light Mode
+                                    </Radio>
+                                    <Radio value={true}>
+                                        Dark Mode
+                                    </Radio>
+                                </Stack>
+                            </RadioGroup>
+                        </Box>
+                </HStack>
+                <HStack spacing="40px">
+                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(2)}}>
+                        Previous
+                    </Button>
+                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(4)}}>
+                        Next
+                    </Button>
+                </HStack>
+            </VStack>
+            : ""}
+
+            {section == 4 ? 
             <VStack>
                 <Center borderBottom="1px" fontSize="5xl">Select Categories That Interest You</Center>
                 <Center fontSize="xl">(These will be used to recommend quizzes for you to take)</Center>
@@ -160,7 +227,7 @@ export default function SignUpPage({}) {
                     })}
                 </Center>
                 <HStack spacing="40px" position="relative" bottom="20px">
-                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(2)}}>
+                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(3)}}>
                         Previous
                     </Button>
                     <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={handleFinishSignup}>

@@ -259,6 +259,15 @@ export const FINISH_SIGNUP = gql`
     }
 `;
 
+export const UPDATE_DARK_MODE = gql`
+    mutation ($userId: ID!, $darkMode: Boolean!) {
+        updateDarkMode(userId: $userId, darkMode: $darkMode){
+            _id
+            darkMode
+        }
+    }
+`;
+
 
 
 

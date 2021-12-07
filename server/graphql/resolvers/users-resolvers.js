@@ -438,5 +438,18 @@ module.exports = {
                 throw new Error(err);
             }
         },
+        async updateDarkMode(
+            _,
+            { userId,  darkMode},
+            context
+        ) {
+            let user = await User.findById(userId);
+
+            user = await User.findByIdAndUpdate(userId, { darkMode: darkMode });
+
+            console.log(darkMode)
+            
+            return user;
+        }
     },
 };

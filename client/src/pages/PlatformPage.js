@@ -193,6 +193,12 @@ export default function PlatformPage({}) {
         })
     }
 
+    // Checks if user is logged in or not
+    let logged_in = false
+    if (user !== null && user !== "NoUser") {
+        logged_in = true
+    }
+
     // Loading Screen
     if (loading) {
         return (
@@ -340,7 +346,7 @@ export default function PlatformPage({}) {
                                     color="white"
                                     mt={4} 
                                     float="right"
-                                    display={is_owner ? 'none':''}
+                                    display={is_owner || !logged_in ? 'none':''}
                                     onClick={setFollowPlatform}
                                     _hover={{opacity:"85%"}} 
                                     _active={{opacity:"75%"}} 

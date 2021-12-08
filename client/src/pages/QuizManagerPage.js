@@ -2,26 +2,31 @@ import {
     Box,
     Text,
     Grid,
+    Avatar,
     VStack,
     Button,
     Image,
     Center,
     Spinner,
-    Flex,
-    Textarea,
-    FormControl,
-    FormLabel,
-    Select,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverArrow,
+    PopoverCloseButton,
+    PopoverHeader,
+    PopoverBody,
+    PopoverFooter,
     HStack,
-    Icon
+    Icon,
+    IconButton
 } from '@chakra-ui/react';
 import { GET_USER } from '../cache/queries';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { AuthContext } from '../context/auth';
 import { useState, useContext, createRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { BsFillFileEarmarkTextFill, BsFillPersonFill, BsHeart } from 'react-icons/bs';
-import { ViewIcon, StarIcon } from '@chakra-ui/icons';
+import { BsArrowUp, BsFillArrowUpCircleFill, BsFillCaretRightFill, BsFillFileEarmarkTextFill, BsFillHeartFill, BsFillPersonFill, BsFillTrashFill, BsHeart, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { ViewIcon, StarIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
 import { GrScorecard } from 'react-icons/gr';
 
 export default function QuizManagerPage() {
@@ -66,6 +71,27 @@ export default function QuizManagerPage() {
         });
     }
 
+    function renderDeleteButton(quiz) {
+        return (
+            <Popover placement="top-start">
+                <PopoverTrigger>
+                    <IconButton icon={<BsFillTrashFill/>} colorScheme='red' _focus={{ outline: 'none' }} />
+                </PopoverTrigger>
+                <PopoverContent>
+                    <PopoverCloseButton />
+                    <PopoverBody>
+                        Delete this quiz permanently?
+                    </PopoverBody>
+                    <PopoverFooter>
+                        <Center>
+                            <Button colorScheme="red" onClick={() => handleDeleteQuiz(quiz._id)}> Yes, Delete It </Button>
+                        </Center>
+                    </PopoverFooter>
+                </PopoverContent>
+            </Popover>
+        )
+    }
+
     if (user === 'NoUser') {
         return (
             <Center>
@@ -96,81 +122,104 @@ export default function QuizManagerPage() {
         );
     }
 
-    console.log(userData);
+    
     return (
         <Box>
         
             <Center> 
                 <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Quizzes </Text>
             </Center>
-            <Button display='inline' pos='absolute' top='70px' right='10px' backgroundColor='cyan.500' color='white' onClick={() => history.push('/createQuiz')} _focus={{ outline: 'none' }} _hover={{ backgroundColor: 'cyan.600' }} _active={{backgroundColor: 'cyan.700'}}>Create Quiz</Button>
+            
+            <Button 
+                leftIcon={<BsFillFileEarmarkTextFill/>}
+                pos='absolute' 
+                top='85px' 
+                right='55px' 
+                backgroundColor='cyan.500' color='white'
+                onClick={() => history.push('/createQuiz')} 
+                _focus={{ outline: 'none' }} 
+                _hover={{ backgroundColor: 'cyan.600' }} 
+                _active={{backgroundColor: 'cyan.700'}}
+                size="lg"
+            >
+                    Create Quiz
+            </Button>
 
             {/* PLATFORM CARDS */}
             {
                 userData.quizzesMade.length !== 0 ?
-                    <Grid mt="0.5%" ml="5%" mr="5%" justifyItems='center' rowGap='3%' templateColumns="repeat(auto-fill, minmax(600px, 1fr))">
+                    <Grid mt="0.5%" ml="5%" mr="5%" justifyItems='center' rowGap='3%' templateColumns="repeat(auto-fill, minmax(300px, 1fr))">
                         {
                             userData.quizzesMade.map((quiz, key) => {
                                 return (
                                     <Box 
                                         key={key}
                                         w="90%" 
+                                        padding={4}
                                         mt={5} 
                                         borderRadius={10} 
-                                        boxShadow="lg" 
+                                        boxShadow="md" 
                                         transition=".1s linear"
-                                        // _hover={{cursor:"pointer", opacity:"85%", transition:".15s linear"}} 
-                                        // _active={{opacity:"75%"}}
-                                        // onClick={() => history.push('/prequizpage/' + quiz._id)}
+                                        border="1px"
+                                        borderColor="gray.200"
                                     >
-                                            {/* PLATFORM IMAGE */}
-                                            <Box
-                                                pos="relative"
-                                                w="100%"
-                                                h="20vh"
-                                                // bgColor="gray.300"
-                                                bgGradient="linear(to-br, gray.100, gray.600)" 
-                                                // bgImage={"linear-gradient(to bottom, rgba(245, 246, 252, 0.10), rgba(30, 30, 30, 0.75)), url('" + platform.bannerImage +  "')"}
-                                                bgSize="cover" 
-                                                bgPosition="center"
-                                                borderTopRadius={10}
-                                                display='flex'
-                                            >
-                                                <HStack w="100%" spacing={3} ml="2%">
-                                                    <Box className='squareimage_container' w="15%" minW={50}> 
-                                                        <Image className="squareimage" src={quiz.icon} objectFit="cover" borderRadius="50%" border="2px solid white"></Image>
-                                                    </Box>
-                                                    <Text className="disable-select" fontSize="160%" textColor="white" fontWeight="medium"> {quiz.title} </Text>
-                                                    <Box pl='4%'>
-                                                        <VStack spacing={4} align='start'>
-                                                            <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={ViewIcon} /> {quiz.numAttempts} Attempts 
-                                                            </Text>
-                                                            <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={BsHeart} /> {quiz.numFavorites} Favorites 
-                                                            </Text>
-                                                            <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={StarIcon} /> {quiz.rating ? quiz.rating : 'N/A'} {quiz.rating ? `(${quiz.numRatings} Ratings)`: ''}
-                                                            </Text>
-                                                        </VStack>
-                                                    </Box>
-                                                    <Box pl='6%'>
-                                                        <VStack spacing={4} align='start'>
-                                                            <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={GrScorecard} /> {quiz.averageScore !== null ? `${quiz.averageScore}%` : 'No'} Average Score 
-                                                            </Text>
-                                                            <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={GrScorecard} /> {quiz.medianScore !== null ? `${quiz.medianScore}%` : 'No'} Median Score 
-                                                            </Text>
-                                                        </VStack>
-                                                    </Box>
+                                        <VStack>
+                                            {/* Quiz Image */}
+                                            <Center>
+                                                <Avatar src={quiz.icon} size="xl" />
+                                            </Center>
+
+                                            {/* Quiz Name */}
+                                            <Text fontWeight="medium" fontSize="120%" textColor="gray.800" wordBreak="break-word" textAlign="center"> {quiz.title} </Text>
+                                            
+                                            {/* Attempts */}
+                                            <HStack spacing={4}>
+                                                <HStack>
+                                                    <Text>
+                                                        <Icon as={ViewIcon} pos="relative" top="-1px" mr="5px"/> 
+                                                        {quiz.numAttempts} Attempts 
+                                                    </Text>
                                                 </HStack>
-                                            </Box>
-                                        <HStack justifyContent='center' spacing='15%' pt='1%' pb='1%'>
-                                            <Button backgroundColor='green.500' color='white' onClick={() => history.push('/prequizpage/' + quiz._id)} _focus={{ outline: 'none' }} _hover={{ backgroundColor: 'green.600' }} _active={{backgroundColor: 'green.700'}}>Go To Quiz</Button>
-                                            <Button colorScheme='blue' onClick={() => history.push('/editQuiz/' + quiz._id)} _focus={{ outline: 'none' }}>Edit Quiz</Button>
-                                            <Button colorScheme='red' onClick={() => handleDeleteQuiz(quiz._id)} _focus={{ outline: 'none' }}>Delete Quiz</Button>
-                                        </HStack>
+
+                                                {/* Favorites */}
+                                                <HStack>
+                                                    <Text>
+                                                        <Icon as={BsFillHeartFill} pos="relative" top="-1px" mr="5px" color="red.400" /> 
+                                                        {quiz.numFavorites} Favorites 
+                                                    </Text>
+                                                </HStack>
+                                            </HStack>
+
+                                            {/* Rating */}
+                                            <HStack>
+                                                <Text>
+                                                    <Icon as={StarIcon} pos="relative" top="-1.5px" mr="5px" color="yellow.400" /> 
+                                                    {quiz.rating ? quiz.rating : 'N/A'} {quiz.rating ? `(${quiz.numRatings} Ratings)`: ''}
+                                                </Text>
+                                            </HStack>
+
+                                            {/* Average Score */}
+                                            <HStack>
+                                                <Text className="disable-select"> 
+                                                    <Icon as={GrScorecard} pos="relative" top="-1.5px" mr="5px"/>
+                                                    {quiz.averageScore !== null ? `${quiz.averageScore}%` : 'No'} Average
+                                                </Text>
+                                            </HStack>
+                                        
+                                            {/* Median Score */}
+                                            <HStack>
+                                                <Text className="disable-select"> 
+                                                    <Icon as={GrScorecard} pos="relative" top="-1.5px" mr="5px"/>
+                                                    {quiz.medianScore !== null ? `${quiz.medianScore}%` : 'No'} Median
+                                                </Text>
+                                            </HStack>
+
+                                            <HStack justifyContent='center' pt='1%' pb='1%'>
+                                                <IconButton icon={<BsFillCaretRightFill/>} backgroundColor='green.500' color='white' onClick={() => history.push('/prequizpage/' + quiz._id)} _focus={{ outline: 'none' }} _hover={{ backgroundColor: 'green.600' }} _active={{backgroundColor: 'green.700'}} />
+                                                <IconButton icon={<BsPencilSquare/>} colorScheme='blue' onClick={() => history.push('/editQuiz/' + quiz._id)} _focus={{ outline: 'none' }} />
+                                                { renderDeleteButton(quiz) }
+                                            </HStack>
+                                        </VStack>
                                     </Box>   
                                 )
                             })

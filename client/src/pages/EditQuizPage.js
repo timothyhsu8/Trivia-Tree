@@ -1,4 +1,4 @@
-import { React, useState, useEffect, createRef, useContext } from 'react';
+import { React, useState, useRef, createRef, useContext } from 'react';
 import { useMutation, useQuery, gql } from '@apollo/client';
 import {
     Input,
@@ -14,9 +14,14 @@ import {
     Box,
     Stack,
     Icon,
-    Spinner
+    Spinner,
+    AlertDialog, 
+    AlertDialogOverlay, 
+    AlertDialogContent,
+    AlertDialogBody, 
+    AlertDialogFooter,
+    AlertDialogHeader
 } from '@chakra-ui/react';
-import { RiArrowRightSLine } from 'react-icons/ri';
 import TimeField from 'react-simple-timefield';
 import { AuthContext } from '../context/auth';
 import { v4 as uuidv4 } from 'uuid';
@@ -30,10 +35,12 @@ let refs = null;
 let hiddenImageInput = null;
 
 function EditQuizPage(props) {
+    const cancelRef = useRef()
     const quizId = props.match.params.quizId;
     const { user } = useContext(AuthContext);
 
     const [setup, setSetUp] = useState(false);
+    const [showQuizUpdated, setShowQuizUpdated] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('Other');
@@ -269,7 +276,7 @@ function EditQuizPage(props) {
             },
         },
         onCompleted() {
-            props.history.goBack()
+            setShowQuizUpdated(true)
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -372,6 +379,48 @@ function EditQuizPage(props) {
             setSetUp(true);
         },
     });
+
+    // Show dialogue for 'Item Unffordable' and 'Purchase Successful'
+    function renderSuccessfulQuizUpdate() {
+        return (
+            <Center>
+                <AlertDialog
+                    isOpen={showQuizUpdated}
+                    leastDestructiveRef={cancelRef}
+                    onClose={() => {
+                        setShowQuizUpdated(false)
+                        props.history.goBack()
+                    }}
+                >
+                    <AlertDialogOverlay>
+                        <AlertDialogContent top="30%">
+                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                Success!
+                            </AlertDialogHeader>
+
+                            <AlertDialogBody>
+                                Quiz Updated Succesfully
+                            </AlertDialogBody>
+
+                            <AlertDialogFooter>
+                                <Button 
+                                    colorScheme="yellow"
+                                    ref={cancelRef} 
+                                    onClick={() => {
+                                        setShowQuizUpdated(false)
+                                        props.history.goBack()
+                                    }}
+                                    _focus={{border:"none"}}
+                                >
+                                    Close
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialogOverlay>
+                </AlertDialog>
+            </Center>
+        )
+    }
 
     if (user === null) {
         return <div></div>;
@@ -762,6 +811,7 @@ function EditQuizPage(props) {
                     </Box>
                 </div>
             </div>
+            { renderSuccessfulQuizUpdate() }
         </div>
     );
 }

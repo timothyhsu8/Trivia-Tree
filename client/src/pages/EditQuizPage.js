@@ -12,13 +12,18 @@ import {
     HStack,
     VStack,
     Box,
+    Stack,
+    Icon,
+    Spinner
 } from '@chakra-ui/react';
 import { RiArrowRightSLine } from 'react-icons/ri';
 import TimeField from 'react-simple-timefield';
 import { AuthContext } from '../context/auth';
 import { v4 as uuidv4 } from 'uuid';
 import '../styles/CreateQuizPage.css';
+import { AddIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import QuestionCreatorCard from '../components/QuestionCreatorCard';
+import { BsFillFileEarmarkTextFill, BsFillImageFill } from 'react-icons/bs';
 
 let img = null;
 let refs = null;
@@ -91,6 +96,8 @@ function EditQuizPage(props) {
                 questionType: 1,
                 answerChoices: [
                     { choice: '', id: uuidv4(), answer: false },
+                    { choice: '', id: uuidv4(), amswer: false },
+                    { choice: '', id: uuidv4(), amswer: false },
                     { choice: '', id: uuidv4(), amswer: false },
                 ],
                 answer: [], //this will be populated at submission
@@ -262,7 +269,7 @@ function EditQuizPage(props) {
             },
         },
         onCompleted() {
-            props.history.push('/');
+            props.history.goBack()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -379,7 +386,11 @@ function EditQuizPage(props) {
     }
 
     if (loading) {
-        return <div></div>;
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
     }
 
     return (
@@ -387,83 +398,95 @@ function EditQuizPage(props) {
             <div className='gridContainer'>
                 <div className='leftSidebar'>
                     <Box
+                        top="70px"
+                        h="80vh"
                         position='sticky'
-                        top='70px'
-                        height='800px'
                         overflowY='auto'
                         width='90%'
+                        borderRight="1px"
+                        borderColor="gray.200"
                     >
-                        <Text marginLeft='10px' fontSize='160%'>
-                            Go To:
-                        </Text>
-                        {quizQuestions.map((item, index) => (
-                            <HStack
-                                key={item.id}
-                                marginLeft='5px'
-                                marginTop={index > 0 ? '20px' : '0px'}
-                            >
-                                <RiArrowRightSLine fontSize='150%' />
-                                <Text
-                                    fontSize='120%'
-                                    fontWeight='500'
-                                    width='80%'
-                                    overflowWrap='anywhere'
-                                    cursor='pointer'
-                                    onClick={() => handleScrollAction(item.id)}
+                        <Center>
+                            <Text marginLeft='10px' fontSize='120%' fontWeight="medium" textColor="gray.600">
+                                Jump To Question:
+                            </Text>
+                        </Center>
+                        <Box mt='10px'>
+                            {quizQuestions.map((item, index) => (
+                                <HStack
+                                    key={item.id}
+                                    marginLeft='15px'
+                                    marginTop={index > 0 ? '20px' : '0px'}
                                 >
-                                    Question #{index + 1} -{' '}
-                                    {item.question.trim().substr(0, 40)}
-                                    {item.question.trim().length > 40
-                                        ? '...'
-                                        : ''}
-                                </Text>
-                            </HStack>
-                        ))}
+                                    <Text
+                                        paddingRight='15px'
+                                        fontSize='100%'
+                                        overflowWrap='anywhere'
+                                        cursor='pointer'
+                                        onClick={() => handleScrollAction(item.id)}
+                                    >
+                                        <Text fontWeight="medium" textColor="gray.700">
+                                            <Icon as={ChevronRightIcon} pos="relative" top="-1.1px" mr="2px"/>
+                                             Question #{index + 1} 
+                                        </Text>
+                                        {item.question.trim().substr(0, 35)}
+                                        {item.question.trim().length > 35
+                                            ? '...'
+                                            : ''}
+                                    </Text>
+                                </HStack>
+                            ))}
+                        </Box>
                     </Box>
                 </div>
                 <div className='title-description'>
-                    <Input
-                        value={title}
-                        onChange={(event) => updateTitle(event)}
-                        placeholder='Enter Quiz Title'
-                        variant='flushed'
-                        borderColor='black'
-                        borderBottomWidth='3px'
-                        _focus={{ borderColor: 'black' }}
-                        fontSize='200%'
-                        height='fit-content'
-                        width='80%'
-                    />
-                    <Text marginLeft='10px'>Quiz Title</Text>
-                    <Textarea
-                        value={description}
-                        onChange={(event) => updateDescription(event)}
-                        placeholder='Enter Quiz Description'
-                        fontSize='100%'
-                        height='fit-content'
-                        overflow='auto'
-                        borderColor='black'
-                        borderWidth='3px'
-                        _focus={{ borderColor: 'black' }}
-                        _hover={{ borderColor: 'black' }}
-                        marginTop='30px'
-                        width='50%'
-                    />
-                    <Text marginLeft='10px'>Quiz Description</Text>
-                    <HStack>
-                        <Text paddingTop='20px' fontSize='24px'>
-                            Category:{' '}
+                    <Stack spacing="1px">
+                        <Input
+                            value={title}
+                            onChange={(event) => updateTitle(event)}
+                            placeholder='Enter A Quiz Title...'
+                            variant='flushed'
+                            borderColor='gray.400'
+                            borderBottomWidth='1px'
+                            _hover={{bgColor: 'gray.100'}}
+                            _focus={{ borderColor: 'blue.500', bgColor:"gray.100" }}
+                            fontSize='140%'
+                            height='fit-content'
+                            width='80%'
+                            overflowWrap="break-word"
+                        />
+                        <Text fontSize="90%" textColor="gray.600" fontWeight="medium">Quiz Title</Text>
+                    </Stack>
+                    <Stack spacing="1px">
+                        <Textarea
+                            value={description}
+                            onChange={(event) => updateDescription(event)}
+                            placeholder='Enter A Description...'
+                            fontSize='100%'
+                            height='fit-content'
+                            overflow='auto'
+                            borderColor='gray.400'
+                            borderWidth='1px'
+                            _focus={{ borderColor: 'blue.500' }}
+                            _hover={{ borderColor: 'blue.500' }}
+                            marginTop='30px'
+                            width='80%'
+                        />
+                        <Text fontSize="90%" textColor="gray.600" fontWeight="medium">Quiz Description</Text>
+                    </Stack>
+                    <HStack mt='20px'>
+                        <Text fontSize="100%" fontWeight="medium">
+                            Category:
                         </Text>
                         <Select
                             _hover={{ outline: 'none' }}
-                            _focus={{ outline: 'none' }}
-                            borderColor='black'
-                            borderWidth='2px'
+                            _focus={{ outline: 'none', borderColor: "blue.500" }}
+                            borderColor='gray.400'
+                            borderWidth='1px'
                             value={category}
-                            width='30%'
+                            width='fit-content'
                             display='inline-block'
                             marginLeft='20px'
-                            paddingTop='20px'
                             onChange={(event) => {
                                 setCategory(event.target.value);
                             }}
@@ -488,6 +511,7 @@ function EditQuizPage(props) {
                             <option value={'Video Games'}>Video Games</option>
                         </Select>
                     </HStack>
+                    <Box w='90%' h="1px" mt='30px' bgColor="gray.400" />
                 </div>
                 <div className='question'>
                     {quizQuestions.map((quizQuestion, questionIndex) => (
@@ -507,19 +531,19 @@ function EditQuizPage(props) {
                     ))}
                     <Center>
                         <Button
+                            leftIcon={<AddIcon />}
+                            size="lg"
+                            colorScheme="pink"
                             _focus={{ outline: 'none' }}
-                            marginTop='10px'
-                            padding='20px'
-                            borderColor='black'
-                            border='solid'
-                            borderWidth='2px'
-                            fontSize='120%'
+                            marginTop='40px'
                             onClick={() => addQuestion()}
                         >
                             Add Question
                         </Button>
                     </Center>
                 </div>
+
+                {/* Right Sidebar */}
                 <div className='rightSidebar'>
                     <Box position='sticky' top='70px'>
                         <HStack
@@ -527,33 +551,34 @@ function EditQuizPage(props) {
                             flexDirection='column'
                             direction='row'
                         >
-                            <Text fontSize='160%'>Platform:</Text>
-                            <Select
-                                fontSize='160%'
-                                _hover={{ outline: 'none' }}
-                                _focus={{ outline: 'none' }}
-                                borderColor='black'
-                                borderWidth='2px'
-                                defaultValue='None'
-                                width='fit-content'
-                            >
-                                <option value='None'>None</option>
-                                <option value='Stony Brook'>Stony Brook</option>
-                                <option value='Sports'>Sports</option>
-                                <option value='School Subject'>
-                                    School Subject
-                                </option>
-                            </Select>
+                            <HStack>
+                                <Text fontSize='105%' textColor="gray.600" fontWeight="medium"> Platform:</Text>
+                                <Select
+                                    _hover={{ outline: 'none' }}
+                                    _focus={{ outline: 'none' }}
+                                    borderColor='gray.300'
+                                    borderWidth='1px'
+                                    defaultValue='None'
+                                    width='fit-content'
+                                >
+                                    <option value='None'>None</option>
+                                    <option value='Stony Brook'>Stony Brook</option>
+                                    <option value='Sports'>Sports</option>
+                                    <option value='School Subject'>
+                                        School Subject
+                                    </option>
+                                </Select>
+                            </HStack>
                         </HStack>
+
+                        {/* Quiz Icon */}
                         <VStack marginTop='20px'>
-                            <Text fontSize='160%'>Quiz Icon</Text>
+                            <Text fontSize='110%' textColor="gray.600" fontWeight="medium">Quiz Icon</Text>
                             <img
                                 style={{
                                     objectFit: 'cover',
                                     width: '100px',
                                     height: '100px',
-                                    border: 'solid',
-                                    borderColor: 'black',
                                 }}
                                 src={icon}
                             />
@@ -565,39 +590,39 @@ function EditQuizPage(props) {
                                 onChange={(event) => updateIcon(event)}
                             />
                             <Button
+                                leftIcon={<BsFillImageFill />}
+                                variant="outline"
+                                borderColor="gray.300"
+                                textColor="gray.700"
                                 _focus={{ outline: 'none' }}
                                 marginTop='10px'
-                                fontSize='160%'
-                                width='fit-content'
-                                borderColor='black'
-                                border='solid'
-                                borderWidth='2px'
                                 onClick={() => hiddenImageInput.current.click()}
                             >
                                 Upload Image
                             </Button>
                         </VStack>
+
+                        {/* Options */}
                         <Center>
                             <Text
                                 marginTop='20px'
-                                marginBottom='10px'
-                                fontSize='1.6vw'
+                                marginBottom='4px'
+                                fontSize='120%'
+                                fontWeight="medium"
                             >
                                 Options
                             </Text>
                         </Center>
-                        <div
-                            style={{
-                                border: 'solid',
-                                borderColor: 'black',
-                                borderWidth: '2px',
-                                borderRadius: '10px',
-                                marginLeft: '8px',
-                                marginRight: '8px',
-                                textAlign: 'center',
-                            }}
+                        <Box
+                            border='1px'
+                            borderColor='gray.300'
+                            borderRadius='10px'
+                            marginLeft='16px'
+                            marginRight='16px'
+                            textAlign='center'
                         >
-                            <Text marginTop='5px' fontSize='1.4vw'>
+                            {/* Quiz Type */}
+                            <Text marginTop='5px' fontSize='105%'>
                                 Quiz Type
                             </Text>
                             <Center marginTop='10px'>
@@ -605,14 +630,14 @@ function EditQuizPage(props) {
                                     onChange={(value) => setQuizType(value)}
                                     value={quizType}
                                 >
-                                    <HStack>
+                                    <HStack spacing={5}>
                                         <Radio
-                                            fontSize='1.4vw'
+                                            fontSize='100%'
                                             _focus={{ outline: 'none' }}
                                             colorScheme='gray'
                                             value='Standard'
                                         >
-                                            <Text fontSize='1.2vw'>
+                                            <Text fontSize='100%'>
                                                 Standard
                                             </Text>
                                         </Radio>
@@ -621,24 +646,24 @@ function EditQuizPage(props) {
                                             colorScheme='gray'
                                             value='Instant'
                                         >
-                                            <Text fontSize='1.2vw'>
+                                            <Text fontSize='100%'>
                                                 Instant
                                             </Text>
                                         </Radio>
                                     </HStack>
                                 </RadioGroup>
                             </Center>
-                            <hr
-                                style={{
-                                    width: '90%',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
-                                    marginTop: '15px',
-                                    borderColor: 'black',
-                                    borderWidth: '1px',
-                                }}
+                            <Box
+                                width= '90%'
+                                height="1px"
+                                bgColor="gray.300"
+                                marginLeft= 'auto'
+                                marginRight= 'auto'
+                                marginTop= '15px'
                             />
-                            <Text marginTop='5px' fontSize='1.4vw'>
+
+                            {/* Question Ordering */}
+                            <Text marginTop='5px' fontSize='105%'>
                                 Question Ordering
                             </Text>
                             <Center marginTop='10px'>
@@ -646,13 +671,13 @@ function EditQuizPage(props) {
                                     onChange={setQuizOrdering}
                                     value={quizOrdering}
                                 >
-                                    <HStack>
+                                    <HStack spacing={5}>
                                         <Radio
                                             _focus={{ outline: 'none' }}
                                             colorScheme='gray'
                                             value='Ordered'
                                         >
-                                            <Text fontSize='1.2vw'>
+                                            <Text fontSize='100%'>
                                                 Ordered
                                             </Text>
                                         </Radio>
@@ -661,23 +686,23 @@ function EditQuizPage(props) {
                                             colorScheme='gray'
                                             value='Shuffled'
                                         >
-                                            <Text fontSize='1.2vw'>
+                                            <Text fontSize='100%'>
                                                 Shuffled
                                             </Text>
                                         </Radio>
                                     </HStack>
                                 </RadioGroup>
                             </Center>
-                            <hr
-                                style={{
-                                    width: '90%',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
-                                    marginTop: '15px',
-                                    borderColor: 'black',
-                                    borderWidth: '1px',
-                                }}
+                            <Box
+                                width= '90%'
+                                height="1px"
+                                bgColor="gray.300"
+                                marginLeft= 'auto'
+                                marginRight= 'auto'
+                                marginTop= '20px'
                             />
+
+                            {/* Quiz Timer */}
                             <div
                                 style={{
                                     marginTop: '5px',
@@ -685,12 +710,20 @@ function EditQuizPage(props) {
                                 }}
                             >
                                 <Text
-                                    fontSize='1.4vw'
+                                    fontSize='105%'
                                     marginLeft='auto'
                                     marginRight='auto'
                                 >
                                     Quiz Timer
                                 </Text>
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: '8px',
+                                        left: '80%',
+                                        height: 'fit-content',
+                                    }}
+                                ></div>
                             </div>
                             <Center marginTop='10px' mb='10px'>
                                 <TimeField
@@ -702,34 +735,32 @@ function EditQuizPage(props) {
                                     showSeconds
                                     style={{
                                         border: 'solid',
-                                        borderColor: 'black',
-                                        borderWidth: '2px',
+                                        borderColor: '#cccccc',
+                                        borderWidth: '1px',
                                         borderRadius: '10px',
                                         background: 'none',
-                                        width: '5.1vw',
-                                        fontSize: '1.2vw',
+                                        width: '50%',
+                                        fontSize: '130%',
                                         textAlign: 'center',
                                     }}
                                 />
                             </Center>
-                        </div>
+                        </Box>
+
+                        <Center>
+                            <Button
+                                leftIcon={<BsFillFileEarmarkTextFill/>}
+                                mt={10}
+                                colorScheme='purple'
+                                size='lg'
+                                _focus={{ outline: 'none' }}
+                                onClick={() => handleUpdateQuiz()}
+                            >
+                                Save Changes
+                            </Button>
+                        </Center>
                     </Box>
                 </div>
-            </div>
-            <div className='footer'>
-                <Button
-                    float='right'
-                    border='solid'
-                    borderColor='white'
-                    borderRadius='10px'
-                    colorScheme='blue'
-                    size='md'
-                    fontSize='160%'
-                    _focus={{ outline: 'none' }}
-                    onClick={() => handleUpdateQuiz()}
-                >
-                    Save Changes
-                </Button>
             </div>
         </div>
     );

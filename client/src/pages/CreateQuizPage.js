@@ -335,7 +335,7 @@ function CreateQuizPage(props) {
                     leastDestructiveRef={cancelRef}
                     onClose={() => {
                         setShowQuizSubmitted(false)
-                        props.history.push('/')
+                        props.history.goBack()
                     }}
                 >
                     <AlertDialogOverlay>
@@ -354,7 +354,7 @@ function CreateQuizPage(props) {
                                     ref={cancelRef} 
                                     onClick={() => {
                                         setShowQuizSubmitted(false)
-                                        props.history.push('/')
+                                        props.history.goBack()
                                     }}
                                     _focus={{border:"none"}}
                                 >
@@ -506,7 +506,7 @@ function CreateQuizPage(props) {
                             addAnswerChoice={addAnswerChoice}
                             removeAnswerChoice={removeAnswerChoice}
                             updateAnswer={updateAnswer}
-                            // questionRef={refs[quizQuestion.id]}
+                            questionRef={refs[quizQuestion.id]}
                         />
                     ))}
                     <Center>

@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     Input,
-    Textarea,
     Text,
     Button,
     HStack,
@@ -23,7 +22,7 @@ function QuestionCreatorCard({
     updateAnswer,
     questionRef,
 }) {
-    // console.log('Rendering question ' + (questionIndex + 1));
+    
     return (
         <Box
             mr={10}
@@ -45,7 +44,7 @@ function QuestionCreatorCard({
                     <Select
                         w='fit-content'
                         _hover={{ outline: 'none' }}
-                        _focus={{ outline: 'none' }}
+                        _focus={{ outline: 'none', borderColor: 'blue.500' }}
                         borderColor='gray.400'
                         borderWidth='1px'
                         value={quizQuestion.questionType}
@@ -98,11 +97,10 @@ function QuestionCreatorCard({
                             verticalAlign='middle'
                             marginLeft='20px'
                             marginRight='10px'
-                            colorScheme='green'
                             background={
                                 answerChoice.answer &&
                                 answerChoice.choice.trim() !== ''
-                                    ? 'rgba(124, 252, 0, 0.5)'
+                                    ? 'green.100'
                                     : 'transparent'
                             }
                             size='xs'
@@ -127,7 +125,7 @@ function QuestionCreatorCard({
                             backgroundColor={
                                 answerChoice.answer &&
                                 answerChoice.choice.trim() !== ''
-                                    ? 'rgba(124, 252, 0, 0.5)'
+                                    ? 'green.100'
                                     : 'transparent'
                             }
                             // borderRadius='10px'
@@ -140,6 +138,7 @@ function QuestionCreatorCard({
                             }}
                             _focus={{
                                 borderColor: 'blue.500',
+                                bgColor: "gray.100"
                             }}
                             fontSize='100%'
                             height='fit-content'

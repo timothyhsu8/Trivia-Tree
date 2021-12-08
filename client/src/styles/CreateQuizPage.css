@@ -3,6 +3,7 @@
 }
 
 .gridContainer {
+    padding-top: 15px;
     display: grid;
     padding-bottom: 60px;
     grid-template: auto 6fr / 1fr 3fr 1fr;

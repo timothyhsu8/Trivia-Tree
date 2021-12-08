@@ -1,7 +1,7 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
-import { BsFillCartFill, BsFillFileEarmarkTextFill } from "react-icons/bs"
+import { BsCollectionFill, BsFillCartFill, BsFillFileEarmarkTextFill, BsFillGearFill, BsFillHouseDoorFill, BsFillPersonLinesFill, BsGiftFill, BsGridFill } from "react-icons/bs"
 import { config } from '../util/constants';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
@@ -215,30 +215,30 @@ export default function Navbar() {
                     {/* DROPDOWN MENU */}
                     <Menu>
                         <MenuButton as={HamburgerIcon} boxSize='6' color='white' _hover={{ cursor: 'pointer' }} />
-                            <MenuList>
+                            <MenuList boxShadow='lg'>
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (
                                     <Box>
-                                        <MenuItem onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> 
+                                        <MenuItem icon={<BsFillFileEarmarkTextFill/>} iconSpacing="2" onClick={() => history.push('/createQuiz')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> 
                                             Create Quiz   
                                         </MenuItem>
-                                        <MenuItem onClick={() => setChoosePlatformName(true)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
-                                        <MenuItem onClick={() => history.push('/quizmanager')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
-                                        <MenuItem onClick={() => history.push('/platformmanager/' + user._id)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
+                                        <MenuItem icon={<BsFillHouseDoorFill/>} iconSpacing="2" onClick={() => setChoosePlatformName(true)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Create Platform  </MenuItem>
+                                        <MenuItem icon={<BsGridFill/>} iconSpacing="2" onClick={() => history.push('/quizmanager')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Quiz Manager     </MenuItem>
+                                        <MenuItem icon={<BsCollectionFill/>} iconSpacing="2" onClick={() => history.push('/platformmanager/' + user._id)} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Platform Manager </MenuItem>
                                     </Box>) 
                                     : 
                                     null
                                 }
                                 
                                 {/* Settings Page Button */}
-                                <MenuItem onClick={() => history.push(user !== "NoUser" ? '/settingspage' : '/loginpage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
+                                <MenuItem icon={<BsFillGearFill />} iconSpacing="2" onClick={() => history.push(user !== "NoUser" ? '/settingspage' : '/loginpage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Settings </MenuItem>
                                 
                                 {/* Rewards Button / Logout Button */}
                                 {logged_in === true ? 
                                     <Box>
-                                        <MenuItem onClick={() => history.push('/rewardspage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem>
+                                        <MenuItem icon={<BsGiftFill/>} iconSpacing="2" onClick={() => history.push('/rewardspage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem>
                                         <a href={`${config.API_URL}/auth/logout`}>
-                                            <MenuItem onClick={() => initialDark()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
+                                            <MenuItem icon={<BsFillPersonLinesFill/>} iconSpacing="2" onClick={() => initialDark()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
                                         </a>
                                     </Box>
                                     : 

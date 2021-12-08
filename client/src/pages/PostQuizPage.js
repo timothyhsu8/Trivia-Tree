@@ -112,11 +112,11 @@ export default function PostQuizPage() {
     const {data: data4, loading: loading4} = useQuery(queries.GET_RATING,
         (!user || user === 'NoUser') ?
         {skip: true} : {
-            fetchPolicy: 'catch-first', //does this stop it
+            fetchPolicy: 'network-only', //does this stop it
             variables: { quizId: quizId, userId: user._id},
             onCompleted() {
+                console.log(data4);
                 if (data4.getRating) {
-                    console.log(data4);
                     setIsRated(true);
                     setRating(data4.getRating);
                 }
@@ -250,10 +250,12 @@ export default function PostQuizPage() {
     }
 
     function handleRating(rate) {
-        setRating(rate)
-        const {data} = rateQuiz({variables: {quizId: quizId, userId: user_id, rating: rate }});
-        // Some logic
-        setIsRated(true);
+        if (user && user !== 'NoUser') {
+            setRating(rate)
+            const {data} = rateQuiz({variables: {quizId: quizId, userId: user._id, rating: rate }});
+            // Some logic
+            setIsRated(true);
+        }
     }
 
     async function handleAddComment(){
@@ -369,7 +371,8 @@ export default function PostQuizPage() {
                                                 }
                                                 
                                             </Box>
-                                            { isRated ? <Text fontSize="20px" color="white">Thank you for rating!</Text> : ""}
+                                            { isRated ? <Text fontSize="20px" color="white">Thank you for rating!</Text> : null}
+                                            { user && user === 'NoUser' ? <Text fontSize="20px" color="white">You must be a logged in to rate a quiz</Text> : null}
                                         </VStack>
                                     </Box>
 

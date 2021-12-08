@@ -200,8 +200,8 @@ export const DELETE_USER = gql`
 `;
 
 export const RATE_QUIZ = gql`
-    mutation ($quizId: ID!, $rating: Int!) {
-        rateQuiz(quizId: $quizId, rating: $rating) {
+    mutation ($quizId: ID!, $userId: ID!, $rating: Int!) {
+        rateQuiz(quizId: $quizId, userId: $userId, rating: $rating) {
             rating
         }
     }

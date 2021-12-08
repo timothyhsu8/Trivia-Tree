@@ -1,6 +1,7 @@
 const Quiz = require('../../models/Quiz');
 const Comment = require('../../models/Comment');
 const Reply = require('../../models/Reply');
+const Rating = require('../../models/Rating');
 const User = require('../../models/User');
 const QuizAttempt = require('../../models/QuizAttempt');
 const Platform = require('../../models/Platform');
@@ -116,6 +117,16 @@ module.exports = {
             }
 
             return recommendationList;
+        },
+        async getRating(_, { quizId, userId}) {
+            const quiz = await Quiz.findById(quizId);
+
+            for (let i = 0; i < quiz.ratings.length; i++) {
+                if (quiz.ratings[i].user.equals(userId)) {
+                    return quiz.ratings[i].rating;
+                }
+            }
+            return null;
         },
     },
     Mutation: {
@@ -488,20 +499,40 @@ module.exports = {
 
             return true;
         },
-        async rateQuiz(_, { quizId, rating }) {
+        async rateQuiz(_, { quizId, userId, rating }) {
             const quiz = await Quiz.findById(quizId);
 
-            let oldRating = quiz.rating;
-            let numRatings = quiz.numRatings;
-            let tempRating;
-            if (oldRating === null) {
-                tempRating = rating;
-            } else {
-                tempRating =
-                    oldRating + (rating - oldRating) / (numRatings + 1);
+            // let oldRating = quiz.rating;
+            // let numRatings = quiz.numRatings;
+            // let tempRating;
+            // if (oldRating === null) {
+            //     tempRating = rating;
+            // } else {
+            //     tempRating =
+            //         oldRating + (rating - oldRating) / (numRatings + 1);
+            // }
+            let ratings = quiz.ratings;
+            let found = false;
+            let total = 0;
+            for (let i = 0; i < ratings.length; i++) {
+                if (ratings[i].user.equals(userId)) {
+                    ratings[i].rating = rating;
+                    found = true;
+                }
+                total += ratings[i].rating;
             }
+            if (!found) {
+                const newRating = new Rating({
+                    user: userId,
+                    rating: rating
+                });
+                ratings.push(newRating);
+                total += rating;
+            }
+            let tempRating = total / ratings.length;
             quiz.rating = roundToTwoPlace(tempRating);
-            quiz.numRatings = numRatings + 1;
+            quiz.numRatings = ratings.length;
+            quiz.ratings = ratings;
 
             quiz.save();
 

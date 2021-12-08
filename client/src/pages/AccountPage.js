@@ -59,6 +59,7 @@ import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
 import bronze_badge from '../images/silver_badge.png'
+import CreateQuizCard from '../components/CreateQuizCard';
 
 let profileImg = null;
 let bannerImg = null;
@@ -1237,6 +1238,12 @@ export default function AccountPage(props) {
                         display='flex'
                         flexWrap='wrap'
                     >
+                        <CreateQuizCard
+                            width='7.5%'
+                            title_fontsize='92%'
+                            type='1'
+                            callback={() => history.push('/createQuiz')}
+                        />
                         {userData.quizzesMade.map((quiz, key) => {
                             return (
                                 <SelectQuizCard

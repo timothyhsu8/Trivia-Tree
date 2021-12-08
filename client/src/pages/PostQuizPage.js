@@ -1,5 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
+import { AuthContext } from '../context/auth';
+import { useContext } from 'react';
 import { Box, Flex, Center, Text, Stack, VStack, Button, Image, Avatar, Icon, useColorModeValue, Input, HStack, Grid } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
 import userImage from '../images/guest.png';
@@ -22,6 +24,7 @@ import { BsAlarm, BsChatSquareDotsFill, BsCheck2, BsCheck2Square, BsFillFileText
 
 export default function PostQuizPage() {
     let history = useHistory();
+    let {user} = useContext(AuthContext);
     let logged_in = false;
     let quizScore = null; 
     let elapsedTime = null;
@@ -95,7 +98,7 @@ export default function PostQuizPage() {
         fetchPolicy: 'network-only',
         variables: { quizId: quizId },
         onCompleted(data) {
-            console.log(data2);
+            // console.log(data2);
         }
     });
     //Dark mode styling
@@ -103,8 +106,25 @@ export default function PostQuizPage() {
 
     const {data:data3, loading:loading3} = useQuery(queries.GET_POST_RECOMMENDATIONS, {
         fetchPolicy: 'catch-first', //does this stop it
-        variables: { quiz_id: quizId }
+        variables: { quiz_id: quizId },
     });
+
+    const {data: data4, loading: loading4} = useQuery(queries.GET_RATING,
+        (!user || user === 'NoUser') ?
+        {skip: true} : {
+            fetchPolicy: 'catch-first', //does this stop it
+            variables: { quizId: quizId, userId: user._id},
+            onCompleted() {
+                if (data4.getRating) {
+                    console.log(data4);
+                    setIsRated(true);
+                    setRating(data4.getRating);
+                }
+            },
+            onError(err) {
+                console.log(JSON.stringify(err, null, 2));
+            }
+        });
 
     const buttons = [
         {
@@ -135,7 +155,7 @@ export default function PostQuizPage() {
             return <Text fontSize="10px"> No comparisons possible, you are the first to take this quiz </Text>
         }
         //First we have to calculate the average when the user's score is factored out
-        console.log(averageScore);
+        // console.log(averageScore);
         let adjustedAverage = ((averageScore * attempts) - userScore) / (attempts - 1);
         adjustedAverage = Math.round(adjustedAverage * 10) / 10;
         let increase = userScore - adjustedAverage;
@@ -147,7 +167,7 @@ export default function PostQuizPage() {
             percentIncrease = ((Math.abs(increase)) / adjustedAverage) * 100;
         }
         percentIncrease = Math.round(percentIncrease * 100) / 100;
-        console.log(percentIncrease)
+        // console.log(percentIncrease)
         if (increase >= 0) {
             return `You ${percentIncrease}% better than other Quiztakers`
         } else {
@@ -168,6 +188,10 @@ export default function PostQuizPage() {
     }
 
     if (loading3) {
+        return <div></div>;
+    }
+
+    if (loading4) {
         return <div></div>;
     }
 
@@ -214,7 +238,7 @@ export default function PostQuizPage() {
         comments = data2.getQuiz.comments
         comments = reverseArr(comments)
         icon_src = data2.getQuiz.icon == null ? quizImage : data2.getQuiz.icon
-        console.log(data2.getQuiz);
+        // console.log(data2.getQuiz);
         user_icon = data2.getQuiz.user.iconImage
 
     }
@@ -222,18 +246,18 @@ export default function PostQuizPage() {
     if (data3) {
         // console.log(leaderboard)
         quiz_recommendations = data3.getPostRecommendations;
-        console.log(quiz_recommendations)
+        // console.log(quiz_recommendations)
     }
 
     function handleRating(rate) {
         setRating(rate)
-        const {data} = rateQuiz({variables: {quizId: quizId, rating: rate }});
+        const {data} = rateQuiz({variables: {quizId: quizId, userId: user_id, rating: rate }});
         // Some logic
         setIsRated(true);
     }
 
     async function handleAddComment(){
-        console.log(comment);
+        // console.log(comment);
         const {data} = await AddComment({ variables: {
             quiz_id: quizId, user_id: user_id, comment: comment
         }});
@@ -242,7 +266,7 @@ export default function PostQuizPage() {
     }
 
     async function handleDeleteComment(comment_id){
-        console.log(comment_id);
+        // console.log(comment_id);
         const {data} = await DeleteComment({ variables: {
             quiz_id: quizId, user_id: user_id, comment_id: comment_id
         }});
@@ -338,10 +362,10 @@ export default function PostQuizPage() {
                                             </Text>
                                             <Box>
                                                 {
-                                                    !isRated ? 
+                                                    // !isRated ? 
                                                     <Rating onClick={handleRating} ratingValue={rating} size={50}/>
-                                                    :
-                                                    <RatingView ratingValue={rating} size={50}/>
+                                                    // :
+                                                    // <RatingView ratingValue={rating} size={50}/>
                                                 }
                                                 
                                             </Box>

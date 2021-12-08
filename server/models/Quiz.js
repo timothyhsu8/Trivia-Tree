@@ -49,6 +49,17 @@ const commentSchema = new Schema({
     }
 }, { timestamps: true });
 
+const ratingSchema = new Schema({
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    rating: {
+        type: Number,
+        required: true
+    },
+});
 
 const quizSchema = new Schema(
     {
@@ -103,6 +114,10 @@ const quizSchema = new Schema(
         rating: {
             type: Number,
             default: null
+        },
+        ratings: {
+            type: [ratingSchema],
+            default: []
         },
         averageScore: {
             type: Number,

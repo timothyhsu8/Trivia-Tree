@@ -371,7 +371,7 @@ module.exports = {
                 await user.delete();
                 await Quiz.find({ user: user._id }).then(function (quizess) {
                     quizess.forEach(async (quizData) => {
-                        console.log(quizData._id);
+                        // console.log(quizData._id);
                         await QuizAttempt.deleteMany({ quiz: quizData._id });
                         await User.updateMany(
                             {
@@ -433,6 +433,28 @@ module.exports = {
                         },
                     }
                 );
+                await Quiz.find({ ratings: { $elemMatch: { user: user._id } } }).then(function (quizess) {
+                    quizess.forEach(async (quiz) => {
+                        console.log(quiz);
+                        let total = 0;
+                        let spliceIndex;
+                        for (let i = 0; i < quiz.ratings.length; i++) {
+                            if (quiz.ratings[i].user.equals(user._id)) {
+                                spliceIndex = i;
+                            } else {
+                                total += quiz.ratings[i].rating;
+                            }
+                        }
+                        quiz.ratings.splice(spliceIndex, 1);
+                        quiz.numRatings = quiz.ratings.length;
+                        if (quiz.ratings.length === 0) {
+                            quiz.rating = null;
+                        } else {
+                            quiz.rating = total / quiz.ratings.length;
+                        }
+                        quiz.save();
+                    });
+                });
                 // console.log(user);
             } catch (err) {
                 throw new Error(err);

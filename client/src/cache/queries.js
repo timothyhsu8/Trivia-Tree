@@ -443,3 +443,9 @@ export const GET_SHOP_ITEMS = gql`
         }
     }
 `;
+
+export const GET_RATING = gql`
+    query ($quizId: ID!, $userId: ID!) {
+        getRating(quizId: $quizId, userId: $userId) 
+    }
+`;

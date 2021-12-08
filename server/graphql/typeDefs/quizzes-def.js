@@ -17,6 +17,7 @@ module.exports = gql`
         quizShuffled: Boolean
         quizInstant: Boolean
         rating: Float
+        ratings: [Rating]
         averageScore: Float
         medianScore: Float
         comments: [Comment!]
@@ -48,7 +49,12 @@ module.exports = gql`
         user: User
         reply: String!
         createdAt: String
-        
+    }
+
+    type Rating {
+        _id: ID!
+        user: User
+        rating: Int
     }
 
     input QuizInput {
@@ -83,6 +89,7 @@ module.exports = gql`
         searchQuizzes(searchText: String!): [Quiz]
         getPostRecommendations(quiz_id: ID): [Quiz]
         getUserRecommendations(user_id: ID): [Quiz]
+        getRating(quizId: ID!, userId: ID!): Int
     }
     extend type Mutation {
         createQuiz(quizInput: QuizInput!): Quiz
@@ -91,7 +98,7 @@ module.exports = gql`
         deleteQuiz(quizId: ID!): Quiz
         favoriteQuiz(quizId: ID!, userId: ID!): Boolean
         unfavoriteQuiz(quizId: ID!, userId: ID!): Boolean
-        rateQuiz(quizId: ID!, rating: Int!): Quiz
+        rateQuiz(quizId: ID!, userId: ID!, rating: Int!): Quiz
         addComment(quiz_id: ID!, user_id: ID!, comment: String!): Quiz
         deleteComment(quiz_id: ID!, user_id: ID!, comment_id: ID!): Quiz
         addReply(quiz_id: ID!, user_id: ID!, comment_id: ID!, reply: String!): Quiz

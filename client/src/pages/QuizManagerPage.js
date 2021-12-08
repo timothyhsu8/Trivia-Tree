@@ -98,11 +98,13 @@ export default function QuizManagerPage() {
 
     console.log(userData);
     return (
-        <Box> 
+        <Box>
+        
             <Center> 
                 <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Quizzes </Text>
             </Center>
-            
+            <Button display='inline' pos='absolute' top='70px' right='10px' backgroundColor='cyan.500' color='white' onClick={() => history.push('/createQuiz')} _focus={{ outline: 'none' }} _hover={{ backgroundColor: 'cyan.600' }} _active={{backgroundColor: 'cyan.700'}}>Create Quiz</Button>
+
             {/* PLATFORM CARDS */}
             {
                 userData.quizzesMade.length !== 0 ?
@@ -148,17 +150,17 @@ export default function QuizManagerPage() {
                                                                 <Icon as={BsHeart} /> {quiz.numFavorites} Favorites 
                                                             </Text>
                                                             <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={StarIcon} /> {quiz.rating ? quiz.rating : 'No'} Rating {quiz.rating ? `(${quiz.numRatings})`: ''}
+                                                                <Icon as={StarIcon} /> {quiz.rating ? quiz.rating : 'N/A'} {quiz.rating ? `(${quiz.numRatings} Ratings)`: ''}
                                                             </Text>
                                                         </VStack>
                                                     </Box>
                                                     <Box pl='6%'>
                                                         <VStack spacing={4} align='start'>
                                                             <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={GrScorecard} /> {quiz.averageScore ? `${quiz.averageScore}%` : 'No'} Average Score 
+                                                                <Icon as={GrScorecard} /> {quiz.averageScore !== null ? `${quiz.averageScore}%` : 'No'} Average Score 
                                                             </Text>
                                                             <Text className="disable-select" fontSize="125%"> 
-                                                                <Icon as={GrScorecard} /> {quiz.medianScore ? `${quiz.medianScore}%` : 'No'} Median Score 
+                                                                <Icon as={GrScorecard} /> {quiz.medianScore !== null ? `${quiz.medianScore}%` : 'No'} Median Score 
                                                             </Text>
                                                         </VStack>
                                                     </Box>

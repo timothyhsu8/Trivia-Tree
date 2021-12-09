@@ -140,7 +140,7 @@ export default function PlatformCard(props) {
                             <HStack>
                                 <Text
                                     textColor='white'
-                                    fontWeight='thin'
+                                    fontSize="90%"
                                     whiteSpace="nowrap"
                                 >
                                     {' '}
@@ -153,7 +153,7 @@ export default function PlatformCard(props) {
                                 <Text textColor='white'>•</Text>
                                 <Text
                                     textColor='white'
-                                    fontWeight='thin'
+                                    fontSize="90%"
                                     whiteSpace="nowrap"
                                 >
                                     <Icon as={BsFillFileEarmarkTextFill} pos="relative" top="-1.5px" />{' '}

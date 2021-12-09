@@ -47,7 +47,7 @@ export default function QuizCard( props ) {
     // Removes this quiz from a platform
     const [removeQuizFromPlatform] = useMutation(REMOVE_QUIZ_FROM_PLATFORM, {
         onCompleted() {
-            history.go(0)
+            props.onDelete()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -100,7 +100,8 @@ export default function QuizCard( props ) {
             w={width}
             minW="80px" 
             padding="0.5%" 
-            margin="0.5%"
+            ml={2}
+            mt={1}
             borderRadius="4%" 
             border={isEditing ? "1px":""}
             borderColor={isEditing ? "red":""}

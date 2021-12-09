@@ -1,13 +1,13 @@
 import { React, useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/auth';
-import { Box, Text, Flex, Spinner, Center, Grid, useColorMode, Image, Icon } from '@chakra-ui/react';
+import { Box, Text, Flex, Spinner, Center, Grid, useColorMode, Image, Icon, Avatar, HStack, VStack, Stack } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_QUIZZES, GET_PLATFORMS, GET_USERS, GET_USER, GET_USER_RECOMMENDATIONS} from "../cache/queries";
 import QuizCard from '../components/QuizCard';
 import PlatformCard from '../components/PlatformCard';
 import UserCard from '../components/UserCard';
-import { StarIcon } from '@chakra-ui/icons'
-import { BsFillBookmarkHeartFill, BsFillBookmarkStarFill, BsFillLightningFill, BsFillReplyFill, BsFillTrophyFill, BsPersonCircle } from 'react-icons/bs';
+import { StarIcon, ViewIcon } from '@chakra-ui/icons'
+import { BsFillBookmarkHeartFill, BsFillBookmarkStarFill, BsFillHeartFill, BsFillLightningFill, BsFillReplyFill, BsFillTrophyFill, BsPersonCircle } from 'react-icons/bs';
 import * as mutations from '../cache/mutations';
 import '../styles/styles.css'
 
@@ -137,7 +137,6 @@ export default function Homepage() {
     const quiz_data = quizzes.data.getQuizzes
     const platform_data = platforms.data.getPlatforms
     const user_data = users.data.getUsers
-
     const featured_quizzes = quiz_data.filter((quiz) => {
         return quiz.isFeatured === true
     })
@@ -233,7 +232,42 @@ export default function Homepage() {
                     </Box>
                 }
 
-                <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
+                {/* Testing out big featured cards */}
+                {/* <Box w="30%" bgColor="white" borderRadius={10} border="1px" borderColor="gray.200" boxShadow="md" padding={5}
+                        _hover={{bgColor:"gray.100", transition:".15s linear", cursor:"pointer"}}
+                        transition=".15s linear"    
+                    >
+                        <HStack>
+                            <Avatar src={featured_quizzes[0].icon} size="2xl" borderRadius={10} />
+                            <Grid templateColumns="2fr 1fr">
+                                <Stack spacing={1}>
+                                    <Text fontSize="130%" fontWeight="medium" whiteSpace="nowrap"> {featured_quizzes[0].title} </Text>
+                                    <HStack>
+                                        <Avatar src={featured_quizzes[0].user.iconImage} size="sm"/>
+                                        <Text whiteSpace="nowrap"> {featured_quizzes[0].user.displayName} </Text>
+                                    </HStack>
+                                    <Text> {featured_quizzes[0].description}</Text>
+                                </Stack>
+
+                                <Stack>
+                                    <Text>
+                                        <Icon as={ViewIcon} color="blue.400" pos="relative" top="-1px" mr="5px"/> 
+                                        {featured_quizzes[0].numAttempts} Attempts 
+                                    </Text>
+                                    <Text>
+                                        <Icon as={BsFillHeartFill} color="red.400" pos="relative" top="-1px" mr="5px"/> 
+                                        {featured_quizzes[0].numFavorites} Favorites
+                                    </Text>
+                                    <Text>
+                                        <Icon as={StarIcon} color="yellow.400" pos="relative" top="-1px" mr="5px"/> 
+                                        {featured_quizzes[0].rating} Stars
+                                    </Text>
+                                </Stack>
+                            </Grid>
+                        </HStack>
+                    </Box> */}
+                
+                {/* <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center> */}
 
 
                 {/* USERS */}

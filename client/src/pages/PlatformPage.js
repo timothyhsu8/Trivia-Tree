@@ -84,7 +84,7 @@ export default function PlatformPage({}) {
     // Sends the updated platform information to the database
     const [updatePlatform] = useMutation(UPDATE_PLATFORM, {
         onCompleted() {
-            // history.push('/');
+            platform.refetch()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -94,7 +94,7 @@ export default function PlatformPage({}) {
     // Sends the selected quiz to the database and adds it to the platform
     const [addQuizToPlatform] = useMutation(ADD_QUIZ_TO_PLATFORM, {
         onCompleted() {
-            history.go(0)
+            platform.refetch()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -103,7 +103,7 @@ export default function PlatformPage({}) {
 
     const [addQuizToPlaylist] = useMutation(ADD_QUIZ_TO_PLAYLIST, {
         onCompleted() {
-            history.go(0)
+            platform.refetch()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -130,7 +130,7 @@ export default function PlatformPage({}) {
 
     const [addPlaylistToPlatform] = useMutation(ADD_PLAYLIST_TO_PLATFORM, {
         onCompleted() {
-            history.go(0)
+            platform.refetch()
         },
         onError(err) {
             console.log(err);
@@ -139,7 +139,7 @@ export default function PlatformPage({}) {
 
     const [removePlaylistFromPlatform] = useMutation(REMOVE_PLAYLIST_FROM_PLATFORM, {
         onCompleted() {
-            history.go(0)
+            platform.refetch()
         },
         onError(err) {
             console.log(err);
@@ -149,7 +149,7 @@ export default function PlatformPage({}) {
     // Sends the updated platform information to the database
     const [editPlaylist] = useMutation(EDIT_PLAYLIST, {
         onCompleted() {
-            history.go(0)
+            platform.refetch()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));
@@ -701,8 +701,8 @@ export default function PlatformPage({}) {
 
     function renderFollowers() {
         return (
-            <Box bgColor='gray.200' borderRadius='10'>
-                <Text pl='1.5%'  fontSize='1.2vw' fontWeight='bold'>
+            <Box borderRadius='10'>
+                <Text pl='1.5%'  fontSize='120%' fontWeight='medium'>
                     Followers ({platform.data.getPlatform.followers.length})
                 </Text>
                 <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
@@ -761,6 +761,7 @@ export default function PlatformPage({}) {
                                 key={key}
                                 is_owner={is_owner}
                                 platform_id={platform_data._id}
+                                onDelete={platform.refetch}
                             />
                         );
                     })}
@@ -859,6 +860,9 @@ export default function PlatformPage({}) {
 
     // Dropdown menu for playlists
     function renderPlaylistDropdown(playlist) {
+        if (!is_owner)
+            return
+
         return (
             <Menu>
                 <MenuButton
@@ -1254,6 +1258,11 @@ export default function PlatformPage({}) {
                     moveDown: moveDown
                 },
             },
+        })
+        setCreatingPlaylist({
+            creating: false,
+            type: null,
+            playlistId: null
         })
     }
 }

@@ -146,6 +146,9 @@ const quizSchema = new Schema(
         numRatings: {
             type: Number,
             default: 0
+        },
+        isFeatured: {
+            type: Boolean
         }
     },
     { timestamps: true }

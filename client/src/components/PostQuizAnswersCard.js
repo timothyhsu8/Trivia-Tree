@@ -22,7 +22,7 @@ export default function PostQuizAnswersCard(props) {
 
     /*Edit the mt/mb to change the spacing between elements */
     return ( 
-        <Box className="containerAcross">
+        <Box className="containerAcross" mb={props.isLast ? "120px" : ""} >
             {/* Arrow */}
             { showDetails ? 
                 <Box ml="15px" mt="10px" mb="26px">

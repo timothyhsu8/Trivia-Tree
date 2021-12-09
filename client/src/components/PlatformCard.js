@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Box, Flex, Text, Image, Icon, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, Image, Icon, VStack, HStack, Avatar } from '@chakra-ui/react';
 import defaultIcon from '../images/defaultquiz.jpeg';
-import { BsFillPersonFill } from 'react-icons/bs';
+import { BsFillFileEarmarkTextFill, BsFillPersonFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
 import { DeleteIcon } from '@chakra-ui/icons';
 import '../styles/styles.css';
@@ -117,7 +117,7 @@ export default function PlatformCard(props) {
                                 border='2px solid white'
                             />
                         </Box>
-
+                       
                         <Flex
                             w='100%'
                             direction='column'
@@ -135,21 +135,34 @@ export default function PlatformCard(props) {
                                 {' '}
                                 {platform.name}{' '}
                             </Text>
-                            <Text
-                                pos='relative'
-                                mt='1%'
-                                bottom='4%'
-                                fontSize='100%'
-                                textColor='white'
-                                fontWeight='thin'
-                            >
-                                {' '}
-                                <Icon as={BsFillPersonFill} />{' '}
-                                {platform.followers.length}{' '}
-                                {platform.followers.length == 1
-                                    ? ' Follower'
-                                    : ' Followers'}{' '}
-                            </Text>
+
+                            {/* Followers / Quizzes */}
+                            <HStack>
+                                <Text
+                                    textColor='white'
+                                    fontWeight='thin'
+                                    whiteSpace="nowrap"
+                                >
+                                    {' '}
+                                        <Icon as={BsFillPersonFill} pos="relative" top="-1px" />{' '}
+                                        {platform.followers.length}{' '}
+                                        {platform.followers.length == 1
+                                            ? ' Follower'
+                                            : ' Followers'}{' '}
+                                </Text>
+                                <Text textColor='white'>•</Text>
+                                <Text
+                                    textColor='white'
+                                    fontWeight='thin'
+                                    whiteSpace="nowrap"
+                                >
+                                    <Icon as={BsFillFileEarmarkTextFill} pos="relative" top="-1.5px" />{' '}
+                                    {platform.followers.length}{' '}
+                                    {platform.followers.length == 1
+                                        ? ' Quiz'
+                                        : ' Quizzes'}{' '}
+                                </Text>
+                            </HStack>
                         </Flex>
                     </Flex>
                 </Box>

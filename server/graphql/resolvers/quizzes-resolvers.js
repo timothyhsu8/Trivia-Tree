@@ -509,9 +509,12 @@ module.exports = {
 
             return true;
         },
-        async rateQuiz(_, { quizId, userId, rating }) {
+        async rateQuiz(_, { quizId, userId, rating }, context) {
             const quiz = await Quiz.findById(quizId);
-
+            let id = new ObjectId(userId);
+            if (!id.equals(context.req.user._id)) {
+                throw new Error('You are cannot rate on someone elses behalf');
+            }
             // let oldRating = quiz.rating;
             // let numRatings = quiz.numRatings;
             // let tempRating;

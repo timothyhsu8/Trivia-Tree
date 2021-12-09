@@ -48,6 +48,9 @@ export default function PostQuizPage() {
     const [rateQuiz] = useMutation(mutations.RATE_QUIZ, {
         onCompleted() {
             refetch();
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
         }
     });
 
@@ -175,6 +178,10 @@ export default function PostQuizPage() {
         }
     }
 
+    if (!user) {
+        return <div></div>;
+    }
+
     if (loading) {
         return <div></div>;
     }
@@ -265,7 +272,7 @@ export default function PostQuizPage() {
     async function handleAddComment(){
         // console.log(comment);
         const {data} = await AddComment({ variables: {
-            quiz_id: quizId, user_id: user_id, comment: comment
+            quiz_id: quizId, user_id: user._id, comment: comment
         }});
         setComment("");
         refetch();
@@ -274,7 +281,7 @@ export default function PostQuizPage() {
     async function handleDeleteComment(comment_id){
         // console.log(comment_id);
         const {data} = await DeleteComment({ variables: {
-            quiz_id: quizId, user_id: user_id, comment_id: comment_id
+            quiz_id: quizId, user_id: user._id, comment_id: comment_id
         }});
         refetch();
     }
@@ -438,9 +445,9 @@ export default function PostQuizPage() {
                                 paddingRight="15px"
                             >
                                 <Text marginBottom="20px" borderBottom="1px" borderColor="gray.300" fontSize="22px">Comments ({comments.length})</Text>
-                                { logged_in ? 
+                                { (user !== 'NoUser') ? 
                                     <Flex direction="row">
-                                        <Avatar src={player_icon}/>
+                                        <Avatar src={user.iconImage}/>
                                         <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"
                                             _hover={{pointer:"cursor", bgColor:"gray.200"}}
                                             _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/>
@@ -455,13 +462,13 @@ export default function PostQuizPage() {
                                         return (
                                             <CommentCard
                                                 comment={comment}
-                                                logged_in={logged_in}
-                                                user_id={user_id}
-                                                player_icon={player_icon}
+                                                logged_in={user !== 'NoUser'}
+                                                user_id={user === 'NoUser' ? null : user._id}
+                                                player_icon={user.iconImage}
                                                 handleDeleteComment={handleDeleteComment}
                                                 refetch={refetch}
                                                 quiz_id={quizId}
-                                                key={key}
+                                                key={comment._id}
                                             />
                                         )
                                     })}

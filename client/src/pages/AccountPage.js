@@ -54,7 +54,7 @@ import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
@@ -360,7 +360,7 @@ export default function AccountPage(props) {
 
     //Dark mode styling
     const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
-    const platformsButtonBG=useColorModeValue('gray.200', 'gray.500')
+    const platformsButtonBG=useColorModeValue('white', 'gray.700')
     const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
     const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
     const accountButtonsText=useColorModeValue('blue.500', 'light blue')
@@ -372,7 +372,6 @@ export default function AccountPage(props) {
 
     // Loading Screen - Wait for userData and user
     if ((loading || !user) && !firstQueryDone) {
-        console.log('loading spinner');
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -802,18 +801,20 @@ export default function AccountPage(props) {
                 <Grid templateColumns='4fr 1fr' marginTop={3}>
                     {/* FEATURED QUIZZES/PLATFORMS */}
                     <Box w='98.5%' borderRadius='10'>
-                        <VStack spacing='1.5vh'>
+                        <VStack>
                             <Box
                                 w='100%'
+                                border='1px'
                                 bgColor={platformsButtonBG}
+                                borderColor="gray.300"
                                 borderRadius='10'
                                 overflowX='auto'
                                 minH='10.5vw'
                             >
                                 <Text
-                                    pl='1.5%'
-                                    pt='1%'
-                                    fontSize='130%'
+                                    ml={4}
+                                    pt={2}
+                                    fontSize='110%'
                                     fontWeight='medium'
                                 >
                                     Featured Quizzes
@@ -821,8 +822,8 @@ export default function AccountPage(props) {
 
                                 {/* QUIZZES */}
                                 <Flex
-                                    ml='1%'
-                                    mt='.5%'
+                                    ml={2}
+                                    mt={2}
                                     spacing='4%'
                                     display='flex'
                                     flexWrap='wrap'
@@ -832,7 +833,7 @@ export default function AccountPage(props) {
                                             return (
                                                 <QuizCard
                                                     quiz={quiz}
-                                                    width='11%'
+                                                    width='10%'
                                                     title_fontsize='90%'
                                                     include_author={false}
                                                     char_limit={35}
@@ -862,7 +863,9 @@ export default function AccountPage(props) {
                             </Box>
                             <Box
                                 w='100%'
+                                border='1px'
                                 bgColor={platformsButtonBG}
+                                borderColor="gray.300"
                                 borderRadius='10'
                                 overflowX='auto'
                                 minH='12vw'
@@ -870,7 +873,7 @@ export default function AccountPage(props) {
                                 <Text
                                     pl='1.5%'
                                     pt='1%'
-                                    fontSize='130%'
+                                    fontSize='110%'
                                     fontWeight='medium'
                                 >
                                     Featured Platforms
@@ -931,7 +934,9 @@ export default function AccountPage(props) {
                         >
                             <Box
                                 minWidth='100px'
+                                border='1px'
                                 bgColor={platformsButtonBG}
+                                borderColor='gray.300'
                                 borderRadius='10'
                                 overflow='hidden'
                                 onClick={() => {
@@ -942,20 +947,22 @@ export default function AccountPage(props) {
                                 <Text
                                     pl={3}
                                     pt={2}
-                                    fontSize='120%'
+                                    fontSize='110%'
                                     fontWeight='medium'
                                 >
-                                    {' '}
-                                    Biography{' '}
+                                    Biography
                                 </Text>
                                 {editBio ? (
-                                    <Textarea
-                                        backgroundColor={whiteBlackBG}
-                                        value={bio}
-                                        onChange={(event) =>
-                                            updateBio(event.target.value)
-                                        }
-                                    />
+                                    <Center>
+                                        <Textarea
+                                            w='95%'
+                                            backgroundColor={whiteBlackBG}
+                                            value={bio}
+                                            onChange={(event) =>
+                                                updateBio(event.target.value)
+                                            }
+                                        />
+                                    </Center>
                                 ) : (
                                     <Text
                                         pl={3}
@@ -971,7 +978,9 @@ export default function AccountPage(props) {
                     ) : (
                         <Box
                             minWidth='100px'
+                            border='1px'
                             bgColor={platformsButtonBG}
+                            borderColor='gray.300'
                             borderRadius='10'
                             overflow='hidden'
                         >
@@ -1004,14 +1013,12 @@ export default function AccountPage(props) {
     function renderPlatforms() {
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} borderRadius='10'>
-                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                        User's Platforms
+                <Box bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
+                    <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
+                        {userData.displayName}'s Platforms
                     </Text>
                     <Flex
-                        ml='1%'
-                        mt='1%'
-                        spacing='4%'
+                        ml={2}
                         display='flex'
                         flexWrap='wrap'
                     >
@@ -1029,14 +1036,12 @@ export default function AccountPage(props) {
                         })}
                     </Flex>
                 </Box>
-                <Box mt='10px' bgColor={platformsButtonBG} borderRadius='10'>
-                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                        User's Followed Platforms
+                <Box mt='40px' bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
+                     <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
+                        {userData.displayName}'s Followed Platforms
                     </Text>
                     <Flex
-                        ml='1%'
-                        mt='1%'
-                        spacing='4%'
+                        ml={2}
                         display='flex'
                         flexWrap='wrap'
                     >
@@ -1062,9 +1067,9 @@ export default function AccountPage(props) {
     function renderQuizzes() {
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} borderRadius='10'>
-                    <Text pl='1.5%' pt='1%' fontSize='1.2vw' fontWeight='bold'>
-                        User's Quizzes
+                <Box bgColor={platformsButtonBG} borderRadius='10' border="1px" borderColor="gray.200">
+                    <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
+                        {userData.displayName}'s Quizzes
                     </Text>
                     <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
                         {userData.quizzesMade.map((quiz, key) => {
@@ -1083,14 +1088,9 @@ export default function AccountPage(props) {
                 </Box>
 
                 {userData.favoritedQuizzes.length > 0 ? (
-                    <Box mt='10px' bgColor={platformsButtonBG} borderRadius='10'>
-                        <Text
-                            pl='1.5%'
-                            pt='1%'
-                            fontSize='1.2vw'
-                            fontWeight='bold'
-                        >
-                            Favorited Quizzes
+                    <Box bgColor={platformsButtonBG} mt='40px' borderRadius='10' border="1px" borderColor="gray.200">
+                        <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
+                            {userData.displayName}'s Favorited Quizzes
                         </Text>
                         <Flex
                             ml='1%'
@@ -1183,7 +1183,7 @@ export default function AccountPage(props) {
     function renderBadges() {
         return (
             <Box>
-                <Text pl='1.5%' pt='1%' fontSize='150%' fontWeight='bold'>
+                <Text pl='1.5%' pt='1%' fontSize='120%' fontWeight='medium'>
                     Badges
                 </Text>
                 <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
@@ -1382,8 +1382,10 @@ export default function AccountPage(props) {
                     </HStack>
                 </Box>
             ) : null}
-            <Grid templateColumns='1fr 6fr 1fr'>
-                <Box w='100%'></Box>
+            <Grid templateColumns='1fr 7fr 1fr'>
+                <Box w='100%'>
+                    <Button variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
+                </Box>
 
                 {/* MAIN CONTENT */}
                 <Box w='100%'>

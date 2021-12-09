@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useState, createRef } from 'react';
 import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode, Avatar } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
-import moon from '../images/moon.jpg';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_QUIZZES, GET_USER } from '../cache/queries';
 import * as mutations from '../cache/mutations';
@@ -165,6 +165,7 @@ export default function SettingsPage(props) {
 
     return(
         <Box> 
+            <Button pos="absolute" variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
             <Center>
                 {/* Main section */}
                 <Grid w="50%" mt={20} templateColumns="1fr 1fr">

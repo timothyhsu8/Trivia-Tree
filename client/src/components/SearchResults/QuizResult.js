@@ -26,7 +26,7 @@ export default function QuizResult( {quiz} ) {
                 {/* QUIZ ICON */}
                 <Center>
                     <Box className='squareimage_container' w="50%" minW="50px"> 
-                        <Image className="squareimage" src={quiz.icon} fallbackSrc={quizImage} objectFit="cover" borderRadius="23%"></Image>
+                        <Image className="squareimage" src={quiz.icon} objectFit="cover" borderRadius="23%"></Image>
                     </Box>
                 </Center>
 

@@ -1,6 +1,7 @@
-import { Box, Grid, Icon, Text, VStack, HStack, Image, Center, Spinner } from '@chakra-ui/react';
+import { Box, Grid, Icon, Text, VStack, HStack, Image, Center, Spinner, Button } from '@chakra-ui/react';
 import { GET_USER } from '../cache/queries';
 import { useQuery } from '@apollo/client';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import { BsFillFileEarmarkTextFill, BsFillPersonFill } from 'react-icons/bs';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
@@ -47,6 +48,7 @@ export default function PlatformManagerPage() {
 
     return (
         <Box>
+            <Button pos="absolute" variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
             <Center> 
                 <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Platforms </Text>
             </Center>

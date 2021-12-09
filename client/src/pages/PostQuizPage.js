@@ -114,8 +114,8 @@ export default function PostQuizPage() {
         {skip: true} : {
             fetchPolicy: 'network-only', //does this stop it
             variables: { quizId: quizId, userId: user._id},
-            onCompleted() {
-                console.log(data4);
+            onCompleted(data4) {
+                console.log(data4); //
                 if (data4.getRating) {
                     setIsRated(true);
                     setRating(data4.getRating);
@@ -247,6 +247,10 @@ export default function PostQuizPage() {
         // console.log(leaderboard)
         quiz_recommendations = data3.getPostRecommendations;
         // console.log(quiz_recommendations)
+    }
+
+    if (data4) {
+        console.log(data4)
     }
 
     function handleRating(rate) {

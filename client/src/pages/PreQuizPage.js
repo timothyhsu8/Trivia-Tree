@@ -42,10 +42,9 @@ export default function PreQuizPage({}) {
             console.log(quizData);
             if (logged_in){
                 for(let i = 0; i < user.favoritedQuizzes.length; i++){
-                    if(user.favoritedQuizzes[i] == quiz._id){
+                    if(user.favoritedQuizzes[i] == quizData._id){
                         console.log("HERE")
                         console.log(user.favoritedQuizzes[i]);
-                        console.log(quiz._id);
                         setIsFavorited(true);
                         break;
                     }

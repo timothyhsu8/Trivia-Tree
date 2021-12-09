@@ -1,4 +1,4 @@
-import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, 
+import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, Avatar,
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { BsCollectionFill, BsFillCartFill, BsFillFileEarmarkTextFill, BsFillGearFill, BsFillHouseDoorFill, BsFillPersonLinesFill, BsGiftFill, BsGridFill } from "react-icons/bs"
@@ -206,10 +206,7 @@ export default function Navbar() {
                     <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
                     </div>
                     {/* PROFILE PICTURE */}
-                    <Box className='squareimage_container' w="8%" minW="30px"> 
-                        <Image className="squareimage" onClick={() => goToAccountPage()} src={pfp_src} fallbackSrc={guestImage} objectFit="cover" border="1.9px solid white" borderRadius="50%" _hover={{cursor:"pointer"}}></Image>
-                    </Box>
-
+                    <Avatar src={pfp_src} border="1px solid white" boxSize={10} onClick={() => goToAccountPage()} _hover={{cursor:"pointer"}}/>
                     <Box w='1%' />
 
                     {/* DROPDOWN MENU */}

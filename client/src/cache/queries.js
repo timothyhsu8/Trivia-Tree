@@ -17,6 +17,7 @@ export const GET_QUIZZES = gql`
             numFavorites
             numRatings
             rating
+            isFeatured
         }
     }
 `;
@@ -219,6 +220,9 @@ export const GET_PLATFORMS = gql`
                 _id
                 displayName
                 iconImage
+            }
+            quizzes {
+                _id
             }
         }
     }

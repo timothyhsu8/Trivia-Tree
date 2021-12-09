@@ -138,6 +138,9 @@ export default function Homepage() {
     const platform_data = platforms.data.getPlatforms
     const user_data = users.data.getUsers
 
+    const featured_quizzes = quiz_data.filter((quiz) => {
+        return quiz.isFeatured === true
+    })
 
     recommendation_list = userRecommendations;
 
@@ -190,25 +193,32 @@ export default function Homepage() {
                 {currentSection === "RECOMMENDATIONS" ? 
                     <Box mt="1%" ml="2%" mr="2%">
                     <Text fontSize="150%" ml="1%" fontWeight="medium"> Recommended Quizzes </Text>
-                    <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                        {recommendation_list.map((quiz, key) => {
-                            return <QuizCard 
-                                quiz={quiz} 
-                                width="7.3%" 
-                                title_fontsize="95%" 
-                                author_fontsize="85%" 
-                                include_author={true}
-                                char_limit={30} 
-                                key={key}
-                            />
-                        })}
-                    </Flex>
+                    {
+                        userId !== null ?
+                        <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                            {recommendation_list.map((quiz, key) => {
+                                return <QuizCard 
+                                    quiz={quiz} 
+                                    width="7.3%" 
+                                    title_fontsize="95%" 
+                                    author_fontsize="85%" 
+                                    include_author={true}
+                                    char_limit={30} 
+                                    key={key}
+                                />
+                            })}
+                        </Flex>
+                        : 
+                        <Center>
+                            <Text fontSize="150%" mt={21} mb={20}> You must be logged in to view recommendations </Text>
+                        </Center>
+                    }
                     </Box>
                     :
                     <Box mt="1%" ml="2%" mr="2%">
                     <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
                     <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                        {quiz_data.map((quiz, key) => {
+                        {featured_quizzes.map((quiz, key) => {
                             return <QuizCard 
                                 quiz={quiz} 
                                 width="7.3%" 
@@ -227,7 +237,7 @@ export default function Homepage() {
 
 
                 {/* USERS */}
-                <Box mt="1%" ml="2%" mr="2%">
+                {/* <Box mt="1%" ml="2%" mr="2%">
                     <Text fontSize="150%" ml="1%" fontWeight="medium"> Featured Users </Text>
                     <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                         {user_data.map((user, key) => {
@@ -240,7 +250,7 @@ export default function Homepage() {
                             />
                         })}
                     </Flex>
-                </Box>
+                </Box> */}
                 
                 <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
                 {/* PLATFORMS */}

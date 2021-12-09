@@ -26,6 +26,7 @@ module.exports = gql`
         numAttempts: Int
         numRatings: Int
         createdAt: String
+        isFeatured: Boolean
     }
 
     type Question {
@@ -85,6 +86,7 @@ module.exports = gql`
 
     extend type Query {
         getQuizzes: [Quiz]
+        getFeaturedQuizzes: [Quiz]
         getQuiz(quizId: ID!): Quiz
         searchQuizzes(searchText: String!): [Quiz]
         getPostRecommendations(quiz_id: ID): [Quiz]

@@ -413,9 +413,11 @@ export default function PostQuizPage() {
                                     {questions.map((question, index) => {
                                     return (
                                         <PostQuizAnswersCard
+                                            key={index}
                                             place={index+1}
                                             question={question}
                                             answer={answerChoices[index]}
+                                            isLast={questions.length-1 === index}
                                         />    
                                     )
                                     })}

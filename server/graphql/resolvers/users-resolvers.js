@@ -97,6 +97,12 @@ module.exports = {
                 .populate({
                     path: 'ownedIconEffects',
                 })
+                .populate({
+                    path: 'background',
+                })
+                .populate({
+                    path: 'ownedBackgrounds',
+                })
                 .exec();
             return user;
         },

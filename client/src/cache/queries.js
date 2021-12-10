@@ -418,6 +418,16 @@ export const GET_USER = gql`
                 name
                 item
             }
+            background {
+                _id
+                name
+                item
+            }
+            ownedBackgrounds {
+                _id
+                name
+                item
+            }
             darkMode
         }
     }

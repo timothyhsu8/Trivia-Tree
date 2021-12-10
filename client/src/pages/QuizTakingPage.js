@@ -43,7 +43,7 @@ export default function QuizTakingPage({}) {
     useEffect(() => {
         if(quizTimer != -1){
             const interval = setInterval(() => {
-                    setQuizTimer(quizTimer => quizTimer + 1);
+                    setQuizTimer(quizTimer => quizTimer - 1);
             }, 1000);
             if(quizTimer == 0)
                 return () => clearInterval(interval);

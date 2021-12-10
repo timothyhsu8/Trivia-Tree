@@ -30,7 +30,8 @@ import {
     Avatar,
     Tag,
     TagLeftIcon,
-    TagLabel
+    TagLabel,
+    IconButton
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -57,7 +58,7 @@ import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
-import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, AddIcon, EditIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
@@ -1222,8 +1223,63 @@ export default function AccountPage(props) {
         )
     }
 
+    function renderBackgroundPopover() {
+        return (
+            <Popover placement="bottom-start">
+                <PopoverTrigger>
+                    <Button leftIcon={<EditIcon />} borderRadius="40" bgColor="white" textColor="blue.600" pos="relative" boxShadow="lg" _focus={{outline:"none"}} >Edit Background</Button>
+                </PopoverTrigger>
+                <Box>
+                    <PopoverContent>
+                        <PopoverCloseButton />
+                        <PopoverHeader fontWeight="medium"> Edit Background </PopoverHeader>
+                        <PopoverBody>
+                            <Stack>
+                                {/* <HStack>
+                                    <Text> Background Image: </Text>
+                                    <input
+                                        type='file'
+                                        style={{ display: 'none' }}
+                                        ref={hiddenPFPInput}
+                                        onChange={(event) => updatePFP(event)}
+                                    />
+                                    <Button 
+                                        variant="outline" 
+                                        colorScheme="blue"
+                                        _focus={{}}
+                                        onClick={() => hiddenPFPInput.current.click()}
+                                    > 
+                                        Upload Image 
+                                    </Button>
+                                </HStack> */}
+                                <HStack>
+                                    <Text> Background: </Text>
+                                    <Menu>
+                                        <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                            { iconEffect.name }
+                                        </MenuButton>
+                                        <MenuList>
+                                            <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                            {
+                                                userData.ownedIconEffects.map((item, key) => {
+                                                    return (
+                                                        <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                    )
+                                                })
+                                            }
+                                        </MenuList>
+                                    </Menu>
+                                </HStack>
+                            </Stack>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Box>
+            </Popover>
+        )
+    }
+
     return (
-        <Box data-testid='main-component'>
+        <Box data-testid='main-component' h='100vh' bgPos="center" bgSize="cover">
             {isAddingFeaturedQuiz ? (
                 <Box
                     position='fixed'
@@ -1422,13 +1478,22 @@ export default function AccountPage(props) {
                     })
                 }
             </Grid>
-
-            <Grid templateColumns='1fr 7fr 1fr'>
+            
+            {/* Main Grid */}
+            <Grid templateColumns='1fr 7fr 1fr' mt={5}>
                 <Box w='100%' />
 
                 {/* MAIN CONTENT */}
-                <Box w='100%' mt={5}>
+                <Box w='100%'>
                     {renderPage()}
+                </Box>
+                
+                
+                <Box>
+                    <Center>
+                        { renderBackgroundPopover() }
+    
+                    </Center>
                 </Box>
             </Grid>
 

@@ -9,7 +9,7 @@ module.exports = gql`
         iconEffect: Item
         bannerImage: String
         bannerEffect: Item
-        background: String
+        background: Item
         title: String
         bio: String
         currency: Int

@@ -24,8 +24,7 @@ export default function SelectPlatformCard( props ) {
             w={width}
             minWidth={minWidth}
             margin="1%"
-            _hover={{bgColor: chosen ? "green" : "blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
-            _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear", opacity:"0.6"}}
+            _hover={{cursor:"pointer", transition:"0.15s linear", opacity:"0.8"}} 
             transition="0.10s linear"
             onClick={() => setChosenPlatform(platform)}
         >
@@ -46,7 +45,7 @@ export default function SelectPlatformCard( props ) {
                     pos="relative"
                     h={img_height}
                     borderBottomRadius="10"
-                    bgColor={chosen ? "green":"gray.800"}
+                    bgColor={chosen ? "green.600":"gray.800"}
                 >
                     {/* PLATFORM NAME / ICON */}
                     <Flex className="disable-select" w="100%" direction="row" position="absolute" top="8%" ml="3%">

@@ -136,8 +136,6 @@ export default function ShoppingPage() {
 
     return (
         <Box>
-            <Button pos="absolute" variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
-
             {/*Shop Banner*/}
             <Center>
                 <Image pt={5} src={treeshop} alt={"Tree Shop Banner"} />

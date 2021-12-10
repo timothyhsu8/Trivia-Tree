@@ -27,7 +27,10 @@ import {
     Stack,
     useColorModeValue,
     Icon,
-    Avatar
+    Avatar,
+    Tag,
+    TagLeftIcon,
+    TagLabel
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -54,7 +57,7 @@ import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
 import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
-import { ChevronDownIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
@@ -364,7 +367,7 @@ export default function AccountPage(props) {
     const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
     const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
     const accountButtonsText=useColorModeValue('blue.500', 'light blue')
-    const accountButtonsText2=useColorModeValue('black', 'white')
+    const accountButtonsText2=useColorModeValue('gray.700', 'white')
     const whiteBlackBG=useColorModeValue('white', 'gray.700')
     const basicTextColor=useColorModeValue('white', 'black')
     const cancelButtonBG=useColorModeValue('gray.500', 'gray.500')
@@ -588,7 +591,7 @@ export default function AccountPage(props) {
                                         }
                                         bgSize='cover'
                                         bgPosition='center'
-                                        borderRadius='10px'
+                                        borderRadius='5px'
                                         _hover={{
                                             cursor: 'pointer',
                                             filter: 'brightness(65%)',
@@ -658,7 +661,7 @@ export default function AccountPage(props) {
                         }
                         bgSize='cover'
                         bgPosition='center'
-                        borderRadius='10px'
+                        borderRadius='5px'
                     ></Box>
                 )}
                 
@@ -804,21 +807,32 @@ export default function AccountPage(props) {
                         <VStack>
                             <Box
                                 w='100%'
-                                border='1px'
+                                boxShadow="0 0 3px #ccc"
                                 bgColor={platformsButtonBG}
-                                borderColor="gray.300"
                                 borderRadius='10'
                                 overflowX='auto'
                                 minH='10.5vw'
+                                padding={1}
                             >
-                                <Text
-                                    ml={4}
-                                    pt={2}
-                                    fontSize='110%'
-                                    fontWeight='medium'
-                                >
-                                    Featured Quizzes
-                                </Text>
+                                <HStack ml={4} pt={2}>
+                                    <Text
+                                        fontSize='110%'
+                                        fontWeight='medium'
+                                    >
+                                        Featured Quizzes
+                                    </Text>
+                                    {isOwner && !preview ? (
+                                        <Tag className="disable-select" variant="subtle" colorScheme="orange"
+                                            _hover={{cursor:"pointer", opacity:"85%"}}
+                                            onClick={() => setIsAddingFeaturedQuiz(true)}
+                                            >
+                                            <TagLeftIcon as={AddIcon} />
+                                            <TagLabel pos="relative" top='1px'> Add Quiz </TagLabel>
+                                        </Tag>
+                                    ) : (
+                                        ''
+                                    )}
+                                </HStack>
 
                                 {/* QUIZZES */}
                                 <Flex
@@ -849,35 +863,36 @@ export default function AccountPage(props) {
                                             );
                                         }
                                     )}
-                                    {isOwner && !preview ? (
-                                        <AddQuizCard
-                                            width='10%'
-                                            title_fontsize='100%'
-                                            type='1'
-                                            callback={setIsAddingFeaturedQuiz}
-                                        />
-                                    ) : (
-                                        ''
-                                    )}
                                 </Flex>
                             </Box>
                             <Box
                                 w='100%'
-                                border='1px'
+                                boxShadow="0 0 3px #ccc;"
                                 bgColor={platformsButtonBG}
-                                borderColor="gray.300"
                                 borderRadius='10'
                                 overflowX='auto'
                                 minH='12vw'
+                                padding={1}
                             >
-                                <Text
-                                    pl='1.5%'
-                                    pt='1%'
-                                    fontSize='110%'
-                                    fontWeight='medium'
-                                >
-                                    Featured Platforms
-                                </Text>
+                                <HStack ml={4} pt={2}>
+                                    <Text
+                                        fontSize='110%'
+                                        fontWeight='medium'
+                                    >
+                                        Featured Platforms
+                                    </Text>
+                                    {isOwner && !preview ? (
+                                        <Tag className="disable-select" variant="subtle" colorScheme="orange"
+                                            _hover={{cursor:"pointer", opacity:"85%"}}
+                                            onClick={() => setIsAddingFeaturedPlatform(true)}
+                                            >
+                                            <TagLeftIcon as={AddIcon} />
+                                            <TagLabel pos="relative" top='1px'> Add Platform </TagLabel>
+                                        </Tag>
+                                    ) : (
+                                        ''
+                                    )}
+                                </HStack>
                                 {/* Platforms */}
                                 <Flex
                                     ml='1%'
@@ -893,7 +908,7 @@ export default function AccountPage(props) {
                                                     platform={platform}
                                                     width='25%'
                                                     // minWidth='200px'
-                                                    img_height='50px'
+                                                    img_height='60px'
                                                     char_limit={44}
                                                     key={key}
                                                     isOwner={
@@ -905,19 +920,6 @@ export default function AccountPage(props) {
                                                 />
                                             );
                                         }
-                                    )}
-                                    {isOwner && !preview ? (
-                                        <AddQuizCard
-                                            width='10%'
-                                            // height='25%'
-                                            title_fontsize='100%'
-                                            type='0'
-                                            callback={
-                                                setIsAddingFeaturedPlatform
-                                            }
-                                        />
-                                    ) : (
-                                        ''
                                     )}
                                 </Flex>
                             </Box>
@@ -933,10 +935,10 @@ export default function AccountPage(props) {
                             bgColor={bannerEditBG}
                         >
                             <Box
+                                boxShadow="0 0 3px #ccc;"
+                                padding={1}
                                 minWidth='100px'
-                                border='1px'
                                 bgColor={platformsButtonBG}
-                                borderColor='gray.300'
                                 borderRadius='10'
                                 overflow='hidden'
                                 onClick={() => {
@@ -978,9 +980,8 @@ export default function AccountPage(props) {
                     ) : (
                         <Box
                             minWidth='100px'
-                            border='1px'
+                            boxShadow="0 0 3px #ccc;"
                             bgColor={platformsButtonBG}
-                            borderColor='gray.300'
                             borderRadius='10'
                             overflow='hidden'
                         >
@@ -1014,9 +1015,11 @@ export default function AccountPage(props) {
         return (
             <Box>
                 <Box bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
-                    <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                        {userData.displayName}'s Platforms
-                    </Text>
+                    <HStack>
+                        <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
+                            {userData.displayName}'s Platforms
+                        </Text>
+                    </HStack>
                     <Flex
                         ml={2}
                         display='flex'
@@ -1026,9 +1029,9 @@ export default function AccountPage(props) {
                             return (
                                 <PlatformCard
                                     platform={platform}
-                                    width='15%'
+                                    width='18%'
                                     minWidth='200px'
-                                    img_height='50px'
+                                    img_height='60px'
                                     char_limit={44}
                                     key={key}
                                 />
@@ -1049,9 +1052,9 @@ export default function AccountPage(props) {
                             return (
                                 <PlatformCard
                                     platform={platform}
-                                    width='15%'
+                                    width='18%'
                                     minWidth='200px'
-                                    img_height='50px'
+                                    img_height='60px'
                                     char_limit={44}
                                     key={key}
                                 />
@@ -1382,88 +1385,49 @@ export default function AccountPage(props) {
                     </HStack>
                 </Box>
             ) : null}
+
+            {/* HEADER BUTTONS */}
+            <Grid
+                bgColor="white"
+                w='100%'
+                h='6vh'
+                minH='50px'
+                templateColumns='1fr 1fr 1fr 1fr'
+                boxShadow="md"
+            >
+                {
+                    headerSections.map((section, key) => {
+                        return (
+                            <Box className="disable-select" pos="relative" key={key} display="flex" flexDir="column" justifyContent="center">
+                                <Text
+                                    key={key}
+                                    w='100%'
+                                    fontSize='125%'
+                                    textColor={ page === section.pageId ? accountButtonsText : accountButtonsText2 }
+                                    textAlign="center"
+                                    transition=".1s linear"
+                                    whiteSpace="nowrap"
+                                    _focus={{ boxShadow:'none' }}
+                                    _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
+                                    onClick={() => setPage(section.pageId)}
+                                >
+                                    <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
+                                    { section.pageName }
+                                </Text>
+                                <Center>
+                                    <Box pos="absolute" bottom="0px" w="70%" h="4px" bgColor={page === section.pageId ? "blue.500" : "" }  transition="0.15s linear"/>
+                                </Center>
+                            </Box>
+                        )
+                    })
+                }
+            </Grid>
+
             <Grid templateColumns='1fr 7fr 1fr'>
-                <Box w='100%'>
-                    <Button variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
-                </Box>
+                <Box w='100%' />
 
                 {/* MAIN CONTENT */}
-                <Box w='100%'>
-                    {/* HEADER BUTTONS */}
-                    <Grid
-                        w='100%'
-                        h='6vh'
-                        minH='50px'
-                        templateColumns='1fr 1fr 1fr 1fr'
-                    >
-                        {
-                            headerSections.map((section, key) => {
-                                return (
-                                    <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
-                                        <Text
-                                            key={key}
-                                            w='100%'
-                                            fontSize='125%'
-                                            textColor={ page === section.pageId ? accountButtonsText : accountButtonsText2 }
-                                            textAlign="center"
-                                            transition=".1s linear"
-                                            whiteSpace="nowrap"
-                                            _focus={{ boxShadow:'none' }}
-                                            _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
-                                            onClick={() => setPage(section.pageId)}
-                                        >
-                                            <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
-                                            { section.pageName }
-                                        </Text>
-                                    </Box>
-                                )
-                            })
-                        }
-                        {/* <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'user' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('user')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            {username}{' '}
-                        </Button>
-                        <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'platforms' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('platforms')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            Platforms{' '}
-                        </Button>
-                        <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'quizzes' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('quizzes')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            Quizzes{' '}
-                        </Button>
-                        <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'badges' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('badges')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            Badges{' '}
-                        </Button> */}
-                    </Grid>
+                <Box w='100%' mt={5}>
                     {renderPage()}
                 </Box>
             </Grid>

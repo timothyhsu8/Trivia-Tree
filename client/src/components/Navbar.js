@@ -116,7 +116,7 @@ export default function Navbar() {
     
 
     return(
-        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="red.900">
+        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="red.900" boxShadow="md">
             <Grid h="100%" templateColumns="2fr 3fr 2fr" pos="relative">
                 {/* RETURN TO HOMEPAGE */}
                 <Box display="flex" flexDirection="column" justifyContent="center">

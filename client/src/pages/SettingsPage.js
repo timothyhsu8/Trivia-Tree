@@ -165,7 +165,6 @@ export default function SettingsPage(props) {
 
     return(
         <Box> 
-            <Button pos="absolute" variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
             <Center>
                 {/* Main section */}
                 <Grid w="50%" mt={20} templateColumns="1fr 1fr">

@@ -125,7 +125,6 @@ export default function QuizManagerPage() {
     
     return (
         <Box>
-            <Button pos="absolute" variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
             <Center> 
                 <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Quizzes </Text>
             </Center>

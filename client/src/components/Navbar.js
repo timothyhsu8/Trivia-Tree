@@ -1,5 +1,5 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, Avatar,
-    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue } from "@chakra-ui/react"
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue, IconButton } from "@chakra-ui/react"
 import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { BsCollectionFill, BsFillCartFill, BsFillFileEarmarkTextFill, BsFillGearFill, BsFillHouseDoorFill, BsFillPersonLinesFill, BsGiftFill, BsGridFill } from "react-icons/bs"
 import { config } from '../util/constants';
@@ -116,7 +116,7 @@ export default function Navbar() {
     
 
     return(
-        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="red.900" boxShadow="md">
+        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="#751616" boxShadow="md">
             <Grid h="100%" templateColumns="2fr 3fr 2fr" pos="relative">
                 {/* RETURN TO HOMEPAGE */}
                 <Box display="flex" flexDirection="column" justifyContent="center">
@@ -185,25 +185,30 @@ export default function Navbar() {
                     <Spacer />
                     
                     <div className="fadeshow3">
-
-                    <Text fontSize="105%" color="white" whiteSpace="nowrap" onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} _hover={{cursor:"pointer"}}>
-                        <Icon as={BsFillCartFill} mr={2} pos="relative" top={-0.5} />
-                        Shop
-                    </Text>
+                    
+                    {/* SHOP BUTTON */}
+                    <Button 
+                        colorScheme="pink" 
+                        leftIcon={<BsFillCartFill />} 
+                        onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} 
+                        _focus={{outline:"none"}}
+                    >
+                        Shop 
+                    </Button>
                     </div>
                     
                     <Spacer />
                     
                     <div className="fadeshow2">
-                    <Flex direction="row" pr={10}>
-                        <Image src={coin} h="20px" w="20px" position="relative" top="3px"></Image>
-                        <Text fontSize="16px" position="relative" color="white" left="6px" top="1px">{currency}</Text>
-                    </Flex>
+                    <HStack pr={10} spacing={1}>
+                        <Image src={coin} h="20px" w="20px" position="relative" top="1px"></Image>
+                        <Text position="relative" color="white">{currency}</Text>
+                    </HStack>
                     </div>
 
                     {/* USER NAME */}
                     <div className="fadeshow1">
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="105%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
                     </div>
                     {/* PROFILE PICTURE */}
                     <Avatar src={pfp_src} border="1px solid white" boxSize={10} onClick={() => goToAccountPage()} _hover={{cursor:"pointer"}}/>
@@ -211,7 +216,7 @@ export default function Navbar() {
 
                     {/* DROPDOWN MENU */}
                     <Menu>
-                        <MenuButton as={HamburgerIcon} boxSize='6' color='white' _hover={{ cursor: 'pointer' }} />
+                        <MenuButton as={IconButton} colorScheme="orange" borderRadius="0" icon={<HamburgerIcon boxSize={5} />} w="45px" h="55px" _focus={{outline:"none"}}/>
                             <MenuList boxShadow='lg'>
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (
@@ -243,7 +248,6 @@ export default function Navbar() {
                                 }
                             </MenuList>
                     </Menu>
-                    <Box w='1%' />
                 </HStack>
             </Grid>
             

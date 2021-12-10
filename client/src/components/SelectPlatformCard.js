@@ -27,6 +27,7 @@ export default function SelectPlatformCard( props ) {
             _hover={{cursor:"pointer", transition:"0.15s linear", opacity:"0.8"}} 
             transition="0.10s linear"
             onClick={() => setChosenPlatform(platform)}
+            overflow="hidden"
         >
             <Flex flexDirection="column">
                 {/* MAIN IMAGE */}

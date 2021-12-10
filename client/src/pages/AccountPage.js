@@ -31,7 +31,8 @@ import {
     Tag,
     TagLeftIcon,
     TagLabel,
-    IconButton
+    IconButton,
+    Spacer
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -57,8 +58,8 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
-import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
-import { ChevronDownIcon, AddIcon, EditIcon } from '@chakra-ui/icons';
+import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsJustify, BsJustifyLeft, BsPersonCircle } from 'react-icons/bs';
+import { ChevronDownIcon, AddIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
@@ -112,6 +113,9 @@ export default function AccountPage(props) {
             _id: "uninitialized"
         }
     )
+
+    const [viewQuizType, setViewQuizType] = useState("Created Quizzes")
+    const [viewPlatformType, setViewPlatformType] = useState("Created Platforms")
 
     const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
         React.useState(false);
@@ -619,111 +623,216 @@ export default function AccountPage(props) {
     function renderUser() {
         return (
             <Box minW='500px' pos='relative'>
-                <Box position='absolute' left='-150px' zIndex='2'>
-                    {preview ? (
-                        <Button
-                            colorScheme='blue'
-                            _focus={{ border: 'none' }}
-                            onClick={() =>
-                                history.push({
-                                    pathname: '/shoppingpage',
-                                    state: {
-                                        item: itemData,
-                                        page: location.state.prevSection,
-                                        pageNum: location.state.prevPageNum,
-                                    },
-                                })
-                            }
-                        >
-                            Back to Shop
-                        </Button>
-                    ) : null}
-                </Box>
-
                 <Box pos="relative" w="100%" h="fit-content">
 
-                {/* PROFILE PICTURE AND NAME */}
-                <HStack
-                    pos="absolute"
-                    width='11%'
-                    left={12}
-                    spacing={0}
-                    top="50%"
-                    transform="translateY(-50%)"
-                    zIndex="3"
-                >
+                    {/* PROFILE PICTURE AND NAME */}
+                    <HStack
+                        pos="absolute"
+                        width='11%'
+                        left={12}
+                        spacing={0}
+                        top="50%"
+                        transform="translateY(-50%)"
+                        zIndex="2"
+                    >
 
-                    {/* Icon Effect */}
-                    {renderIconEffect()}
+                        {/* Icon Effect */}
+                        {renderIconEffect()}
 
-                    {/* Profile Picture */}
-                    {isOwner && !preview ? (
-                        <Popover placement="right-start">
-                            <PopoverTrigger>
-                                <Box w="100%">
-                                    <Tooltip
-                                        label='Edit Platform Icon'
-                                        placement='top'
-                                        fontSize='100%'
-                                        bgColor={bannerEditBG}
-                                    >
-                                        <Box
-                                            className='squareimage_container'
-                                            w='100%'
-                                            minW='60px'
-                                            minH='60px'
+                        {/* Profile Picture */}
+                        {isOwner && !preview ? (
+                            <Popover placement="right-start">
+                                <PopoverTrigger>
+                                    <Box w="100%">
+                                        <Tooltip
+                                            label='Edit Platform Icon'
+                                            placement='top'
+                                            fontSize='100%'
+                                            bgColor={bannerEditBG}
                                         >
-                                            <Image
-                                                className='squareimage'
-                                                src={pfp_src}
-                                                objectFit='cover'
-                                                borderRadius='50%'
-                                                _hover={{
-                                                    cursor: 'pointer',
-                                                    filter: 'brightness(65%)',
-                                                    transition: '0.15s linear',
-                                                }}
-                                                transition='0.15s linear'
-                                            />
-                                        </Box>
-                                    </Tooltip>
+                                            <Box
+                                                className='squareimage_container'
+                                                w='100%'
+                                                minW='60px'
+                                                minH='60px'
+                                            >
+                                                <Image
+                                                    className='squareimage'
+                                                    src={pfp_src}
+                                                    objectFit='cover'
+                                                    borderRadius='50%'
+                                                    _hover={{
+                                                        cursor: 'pointer',
+                                                        filter: 'brightness(65%)',
+                                                        transition: '0.15s linear',
+                                                    }}
+                                                    transition='0.15s linear'
+                                                />
+                                            </Box>
+                                        </Tooltip>
+                                    </Box>
+                                </PopoverTrigger>
+                                <Box>
+                                    <PopoverContent>
+                                        <PopoverCloseButton />
+                                        <PopoverHeader fontWeight="medium"> Edit Icon </PopoverHeader>
+                                        <PopoverBody>
+                                            <Stack>
+                                                <HStack>
+                                                    <Text> Icon Image: </Text>
+                                                    <input
+                                                        type='file'
+                                                        style={{ display: 'none' }}
+                                                        ref={hiddenPFPInput}
+                                                        onChange={(event) => updatePFP(event)}
+                                                    />
+                                                    <Button 
+                                                        variant="outline" 
+                                                        colorScheme="blue"
+                                                        _focus={{}}
+                                                        onClick={() => hiddenPFPInput.current.click()}
+                                                    > 
+                                                        Upload Image 
+                                                    </Button>
+                                                </HStack>
+                                                <HStack>
+                                                    <Text> Icon Effect: </Text>
+                                                    <Menu>
+                                                        <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                                            { iconEffect.name }
+                                                        </MenuButton>
+                                                        <MenuList>
+                                                            <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                                            {
+                                                                userData.ownedIconEffects.map((item, key) => {
+                                                                    return (
+                                                                        <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </MenuList>
+                                                    </Menu>
+                                                </HStack>
+                                            </Stack>
+                                        </PopoverBody>
+                                    </PopoverContent>
                                 </Box>
-                            </PopoverTrigger>
-                            <Box>
-                                <PopoverContent>
+                            </Popover>
+                        ) : (
+                            <Box
+                                className='squareimage_container'
+                                w='100%'
+                                minW='60px'
+                                minH='60px'
+                            >
+                                <Image
+                                    className='squareimage'
+                                    src={pfp_src}
+                                    objectFit='cover'
+                                    borderRadius='50%'
+                                />
+                            </Box>
+                        )}
+
+                        {/* Username */}
+                        <Text
+                            pos='absolute'
+                            bottom='30%'
+                            left='110%'
+                            fontSize='2.2vw'
+                            as='b'
+                            color='black'
+                            w='100%'
+                            pointerEvents="none"
+                            whiteSpace="nowrap"
+                        >
+                            {username}
+                        </Text>
+                        <Text
+                            pos='absolute'
+                            bottom='8%'
+                            left='14.2%'
+                            fontSize='190%'
+                            fontWeight='thin'
+                        >
+                            {' '}
+                            {userTitle}{' '}
+                        </Text>
+                    </HStack>
+
+                    {/* BANNER EFFECT */}
+                    { renderBannerEffect() }
+
+                    {/* BANNER */}
+                    {isOwner && !preview ? (
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Box>
+                                        <Tooltip
+                                            label='Edit Banner'
+                                            placement='bottom'
+                                            fontSize='100%'
+                                            bgColor={bannerEditBG}
+                                        >
+                                        <Box
+                                            h='28vh'
+                                            minH='150px'
+                                            pos='relative'
+                                            bgImage={
+                                                "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
+                                                (preview && itemData.type === 'background'
+                                                    ? itemData.item
+                                                    : banner_src) +
+                                                "')"
+                                            }
+                                            bgSize='cover'
+                                            bgPosition='center'
+                                            borderRadius='5px'
+                                            _hover={{
+                                                cursor: 'pointer',
+                                                filter: 'brightness(65%)',
+                                                transition: '0.15s linear',
+                                            }}
+                                            transition='0.15s linear'
+                                        />
+                                        </Tooltip>
+                                    </Box>
+                                </PopoverTrigger>
+                                <PopoverContent >
                                     <PopoverCloseButton />
-                                    <PopoverHeader fontWeight="medium"> Edit Icon </PopoverHeader>
+                                    <PopoverHeader fontWeight="medium"> Edit Banner </PopoverHeader>
                                     <PopoverBody>
                                         <Stack>
                                             <HStack>
-                                                <Text> Icon Image: </Text>
+                                                <Text> Banner Image: </Text>
                                                 <input
                                                     type='file'
+                                                    accept='image/*'
                                                     style={{ display: 'none' }}
-                                                    ref={hiddenPFPInput}
-                                                    onChange={(event) => updatePFP(event)}
+                                                    ref={hiddenBannerInput}
+                                                    onChange={(event) => updateBanner(event)}
                                                 />
                                                 <Button 
                                                     variant="outline" 
                                                     colorScheme="blue"
                                                     _focus={{}}
-                                                    onClick={() => hiddenPFPInput.current.click()}
+                                                    onClick={() => hiddenBannerInput.current.click()}
                                                 > 
                                                     Upload Image 
                                                 </Button>
                                             </HStack>
                                             <HStack>
-                                                <Text> Icon Effect: </Text>
+                                                <Text> Banner Effect: </Text>
                                                 <Menu>
                                                     <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
-                                                        { iconEffect.name }
+                                                        { bannerEffectPreview.name }
                                                     </MenuButton>
                                                     <MenuList>
-                                                        <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                                        <MenuItem onClick={() => updateBannerEffect({name: "No Banner Effect", item: null, _id: "none"})}> No Banner Effect </MenuItem>
                                                         {
-                                                            userData.ownedIconEffects.map((item, key) => {
+                                                            userData.ownedBannerEffects.map((item, key) => {
                                                                 return (
-                                                                    <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                                    <MenuItem key={key} onClick={() => updateBannerEffect(item)}> {item.name} </MenuItem>
                                                                 )
                                                             })
                                                         }
@@ -733,156 +842,29 @@ export default function AccountPage(props) {
                                         </Stack>
                                     </PopoverBody>
                                 </PopoverContent>
-                            </Box>
-                        </Popover>
+                            </Popover>
                     ) : (
                         <Box
-                            className='squareimage_container'
-                            w='100%'
-                            minW='60px'
-                            minH='60px'
-                        >
-                            <Image
-                                className='squareimage'
-                                src={pfp_src}
-                                objectFit='cover'
-                                borderRadius='50%'
-                            />
-                        </Box>
+                            h='28vh'
+                            minH='150px'
+                            pos='relative'
+                            bgImage={
+                                "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
+                                (preview && itemData.type === 'background'
+                                    ? itemData.item
+                                    : banner_src) +
+                                "')"
+                            }
+                            bgSize='cover'
+                            bgPosition='center'
+                            borderRadius='5px'
+                        ></Box>
                     )}
-
-                    {/* Username */}
-                    <Text
-                        pos='absolute'
-                        bottom='30%'
-                        left='110%'
-                        fontSize='2.2vw'
-                        as='b'
-                        color='black'
-                        w='100%'
-                        pointerEvents="none"
-                        whiteSpace="nowrap"
-                    >
-                        {username}
-                    </Text>
-                    <Text
-                        pos='absolute'
-                        bottom='8%'
-                        left='14.2%'
-                        fontSize='190%'
-                        fontWeight='thin'
-                    >
-                        {' '}
-                        {userTitle}{' '}
-                    </Text>
-                </HStack>
-
-                {/* BANNER EFFECT */}
-                { renderBannerEffect() }
-
-                {/* BANNER */}
-                {isOwner && !preview ? (
-                        <Popover>
-                            <PopoverTrigger>
-                                <Box>
-                                    <Tooltip
-                                        label='Edit Banner'
-                                        placement='bottom'
-                                        fontSize='100%'
-                                        bgColor={bannerEditBG}
-                                    >
-                                    <Box
-                                        h='28vh'
-                                        minH='150px'
-                                        pos='relative'
-                                        bgImage={
-                                            "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                                            (preview && itemData.type === 'background'
-                                                ? itemData.item
-                                                : banner_src) +
-                                            "')"
-                                        }
-                                        bgSize='cover'
-                                        bgPosition='center'
-                                        borderRadius='5px'
-                                        _hover={{
-                                            cursor: 'pointer',
-                                            filter: 'brightness(65%)',
-                                            transition: '0.15s linear',
-                                        }}
-                                        transition='0.15s linear'
-                                    />
-                                    </Tooltip>
-                                </Box>
-                            </PopoverTrigger>
-                            <PopoverContent >
-                                <PopoverCloseButton />
-                                <PopoverHeader fontWeight="medium"> Edit Banner </PopoverHeader>
-                                <PopoverBody>
-                                    <Stack>
-                                        <HStack>
-                                            <Text> Banner Image: </Text>
-                                            <input
-                                                type='file'
-                                                accept='image/*'
-                                                style={{ display: 'none' }}
-                                                ref={hiddenBannerInput}
-                                                onChange={(event) => updateBanner(event)}
-                                            />
-                                            <Button 
-                                                variant="outline" 
-                                                colorScheme="blue"
-                                                _focus={{}}
-                                                onClick={() => hiddenBannerInput.current.click()}
-                                            > 
-                                                Upload Image 
-                                            </Button>
-                                        </HStack>
-                                        <HStack>
-                                            <Text> Banner Effect: </Text>
-                                            <Menu>
-                                                <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
-                                                    { bannerEffectPreview.name }
-                                                </MenuButton>
-                                                <MenuList>
-                                                    <MenuItem onClick={() => updateBannerEffect({name: "No Banner Effect", item: null, _id: "none"})}> No Banner Effect </MenuItem>
-                                                    {
-                                                        userData.ownedBannerEffects.map((item, key) => {
-                                                            return (
-                                                                <MenuItem key={key} onClick={() => updateBannerEffect(item)}> {item.name} </MenuItem>
-                                                            )
-                                                        })
-                                                    }
-                                                </MenuList>
-                                            </Menu>
-                                        </HStack>
-                                    </Stack>
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Popover>
-                ) : (
-                    <Box
-                        h='28vh'
-                        minH='150px'
-                        pos='relative'
-                        bgImage={
-                            "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                            (preview && itemData.type === 'background'
-                                ? itemData.item
-                                : banner_src) +
-                            "')"
-                        }
-                        bgSize='cover'
-                        bgPosition='center'
-                        borderRadius='5px'
-                    ></Box>
-                )}
-              
                 </Box>
                 {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
                 <Grid templateColumns='0.78fr 0.22fr' marginTop={2} mb={100}>
                     {/* FEATURED QUIZZES/PLATFORMS */}
-                    <Box w='99.2%' borderRadius='10'>
+                    <Box w='99.2%' borderRadius='5'>
                         <VStack>
                             <Box
                                 w='100%'
@@ -1020,6 +1002,7 @@ export default function AccountPage(props) {
                                 bgColor={platformsButtonBG}
                                 borderRadius='5'
                                 overflow='hidden'
+                                _hover={{cursor:"pointer"}}
                                 onClick={() => {
                                     setEditBio(true);
                                     setUnsavedChanges(true);
@@ -1061,7 +1044,7 @@ export default function AccountPage(props) {
                             minWidth='100px'
                             boxShadow="0 0 3px #ccc;"
                             bgColor={platformsButtonBG}
-                            borderRadius='10'
+                            borderRadius='5'
                             overflow='hidden'
                         >
                             <Text
@@ -1091,43 +1074,44 @@ export default function AccountPage(props) {
     
     // Render Platforms
     function renderPlatforms() {
+        let platforms = userData.platformsMade
+
+        if (viewPlatformType === "Followed Platforms")
+            platforms = userData.following
+
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
-                    <HStack>
-                        <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                            {userData.displayName}'s Platforms
-                        </Text>
-                    </HStack>
-                    <Flex
-                        ml={2}
-                        display='flex'
-                        flexWrap='wrap'
-                    >
-                        {userData.platformsMade.map((platform, key) => {
-                            return (
-                                <PlatformCard
-                                    platform={platform}
-                                    width='18%'
-                                    minWidth='200px'
-                                    img_height='60px'
-                                    char_limit={44}
-                                    key={key}
-                                />
-                            );
-                        })}
+                <Box bgColor={platformsButtonBG} paddingBottom={5} border="1px" borderColor="gray.200" borderRadius='5'>
+                    <Flex ml={4} mt={3}>
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Text fontSize='120%' fontWeight='medium'>
+                                {userData.displayName}'s { viewPlatformType === "Followed Platforms" ? "Followed" : "" } Platforms
+                            </Text>
+                        </Box>
+                        <Spacer />
+                        <Menu>
+                            <MenuButton
+                                textColor="gray.600"
+                                variant="none"
+                                mr={2}
+                                as={Button}
+                                leftIcon={<BsJustifyLeft />}
+                                _focus={{border:"none"}}
+                            >
+                                { viewPlatformType }
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem onClick={() => setViewPlatformType("Created Platforms") }> Created Platforms </MenuItem>
+                                <MenuItem onClick={() => setViewPlatformType("Followed Platforms") }> Followed Platforms </MenuItem>
+                            </MenuList>
+                        </Menu>
                     </Flex>
-                </Box>
-                <Box mt='40px' bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
-                     <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                        {userData.displayName}'s Followed Platforms
-                    </Text>
                     <Flex
                         ml={2}
                         display='flex'
                         flexWrap='wrap'
                     >
-                        {userData.following.map((platform, key) => {
+                        {platforms.slice(0).reverse().map((platform, key) => {
                             return (
                                 <PlatformCard
                                     platform={platform}
@@ -1147,14 +1131,40 @@ export default function AccountPage(props) {
 
     // Render Quizzes
     function renderQuizzes() {
+        let quizzes = userData.quizzesMade
+
+        if (viewQuizType === "Favorited Quizzes")
+            quizzes = userData.favoritedQuizzes
+
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} borderRadius='10' border="1px" borderColor="gray.200">
-                    <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                        {userData.displayName}'s Quizzes
-                    </Text>
+                <Box bgColor={platformsButtonBG} paddingBottom={5} borderRadius='5' border="1px" borderColor="gray.200">
+                    <Flex ml={4} mt={3}>
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Text fontSize='120%' fontWeight='medium' whiteSpace="nowrap">
+                                {userData.displayName}'s { viewQuizType === "Favorited Quizzes" ? "Favorited" : ""} Quizzes
+                            </Text>
+                        </Box>
+                        <Spacer />
+                        <Menu>
+                            <MenuButton
+                                textColor="gray.600"
+                                variant="none"
+                                mr={2}
+                                as={Button}
+                                leftIcon={<BsJustifyLeft />}
+                                _focus={{border:"none"}}
+                            >
+                                { viewQuizType }
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem onClick={() => setViewQuizType("Created Quizzes") }> Created Quizzes </MenuItem>
+                                <MenuItem onClick={() => setViewQuizType("Favorited Quizzes") }> Favorited Quizzes </MenuItem>
+                            </MenuList>
+                        </Menu>
+                    </Flex>
                     <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                        {userData.quizzesMade.map((quiz, key) => {
+                        {quizzes.slice(0).reverse().map((quiz, key) => {
                             return (
                                 <QuizCard
                                     quiz={quiz}
@@ -1168,35 +1178,6 @@ export default function AccountPage(props) {
                         })}
                     </Flex>
                 </Box>
-
-                {userData.favoritedQuizzes.length > 0 ? (
-                    <Box bgColor={platformsButtonBG} mt='40px' borderRadius='10' border="1px" borderColor="gray.200">
-                        <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                            {userData.displayName}'s Favorited Quizzes
-                        </Text>
-                        <Flex
-                            ml='1%'
-                            spacing='4%'
-                            display='flex'
-                            flexWrap='wrap'
-                        >
-                            {userData.favoritedQuizzes.map((quiz, key) => {
-                                return (
-                                    <QuizCard
-                                        quiz={quiz}
-                                        width='8.0%'
-                                        title_fontsize='95%'
-                                        include_author={false}
-                                        char_limit={35}
-                                        key={key}
-                                    />
-                                );
-                            })}
-                        </Flex>
-                    </Box>
-                ) : (
-                    ''
-                )}
             </Box>
         );
     }
@@ -1248,7 +1229,7 @@ export default function AccountPage(props) {
                     w='100%'
                     minW='75px'
                     pointerEvents="none"
-                    zIndex='1'
+                    zIndex='2'
                 >
                     <Image
                         className='squareimage'
@@ -1276,20 +1257,45 @@ export default function AccountPage(props) {
     // Render Badges
     function renderBadges() {
         return (
-            <Box>
-                <Text pl='1.5%' pt='1%' fontSize='120%' fontWeight='medium'>
-                    Badges
-                </Text>
-                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                    {badges.map((badge, key) => {
-                        return (
-                            <Box key={key}>
-                                { renderBadgeIcon(badge) }
-                            </Box>
-                        );
-                    })}
-                </Flex>
+            <Box w="100%">
+                <Center>
+                    <Box w="50%" padding={5} borderRadius={5} minH="70vh" bgColor={platformsButtonBG} border="1px" borderColor="gray.300">
+                        <Center>
+                            <VStack mt={30}>
+                                <Avatar src={userData.iconImage} size="2xl" />
+                                <Text fontWeight="medium" fontSize="175%"> {userData.displayName} </Text>
+                                {/* Platform Misc. Information (# Followers, # Quizzes, etc.) */}
+                                <HStack>
+                                    <Text fontSize="105%"> 
+                                        <Icon as={BsFillFileEarmarkTextFill} mr={1} /> 
+                                        { userData.quizzesMade.length } { userData.quizzesMade.length !== 1 ? "Quizzes" : "Quiz" }
+                                    </Text>
+                                    <Text>•</Text>
+                                    <Text fontSize="105%"> 
+                                        <Icon as={BsFillFileEarmarkTextFill} mr={1} /> 
+                                        { userData.platformsMade.length } { userData.platformsMade.length !== 1 ? "Platforms" : "Platforms" }
+                                    </Text>
+                                </HStack>
+                                <Text fontSize="100%" textAlign="center"> {userData.bio} </Text>
+                            </VStack>
+                        </Center>
+                    </Box>
+                </Center>
             </Box>
+            // <Box>
+            //     <Text pl='1.5%' pt='1%' fontSize='120%' fontWeight='medium'>
+            //         Badges
+            //     </Text>
+            //     <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+            //         {badges.map((badge, key) => {
+            //             return (
+            //                 <Box key={key}>
+            //                     { renderBadgeIcon(badge) }
+            //                 </Box>
+            //             );
+            //         })}
+            //     </Flex>
+            // </Box>
         );
     }
 
@@ -1307,14 +1313,14 @@ export default function AccountPage(props) {
 
         return (
             <VStack>
-                <Image w={120} h={120} src={badge_src} border="1px" borderColor="gray.100" boxShadow="md" bgColor="white" borderRadius={10} mt={5} ml={5} mr={5} />
+                <Image w={120} h={120} src={badge_src} border="1px" borderColor="gray.100" boxShadow="md" bgColor="white" borderRadius={5} mt={5} ml={5} mr={5} />
                 <Text fontSize="105%" fontWeight="medium"> Quiz Master </Text>
             </VStack>
         )
     }
 
     function renderBackgroundPopover() {
-        if (!isOwner)
+        if (!isOwner || preview)
             return
 
         return (
@@ -1378,7 +1384,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='2'
+                    zIndex='3'
                     bgColor={mainBG}
                     transition='0.2s linear'
                 >
@@ -1461,7 +1467,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='2'
+                    zIndex='3'
                     bgColor='rgba(0, 0, 0, 0.9)'
                     transition='0.2s linear'
                 >
@@ -1574,7 +1580,31 @@ export default function AccountPage(props) {
             
             {/* Main Grid */}
             <Grid templateColumns='1fr 7fr 1fr' mt={5}>
-                <Box w='100%' />
+                <Box w="100%">
+                    <Center>
+                        {preview ? (
+                            <Button
+                                textColor="blue.600"
+                                _focus={{ border: 'none' }}
+                                leftIcon={<ArrowBackIcon />} 
+                                borderRadius="40"
+                                boxShadow="base"
+                                onClick={() =>
+                                    history.push({
+                                        pathname: '/shoppingpage',
+                                        state: {
+                                            item: itemData,
+                                            page: location.state.prevSection,
+                                            pageNum: location.state.prevPageNum,
+                                        },
+                                    })
+                                }
+                            >
+                                Back to Shop
+                            </Button>
+                        ) : null}
+                    </Center>
+                </Box>
 
                 {/* MAIN CONTENT */}
                 <Box w='100%'>

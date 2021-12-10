@@ -542,6 +542,7 @@ export default function PlatformPage({}) {
                                             key={key}
                                             is_owner={is_owner}
                                             platform_id={platform_data._id}
+                                            onDelete={platform.refetch}
                                         />
                                     })}
                                 </Flex>

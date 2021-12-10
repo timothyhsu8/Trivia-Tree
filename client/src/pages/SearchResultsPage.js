@@ -6,7 +6,7 @@ import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries
 import QuizResult from '../components/SearchResults/QuizResult'
 import PlatformResult from '../components/SearchResults/PlatformResult'
 import UserResult from '../components/SearchResults/UserResult'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import TimeField from "react-simple-timefield";
 import '../styles/styles.css'
 
@@ -26,12 +26,12 @@ export default function SearchResultsPage() {
     let searchType = location.state.searchType
     let search_text = 'Search Results for "' + search + '"'
 
-    const { loading: quiz_loading, error: quiz_error, data: quiz_data } = useQuery(SEARCH_QUIZZES, { variables: { searchText: search }, fetchPolicy: 'cache-and-network' })
+    const quizzes = useQuery(SEARCH_QUIZZES, { variables: { searchText: search }, fetchPolicy: 'cache-and-network' })
     const platforms = useQuery(SEARCH_PLATFORMS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
     const users = useQuery(SEARCH_USERS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
 
-    const loading = quiz_loading || platforms.loading || users.loading
-    const error = quiz_error || platforms.error || users.error
+    const loading = quizzes.loading || platforms.loading || users.loading
+    const error = quizzes.error || platforms.error || users.error
 
     //Dark mode styling
     //const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
@@ -55,7 +55,7 @@ export default function SearchResultsPage() {
         );
     }
 
-    // const quiz_data = quizzes.data.searchQuizzes
+    const quiz_data = quizzes.data.searchQuizzes
     const platform_data = platforms.data.searchPlatforms
     const user_data = users.data.searchUsers
     

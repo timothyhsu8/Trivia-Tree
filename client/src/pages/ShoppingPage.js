@@ -11,7 +11,7 @@ import '../styles/ShoppingPage.css';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_SHOP_ITEMS } from '../cache/queries';
 import { PURCHASE_ITEM } from '../cache/mutations'
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { BsBookmarkStarFill, BsImageFill, BsPersonCircle, BsStars } from 'react-icons/bs';
 
 export default function ShoppingPage() {
@@ -136,6 +136,8 @@ export default function ShoppingPage() {
 
     return (
         <Box>
+            <Button pos="absolute" variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
+
             {/*Shop Banner*/}
             <Center>
                 <Image pt={5} src={treeshop} alt={"Tree Shop Banner"} />

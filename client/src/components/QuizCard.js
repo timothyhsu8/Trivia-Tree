@@ -102,6 +102,7 @@ export default function QuizCard( props ) {
             padding="0.5%" 
             ml={2}
             mt={1}
+            mb={2}
             borderRadius="4%" 
             border={isEditing ? "1px":""}
             borderColor={isEditing ? "red":""}

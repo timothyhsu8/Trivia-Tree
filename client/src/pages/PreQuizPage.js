@@ -1,10 +1,10 @@
-import { Box, Flex, HStack, Text, Grid, Button, Center, Image, GridItem,Icon, Avatar, Stack, } from "@chakra-ui/react"
+import { Box, Flex, HStack, Text, Grid, Button, Center, Image, GridItem,Icon, Avatar, Stack, Spinner } from "@chakra-ui/react"
 import { useQuery, useMutation} from '@apollo/client';
 import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
-import { ViewIcon, EditIcon } from '@chakra-ui/icons'
+import { ViewIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons'
 import { BsHeart, BsHeartFill, BsShuffle, BsQuestionLg, BsFillPlayCircleFill, BsAlarm } from "react-icons/bs"
 import { IoRibbonSharp } from "react-icons/io5";
 import * as queries from '../cache/queries';
@@ -21,10 +21,6 @@ export default function PreQuizPage({}) {
         logged_in = true
     }
 
-    let initialFavoriteState = false; 
-
-
-
     const [FavoriteQuiz] = useMutation(mutations.FAVORITE_QUIZ);
     const [UnfavoriteQuiz] = useMutation(mutations.UNFAVORITE_QUIZ);
     const [isFavorited, setIsFavorited] = useState(false);
@@ -39,7 +35,6 @@ export default function PreQuizPage({}) {
         variables: { quizId:quizId }, 
         fetchPolicy: 'cache-and-network',
         onCompleted({getQuiz: quizData}) {
-            console.log(quizData);
             if (logged_in){
                 for(let i = 0; i < user.favoritedQuizzes.length; i++){
                     if(user.favoritedQuizzes[i] == quizData._id){
@@ -57,7 +52,11 @@ export default function PreQuizPage({}) {
     });
 
     if (loading) {
-        return <div></div>;
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        )
     }
 
     if (error) {
@@ -84,7 +83,6 @@ export default function PreQuizPage({}) {
     
     if (data) {
         quiz = data.getQuiz;
-        console.log(quiz)
     } else {
         return <div></div>;
     }
@@ -100,7 +98,6 @@ export default function PreQuizPage({}) {
     let numFavorites = quiz.numFavorites; 
     let quizTimer = quiz.quizTimer == null ? 'No Timer':quiz.quizTimer; 
     let icon_src = quiz.icon == null ? quizImage : quiz.icon
-    console.log(quiz)
 
     const favoriteQuiz = async () => {
         if (logged_in){
@@ -113,7 +110,6 @@ export default function PreQuizPage({}) {
     }
 
     const unfavoriteQuiz = async () => {
-        console.log(user.favoritedQuizzes)
         if (logged_in){
             const {data} = await UnfavoriteQuiz({ variables: {quizId:quizId, userId: user._id}});
             console.log(data);
@@ -121,11 +117,9 @@ export default function PreQuizPage({}) {
         setIsFavorited(false);
         refetch();
         refreshUserData();
-        console.log(user.favoritedQuizzes)
     }
 
     const toggleQuizFavorited = async () => {
-        console.log(user.favoritedQuizzes)
         if(logged_in){
             if(isFavorited == true){
                 console.log("UNFAVORITE")
@@ -136,12 +130,12 @@ export default function PreQuizPage({}) {
                 favoriteQuiz();
             }
         }
-        console.log(user.favoritedQuizzes)
     }
 
     return ( 
         <Box>
-            <Grid h="650px" templateRows="repeat(6, 1fr)" paddingTop="10px"> 
+            <Button variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
+            <Grid h="650px" templateRows="repeat(6, 1fr)" paddingTop="5px"> 
 
                 {/* Title and Image */}
                 <GridItem rowSpan={2} colSpan={6} borderBottom="1px solid" borderColor="gray.300" overflow="hidden">

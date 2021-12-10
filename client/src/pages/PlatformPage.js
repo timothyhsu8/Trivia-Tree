@@ -1,6 +1,6 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon, Select, Tag, TagLeftIcon, TagLabel,
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter,
-    Menu, MenuButton, IconButton, MenuList, MenuItem } from "@chakra-ui/react"
+    Menu, MenuButton, IconButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, EDIT_PLAYLIST,
@@ -13,6 +13,8 @@ import '../styles/styles.css'
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
 import { BsArrowUp, BsArrowDown, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill, BsThreeDotsVertical, BsTrash } from "react-icons/bs";
+import { MdForum, MdLogin } from "react-icons/md";
+import { FaLock } from "react-icons/fa";
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import { useAlert } from 'react-alert';
 
@@ -244,6 +246,10 @@ export default function PlatformPage({}) {
 
     let header_sections = [
         {
+            name: "Forum",
+            icon: MdForum
+        },
+        {
             name: "Quizzes",
             icon: BsFillFileEarmarkTextFill
         },
@@ -266,6 +272,8 @@ export default function PlatformPage({}) {
             return renderFollowers()
         if (page === 'About') 
             return renderAbout()
+        if (page === 'Forum')
+            return renderForum()
     }
 
     async function setFollowPlatform(){
@@ -770,6 +778,46 @@ export default function PlatformPage({}) {
         )
     }
 
+    function renderForum() {
+        return (
+            <Grid templateColumns="1fr 20fr 1fr">
+                <Box/>
+                    { !(user !== 'NoUser' && (following || is_owner) ) ? 
+                    <Center marginTop="2%" justifySelf="center" w="480px" h="80px" borderRadius="10">
+                        { user == 'NoUser' ? 
+                        <Button leftIcon={<MdLogin/>} w="440px" size="lg" colorScheme='blue' color="white" onClick={() => history.push('/loginpage')}                                    
+                         _hover={{opacity:"85%"}} 
+                        _active={{opacity:"75%"}} 
+                        _focus={{boxShadow:"none"}}> 
+                            Login To View Forum Page
+                        </Button>
+                        :
+                        <Button leftIcon={<FaLock/>} w="440px" size="lg" bgColor="gray.800" color="white" display={is_owner || !logged_in ? 'none':''} onClick={setFollowPlatform}                                     
+                                    _hover={{opacity:"85%"}} 
+                                    _active={{opacity:"75%"}} 
+                                    _focus={{boxShadow:"none"}}> 
+                            Follow To Gain Access to Forum
+                        </Button>
+                        }
+                    </Center>
+                    : 
+                    <Box marginTop="1%" w="100%" h="100%">
+                        <Text marginBottom="20px" borderBottom="1px" borderColor="gray.300" fontSize="22px">Posts</Text>
+                        <Flex direction="row">
+                            <Avatar/>
+                            <Input variant='filled' placeholder='Add a public post...' marginLeft="20px" marginBottom="20px"
+                                _hover={{pointer:"cursor", bgColor:"gray.200"}}
+                                _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/>
+                            <Button w="140px" colorScheme='blue' size="md" marginLeft="20px">
+                                Post
+                            </Button>
+                        </Flex>
+                    </Box>
+                }
+            </Grid>
+
+    )}
+
     // Darken screen and let user choose playlist name
     function renderCreatePlaylist() {
         let name = ''
@@ -1009,7 +1057,7 @@ export default function PlatformPage({}) {
                 <Box/>
                 <Box>
                     {/* HEADER BUTTONS */}
-                    <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr" justifyContent="center" alignItems="center"> 
+                    <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr 1fr" justifyContent="center" alignItems="center"> 
 
                         <Text 
                             className="disable-select" 

@@ -882,7 +882,7 @@ export default function AccountPage(props) {
                                     >
                                         Featured Quizzes
                                     </Text>
-                                    {isOwner && !preview ? (
+                                    {isOwner && !preview && userData.featuredQuizzes.length <= 5 ? (
                                         <Tag className="disable-select" variant="subtle" colorScheme="orange"
                                             _hover={{cursor:"pointer", opacity:"85%"}}
                                             onClick={() => setIsAddingFeaturedQuiz(true)}
@@ -942,7 +942,7 @@ export default function AccountPage(props) {
                                     >
                                         Featured Platforms
                                     </Text>
-                                    {isOwner && !preview ? (
+                                    {isOwner && !preview && userData.featuredPlatforms.length <= 5 ? (
                                         <Tag className="disable-select" variant="subtle" colorScheme="orange"
                                             _hover={{cursor:"pointer", opacity:"85%"}}
                                             onClick={() => setIsAddingFeaturedPlatform(true)}

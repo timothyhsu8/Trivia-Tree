@@ -312,7 +312,7 @@ export default function Homepage() {
             <Box mt="1%" ml="2%" mr="2%">
                 <Text fontSize="150%" ml="1%" fontWeight="medium"> New Quizzes </Text>
                 <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                    {quiz_data.map((quiz, key) => {
+                    {quiz_data.slice(0).reverse().map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
                             width="7.3%" 

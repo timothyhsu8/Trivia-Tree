@@ -108,6 +108,7 @@ export default function PlatformManagerPage() {
                         <Text mt="15%" fontSize="200%"> You don't have any platforms! </Text>
                     </Center>
             } 
+            <Box h="20vh"/>
         </Box>
     )
 }

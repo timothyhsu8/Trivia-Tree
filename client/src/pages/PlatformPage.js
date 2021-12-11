@@ -686,23 +686,27 @@ export default function PlatformPage({}) {
                     </VStack>
                 </Center>
                 
-                {/* Delete Platform Button */}
-                <Center>
-                    <Button 
-                        mt="5%" 
-                        bgColor="red.600" 
-                        textColor="white" 
-                        _hover={{bgColor:"red.500"}} 
-                        _active={{bgColor:"red.400"}}
-                        _focus={{border:"none"}} 
-                        onClick={() => setDeleteConfirmation({
-                            deleting: true,
-                            type: "platform",
-                            playlistId: null
-                        })}
-                        >
-                        Delete Platform
-                    </Button>
+               {/* Delete Platform Button */}
+               <Center>
+                    {
+                        is_owner ?
+                        <Button 
+                            mt="5%" 
+                            bgColor="red.600" 
+                            textColor="white" 
+                            _hover={{bgColor:"red.500"}} 
+                            _active={{bgColor:"red.400"}}
+                            _focus={{border:"none"}} 
+                            onClick={() => setDeleteConfirmation({
+                                deleting: true,
+                                type: "platform",
+                                playlistId: null
+                            })}
+                            >
+                            Delete Platform
+                        </Button>
+                        : ""
+                    }
                 </Center>
             </Box>
         )

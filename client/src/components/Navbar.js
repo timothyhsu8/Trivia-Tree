@@ -183,10 +183,11 @@ export default function Navbar() {
                     
                     {/* SHOP BUTTON */}
                     <Button 
-                        colorScheme="pink" 
+                        colorScheme="yellow"
                         leftIcon={<BsFillCartFill />} 
                         onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} 
                         _focus={{outline:"none"}}
+                        borderRadius="40px"
                     >
                         Shop 
                     </Button>
@@ -211,7 +212,7 @@ export default function Navbar() {
 
                     {/* DROPDOWN MENU */}
                     <Menu>
-                        <MenuButton as={IconButton} colorScheme="orange" borderRadius="0" icon={<HamburgerIcon boxSize={5} />} w="45px" h="55px" _focus={{outline:"none"}}/>
+                        <MenuButton as={IconButton} bgColor="#751616" _hover={{bgColor:'red.600'}} _active={{bgColor:'red.600'}} borderRadius="0" icon={<HamburgerIcon boxSize={5} color="white" />} w="45px" h="55px" _focus={{outline:"none"}}/>
                             <MenuList boxShadow='lg'>
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (

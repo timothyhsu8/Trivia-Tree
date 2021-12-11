@@ -138,7 +138,7 @@ export default function ShoppingPage() {
         <Box>
             {/*Shop Banner*/}
             <Center>
-                <Image pt={5} src={treeshop} alt={"Tree Shop Banner"} />
+                <Image w="100%" h={150} fit="cover" pt={5} mb={5} src={treeshop} alt={"Tree Shop Banner"} />
             </Center>
             
             {
@@ -194,7 +194,7 @@ export default function ShoppingPage() {
                     <Grid w='100%' h='6vh' minH='50px' templateColumns='repeat(4, 1fr)'>
                         {headerSections.map((headerSection, key) => {
                             return (
-                                <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
+                                <Box pos="relative" className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
                                     <Text
                                         w='100%'
                                         fontSize='130%'
@@ -213,7 +213,9 @@ export default function ShoppingPage() {
                                         <Icon as={headerSection.icon} pos="relative" top={-0.5}  mr={2} />
                                         {headerSection.pageName}
                                     </Text>
-                                    {/* <Box h="4px" mt="3%" bgColor={page === headerSection.pageId  ? "blue.500" : "gray.400" }  transition="0.15s linear"/> */}
+                                    <Center>
+                                        <Box pos="absolute" bottom="0px" w="70%" h="2px" bgColor={page === headerSection.pageId ? "blue.500" : "" }  transition="0.15s linear"/>
+                                    </Center>
                                 </Box>
                             )
                         } )}

@@ -56,7 +56,7 @@ export default function QuizCard( props ) {
 
     const [removeQuizFromPlaylist] = useMutation(REMOVE_QUIZ_FROM_PLAYLIST, {
         onCompleted() {
-            history.go(0)
+            props.onDelete()
         },
         onError(err) {
             console.log(JSON.stringify(err, null, 2));

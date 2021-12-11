@@ -27,7 +27,12 @@ import {
     Stack,
     useColorModeValue,
     Icon,
-    Avatar
+    Avatar,
+    Tag,
+    TagLeftIcon,
+    TagLabel,
+    IconButton,
+    Spacer
 } from '@chakra-ui/react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { GET_USER } from '../cache/queries';
@@ -53,8 +58,8 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
-import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsPersonCircle } from 'react-icons/bs';
-import { ChevronDownIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsJustify, BsJustifyLeft, BsPersonCircle } from 'react-icons/bs';
+import { ChevronDownIcon, AddIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
@@ -101,6 +106,17 @@ export default function AccountPage(props) {
         }
     )
 
+    const [background, setBackground] = useState(
+        {
+            name: "No Background",
+            item: null,
+            _id: "uninitialized"
+        }
+    )
+
+    const [viewQuizType, setViewQuizType] = useState("Created Quizzes")
+    const [viewPlatformType, setViewPlatformType] = useState("Created Platforms")
+
     const [isAddingFeaturedQuiz, setIsAddingFeaturedQuiz] =
         React.useState(false);
     const [isAddingFeaturedPlatform, setIsAddingFeaturedPlatform] =
@@ -137,6 +153,24 @@ export default function AccountPage(props) {
     });
 
     useEffect(() => {
+        setBannerEffectPreview({
+            name: "No Banner Effect",
+            item: null,
+            _id: "uninitialized"
+        })
+
+        setIconEffect({
+            name: "No Icon Effect",
+            item: null,
+            _id: "uninitialized"
+        })
+
+        setBackground({
+            name: "No Background",
+            item: null,
+            _id: "uninitialized"
+        })
+
         setFirstQueryDone(false);
     }, [userId]);
 
@@ -240,6 +274,28 @@ export default function AccountPage(props) {
         setUnsavedChanges(true)
     }
 
+    function updateBackground(item) {
+        setBackground(item)
+
+        // If user doesn't already have a banner effect applied
+        if (userData.background === null || userData.background === undefined) {
+            if (item.item !== null)
+                setUnsavedChanges(true)
+            else 
+                setUnsavedChanges(false)
+                
+            return
+        }
+        
+        // If user already had a banner effect applied
+        if (userData.background._id === item._id){
+            setUnsavedChanges(false)
+            return
+        }
+
+        setUnsavedChanges(true)
+    }
+
     function cancelEditing() {
         profileImg = 'Same Image';
         bannerImg = 'Same Image';
@@ -267,13 +323,24 @@ export default function AccountPage(props) {
                 _id: "none"
             })
 
-        // Reset Banner Effect
+        // Reset Icon Effect
         if (userData.iconEffect !== null && userData.iconEffect !== undefined)
             setIconEffect(userData.iconEffect)
 
         else 
             setIconEffect({
                 name: "No Icon Effect",
+                item: null,
+                _id: "none"
+            })
+
+        // Reset Background
+        if (userData.background !== null && userData.background !== undefined)
+            setBackground(userData.background)
+
+        else 
+            setBackground({
+                name: "No Background",
                 item: null,
                 _id: "none"
             })
@@ -351,7 +418,8 @@ export default function AccountPage(props) {
                     bannerImage: banner_src,
                     bio: bio,
                     bannerEffectId: bannerEffectPreview.item !== null ? bannerEffectPreview._id : null,
-                    iconEffectId: iconEffect.item !== null ? iconEffect._id : null
+                    iconEffectId: iconEffect.item !== null ? iconEffect._id : null,
+                    backgroundId: background.item !== null ? background._id : null
                 },
             },
         });
@@ -364,7 +432,7 @@ export default function AccountPage(props) {
     const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
     const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
     const accountButtonsText=useColorModeValue('blue.500', 'light blue')
-    const accountButtonsText2=useColorModeValue('black', 'white')
+    const accountButtonsText2=useColorModeValue('gray.700', 'white')
     const whiteBlackBG=useColorModeValue('white', 'gray.700')
     const basicTextColor=useColorModeValue('white', 'black')
     const cancelButtonBG=useColorModeValue('gray.500', 'gray.500')
@@ -430,6 +498,21 @@ export default function AccountPage(props) {
 
         else {
             setIconEffect(userData.iconEffect)
+        }
+    }
+
+    // Initializes background as the one they own
+    if (background._id === "uninitialized") {
+        if (userData.background === null || userData.background === undefined) {
+            setBackground({
+                name: "No Background",
+                item: null,
+                _id: "none"
+            })
+        }
+
+        else {
+            setBackground(userData.background)
         }
     }
 
@@ -540,210 +623,216 @@ export default function AccountPage(props) {
     function renderUser() {
         return (
             <Box minW='500px' pos='relative'>
-                <Box position='absolute' left='-150px' zIndex='2'>
-                    {preview ? (
-                        <Button
-                            colorScheme='blue'
-                            _focus={{ border: 'none' }}
-                            onClick={() =>
-                                history.push({
-                                    pathname: '/shoppingpage',
-                                    state: {
-                                        item: itemData,
-                                        page: location.state.prevSection,
-                                        pageNum: location.state.prevPageNum,
-                                    },
-                                })
-                            }
-                        >
-                            Back to Shop
-                        </Button>
-                    ) : null}
-                </Box>
-                
-                {/* BANNER EFFECT */}
-                { renderBannerEffect() }
+                <Box pos="relative" w="100%" h="fit-content">
 
-                {/* BANNER */}
-                {isOwner && !preview ? (
-                        <Popover>
-                            <PopoverTrigger>
-                                <Box>
-                                    <Tooltip
-                                        label='Edit Banner'
-                                        placement='bottom'
-                                        fontSize='100%'
-                                        bgColor={bannerEditBG}
-                                    >
-                                    <Box
-                                        h='28vh'
-                                        minH='150px'
-                                        pos='relative'
-                                        bgImage={
-                                            "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                                            (preview && itemData.type === 'background'
-                                                ? itemData.item
-                                                : banner_src) +
-                                            "')"
-                                        }
-                                        bgSize='cover'
-                                        bgPosition='center'
-                                        borderRadius='10px'
-                                        _hover={{
-                                            cursor: 'pointer',
-                                            filter: 'brightness(65%)',
-                                            transition: '0.15s linear',
-                                        }}
-                                        transition='0.15s linear'
-                                    />
-                                    </Tooltip>
-                                </Box>
-                            </PopoverTrigger>
-                            <PopoverContent >
-                                <PopoverCloseButton />
-                                <PopoverHeader fontWeight="medium"> Edit Banner </PopoverHeader>
-                                <PopoverBody>
-                                    <Stack>
-                                        <HStack>
-                                            <Text> Banner Image: </Text>
-                                            <input
-                                                type='file'
-                                                accept='image/*'
-                                                style={{ display: 'none' }}
-                                                ref={hiddenBannerInput}
-                                                onChange={(event) => updateBanner(event)}
-                                            />
-                                            <Button 
-                                                variant="outline" 
-                                                colorScheme="blue"
-                                                _focus={{}}
-                                                onClick={() => hiddenBannerInput.current.click()}
-                                            > 
-                                                Upload Image 
-                                            </Button>
-                                        </HStack>
-                                        <HStack>
-                                            <Text> Banner Effect: </Text>
-                                            <Menu>
-                                                <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
-                                                    { bannerEffectPreview.name }
-                                                </MenuButton>
-                                                <MenuList>
-                                                    <MenuItem onClick={() => updateBannerEffect({name: "No Banner Effect", item: null, _id: "none"})}> No Banner Effect </MenuItem>
-                                                    {
-                                                        userData.ownedBannerEffects.map((item, key) => {
-                                                            return (
-                                                                <MenuItem key={key} onClick={() => updateBannerEffect(item)}> {item.name} </MenuItem>
-                                                            )
-                                                        })
-                                                    }
-                                                </MenuList>
-                                            </Menu>
-                                        </HStack>
-                                    </Stack>
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Popover>
-                ) : (
-                    <Box
-                        h='28vh'
-                        minH='150px'
-                        pos='relative'
-                        bgImage={
-                            "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
-                            (preview && itemData.type === 'background'
-                                ? itemData.item
-                                : banner_src) +
-                            "')"
-                        }
-                        bgSize='cover'
-                        bgPosition='center'
-                        borderRadius='10px'
-                    ></Box>
-                )}
-                
-        
-                {/* PROFILE PICTURE AND NAME */}
-                <HStack
-                    position='absolute'
-                    top='18%'
-                    left='3%'
-                    transform='translateY(-50%)'
-                    width='12%'
-                    spacing={0}
-                >
+                    {/* PROFILE PICTURE AND NAME */}
+                    <HStack
+                        pos="absolute"
+                        width='11%'
+                        left={12}
+                        spacing={0}
+                        top="50%"
+                        transform="translateY(-50%)"
+                        zIndex="2"
+                    >
 
-                    {/* Icon Effect */}
-                    {renderIconEffect()}
+                        {/* Icon Effect */}
+                        {renderIconEffect()}
 
-                    {/* Profile Picture */}
-                    {isOwner && !preview ? (
-                        <Popover placement="right-start">
-                            <PopoverTrigger>
-                                <Box w="100%">
-                                    <Tooltip
-                                        label='Edit Platform Icon'
-                                        placement='top'
-                                        fontSize='100%'
-                                        bgColor={bannerEditBG}
-                                    >
-                                        <Box
-                                            className='squareimage_container'
-                                            w='100%'
-                                            minW='75px'
-                                            minH='75px'
+                        {/* Profile Picture */}
+                        {isOwner && !preview ? (
+                            <Popover placement="right-start">
+                                <PopoverTrigger>
+                                    <Box w="100%">
+                                        <Tooltip
+                                            label='Edit Platform Icon'
+                                            placement='top'
+                                            fontSize='100%'
+                                            bgColor={bannerEditBG}
                                         >
-                                            <Image
-                                                className='squareimage'
-                                                src={pfp_src}
-                                                objectFit='cover'
-                                                borderRadius='50%'
-                                                _hover={{
-                                                    cursor: 'pointer',
-                                                    filter: 'brightness(65%)',
-                                                    transition: '0.15s linear',
-                                                }}
-                                                transition='0.15s linear'
-                                            />
-                                        </Box>
-                                    </Tooltip>
+                                            <Box
+                                                className='squareimage_container'
+                                                w='100%'
+                                                minW='60px'
+                                                minH='60px'
+                                            >
+                                                <Image
+                                                    className='squareimage'
+                                                    src={pfp_src}
+                                                    objectFit='cover'
+                                                    borderRadius='50%'
+                                                    _hover={{
+                                                        cursor: 'pointer',
+                                                        filter: 'brightness(65%)',
+                                                        transition: '0.15s linear',
+                                                    }}
+                                                    transition='0.15s linear'
+                                                />
+                                            </Box>
+                                        </Tooltip>
+                                    </Box>
+                                </PopoverTrigger>
+                                <Box>
+                                    <PopoverContent>
+                                        <PopoverCloseButton />
+                                        <PopoverHeader fontWeight="medium"> Edit Icon </PopoverHeader>
+                                        <PopoverBody>
+                                            <Stack>
+                                                <HStack>
+                                                    <Text> Icon Image: </Text>
+                                                    <input
+                                                        type='file'
+                                                        style={{ display: 'none' }}
+                                                        ref={hiddenPFPInput}
+                                                        onChange={(event) => updatePFP(event)}
+                                                    />
+                                                    <Button 
+                                                        variant="outline" 
+                                                        colorScheme="blue"
+                                                        _focus={{}}
+                                                        onClick={() => hiddenPFPInput.current.click()}
+                                                    > 
+                                                        Upload Image 
+                                                    </Button>
+                                                </HStack>
+                                                <HStack>
+                                                    <Text> Icon Effect: </Text>
+                                                    <Menu>
+                                                        <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                                            { iconEffect.name }
+                                                        </MenuButton>
+                                                        <MenuList>
+                                                            <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                                            {
+                                                                userData.ownedIconEffects.map((item, key) => {
+                                                                    return (
+                                                                        <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </MenuList>
+                                                    </Menu>
+                                                </HStack>
+                                            </Stack>
+                                        </PopoverBody>
+                                    </PopoverContent>
                                 </Box>
-                            </PopoverTrigger>
-                            <Box>
-                                <PopoverContent>
+                            </Popover>
+                        ) : (
+                            <Box
+                                className='squareimage_container'
+                                w='100%'
+                                minW='60px'
+                                minH='60px'
+                            >
+                                <Image
+                                    className='squareimage'
+                                    src={pfp_src}
+                                    objectFit='cover'
+                                    borderRadius='50%'
+                                />
+                            </Box>
+                        )}
+
+                        {/* Username */}
+                        <Text
+                            pos='absolute'
+                            bottom='30%'
+                            left='110%'
+                            fontSize='2.2vw'
+                            as='b'
+                            color='black'
+                            w='100%'
+                            pointerEvents="none"
+                            whiteSpace="nowrap"
+                        >
+                            {username}
+                        </Text>
+                        <Text
+                            pos='absolute'
+                            bottom='8%'
+                            left='14.2%'
+                            fontSize='190%'
+                            fontWeight='thin'
+                        >
+                            {' '}
+                            {userTitle}{' '}
+                        </Text>
+                    </HStack>
+
+                    {/* BANNER EFFECT */}
+                    { renderBannerEffect() }
+
+                    {/* BANNER */}
+                    {isOwner && !preview ? (
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Box>
+                                        <Tooltip
+                                            label='Edit Banner'
+                                            placement='bottom'
+                                            fontSize='100%'
+                                            bgColor={bannerEditBG}
+                                        >
+                                        <Box
+                                            h='28vh'
+                                            minH='150px'
+                                            pos='relative'
+                                            bgImage={
+                                                "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
+                                                (preview && itemData.type === 'background'
+                                                    ? itemData.item
+                                                    : banner_src) +
+                                                "')"
+                                            }
+                                            bgSize='cover'
+                                            bgPosition='center'
+                                            borderRadius='5px'
+                                            _hover={{
+                                                cursor: 'pointer',
+                                                filter: 'brightness(65%)',
+                                                transition: '0.15s linear',
+                                            }}
+                                            transition='0.15s linear'
+                                        />
+                                        </Tooltip>
+                                    </Box>
+                                </PopoverTrigger>
+                                <PopoverContent >
                                     <PopoverCloseButton />
-                                    <PopoverHeader fontWeight="medium"> Edit Icon </PopoverHeader>
+                                    <PopoverHeader fontWeight="medium"> Edit Banner </PopoverHeader>
                                     <PopoverBody>
                                         <Stack>
                                             <HStack>
-                                                <Text> Icon Image: </Text>
+                                                <Text> Banner Image: </Text>
                                                 <input
                                                     type='file'
+                                                    accept='image/*'
                                                     style={{ display: 'none' }}
-                                                    ref={hiddenPFPInput}
-                                                    onChange={(event) => updatePFP(event)}
+                                                    ref={hiddenBannerInput}
+                                                    onChange={(event) => updateBanner(event)}
                                                 />
                                                 <Button 
                                                     variant="outline" 
                                                     colorScheme="blue"
                                                     _focus={{}}
-                                                    onClick={() => hiddenPFPInput.current.click()}
+                                                    onClick={() => hiddenBannerInput.current.click()}
                                                 > 
                                                     Upload Image 
                                                 </Button>
                                             </HStack>
                                             <HStack>
-                                                <Text> Icon Effect: </Text>
+                                                <Text> Banner Effect: </Text>
                                                 <Menu>
                                                     <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
-                                                        { iconEffect.name }
+                                                        { bannerEffectPreview.name }
                                                     </MenuButton>
                                                     <MenuList>
-                                                        <MenuItem onClick={() => updateIconEffect({name: "No Icon Effect", item: null, _id: "none"})}> No Icon Effect </MenuItem>
+                                                        <MenuItem onClick={() => updateBannerEffect({name: "No Banner Effect", item: null, _id: "none"})}> No Banner Effect </MenuItem>
                                                         {
-                                                            userData.ownedIconEffects.map((item, key) => {
+                                                            userData.ownedBannerEffects.map((item, key) => {
                                                                 return (
-                                                                    <MenuItem key={key} onClick={() => updateIconEffect(item)}> {item.name} </MenuItem>
+                                                                    <MenuItem key={key} onClick={() => updateBannerEffect(item)}> {item.name} </MenuItem>
                                                                 )
                                                             })
                                                         }
@@ -753,72 +842,58 @@ export default function AccountPage(props) {
                                         </Stack>
                                     </PopoverBody>
                                 </PopoverContent>
-                            </Box>
-                        </Popover>
+                            </Popover>
                     ) : (
                         <Box
-                            className='squareimage_container'
-                            w='100%'
-                            minW='75px'
-                            minH='75px'
-                        >
-                            <Image
-                                className='squareimage'
-                                src={pfp_src}
-                                objectFit='cover'
-                                borderRadius='50%'
-                            />
-                        </Box>
+                            h='28vh'
+                            minH='150px'
+                            pos='relative'
+                            bgImage={
+                                "linear-gradient(to bottom, rgba(245, 246, 252, 0.30), rgba(255, 255, 255, 0.90)), url('" +
+                                (preview && itemData.type === 'background'
+                                    ? itemData.item
+                                    : banner_src) +
+                                "')"
+                            }
+                            bgSize='cover'
+                            bgPosition='center'
+                            borderRadius='5px'
+                        ></Box>
                     )}
-
-                    {/* Username */}
-                    <Text
-                        pos='absolute'
-                        bottom='30%'
-                        left='110%'
-                        fontSize='2.5vw'
-                        as='b'
-                        color='black'
-                        w='100%'
-                        pointerEvents="none"
-                        whiteSpace="nowrap"
-                    >
-                        {username}
-                    </Text>
-                    <Text
-                        pos='absolute'
-                        bottom='8%'
-                        left='14.2%'
-                        fontSize='190%'
-                        fontWeight='thin'
-                    >
-                        {' '}
-                        {userTitle}{' '}
-                    </Text>
-                </HStack>
-                
+                </Box>
                 {/* FEATURED QUIZZES/PLATFORMS AND BIOGRAPHY */}
-                <Grid templateColumns='4fr 1fr' marginTop={3}>
+                <Grid templateColumns='0.78fr 0.22fr' marginTop={2} mb={100}>
                     {/* FEATURED QUIZZES/PLATFORMS */}
-                    <Box w='98.5%' borderRadius='10'>
+                    <Box w='99.2%' borderRadius='5'>
                         <VStack>
                             <Box
                                 w='100%'
-                                border='1px'
+                                boxShadow="0 0 3px #ccc"
                                 bgColor={platformsButtonBG}
-                                borderColor="gray.300"
-                                borderRadius='10'
+                                borderRadius='5'
                                 overflowX='auto'
                                 minH='10.5vw'
+                                padding={1}
                             >
-                                <Text
-                                    ml={4}
-                                    pt={2}
-                                    fontSize='110%'
-                                    fontWeight='medium'
-                                >
-                                    Featured Quizzes
-                                </Text>
+                                <HStack ml={4} pt={2}>
+                                    <Text
+                                        fontSize='110%'
+                                        fontWeight='medium'
+                                    >
+                                        Featured Quizzes
+                                    </Text>
+                                    {isOwner && !preview ? (
+                                        <Tag className="disable-select" variant="subtle" colorScheme="orange"
+                                            _hover={{cursor:"pointer", opacity:"85%"}}
+                                            onClick={() => setIsAddingFeaturedQuiz(true)}
+                                            >
+                                            <TagLeftIcon as={AddIcon} />
+                                            <TagLabel pos="relative" top='1px'> Add Quiz </TagLabel>
+                                        </Tag>
+                                    ) : (
+                                        ''
+                                    )}
+                                </HStack>
 
                                 {/* QUIZZES */}
                                 <Flex
@@ -849,35 +924,36 @@ export default function AccountPage(props) {
                                             );
                                         }
                                     )}
-                                    {isOwner && !preview ? (
-                                        <AddQuizCard
-                                            width='10%'
-                                            title_fontsize='100%'
-                                            type='1'
-                                            callback={setIsAddingFeaturedQuiz}
-                                        />
-                                    ) : (
-                                        ''
-                                    )}
                                 </Flex>
                             </Box>
                             <Box
                                 w='100%'
-                                border='1px'
+                                boxShadow="0 0 3px #ccc;"
                                 bgColor={platformsButtonBG}
-                                borderColor="gray.300"
-                                borderRadius='10'
+                                borderRadius='5'
                                 overflowX='auto'
                                 minH='12vw'
+                                padding={1}
                             >
-                                <Text
-                                    pl='1.5%'
-                                    pt='1%'
-                                    fontSize='110%'
-                                    fontWeight='medium'
-                                >
-                                    Featured Platforms
-                                </Text>
+                                <HStack ml={4} pt={2}>
+                                    <Text
+                                        fontSize='110%'
+                                        fontWeight='medium'
+                                    >
+                                        Featured Platforms
+                                    </Text>
+                                    {isOwner && !preview ? (
+                                        <Tag className="disable-select" variant="subtle" colorScheme="orange"
+                                            _hover={{cursor:"pointer", opacity:"85%"}}
+                                            onClick={() => setIsAddingFeaturedPlatform(true)}
+                                            >
+                                            <TagLeftIcon as={AddIcon} />
+                                            <TagLabel pos="relative" top='1px'> Add Platform </TagLabel>
+                                        </Tag>
+                                    ) : (
+                                        ''
+                                    )}
+                                </HStack>
                                 {/* Platforms */}
                                 <Flex
                                     ml='1%'
@@ -893,7 +969,7 @@ export default function AccountPage(props) {
                                                     platform={platform}
                                                     width='25%'
                                                     // minWidth='200px'
-                                                    img_height='50px'
+                                                    img_height='60px'
                                                     char_limit={44}
                                                     key={key}
                                                     isOwner={
@@ -905,19 +981,6 @@ export default function AccountPage(props) {
                                                 />
                                             );
                                         }
-                                    )}
-                                    {isOwner && !preview ? (
-                                        <AddQuizCard
-                                            width='10%'
-                                            // height='25%'
-                                            title_fontsize='100%'
-                                            type='0'
-                                            callback={
-                                                setIsAddingFeaturedPlatform
-                                            }
-                                        />
-                                    ) : (
-                                        ''
                                     )}
                                 </Flex>
                             </Box>
@@ -933,12 +996,13 @@ export default function AccountPage(props) {
                             bgColor={bannerEditBG}
                         >
                             <Box
+                                boxShadow="0 0 3px #ccc;"
+                                padding={1}
                                 minWidth='100px'
-                                border='1px'
                                 bgColor={platformsButtonBG}
-                                borderColor='gray.300'
-                                borderRadius='10'
+                                borderRadius='5'
                                 overflow='hidden'
+                                _hover={{cursor:"pointer"}}
                                 onClick={() => {
                                     setEditBio(true);
                                     setUnsavedChanges(true);
@@ -978,10 +1042,9 @@ export default function AccountPage(props) {
                     ) : (
                         <Box
                             minWidth='100px'
-                            border='1px'
+                            boxShadow="0 0 3px #ccc;"
                             bgColor={platformsButtonBG}
-                            borderColor='gray.300'
-                            borderRadius='10'
+                            borderRadius='5'
                             overflow='hidden'
                         >
                             <Text
@@ -1011,47 +1074,50 @@ export default function AccountPage(props) {
     
     // Render Platforms
     function renderPlatforms() {
+        let platforms = userData.platformsMade
+
+        if (viewPlatformType === "Followed Platforms")
+            platforms = userData.following
+
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
-                    <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                        {userData.displayName}'s Platforms
-                    </Text>
-                    <Flex
-                        ml={2}
-                        display='flex'
-                        flexWrap='wrap'
-                    >
-                        {userData.platformsMade.map((platform, key) => {
-                            return (
-                                <PlatformCard
-                                    platform={platform}
-                                    width='15%'
-                                    minWidth='200px'
-                                    img_height='50px'
-                                    char_limit={44}
-                                    key={key}
-                                />
-                            );
-                        })}
+                <Box bgColor={platformsButtonBG} paddingBottom={5} border="1px" borderColor="gray.200" borderRadius='5'>
+                    <Flex ml={4} mt={3}>
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Text fontSize='120%' fontWeight='medium'>
+                                {userData.displayName}'s { viewPlatformType === "Followed Platforms" ? "Followed" : "" } Platforms
+                            </Text>
+                        </Box>
+                        <Spacer />
+                        <Menu>
+                            <MenuButton
+                                textColor="gray.600"
+                                variant="none"
+                                mr={2}
+                                as={Button}
+                                leftIcon={<BsJustifyLeft />}
+                                _focus={{border:"none"}}
+                            >
+                                { viewPlatformType }
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem onClick={() => setViewPlatformType("Created Platforms") }> Created Platforms </MenuItem>
+                                <MenuItem onClick={() => setViewPlatformType("Followed Platforms") }> Followed Platforms </MenuItem>
+                            </MenuList>
+                        </Menu>
                     </Flex>
-                </Box>
-                <Box mt='40px' bgColor={platformsButtonBG} border="1px" borderColor="gray.200" borderRadius='10'>
-                     <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                        {userData.displayName}'s Followed Platforms
-                    </Text>
                     <Flex
                         ml={2}
                         display='flex'
                         flexWrap='wrap'
                     >
-                        {userData.following.map((platform, key) => {
+                        {platforms.slice(0).reverse().map((platform, key) => {
                             return (
                                 <PlatformCard
                                     platform={platform}
-                                    width='15%'
+                                    width='18%'
                                     minWidth='200px'
-                                    img_height='50px'
+                                    img_height='60px'
                                     char_limit={44}
                                     key={key}
                                 />
@@ -1065,14 +1131,40 @@ export default function AccountPage(props) {
 
     // Render Quizzes
     function renderQuizzes() {
+        let quizzes = userData.quizzesMade
+
+        if (viewQuizType === "Favorited Quizzes")
+            quizzes = userData.favoritedQuizzes
+
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} borderRadius='10' border="1px" borderColor="gray.200">
-                    <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                        {userData.displayName}'s Quizzes
-                    </Text>
+                <Box bgColor={platformsButtonBG} paddingBottom={5} borderRadius='5' border="1px" borderColor="gray.200">
+                    <Flex ml={4} mt={3}>
+                        <Box display="flex" flexDirection="column" justifyContent="center">
+                            <Text fontSize='120%' fontWeight='medium' whiteSpace="nowrap">
+                                {userData.displayName}'s { viewQuizType === "Favorited Quizzes" ? "Favorited" : ""} Quizzes
+                            </Text>
+                        </Box>
+                        <Spacer />
+                        <Menu>
+                            <MenuButton
+                                textColor="gray.600"
+                                variant="none"
+                                mr={2}
+                                as={Button}
+                                leftIcon={<BsJustifyLeft />}
+                                _focus={{border:"none"}}
+                            >
+                                { viewQuizType }
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem onClick={() => setViewQuizType("Created Quizzes") }> Created Quizzes </MenuItem>
+                                <MenuItem onClick={() => setViewQuizType("Favorited Quizzes") }> Favorited Quizzes </MenuItem>
+                            </MenuList>
+                        </Menu>
+                    </Flex>
                     <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                        {userData.quizzesMade.map((quiz, key) => {
+                        {quizzes.slice(0).reverse().map((quiz, key) => {
                             return (
                                 <QuizCard
                                     quiz={quiz}
@@ -1086,35 +1178,6 @@ export default function AccountPage(props) {
                         })}
                     </Flex>
                 </Box>
-
-                {userData.favoritedQuizzes.length > 0 ? (
-                    <Box bgColor={platformsButtonBG} mt='40px' borderRadius='10' border="1px" borderColor="gray.200">
-                        <Text ml={4} mt={4} fontSize='120%' fontWeight='medium'>
-                            {userData.displayName}'s Favorited Quizzes
-                        </Text>
-                        <Flex
-                            ml='1%'
-                            spacing='4%'
-                            display='flex'
-                            flexWrap='wrap'
-                        >
-                            {userData.favoritedQuizzes.map((quiz, key) => {
-                                return (
-                                    <QuizCard
-                                        quiz={quiz}
-                                        width='8.0%'
-                                        title_fontsize='95%'
-                                        include_author={false}
-                                        char_limit={35}
-                                        key={key}
-                                    />
-                                );
-                            })}
-                        </Flex>
-                    </Box>
-                ) : (
-                    ''
-                )}
             </Box>
         );
     }
@@ -1166,7 +1229,7 @@ export default function AccountPage(props) {
                     w='100%'
                     minW='75px'
                     pointerEvents="none"
-                    zIndex='1'
+                    zIndex='2'
                 >
                     <Image
                         className='squareimage'
@@ -1179,23 +1242,60 @@ export default function AccountPage(props) {
         }
     }
 
+    function renderBackground() {
+        let item_src = null
+
+        // If user is previewing an item from the shop, use the previewed banner effect
+        if (preview && itemData.type === "background")
+            return itemData.item
+        
+        // If user is previewing an item from their account, use the previewed banner effect
+        else
+            return background.item
+    }
+
     // Render Badges
     function renderBadges() {
         return (
-            <Box>
-                <Text pl='1.5%' pt='1%' fontSize='120%' fontWeight='medium'>
-                    Badges
-                </Text>
-                <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                    {badges.map((badge, key) => {
-                        return (
-                            <Box key={key}>
-                                { renderBadgeIcon(badge) }
-                            </Box>
-                        );
-                    })}
-                </Flex>
+            <Box w="100%">
+                <Center>
+                    <Box w="50%" padding={5} borderRadius={5} minH="70vh" bgColor={platformsButtonBG} border="1px" borderColor="gray.300">
+                        <Center>
+                            <VStack mt={30}>
+                                <Avatar src={userData.iconImage} size="2xl" />
+                                <Text fontWeight="medium" fontSize="175%"> {userData.displayName} </Text>
+                                {/* Platform Misc. Information (# Followers, # Quizzes, etc.) */}
+                                <HStack>
+                                    <Text fontSize="105%"> 
+                                        <Icon as={BsFillFileEarmarkTextFill} mr={1} /> 
+                                        { userData.quizzesMade.length } { userData.quizzesMade.length !== 1 ? "Quizzes" : "Quiz" }
+                                    </Text>
+                                    <Text>•</Text>
+                                    <Text fontSize="105%"> 
+                                        <Icon as={BsFillFileEarmarkTextFill} mr={1} /> 
+                                        { userData.platformsMade.length } { userData.platformsMade.length !== 1 ? "Platforms" : "Platforms" }
+                                    </Text>
+                                </HStack>
+                                <Text fontSize="100%" textAlign="center"> {userData.bio} </Text>
+                            </VStack>
+                        </Center>
+                    </Box>
+                </Center>
             </Box>
+            // <Box>
+            //     <Text pl='1.5%' pt='1%' fontSize='120%' fontWeight='medium'>
+            //         Badges
+            //     </Text>
+            //     <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
+            //         {badges.map((badge, key) => {
+            //             return (
+            //                 <Box key={key}>
+            //                     { renderBadgeIcon(badge) }
+            //                 </Box>
+            //             );
+            //         })}
+            //     </Flex>
+            // </Box>
         );
     }
 
@@ -1213,20 +1313,78 @@ export default function AccountPage(props) {
 
         return (
             <VStack>
-                <Image w={120} h={120} src={badge_src} border="1px" borderColor="gray.100" boxShadow="md" bgColor="white" borderRadius={10} mt={5} ml={5} mr={5} />
+                <Image w={120} h={120} src={badge_src} border="1px" borderColor="gray.100" boxShadow="md" bgColor="white" borderRadius={5} mt={5} ml={5} mr={5} />
                 <Text fontSize="105%" fontWeight="medium"> Quiz Master </Text>
             </VStack>
         )
     }
 
+    function renderBackgroundPopover() {
+        if (!isOwner || preview)
+            return
+
+        return (
+            <Popover placement="bottom-start">
+                <PopoverTrigger>
+                    <Button leftIcon={<EditIcon />} borderRadius="40" bgColor="white" textColor="blue.600" pos="relative" boxShadow="base" _focus={{outline:"none"}} >Edit Background</Button>
+                </PopoverTrigger>
+                <Box>
+                    <PopoverContent>
+                        <PopoverCloseButton />
+                        <PopoverHeader fontWeight="medium"> Edit Background </PopoverHeader>
+                        <PopoverBody>
+                            <Stack>
+                                {/* <HStack>
+                                    <Text> Background Image: </Text>
+                                    <input
+                                        type='file'
+                                        style={{ display: 'none' }}
+                                        ref={hiddenPFPInput}
+                                        onChange={(event) => updatePFP(event)}
+                                    />
+                                    <Button 
+                                        variant="outline" 
+                                        colorScheme="blue"
+                                        _focus={{}}
+                                        onClick={() => hiddenPFPInput.current.click()}
+                                    > 
+                                        Upload Image 
+                                    </Button>
+                                </HStack> */}
+                                <HStack>
+                                    <Text> Background: </Text>
+                                    <Menu>
+                                        <MenuButton w={180} as={Button} rightIcon={<ChevronDownIcon />} border="1px solid" borderColor="gray.300" _focus={{}}>
+                                            { background.name }
+                                        </MenuButton>
+                                        <MenuList>
+                                            <MenuItem onClick={() => updateBackground({name: "No Background", item: null, _id: "none"})}> No Background </MenuItem>
+                                            {
+                                                userData.ownedBackgrounds.map((item, key) => {
+                                                    return (
+                                                        <MenuItem key={key} onClick={() => updateBackground(item)}> {item.name} </MenuItem>
+                                                    )
+                                                })
+                                            }
+                                        </MenuList>
+                                    </Menu>
+                                </HStack>
+                            </Stack>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Box>
+            </Popover>
+        )
+    }
+
     return (
-        <Box data-testid='main-component'>
+        <Box data-testid='main-component' minH="100vh" bgRepeat="repeat" bgImage={"url('" + renderBackground() + "')"} bgPos="center" bgSize="cover">
             {isAddingFeaturedQuiz ? (
                 <Box
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='2'
+                    zIndex='3'
                     bgColor={mainBG}
                     transition='0.2s linear'
                 >
@@ -1309,7 +1467,7 @@ export default function AccountPage(props) {
                     position='fixed'
                     w='100%'
                     h='100vh'
-                    zIndex='2'
+                    zIndex='3'
                     bgColor='rgba(0, 0, 0, 0.9)'
                     transition='0.2s linear'
                 >
@@ -1382,89 +1540,83 @@ export default function AccountPage(props) {
                     </HStack>
                 </Box>
             ) : null}
-            <Grid templateColumns='1fr 7fr 1fr'>
-                <Box w='100%'>
-                    <Button variant="outline" leftIcon={<ArrowBackIcon />} colorScheme="blue" ml={10} mt={6} onClick={() => history.goBack()}> Back </Button>
+
+            {/* HEADER BUTTONS */}
+            <Grid
+                bgColor="white"
+                w='100%'
+                h='6vh'
+                minH='50px'
+                templateColumns='1fr 1fr 1fr 1fr'
+                boxShadow="md"
+            >
+                {
+                    headerSections.map((section, key) => {
+                        return (
+                            <Box className="disable-select" pos="relative" key={key} display="flex" flexDir="column" justifyContent="center">
+                                <Text
+                                    key={key}
+                                    w='100%'
+                                    fontSize='125%'
+                                    textColor={ page === section.pageId ? accountButtonsText : accountButtonsText2 }
+                                    textAlign="center"
+                                    transition=".1s linear"
+                                    whiteSpace="nowrap"
+                                    _focus={{ boxShadow:'none' }}
+                                    _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
+                                    onClick={() => setPage(section.pageId)}
+                                >
+                                    <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
+                                    { section.pageName }
+                                </Text>
+                                <Center>
+                                    <Box pos="absolute" bottom="0px" w="70%" h="4px" bgColor={page === section.pageId ? "blue.500" : "" }  transition="0.15s linear"/>
+                                </Center>
+                            </Box>
+                        )
+                    })
+                }
+            </Grid>
+            
+            {/* Main Grid */}
+            <Grid templateColumns='1fr 7fr 1fr' mt={5}>
+                <Box w="100%">
+                    <Center>
+                        {preview ? (
+                            <Button
+                                textColor="blue.600"
+                                _focus={{ border: 'none' }}
+                                leftIcon={<ArrowBackIcon />} 
+                                borderRadius="40"
+                                boxShadow="base"
+                                onClick={() =>
+                                    history.push({
+                                        pathname: '/shoppingpage',
+                                        state: {
+                                            item: itemData,
+                                            page: location.state.prevSection,
+                                            pageNum: location.state.prevPageNum,
+                                        },
+                                    })
+                                }
+                            >
+                                Back to Shop
+                            </Button>
+                        ) : null}
+                    </Center>
                 </Box>
 
                 {/* MAIN CONTENT */}
                 <Box w='100%'>
-                    {/* HEADER BUTTONS */}
-                    <Grid
-                        w='100%'
-                        h='6vh'
-                        minH='50px'
-                        templateColumns='1fr 1fr 1fr 1fr'
-                    >
-                        {
-                            headerSections.map((section, key) => {
-                                return (
-                                    <Box className="disable-select" key={key} display="flex" flexDir="column" justifyContent="center">
-                                        <Text
-                                            key={key}
-                                            w='100%'
-                                            fontSize='125%'
-                                            textColor={ page === section.pageId ? accountButtonsText : accountButtonsText2 }
-                                            textAlign="center"
-                                            transition=".1s linear"
-                                            whiteSpace="nowrap"
-                                            _focus={{ boxShadow:'none' }}
-                                            _hover={{ cursor:'pointer', opacity:"70%", transition:".15s linear" }}
-                                            onClick={() => setPage(section.pageId)}
-                                        >
-                                            <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
-                                            { section.pageName }
-                                        </Text>
-                                    </Box>
-                                )
-                            })
-                        }
-                        {/* <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'user' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('user')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            {username}{' '}
-                        </Button>
-                        <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'platforms' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('platforms')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            Platforms{' '}
-                        </Button>
-                        <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'quizzes' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('quizzes')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            Quizzes{' '}
-                        </Button>
-                        <Button
-                            height='100%'
-                            fontSize='115%'
-                            bgColor={accountButtonsBG}
-                            textColor={page === 'badges' ? {accountButtonsText} : {accountButtonsText2}}
-                            onClick={() => setPage('badges')}
-                            _focus={{ boxShadow: 'none' }}
-                        >
-                            {' '}
-                            Badges{' '}
-                        </Button> */}
-                    </Grid>
                     {renderPage()}
+                </Box>
+                
+                
+                <Box>
+                    <Center>
+                        { renderBackgroundPopover() }
+    
+                    </Center>
                 </Box>
             </Grid>
 

@@ -31,9 +31,9 @@ export default function QuizTakingPage({}) {
     
     //Dark mode styling
     const quizTimerBoxBG=useColorModeValue("gray.100", "gray.600")
-    const quizTimerSideBG=useColorModeValue("gray.100", "gray.300")
+    const quizTimerSideBG=useColorModeValue("white", "gray.300")
     const authorTextColor=useColorModeValue("blue.600","blue.400")
-    const quizTimerTextColor=useColorModeValue("gray.800","gray.800")
+    const quizTimerTextColor=useColorModeValue("gray.700","gray.800")
     const highlightChosenQText=useColorModeValue("gray.200","gray.600")
     const whiteBlackText=useColorModeValue("white","white")
     const nonChosenQText=useColorModeValue("black","white")
@@ -285,17 +285,17 @@ export default function QuizTakingPage({}) {
             if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
                 if (userAnswers[currentQuestionNumber - 1] === choice) {
                     if (userAnswers[currentQuestionNumber - 1].toString() !== quiz.questions[currentQuestionNumber - 1].answer.toString().trim()) {
-                        return '1px solid black'
+                        return '1px solid #3182CE'
                     } else {
-                        return '1px solid black'
+                        return '1px solid #3182CE'
                     }
                 } else if (quiz.questions[currentQuestionNumber - 1].answer.toString().trim() === choice) {
                     return '4px dashed green'
                 } else {
-                    return "1px solid black"
+                    return "1px solid #3182CE"
                 }
             } else {
-                return '1px solid black'
+                return '1px solid #3182CE'
             }
         }
 
@@ -303,22 +303,22 @@ export default function QuizTakingPage({}) {
         else if (questionType === 2){
             // Array hasn't been created yet, set color to gray
             if (userAnswers[currentQuestionNumber-1] === undefined)
-                return "1px solid black"
+                return "1px solid #3182CE"
 
                 if (quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true) {
                     if (userAnswers[currentQuestionNumber - 1].includes(choice)) {
                         if (!quiz.questions[currentQuestionNumber - 1].answer.includes(choice)) {
-                            return '1px solid black'
+                            return '1px solid #3182CE'
                         } else {
-                            return '1px solid black'
+                            return '1px solid #3182CE'
                         }
                     } else if (quiz.questions[currentQuestionNumber - 1].answer.includes(choice)) {
                         return '4px dashed green'
                     } else {
-                        return "1px solid black"
+                        return "1px solid #3182CE"
                     }
                 } else {
-                    return '1px solid black'
+                    return '1px solid #3182CE'
                 }
         }
     }
@@ -396,7 +396,7 @@ export default function QuizTakingPage({}) {
 
                     {/* QUIZ TIMER */}
                     <Center pt="6%">
-                        <Box w='70%' h='6vh' bgColor={quizTimerSideBG} border="1px solid" borderColor="gray.400" borderRadius="15">
+                        <Box w='70%' bgColor={quizTimerSideBG} border="1px solid" borderColor="gray.400" borderRadius="15">
                         <Text fontSize='170%' textAlign='center' color={ timeRunningOut ? "red.500" : quizTimerTextColor }>
                             {quizDone ? "Quiz Ended" : quizTimerDisplay}
                         </Text>
@@ -429,12 +429,12 @@ export default function QuizTakingPage({}) {
                 <Box>
                     {/* QUESTION */}
                     <VStack>
-                        <Text pt='50' fontSize="270%" textAlign="center" pl={17} pr={17}>
+                        <Text pt='50' fontSize="240%" fontWeight="medium" textColor="gray.700" textAlign="center" pl={17} pr={17}>
                             {question}
                         </Text>
 
                    
-                        <Text fontSize="150%" textAlign="center" color="blue.400" pl={17} pr={17}>
+                        <Text fontSize="150%" textAlign="center" color="blue.500" pl={17} pr={17}>
                             {questionType === 2 ? "(Select All That Apply)" : null}
                         </Text>
                     </VStack>
@@ -458,6 +458,8 @@ export default function QuizTakingPage({}) {
                                     onClick={() => { updateUserAnswers(currentQuestionNumber, choice, quiz.questions[currentQuestionNumber-1].questionType) }}
                                     _hover={quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true ? 'none' : {bg: hoverAnswerBG}}
                                     _active={quiz.quizInstant && finalizedQuestions[currentQuestionNumber - 1] === true ? 'none' : {opacity: '75%'}}
+                                    overflow="hidden"
+                                    whiteSpace="initial"
                                 >
                                     {choices[index]}
                                 </Button>

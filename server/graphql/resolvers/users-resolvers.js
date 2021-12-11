@@ -97,6 +97,12 @@ module.exports = {
                 .populate({
                     path: 'ownedIconEffects',
                 })
+                .populate({
+                    path: 'background',
+                })
+                .populate({
+                    path: 'ownedBackgrounds',
+                })
                 .exec();
             return user;
         },
@@ -123,6 +129,7 @@ module.exports = {
                     bio,
                     bannerEffectId,
                     iconEffectId,
+                    backgroundId
                 },
             },
             context
@@ -165,6 +172,9 @@ module.exports = {
                 let iconEffect = await Item.findById(iconEffectId);
                 if (iconEffect === undefined) iconEffect = null;
 
+                let background = await Item.findById(backgroundId);
+                if (background === undefined) background = null;
+
                 user = await User.findByIdAndUpdate(
                     userId,
                     {
@@ -173,6 +183,7 @@ module.exports = {
                         bio,
                         bannerEffect: bannerEffect,
                         iconEffect: iconEffect,
+                        background: background
                     },
                     { new: true }
                 )

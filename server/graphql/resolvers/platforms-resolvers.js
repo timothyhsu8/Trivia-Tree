@@ -286,14 +286,15 @@ module.exports = {
                 if (quiz === undefined)
                     throw new Error('Quiz does not exist');
 
+                
                 // If quiz doesn't already exist on the platform, add it
-                for (let i = 0; i < platform.quizzes.length; i++) {
+                let addToPlatform = true
+                for (let i = 0; i < platform.quizzes.length; i++) 
                     if (platform.quizzes[i]._id.toString() === quizId)
-                        break
-                    
-                    if (i === platform.quizzes.length-1)
-                        platform.quizzes.push(quiz)
-                }
+                        addToPlatform = false
+                
+                if (addToPlatform)
+                    platform.quizzes.push(quiz)
                 
                 // Add quiz to playlist
                 for (let i = 0; i < platform.playlists.length; i++) 

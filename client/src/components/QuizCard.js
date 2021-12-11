@@ -106,7 +106,7 @@ export default function QuizCard( props ) {
             borderRadius="4%" 
             border={isEditing ? "1px":""}
             borderColor={isEditing ? "red":""}
-            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"blue.100", cursor:"pointer", transition:"0.15s linear"}} 
+            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"gray.100", cursor:"pointer", transition:"0.15s linear"}} 
             _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
             transition="0.1s linear"
             onClick={isEditing ? ()=> quizToDelete():() => history.push('/prequizpage/' + quiz_data._id)}

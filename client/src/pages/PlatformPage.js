@@ -763,7 +763,7 @@ export default function PlatformPage({}) {
                     </HStack>
                 </Box>
                 <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-                    {platform_data.quizzes.map((quiz, key) => {
+                    {platform_data.quizzes.slice(0).reverse().map((quiz, key) => {
                         return (
                             <QuizCard
                                 quiz={quiz}

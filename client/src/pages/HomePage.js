@@ -2,15 +2,16 @@ import { React, useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/auth';
 import { Box, Text, Flex, Spinner, Center, Grid, useColorMode, Image, Icon, Avatar, HStack, VStack, Stack } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_QUIZZES, GET_PLATFORMS, GET_USERS, GET_USER, GET_USER_RECOMMENDATIONS, GET_QUIZ_OF_THE_DAY, GET_PLATFORM_OF_THE_DAY } from "../cache/queries";
+import { GET_FEATURED_QUIZZES, GET_PLATFORMS, GET_USER, GET_USER_RECOMMENDATIONS, GET_QUIZ_OF_THE_DAY, GET_PLATFORM_OF_THE_DAY } from "../cache/queries";
 import { useHistory } from 'react-router-dom';
 import QuizCard from '../components/QuizCard';
 import PlatformCard from '../components/PlatformCard';
-import UserCard from '../components/UserCard';
 import { StarIcon, ViewIcon } from '@chakra-ui/icons'
-import { BsFillBookmarkHeartFill, BsFillBookmarkStarFill, BsFillFileEarmarkFill, BsFillFileEarmarkTextFill, BsFillHeartFill, BsFillHouseDoorFill, BsFillLightningFill, BsFillPersonFill, BsFillReplyFill, BsFillTrophyFill, BsPersonCircle } from 'react-icons/bs';
+import { BsFillBookmarkHeartFill, BsFillFileEarmarkTextFill, BsFillHeartFill, BsFillHouseDoorFill, BsFillLightningFill, BsFillPersonFill, BsFillTrophyFill, BsLock, BsLockFill } from 'react-icons/bs';
 import * as mutations from '../cache/mutations';
 import '../styles/styles.css'
+import NewQuizzes from '../components/HomePage/NewQuizzes';
+import BestQuizzes from '../components/HomePage/BestQuizzes';
 
 export default function Homepage() {
     let history = useHistory();
@@ -24,33 +25,28 @@ export default function Homepage() {
             icon: BsFillBookmarkHeartFill
         },
         {
-            pageName: "RECOMMENDATIONS",
-            icon: BsFillReplyFill
-        },
-        {
-            pageName: "FAVORITED",
-            icon: StarIcon
-        },
-        {
             pageName: "NEW",
             icon: BsFillLightningFill
         },
         {
             pageName: "BEST",
             icon: BsFillTrophyFill
+        },
+        {
+            pageName: "FAVORITED",
+            icon: StarIcon
         }
     ]
     const [initialLoad, setInitialLoad] = useState(false);
 
     // Fetch quiz/platform data from the backend
-    const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
+    const featuredQuizzes = useQuery(GET_FEATURED_QUIZZES, { fetchPolicy: 'cache-and-network' })
     const platforms = useQuery(GET_PLATFORMS, { fetchPolicy: 'cache-and-network' })
-    const users = useQuery(GET_USERS, { fetchPolicy: 'cache-and-network' })
     const quizOfTheDay = useQuery(GET_QUIZ_OF_THE_DAY, { fetchPolicy: 'cache-and-network' })
     const platformOfTheDay = useQuery(GET_PLATFORM_OF_THE_DAY, { fetchPolicy: 'cache-and-network' })
 
-    const doneLoading = !quizzes.loading && !platforms.loading && !users.loading && !quizOfTheDay.loading && !platformOfTheDay.loading
-    const error = quizzes.error || platforms.error || users.error || quizOfTheDay.error || platformOfTheDay.error
+    const doneLoading = !featuredQuizzes.loading && !platforms.loading && !quizOfTheDay.loading && !platformOfTheDay.loading
+    const error = featuredQuizzes.error || platforms.error || quizOfTheDay.error || platformOfTheDay.error
 
     //I am sorry for this but to recognize dark mode on login from any account. Needs to check user info. 
     let userId = null;
@@ -71,6 +67,7 @@ export default function Homepage() {
             setDarkMode(userData.darkMode);
         }
     });
+
     const {
         data: { getUserRecommendations: userRecommendations } = {},
     } = useQuery(GET_USER_RECOMMENDATIONS,
@@ -138,25 +135,23 @@ export default function Homepage() {
         return null;
     }
 
-    const quiz_data = quizzes.data.getQuizzes
     const platform_data = platforms.data.getPlatforms
-    const user_data = users.data.getUsers
-
-    const featured_quizzes = quiz_data.filter((quiz) => {
-        return quiz.isFeatured === true
-    })
+    const featured_quizzes = featuredQuizzes.data.getFeaturedQuizzes
 
     recommendation_list = userRecommendations;
     if (recommendation_list === undefined)
         recommendation_list = []
 
+    else if (recommendation_list.length === 0)
+        recommendation_list = featured_quizzes.slice(0, 4).reverse()
+    
     // Get Data for Quiz of the Day
     let quizOfTheDay_data = null
     if (quizOfTheDay.data.getQuizOfTheDay !== null)
         quizOfTheDay_data = quizOfTheDay.data.getQuizOfTheDay
     
     else
-        quizOfTheDay_data = quiz_data[0]
+        quizOfTheDay_data = recommendation_list[0]
 
     // Get Data for Platform of the Day
     let platformOfTheDay_data = null
@@ -164,13 +159,13 @@ export default function Homepage() {
         platformOfTheDay_data = platformOfTheDay.data.getPlatformOfTheDay
     
     else
-        platformOfTheDay_data = platform_data[0]
+        platformOfTheDay_data = recommendation_list[0]
         
     return (
         <Box>
             {/* HEADER */}
             <Center>
-                <Grid w="100%" minW="800px" templateColumns="1fr 1fr 1fr 1fr 1fr" boxShadow="md" bgColor="gray.100"> 
+                <Grid w="100%" minW="800px" templateColumns="1fr 1fr 1fr 1fr" boxShadow="md" bgColor="gray.100"> 
                     {header_sections.map((section, key) => {
                         return (
                             <Box h="55px" key={key}>
@@ -221,46 +216,16 @@ export default function Homepage() {
 
     function renderSection() {
         if (currentSection === "FEATURED") return renderFeaturedSection()
-        if (currentSection === "RECOMMENDATIONS") return renderFeaturedSection()
         if (currentSection === "FAVORITED") return renderFavoritedSection()
-        if (currentSection === "NEW") return renderNewSection()
-        if (currentSection === "BEST") return renderBestSection()
+        if (currentSection === "NEW") return <NewQuizzes />
+        if (currentSection === "BEST") return <BestQuizzes />
     }
     
     function renderFeaturedSection() {
         return (
             <Box>
-                {/* <Box w={200} h={200} pos="relative" float="right" top="0" right="50px" bgColor="gray.100">
-                
-                </Box> */}
-                {/* QUIZZES */}
-                {currentSection === "RECOMMENDATIONS" ? 
-                    <Box mt="1%" ml="2%" mr="2%">
-                    <Text fontSize="140%" ml="1%" fontWeight="medium"> Recommended Quizzes </Text>
-                    {
-                        userId !== null ?
-                        <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                            {recommendation_list.map((quiz, key) => {
-                                return <QuizCard 
-                                    quiz={quiz} 
-                                    width="7.3%" 
-                                    title_fontsize="95%" 
-                                    author_fontsize="85%" 
-                                    include_author={true}
-                                    char_limit={30} 
-                                    key={key}
-                                />
-                            })}
-                        </Flex>
-                        : 
-                        <Center>
-                            <Text fontSize="140%" mt={21} mb={20}> You must be logged in to view recommendations </Text>
-                        </Center>
-                    }
-                    </Box>
-                    :
-                    <Box mt="1%" ml="2%" mr="2%">
-
+                {/* Featured Quizzes */}
+                <Box mt="1%" ml="2%" mr="2%">
                     <Text fontSize="140%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
                     <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                         {featured_quizzes.map((quiz, key) => {
@@ -275,12 +240,15 @@ export default function Homepage() {
                             />
                         })}
                     </Flex>
-                    </Box>
-                }
+                </Box>
+         
+                <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
 
-
+                {/* Recommended Quizzes */}
                 <Box mt="1%" ml="2%" mr="2%">
-                    <Text fontSize="140%" ml="1%" fontWeight="medium" borderBottom="1px" borderColor="gray.200"> Recommended Quizzes </Text>
+                    <Text fontSize="140%" ml="1%" fontWeight="medium"> 
+                        Recommended Quizzes 
+                    </Text>
                     {
                         userId !== null ?
                         <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
@@ -298,35 +266,19 @@ export default function Homepage() {
                         </Flex>
                         : 
                         <Center>
-                            <Text fontSize="140%" mt={21} mb={20}> You must be logged in to view recommendations </Text>
+                            <Text fontSize="140%" mt={30} mb={10} textColor="gray.600"> 
+                                <Icon as={BsLockFill} pos="relative" mr={2} top="-4px" />
+                                You must be logged in to view recommendations 
+                            </Text>
                         </Center>
                     }
                     </Box>
-                    :
+                    
                     <Box mt="1%" ml="2%" mr="2%">
                 </Box>
-                
-                {/* <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center> */}
-
-
-                {/* USERS */}
-                {/* <Box mt="1%" ml="2%" mr="2%">
-                    <Text fontSize="140%" ml="1%" fontWeight="medium"> Featured Users </Text>
-                    <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                        {user_data.map((user, key) => {
-                            return <UserCard 
-                                user={user} 
-                                width="7.5%" 
-                                title_fontsize="95%" 
-                                char_limit={30} 
-                                key={key}
-                            />
-                        })}
-                    </Flex>
-                </Box> */}
-                
                 <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
-                {/* PLATFORMS */}
+                
+                {/* Featured Platforms */}
                 <Box mt="1%" ml="2%" mr="2%">
                     <Text fontSize="140%" ml="1%" fontWeight="medium"> Featured Platforms </Text>
                     {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
@@ -342,13 +294,6 @@ export default function Homepage() {
                         })}
                     </Grid>
                 </Box>
-                
-
-                {/* EXTRA CONTENT ON HOMEPAGE (Keep or remove?) */}
-                <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
-                { renderNewSection() }
-                <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>     
-                { renderBestSection() }
             </Box>
         )
     }
@@ -357,42 +302,32 @@ export default function Homepage() {
         if (userId === null) {
             return (
                 <Center>
-                    <Text fontSize="140%" mt={21} mb={20}> You must be logged in to view favorited quizzes </Text>
+                    <Text fontSize="140%" mt={30} mb={10} textColor="gray.600"> 
+                        <Icon as={BsLockFill} pos="relative" mr={2} top="-4px" />
+                        You must be logged in to view favorited quizzes
+                    </Text>
                 </Center>
             )
         }
-        
+
+        const favoritedQuizzes = userData.favoritedQuizzes.slice(0).reverse()
+        const first_three = favoritedQuizzes.slice(0, 3)
+
+        if (favoritedQuizzes.length === 0) {
+            return (
+                <Center>
+                    <Text fontSize="140%" mt={45} mb={10} textColor="gray.600"> 
+                        You don't have any favorited quizzes!
+                    </Text>
+                </Center>
+            )
+        }
 
         return (
             <Box mt="1%" ml="2%" mr="2%">
-                <Text fontSize="140%" ml="1%" fontWeight="medium"> Favorited Quizzes </Text>
-                <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                    {userData.favoritedQuizzes.slice(0).reverse().map((quiz, key) => {
-                        return <QuizCard 
-                            quiz={quiz} 
-                            width="7.3%" 
-                            title_fontsize="95%" 
-                            author_fontsize="85%" 
-                            include_author={true}
-                            char_limit={30} 
-                            key={key}
-                        />
-                    })}
-                </Flex>
-            </Box>
-        )
-    }
-
-    function renderNewSection() {
-        const new_quizzes = quiz_data.slice(0, 20).reverse()
-        const first_three = new_quizzes.slice(0, 3)
-
-        return (
-            <Box mt="1%" ml="2%" mr="2%">
-                <Text fontSize="140%" ml="1%" fontWeight="medium"> New Quizzes </Text>
-
+                <Text fontSize="140%" ml="1%" mb={2} fontWeight="medium"> Favorited Quizzes </Text>
                 {/* Gives first 3 quizzes a big card */}
-                <HStack pt={5} pb={5} spacing={4} borderRadius={5} justifyContent="center" bgColor="yellow.500" boxShadow="lg" bgSize="cover" bgPos="center" bgImage={
+                <HStack pt={5} pb={5} spacing={4} borderRadius={5} justifyContent="center" boxShadow="lg" bgSize="cover" bgPos="center" bgImage={
                             "linear-gradient(to bottom, rgba(245, 246, 252, 0), rgba(100, 0, 0, .5)), url('" +
                             "https://res.cloudinary.com/dsry3cnco/image/upload/v1639197385/triva_tree_featured_afuxb3.png" +
                             "')"
@@ -407,33 +342,7 @@ export default function Homepage() {
                 </HStack>
 
                 <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                    {new_quizzes.slice(3).map((quiz, key) => {
-                        return <QuizCard 
-                            quiz={quiz} 
-                            width="7.3%" 
-                            title_fontsize="95%" 
-                            author_fontsize="85%" 
-                            include_author={true}
-                            char_limit={30} 
-                            key={key}
-                        />
-                    })}
-                </Flex>
-            </Box>
-        )
-    }
-
-    function renderBestSection() {
-        let quizData = [...quiz_data]
-        const popular_quizzes = quizData.sort((a, b) => {
-            return a.numAttempts < b.numAttempts ? 1 : -1
-        })
-
-        return (
-            <Box mt="1%" ml="2%" mr="2%">
-                <Text fontSize="140%" ml="1%" fontWeight="medium"> Top Quizzes of All Time </Text>
-                <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                    {popular_quizzes.slice(0, 24).map((quiz, key) => {
+                    {favoritedQuizzes.slice(3).map((quiz, key) => {
                         return <QuizCard 
                             quiz={quiz} 
                             width="7.3%" 
@@ -547,15 +456,16 @@ export default function Homepage() {
     // Larger quiz cards for the first 2 or 3 new quizzes (or best quizzes or whatever)
     function renderLargeQuizCard(quiz) {
         return (
-            <Box w="30%" bgColor="white" borderRadius={10} border="1px" borderColor="gray.200" boxShadow="md" padding={5} overflow="hidden"
+            <Box w="30%" minW={400} bgColor="white" borderRadius={10} border="1px" borderColor="gray.200" boxShadow="md" padding={5} overflow="hidden"
                 _hover={{bgColor:"gray.100", transition:".15s linear", cursor:"pointer"}}
                 transition=".15s linear"    
+                onClick={() => history.push('/prequizpage/' + quiz._id)}
             >
                 <HStack>
                     <Avatar src={quiz.icon} size="2xl" borderRadius={10} />
                     <Grid templateColumns="2fr 1fr">
                         <Stack spacing={1} p={1}>
-                            <Text fontSize="130%" fontWeight="medium" whiteSpace="nowrap"> {quiz.title} </Text>
+                            <Text fontSize="130%" fontWeight="medium"> {quiz.title} </Text>
                             <HStack>
                                 <Avatar src={quiz.user.iconImage} size="sm"/>
                                 <Text whiteSpace="nowrap"> {quiz.user.displayName} </Text>

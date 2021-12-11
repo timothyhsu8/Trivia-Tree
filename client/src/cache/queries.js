@@ -8,6 +8,29 @@ export const GET_QUIZZES = gql`
             user {
                 _id
                 displayName
+                iconImage
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
+            isFeatured
+        }
+    }
+`;
+
+export const GET_FEATURED_QUIZZES = gql`
+    {
+        getFeaturedQuizzes {
+            _id
+            title
+            user {
+                _id
+                displayName
             }
             icon
             description

@@ -150,6 +150,9 @@ const quizSchema = new Schema(
         },
         isFeatured: {
             type: Boolean
+        },
+        isQuizOfTheDay: {
+            type: Boolean
         }
     },
     { timestamps: true }

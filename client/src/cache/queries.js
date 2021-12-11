@@ -75,6 +75,30 @@ export const GET_QUIZ = gql`
     }
 `;
 
+export const GET_QUIZ_OF_THE_DAY = gql`
+    {
+        getQuizOfTheDay {
+            _id
+            title
+            user {
+                _id
+                displayName
+                iconImage
+            }
+            icon
+            description
+            category
+            quizTimer
+            numQuestions
+            numAttempts
+            numFavorites
+            rating
+            quizInstant
+            quizShuffled  
+        }
+    }
+`;
+
 export const GET_QUIZ_ATTEMPT = gql`
     query GetQuizAttempt($_id: ID!) {
         getQuizAttempt(_id: $_id) {
@@ -228,6 +252,33 @@ export const GET_PLATFORMS = gql`
     }
 `;
 
+export const GET_PLATFORM_OF_THE_DAY = gql`
+    {
+        getPlatformOfTheDay {
+            _id
+            name
+            iconImage
+            bannerImage
+            background
+            tags
+            description
+            followers {
+                _id
+            }
+            quizzes {
+                _id
+                title
+            }
+            user {
+                _id
+                displayName
+                iconImage
+            }
+        }
+    }
+`;
+
+
 export const GET_PLATFORM = gql`
     query getPlatform($platformId: ID!) {
         getPlatform(platformId: $platformId) {
@@ -373,6 +424,9 @@ export const GET_USER = gql`
                     _id
                     displayName
                 }
+                quizzes {
+                    _id
+                }
             }
             following {
                 _id
@@ -385,6 +439,9 @@ export const GET_USER = gql`
                 followers {
                     _id
                     displayName
+                }
+                quizzes {
+                    _id
                 }
             }
             favoritedQuizzes {

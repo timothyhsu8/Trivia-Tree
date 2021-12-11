@@ -59,6 +59,9 @@ const platformSchema = new Schema(
         },
         numFollowers: {
             type: Number
+        },
+        isPlatformOfTheDay: {
+            type: Boolean
         }
     },
     { timestamps: true }

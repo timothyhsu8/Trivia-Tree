@@ -157,8 +157,8 @@ export default function PlatformCard(props) {
                                     whiteSpace="nowrap"
                                 >
                                     <Icon as={BsFillFileEarmarkTextFill} pos="relative" top="-1.5px" />{' '}
-                                    {platform.followers.length}{' '}
-                                    {platform.followers.length == 1
+                                    {platform.quizzes.length}{' '}
+                                    {platform.quizzes.length == 1
                                         ? ' Quiz'
                                         : ' Quizzes'}{' '}
                                 </Text>

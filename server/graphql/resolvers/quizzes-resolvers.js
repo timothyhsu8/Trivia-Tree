@@ -22,16 +22,24 @@ module.exports = {
                 throw new Error(err);
             }
         },
-        async getFeaturedQuizzes() {
+        async getQuizOfTheDay() {
             try {
-                const quizzes = await Quiz.find({
-                    isFeatured: true
-                }).populate('user').exec();
-                return quizzes;
+                const quiz = await Quiz.findOne({ isQuizOfTheDay: true }).populate('user').exec();
+                return quiz;
             } catch (err) {
                 throw new Error(err);
             }
         },
+        // async getFeaturedQuizzes() {
+        //     try {
+        //         const quizzes = await Quiz.find({
+        //             isFeatured: true
+        //         }).populate('user').exec();
+        //         return quizzes;
+        //     } catch (err) {
+        //         throw new Error(err);
+        //     }
+        // },
         async getQuiz(_, { quizId }) {
             try {
                 const quiz = await Quiz.findById(quizId)

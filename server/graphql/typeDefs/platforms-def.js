@@ -16,6 +16,7 @@ module.exports = gql`
         playlists: [Playlist]
         description: String
         createdAt: String
+        isPlatformOfTheDay: Boolean
     }
 
     input PlatformInput {
@@ -44,6 +45,7 @@ module.exports = gql`
 
     extend type Query {
         getPlatforms: [Platform]
+        getPlatformOfTheDay: Platform
         getPlatform(platformId: ID!): Platform
         searchPlatforms(searchText: String!, page: Int!): [Platform]
     }

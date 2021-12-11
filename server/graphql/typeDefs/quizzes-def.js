@@ -27,6 +27,7 @@ module.exports = gql`
         numRatings: Int
         createdAt: String
         isFeatured: Boolean
+        isQuizOfTheDay: Boolean
     }
 
     type Question {
@@ -86,6 +87,7 @@ module.exports = gql`
 
     extend type Query {
         getQuizzes: [Quiz]
+        getQuizOfTheDay: Quiz
         getFeaturedQuizzes: [Quiz]
         getQuiz(quizId: ID!): Quiz
         searchQuizzes(searchText: String!, page: Int!): [Quiz]

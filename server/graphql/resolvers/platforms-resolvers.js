@@ -23,7 +23,32 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
-
+        async getPlatformOfTheDay() {
+			try {
+				const platform = await Platform.findOne({ isPlatformOfTheDay: true })
+                .populate({
+                    path: 'user',
+                    populate: [{
+                        path: 'quizzesMade',
+                        populate: { 
+                            path: 'platform', 
+                            model: 'Platform' 
+                        },
+                    }]
+                })
+                .populate({
+                    path: 'quizzes',
+                    populate: { path: 'platform', model: 'Platform' },
+                })
+                .populate({
+                    path: 'followers'
+                })
+                .exec();
+				return platform;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
         async getPlatform(_, { platformId }) {
             try {
                 const platform = await Platform.findById(platformId)

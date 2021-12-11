@@ -57,7 +57,7 @@ module.exports = gql`
     extend type Query {
         getUsers: [User]
         getUser(_id: ID!): User
-        searchUsers(searchText: String!): [User]
+        searchUsers(searchText: String!, page: Int!): [User]
     }
     extend type Mutation {
         updateUser(userInput: UserInput!): User

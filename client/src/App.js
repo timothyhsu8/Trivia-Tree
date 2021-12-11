@@ -76,8 +76,9 @@ function App() {
                             />
                             \
                             <Route
-                                path='/searchresultspage'
-                                component={SearchResultsPage}
+                                exact
+                                path='/searchresultspage/:searchType/:searchText?'
+                                render={props => <SearchResultsPage key={Date.now()} {...props}/>}
                             />
                             <Route path='/loginpage' component={LoginPage}></Route>
                             <Route path='/signuppage' component={SignUpPage}></Route>

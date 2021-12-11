@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const playlistSchema = new Schema({
     name: {
@@ -63,6 +64,7 @@ const platformSchema = new Schema(
     { timestamps: true }
 );
 
+platformSchema.plugin(mongoosePaginate);
 const Platform = model('Platform', platformSchema);
 // const Playlist = model('Playlist', playlistSchema)
 module.exports = Platform;

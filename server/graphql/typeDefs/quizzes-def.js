@@ -88,7 +88,7 @@ module.exports = gql`
         getQuizzes: [Quiz]
         getFeaturedQuizzes: [Quiz]
         getQuiz(quizId: ID!): Quiz
-        searchQuizzes(searchText: String!): [Quiz]
+        searchQuizzes(searchText: String!, page: Int!): [Quiz]
         getPostRecommendations(quiz_id: ID): [Quiz]
         getUserRecommendations(user_id: ID): [Quiz]
         getRating(quizId: ID!, userId: ID!): Int

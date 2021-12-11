@@ -106,13 +106,13 @@ module.exports = {
                 .exec();
             return user;
         },
-        async searchUsers(_, { searchText }) {
+        async searchUsers(_, { searchText, page }) {
             console.log(searchText);
             try {
-                const users = await User.find({
+                const users = await User.paginate({
                     displayName: { $regex: searchText, $options: 'i' },
-                });
-                return users;
+                }, { page: page, limit: 10 });
+                return users.docs;
             } catch (err) {
                 throw new Error(err);
             }

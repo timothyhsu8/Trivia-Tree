@@ -1,6 +1,6 @@
 import { Box, Grid, Text, Center, VStack, Select, Spinner, Button, NumberInput, NumberInputField, Flex, Spacer, HStack,
     IconButton, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Tag, TagLabel, useColorModeValue } from "@chakra-ui/react"
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries";
 import QuizResult from '../components/SearchResults/QuizResult'
@@ -12,7 +12,9 @@ import '../styles/styles.css'
 
 export default function SearchResultsPage() {
 
-    const location = useLocation()
+    const location = useLocation();
+    let { searchType, searchText } = useParams();
+
     const [sortType, setSortType] = useState("none")
     const [filters, setFilters] = useState( {
         minPlays: 0,
@@ -21,14 +23,77 @@ export default function SearchResultsPage() {
         minRating: 1,
         minFollowers: 0
     })
+    const [isInitQueryDone, setInitQueryDone] = useState(false);
 
-    let search = location.state.search
-    let searchType = location.state.searchType
+    const [quizData, setQuizData] = useState(() => []);
+    const [platformData, setPlatformData] = useState(() => []);
+    const [userData, setUserData] = useState(() => []);
+    const [page, setPage] = useState(1);
+    const [noMoreData, setNoMoreData] = useState(false);
+
+    // let search = location.state.search
+    // let searchType = location.state.searchType
+    let search = searchText === undefined ? '' : searchText;
     let search_text = 'Search Results for "' + search + '"'
 
-    const quizzes = useQuery(SEARCH_QUIZZES, { variables: { searchText: search }, fetchPolicy: 'cache-and-network' })
-    const platforms = useQuery(SEARCH_PLATFORMS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
-    const users = useQuery(SEARCH_USERS, { variables: { searchText: search }, fetchPolicy: 'cache-and-network'})
+    const quizzes = useQuery(SEARCH_QUIZZES, { skip: (searchType !== 'All' && searchType !== 'Quizzes'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network',
+        onCompleted({searchQuizzes: data}) {
+            if (data.length < 10) {
+                setNoMoreData(true);
+            }
+            setQuizData((prevQuizData) => {
+                let temp = [...prevQuizData];
+                return temp.concat(data);
+            });
+            if (!isInitQueryDone) {
+                setInitQueryDone(true);
+            }
+        }
+    })
+    const platforms = useQuery(SEARCH_PLATFORMS, { skip: (searchType !== 'All' && searchType !== 'Platforms'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network', 
+        onCompleted({searchPlatforms: data}) {
+            if (data.length < 10) {
+                setNoMoreData(true);
+            }
+            setPlatformData((prevPlatformData) => {
+                let temp = [...prevPlatformData];
+                return temp.concat(data);
+            });
+            if (!isInitQueryDone) {
+                setInitQueryDone(true);
+            }
+        },
+        onError(err) {
+            console.log(JSON.stringify(err, null, 2));
+        }
+    })
+    const users = useQuery(SEARCH_USERS, { skip: (searchType !== 'All' && searchType !== 'Users'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network',
+        onCompleted({searchUsers: data}) {
+            if (data.length < 10) {
+                setNoMoreData(true);
+            }
+            setUserData((prevUserData) => {
+                let temp = [...prevUserData];
+                return temp.concat(data);
+            });
+            if (!isInitQueryDone) {
+                setInitQueryDone(true);
+            }
+        }
+    })
+
+    function increasePage() {
+        setPage((prevPage) => {
+            return prevPage + 1;
+        });
+        if (searchType === 'Quizzes') {
+            quizzes.refetch();
+        } else if (searchType === 'Platforms') {
+            platforms.refetch();
+        } else if (searchType === 'Users') {
+            users.refetch();
+        }
+    }
 
     const loading = quizzes.loading || platforms.loading || users.loading
     const error = quizzes.error || platforms.error || users.error
@@ -37,7 +102,15 @@ export default function SearchResultsPage() {
     //const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
 
     // Loading Screen
-    if (loading) {
+    if (loading && !isInitQueryDone) {
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
+    }
+
+    if (!isInitQueryDone) {
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -55,21 +128,21 @@ export default function SearchResultsPage() {
         );
     }
 
-    const quiz_data = quizzes.data.searchQuizzes
-    const platform_data = platforms.data.searchPlatforms
-    const user_data = users.data.searchUsers
+    // const quiz_data = quizzes ? quizzes.data.searchQuizzes: [];
+    // const platform_data = platforms.data ? platforms.data.searchPlatforms : [];
+    // const user_data = users.data ? users.data.searchUsers : [];
     
     // Doing the actual filtering work
-    let filtered_quiz_data = quiz_data.filter((quiz) => {
+    let filtered_quiz_data = quizData.filter((quiz) => {
         return (quiz.numAttempts >= filters.minPlays) && (quiz.numFavorites >= filters.minFavorites) && (quiz.quizTimer >= filters.minTimer)
     })
 
-    let filtered_platform_data = platform_data.filter((platform) => {
+    let filtered_platform_data = platformData.filter((platform) => {
         return platform.followers.length >= filters.minFollowers
     })
 
     // Gather all search results
-    let search_results = getSearchResults(searchType, filtered_quiz_data, filtered_platform_data, user_data)
+    let search_results = getSearchResults(searchType, filtered_quiz_data, filtered_platform_data, userData)
     search_results = sortSearchResults(search_results, sortType)
 
     // Puts the correct data into the search results array (Depending on if the user serached for quizzes, platforms, users, or all)
@@ -221,8 +294,7 @@ export default function SearchResultsPage() {
                             user={content}
                         />
                     )
-                }
-                
+                } 
             })
         )
 
@@ -338,6 +410,13 @@ export default function SearchResultsPage() {
 
                     {/* ALL SEARCH RESULTS */}
                     {renderSearchResults()}
+                    {!noMoreData ?
+                    <Center mt={5} pb={5}>
+                        <Button w='fit-content' colorScheme='blue' variant='solid'  h='40px' fontSize='20px' onClick={() => increasePage()}>
+                        Show More
+                        </Button>
+                    </Center> : 
+                    <Box pb={10}></Box>}
                 </Box>
             </Grid>
         </Box>

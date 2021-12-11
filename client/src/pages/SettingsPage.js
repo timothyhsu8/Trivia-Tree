@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useState, createRef } from 'react';
-import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode, Avatar } from "@chakra-ui/react"
+import { Radio, Input, Stack, Box, Flex, Center, Text, Grid, HStack, Button, Image, RadioGroup, useRadio, Spinner, useColorMode, Avatar, PopoverContent, PopoverCloseButton, PopoverBody, PopoverFooter, Popover, PopoverTrigger, IconButton } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation } from '@apollo/client';
@@ -16,6 +16,7 @@ import {
 } from 'react-router-dom';
 import { subscribe } from 'graphql';
 import '../styles/postpage.css';
+import { BsFillTrashFill } from 'react-icons/bs';
 
 export default function SettingsPage(props) {
     const { user, refreshUserData } = useContext(AuthContext);
@@ -163,6 +164,29 @@ export default function SettingsPage(props) {
         //history.push('/')
     }
 
+    function renderDeleteButton(quiz) {
+        return (
+            <Popover placement='top-start'>
+                <PopoverTrigger>
+                    <Box display="flex" flexDirection="column" justifyContent="center">
+                        <Button w="fit-content" colorScheme="red" size="md">Delete Account</Button>  
+                    </Box>
+                </PopoverTrigger>
+                <PopoverContent>
+                    <PopoverCloseButton />
+                    <PopoverBody>
+                        Delete your account permanently?
+                    </PopoverBody>
+                    <PopoverFooter>
+                        <Center>
+                            <Button colorScheme="red" onClick={() => deleteAccount()}> Yes, Delete It </Button>
+                        </Center>
+                    </PopoverFooter>
+                </PopoverContent>
+            </Popover>
+        )
+    }
+
     return(
         <Box> 
             <Center>
@@ -183,9 +207,7 @@ export default function SettingsPage(props) {
                         <Text display="flex" flexDirection="column" justifyContent="center"> Profile Picture: </Text>
 
                         {/* Delete Account Button */}
-                        <Box display="flex" flexDirection="column" justifyContent="center">
-                            <Button w="fit-content" colorScheme="red" size="md" onClick={deleteAccount}>Delete Account</Button>  
-                        </Box>
+                        { renderDeleteButton() }
                     </Grid>                  
                     
 

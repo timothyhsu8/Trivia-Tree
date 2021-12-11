@@ -66,10 +66,11 @@ module.exports = {
             }
         },
 
-        async searchPlatforms(_, { searchText }) {
+        async searchPlatforms(_, { searchText, page }) {
             try {
-                const platforms = await Platform.find({name: { "$regex": searchText, "$options": "i"}}).populate('user').exec();
-                return platforms;
+                const platforms = await Platform.paginate({name: { "$regex": searchText, "$options": "i"}},
+                {page: page, limit: 10, populate: 'user'});
+                return platforms.docs;
             } catch (err) {
                 throw new Error(err);
             }

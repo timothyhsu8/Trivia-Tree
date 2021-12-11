@@ -60,14 +60,12 @@ module.exports = {
                 throw new Error(err);
             }
         },
-        async searchQuizzes(_, { searchText }) {
+        async searchQuizzes(_, { searchText, page }) {
             try {
-                const quizzes = await Quiz.find({
+                const quizzes = await Quiz.paginate({
                     title: { $regex: searchText, $options: 'i' },
-                })
-                    .populate('user')
-                    .exec();
-                return quizzes;
+                }, { page: page, limit: 10, populate: 'user' })
+                return quizzes.docs;
             } catch (err) {
                 throw new Error(err);
             }

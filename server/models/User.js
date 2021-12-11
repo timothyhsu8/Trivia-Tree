@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 //current have not added badges or notifications, we should talk about how we will handle these
 const userSchema = new Schema(
@@ -102,5 +103,6 @@ const userSchema = new Schema(
     { timestamps: true }
 );
 
+userSchema.plugin(mongoosePaginate);
 const User = model('User', userSchema);
 module.exports = User;

@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const questionSchema = new Schema({
     //seperated from quiz schema just to add readability
@@ -154,5 +155,6 @@ const quizSchema = new Schema(
     { timestamps: true }
 );
 
+quizSchema.plugin(mongoosePaginate);
 const Quiz = model('Quiz', quizSchema);
 module.exports = Quiz;

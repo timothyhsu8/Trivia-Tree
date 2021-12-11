@@ -17,7 +17,7 @@ export default function Navbar() {
     let userId = null;
 
     const cancelRef = useRef()
-    const [searchType, setSearchType] = useState('All')
+    const [searchType, setSearchType] = useState('Quizzes')
     const [searchText, setSearchText] = useState("")
     const [choosePlatformName, setChoosePlatformName] = useState(false)
     const [chosenPlatformName, setChosenPlatformName] = useState("Untitled Platform")
@@ -25,7 +25,7 @@ export default function Navbar() {
 
     let history = useHistory();
     let logged_in = false
-    let categories = ["All", "Quizzes", "Platforms", "Users"]
+    let categories = ["Quizzes", "Platforms", "Users"]
     let username = "Guest"
     let pfp_src = {guestImage}
     let menu_bg_hover = "blue.500"
@@ -74,12 +74,7 @@ export default function Navbar() {
     // Takes user to the search results page
     function search() {
         history.push({
-            pathname: '/searchresultspage',
-            state: {
-                // location state
-                search: searchText,
-                searchType: searchType
-            },
+            pathname: `/searchresultspage/${searchType}/${searchText}`
         });
     }
 

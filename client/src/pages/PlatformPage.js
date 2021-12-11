@@ -30,9 +30,9 @@ export default function PlatformPage({}) {
     let { platformId } = useParams();
 
     // Fetch quiz data from the backend
-    const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId}, onCompleted() {
-        for(let i = 0; i < platform.data.getPlatform.followers.length; i++){
-            if(user !== null && platform.data.getPlatform.followers[i]._id === user._id){
+    const platform = useQuery(GET_PLATFORM, { variables: { platformId: platformId}, onCompleted(data) {
+        for(let i = 0; i < data.getPlatform.followers.length; i++){
+            if(user !== null && data.getPlatform.followers[i]._id === user._id){
                 setFollowing(true)
             }
         }         

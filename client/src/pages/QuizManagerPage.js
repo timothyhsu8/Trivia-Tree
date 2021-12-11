@@ -124,7 +124,7 @@ export default function QuizManagerPage() {
 
     
     return (
-        <Box>
+        <Box >
             <Center> 
                 <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Quizzes </Text>
             </Center>
@@ -230,6 +230,7 @@ export default function QuizManagerPage() {
                         <Text mt="15%" fontSize="200%"> You don't have any quizzes! </Text>
                     </Center>
             } 
+            <Box h="20vh"/>
         </Box>
     )
 }

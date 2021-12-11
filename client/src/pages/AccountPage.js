@@ -903,7 +903,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {userData.featuredQuizzes.map(
+                                    {userData.featuredQuizzes.slice(0).reverse().map(
                                         (quiz, key) => {
                                             return (
                                                 <QuizCard
@@ -962,7 +962,7 @@ export default function AccountPage(props) {
                                     display='flex'
                                     flexWrap='wrap'
                                 >
-                                    {userData.featuredPlatforms.map(
+                                    {userData.featuredPlatforms.slice(0).reverse().map(
                                         (platform, key) => {
                                             return (
                                                 <PlatformCard
@@ -1096,6 +1096,7 @@ export default function AccountPage(props) {
                                 mr={2}
                                 as={Button}
                                 leftIcon={<BsJustifyLeft />}
+                                _hover={{opacity:"85%"}}
                                 _focus={{border:"none"}}
                             >
                                 { viewPlatformType }
@@ -1153,6 +1154,7 @@ export default function AccountPage(props) {
                                 mr={2}
                                 as={Button}
                                 leftIcon={<BsJustifyLeft />}
+                                _hover={{opacity:"85%"}}
                                 _focus={{border:"none"}}
                             >
                                 { viewQuizType }

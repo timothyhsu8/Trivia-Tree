@@ -348,7 +348,7 @@ export default function PreQuizPage({}) {
                                             }}
                                         >
                                             {/* for horizontal line*/}
-                                            <a href={button.page} className='center button black' onClick={button.clickFunction}>
+                                            <a className='center button black' onClick={button.clickFunction}>
                                                 <Icon as={button.icon} pos='relative' boxSize={4} top={0.5} mr={2} />
                                                 {button.text} {button.page === '#comments' ? `(${quiz.comments.length})` : ''}
                                             </a>

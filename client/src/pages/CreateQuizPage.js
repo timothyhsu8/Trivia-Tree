@@ -291,7 +291,15 @@ function CreateQuizPage(props) {
         },
         onError(err) {
             setLoadingButton(false)
-            setErrorMessage(err.toString())
+            let errors = err.graphQLErrors[0].extensions;
+            let errorKeys = Object.keys(errors);
+            let errorStrings = []
+            for (let i = 0; i < errorKeys.length; i++) {
+                if (errorKeys[i] !== 'code' && errorKeys[i] !== 'exception') {
+                    errorStrings.push(errors[errorKeys[i]])
+                }
+            }
+            setErrorMessage(errorStrings);
             console.log(JSON.stringify(err, null, 2));
         },
     });
@@ -747,10 +755,11 @@ function CreateQuizPage(props) {
                                 >
                                     Create Quiz
                                 </Button>
-
-                                <Text textAlign="center" textColor="red.500" fontWeight="medium">
-                                    { errorMessage }
-                                </Text>
+                                {errorMessage ? errorMessage.map((message, index) =>
+                                    <Text key={index} textAlign="center" textColor="red.500" fontWeight="medium">
+                                        {message}
+                                    </Text>
+                                ) : null}
                             </VStack>
                         </Center>
                     </Box>

@@ -7,6 +7,7 @@ const QuizAttempt = require('../../models/QuizAttempt');
 const Platform = require('../../models/Platform');
 const ObjectId = require('mongoose').Types.ObjectId;
 const cloudinary = require('cloudinary').v2;
+const { UserInputError } = require('apollo-server-express');
 
 function roundToTwoPlace(num) {
     return Math.round(num * 100) / 100;
@@ -188,23 +189,24 @@ module.exports = {
             },
             context
         ) {
+            const errors = [];
             if (title.trim() === '') {
-                throw new Error('Quiz title cannot be blank');
+                errors.push('Quiz title cannot be blank');
             }
 
             questions.forEach((question, index) => {
                 if (question.question.trim() === '') {
-                    throw new Error(`A question cannot be blank (Question ${index+1})`);
+                    errors.push(`A question cannot be blank (Question ${index+1})`);
                 }
 
                 question.answer.forEach((answer) => {
                     if (answer.trim() === '') {
-                        throw new Error(`Each question must have an answer (Question ${index+1})`);
+                        errors.push(`Each question must have an answer (Question ${index+1})`);
                     }
                 });
 
                 if (question.answerChoices.length <= 1) {
-                    throw new Error(
+                    errors.push(
                         `A question must have at least two choices (Question ${index+1})`
                     );
                 }
@@ -212,7 +214,7 @@ module.exports = {
                 let answerMatch = false;
                 question.answerChoices.forEach((choice) => {
                     if (choice.trim() === '') {
-                        throw new Error(`An answer choice cannot be blank (Question ${index+1})`);
+                        errors.push(`An answer choice cannot be blank (Question ${index+1})`);
                     }
 
                     question.answer.forEach((answer) => {
@@ -222,7 +224,7 @@ module.exports = {
                     });
                 });
                 if (!answerMatch) {
-                    throw new Error(
+                    errors.push(
                         `A question must have an answer choice that matches the answer (Question ${index+1})`
                     );
                 }
@@ -231,11 +233,15 @@ module.exports = {
                     new Set(question.answerChoices).size !==
                     question.answerChoices.length
                 ) {
-                    throw new Error(
+                    errors.push(
                         `A question cannot have answer choices that are the same (Question ${index+1})`
                     );
                 }
             });
+
+            if (errors.length !== 0) {
+                throw new UserInputError('Error occured when creating the quiz', errors);
+            }
 
             let imageUrl;
             if (icon === 'No Image') {
@@ -368,31 +374,31 @@ module.exports = {
             if (!quiz.user.equals(context.req.user._id)) {
                 throw new Error('You are not the creator of this quiz');
             }
-
+            const errors = [];
             if (title.trim() === '') {
-                throw new Error('Quiz title cannot be blank');
+                errors.push('Quiz title cannot be blank');
             }
 
             const valid = questions.forEach((question, index) => {
                 if (question.question.trim() === '') {
-                    throw new Error(`A question cannot be blank (Question ${index+1})`);
+                    errors.push(`A question cannot be blank (Question ${index+1})`);
                 }
                 let answerMatch = false;
 
                 question.answer.forEach((answer) => {
                     if (answer.trim() === '') {
-                        throw new Error(`Each question must have an answer (Question ${index+1})`);
+                        errors.push(`Each question must have an answer (Question ${index+1})`);
                     }
                 });
 
                 if (question.answerChoices.length <= 1) {
-                    throw new Error(
+                    errors.push(
                         `A question must have at least two choices (Question ${index+1})`
                     );
                 }
                 question.answerChoices.forEach((choice) => {
                     if (choice.trim() === '') {
-                        throw new Error(`An answer choice cannot be blank (Question ${index+1})`);
+                        errors.push(`An answer choice cannot be blank (Question ${index+1})`);
                     }
 
                     question.answer.forEach((answer) => {
@@ -402,7 +408,7 @@ module.exports = {
                     });
                 });
                 if (!answerMatch) {
-                    throw new Error(
+                    errors.push(
                         `A question must have an answer choice that matches the answer (Question ${index+1})`
                     );
                 }
@@ -411,11 +417,15 @@ module.exports = {
                     new Set(question.answerChoices).size !==
                     question.answerChoices.length
                 ) {
-                    throw new Error(
+                    errors.push(
                         `A question cannot have answer choices that are the same (Question ${index+1})`
                     );
                 }
             });
+
+            if (errors.length !== 0) {
+                throw new UserInputError('Error occured when creating the quiz', errors);
+            }
 
             let imageUrl;
             if (icon === 'Same Image') {

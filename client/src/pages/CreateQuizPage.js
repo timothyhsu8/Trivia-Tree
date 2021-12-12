@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect, useRef } from 'react';
+import React, { useState, createRef, useEffect, useRef, useContext } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import {
     Input,
@@ -19,11 +19,13 @@ import {
     AlertDialogContent,
     AlertDialogBody, 
     AlertDialogFooter,
-    AlertDialogHeader
+    AlertDialogHeader,
+    Spinner
 } from '@chakra-ui/react';
 import TimeField from 'react-simple-timefield';
 import { v4 as uuidv4 } from 'uuid';
 import '../styles/CreateQuizPage.css';
+import { AuthContext } from '../context/auth';
 import QuestionCreatorCard from '../components/QuestionCreatorCard';
 import { AddIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { BsFillFileEarmarkTextFill, BsFillImageFill } from 'react-icons/bs';
@@ -33,6 +35,7 @@ let hiddenImageInput = null;
 let img = null;
 
 function CreateQuizPage(props) {
+    const { user } = useContext(AuthContext);
     const cancelRef = useRef()
     const [isInitialDone, setInitialDone] = useState(false);
     const [showQuizSubmitted, setShowQuizSubmitted] = useState(false);
@@ -61,8 +64,8 @@ function CreateQuizPage(props) {
     const [timeType, setTimeType] = useState('Quiz');
     const [quizTimer, setQuizTimer] = useState('00:05:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
-    const [loadingButton, setLoadingButton] = useState(false)
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [loadingButton, setLoadingButton] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
         refs = {};
@@ -383,6 +386,21 @@ function CreateQuizPage(props) {
         )
     }
 
+    if (!user) {
+        return (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        );
+    }
+
+    if (user && user === 'NoUser') {
+        return (
+            <Center>
+                <Text fontSize="3vw" fontWeight="thin"> You must be logged in to create a quiz </Text>
+            </Center>
+        );
+    }
 
     if (!isInitialDone) {
         return null;

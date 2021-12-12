@@ -610,7 +610,7 @@ function EditQuizPage(props) {
                 {/* Right Sidebar */}
                 <div className='rightSidebar'>
                     <Box position='sticky' top='70px'>
-                        <HStack
+                        {/* <HStack
                             display='flex'
                             flexDirection='column'
                             direction='row'
@@ -633,7 +633,7 @@ function EditQuizPage(props) {
                                     </option>
                                 </Select>
                             </HStack>
-                        </HStack>
+                        </HStack> */}
 
                         {/* Quiz Icon */}
                         <VStack marginTop='20px'>

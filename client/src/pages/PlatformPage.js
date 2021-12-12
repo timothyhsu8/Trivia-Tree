@@ -4,7 +4,7 @@ import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, T
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, EDIT_PLAYLIST,
-    ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM, ADD_POST } from '../cache/mutations';
+    ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM, ADD_POST, DELETE_POST } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
@@ -72,6 +72,13 @@ export default function PlatformPage({}) {
             setPostImage(null);
             setPostText('');
             platform.refetch();
+        }
+    });
+
+    const [DeletePost] = useMutation(DELETE_POST, {
+        onCompleted() {
+            platform.refetch();
+            setIsLoading(false)
         }
     });
 
@@ -897,6 +904,7 @@ export default function PlatformPage({}) {
                                             <PostCard
                                                 post={post}
                                                 logged_in={user !== 'NoUser'}
+                                                platform_id={platform_data._id}
                                                 user_id={user === 'NoUser' ? null : user._id}
                                                 player_icon={user.iconImage}
                                                 handleDeletePost={handleDeletePost}
@@ -1433,24 +1441,20 @@ export default function PlatformPage({}) {
             }
         });
 
-        platform.refetch();
-
     }
 
     async function handleDeletePost(post_id) {
-        // setIsLoading(true)
+        setIsLoading(true)
         console.log(post_id);
 
-        // const { data } = await AddPost({
-        //     variables: {
-        //         platform_id: platformId,
-        //         user_id: user._id,
-        //         postText: postText,
-        //         postImage: postImage
-        //     }
-        // });
+        const { data } = await DeletePost({
+            variables: {
+                platform_id: platformId,
+                user_id: user._id,
+                post_id: post_id
+            }
+        });
 
-        // platform.refetch();
 
     }
 }

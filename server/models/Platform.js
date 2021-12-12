@@ -48,8 +48,8 @@ const postSchema = new Schema({
         ref: 'User',
         required: true,
     },
-    comments: {
-        type: [commentSchema]
+    replies: {
+        type: [replySchema]
     },
     postText: {
         type: String,

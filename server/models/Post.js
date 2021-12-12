@@ -13,22 +13,6 @@ const replySchema = new Schema({
     }
 }, { timestamps: true });
 
-const commentSchema = new Schema({
-    user: {
-        //every comment is tied to a user
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
-    comment: {
-        type: String,
-        required: true,
-    },
-    replies: {
-        type: [replySchema]
-    }
-}, { timestamps: true });
-
 const postSchema = new Schema({
     user: {
         //every comment is tied to a user
@@ -36,8 +20,8 @@ const postSchema = new Schema({
         ref: 'User',
         required: true,
     },
-    comments: {
-        type: [commentSchema]
+    replies: {
+        type: [replySchema]
     },
     postText: {
         type: String,

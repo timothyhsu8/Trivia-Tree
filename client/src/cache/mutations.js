@@ -276,6 +276,30 @@ mutation ($platform_id: ID!, $user_id: ID!, $postText: String!, $postImage: Stri
 }
 `;
 
+export const DELETE_POST = gql`
+mutation ($platform_id: ID!, $user_id: ID!, $post_id: ID!) {
+    deletePost(platform_id: $platform_id, user_id: $user_id, post_id: $post_id){
+        _id
+    }
+}
+`;
+
+export const ADD_POST_REPLY = gql`
+mutation ($platform_id: ID!, $user_id: ID!, $post_id: ID!, $reply: String!) {
+    addPostReply(platform_id: $platform_id, user_id: $user_id, post_id: $post_id, reply: $reply) {
+        _id
+    }
+}
+`;
+
+export const DELETE_POST_REPLY = gql`
+mutation ($platform_id: ID!, $user_id: ID!, $post_id: ID!, $reply_id: ID!) {
+    deletePostReply(platform_id: $platform_id, user_id: $user_id, post_id: $post_id, reply_id: $reply_id) {
+        _id
+    }
+}
+`;
+
 
 
 

@@ -1,6 +1,7 @@
 const Platform = require('../../models/Platform');
 const Playlist = require('../../models/Playlist')
 const Quiz = require('../../models/Quiz');
+const Reply = require('../../models/Reply');
 const Post = require('../../models/Post')
 const User = require('../../models/User');
 const cloudinary = require('cloudinary').v2;
@@ -82,10 +83,17 @@ module.exports = {
                 })
                 .populate({
                     path: 'posts',
-                    populate: {
+                    populate: [{
                         path: 'user',
                         model: 'User'
-                    }
+                    },
+                    {
+                        path: 'replies',
+                        populate: {
+                            path: 'user',
+                            model: 'User'
+                        }
+                    }]
                 })
                 .exec();
 
@@ -549,12 +557,73 @@ module.exports = {
 
             const newPost = new Post({
                 user: user_id,
-                comments: [],
+                replies: [],
                 postText: postText,
                 postImage: imageUrl
             });
 
             platform.posts.push(newPost)
+
+            platform.save();
+
+            return platform;
+        },
+        async deletePost(_, { platform_id, user_id, post_id}) {
+            const platform = await Platform.findById(platform_id);
+
+            for(let i = 0; i < platform.posts.length; i++){
+                if(platform.posts[i]._id == post_id){
+                    platform.posts.splice(i,1);
+                    break;
+                }
+            }
+
+            platform.save();
+
+            return platform;
+        },
+        async addPostReply(_, { platform_id, user_id, post_id, reply }) {
+            const platform = await Platform.findById(platform_id);
+
+            const newReply = new Reply({
+                user: user_id,
+                reply: reply,
+            });
+
+            let posts = platform.posts;
+
+            for (let i = 0; i < posts.length; i++) {
+                if (posts[i]._id == post_id) {
+                    posts[i].replies.push(newReply);
+                    break;
+                }
+            }
+
+            platform.posts = posts;
+
+            platform.save();
+
+            return platform;
+        },
+        async deletePostReply(_, { platform_id, user_id, post_id, reply_id }) {
+            const platform = await Platform.findById(platform_id);
+
+
+            let posts = platform.posts;
+
+            for (let i = 0; i < posts.length; i++) {
+                if (posts[i]._id == post_id) {
+                    for (let j = 0; j < posts[i].replies.length; j++){
+                        if(posts[i].replies[j]._id == reply_id){
+                            posts[i].replies.splice(j, 1);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            platform.posts = posts;
 
             platform.save();
 

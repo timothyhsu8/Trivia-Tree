@@ -3,7 +3,7 @@ import { Text, Avatar, HStack, Button, Stack, Flex} from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
 
-export default function ReplyCard( props ) {   
+export default function PostReplyCard( props ) {   
     let history = useHistory();
     let reply = props.reply
     let reply_id = props.reply._id

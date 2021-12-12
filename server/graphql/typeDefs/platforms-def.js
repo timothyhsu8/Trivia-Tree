@@ -41,7 +41,7 @@ module.exports = gql`
         user: User
         postText: String!
         postImage: String
-        comments: [Comment!]
+        replies: [Reply!]
         createdAt: String
     }
 
@@ -82,5 +82,8 @@ module.exports = gql`
         followPlatform(platformId: ID!, userId: ID!): User
         unfollowPlatform(platformId: ID!, userId: ID!): User
         addPost(platform_id: ID!, user_id: ID!, postText: String!, postImage: String): Platform
+        deletePost(platform_id: ID!, user_id: ID!, post_id: ID!): Platform
+        addPostReply(platform_id: ID!, user_id: ID!, post_id: ID!, reply: String!): Platform
+        deletePostReply(platform_id: ID!, user_id: ID!, post_id: ID!, reply_id: ID!) : Platform
     }
 `;

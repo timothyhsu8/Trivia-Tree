@@ -358,6 +358,16 @@ export const GET_PLATFORM = gql`
                     displayName
                     iconImage
                 }
+                replies {
+                    _id
+                    user {
+                        _id
+                        displayName
+                        iconImage
+                    }
+                    reply
+                    createdAt
+                }
                 postText
                 postImage
                 createdAt

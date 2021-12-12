@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Text, Image, HStack, Button, Flex, Input, Avatar } from '@chakra-ui/react';
+import { Text, Image, HStack, Button, Flex, Input, Avatar, Center} from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { BsTrash } from 'react-icons/bs';
+import { BsTrash, BsFillHandThumbsUpFill, BsHandThumbsUp } from 'react-icons/bs';
 import { ArrowDownIcon, ArrowForwardIcon } from '@chakra-ui/icons'
 import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 import * as mutations from '../cache/mutations';
-import ReplyCard from './ReplyCard.js'
+import PostReplyCard from './PostReplyCard.js'
 
 export default function PostCard( props ) {    
     let history = useHistory();
     let post = props.post
     let post_id = props.post._id
+    let replies = props.post.replies;
     let timeAgo = getTimeAgo(props.post.createdAt);
     let usersPost = false;
     let quiz_id = props.quiz_id
@@ -19,15 +20,41 @@ export default function PostCard( props ) {
         usersPost = true;
     }
 
+    const [AddPostReply] = useMutation(mutations.ADD_POST_REPLY);
+    const [DeletePostReply] = useMutation(mutations.DELETE_POST_REPLY);
 
-    const [comment, setComment] = useState('');
-    const handleCommentChange = (event) => setComment(event.target.value);
+    const [reply, setReply] = useState('');
+    const handleReplyChange = (event) => setReply(event.target.value);
 
     const[deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const[showReply, setShowReply] = useState(false)
+    const [loadingReply, setLoadingReply] = useState(false);
 
     function handleDeletePost() {
 
+        setDeleteConfirmation(false)
         props.handleDeletePost(props.post._id)
+
+    }
+
+    async function handleAddReply(){
+        setLoadingReply(true)
+        setReply("");
+        const {data} = await AddPostReply({ variables: {
+            platform_id: props.platform_id, user_id: props.user_id, post_id: post_id, reply:reply
+        }});
+        props.refetch();
+        setLoadingReply(false)
+    }
+
+
+    async function handleDeleteReply(reply_id) {
+        setLoadingReply(true)
+        const {data} = await DeletePostReply({ variables: {
+            platform_id: props.platform_id, user_id: props.user_id, post_id: post_id, reply_id:reply_id
+        }});
+        props.refetch();
+        setLoadingReply(false)
 
     }
 
@@ -49,7 +76,10 @@ export default function PostCard( props ) {
             overflow="hidden"
         >
             {/* USER ICON */}
-            <Avatar src={post.user.iconImage} _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + post.user._id)}/>
+            <Flex ml={3} spacing="0.1" direction="column">
+                <Avatar src={post.user.iconImage} _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + post.user._id)}/>
+                <Center> <Text fontSize="10px" marginTop="5px">0 Likes</Text> </Center>
+            </Flex>
 
             {/* USER NAME */}
             <Flex ml={3} spacing="0.1" direction="column">
@@ -67,7 +97,7 @@ export default function PostCard( props ) {
                             style={{
                             display: 'inline',
                             verticalAlign: 'middle',
-                            fontSize: '70%',
+                            fontSize: '60%',
                             }}
                             onClick={() =>
                             setDeleteConfirmation(true)
@@ -78,7 +108,8 @@ export default function PostCard( props ) {
                                 <Button 
                                 size="xs" 
                                 variant='link' 
-                                colorScheme="black" 
+                                colorScheme="black"
+                                fontSize="60%" 
                                 onClick={() =>
                                     setDeleteConfirmation(false)
                                 }> 
@@ -89,6 +120,7 @@ export default function PostCard( props ) {
                                 size="xs" 
                                 variant='link' 
                                 colorScheme="red"
+                                fontSize="60%" 
                                 onClick={() =>
                                     handleDeletePost()
                                 }>  
@@ -102,6 +134,50 @@ export default function PostCard( props ) {
                 </HStack>
                 <Text fontSize="100%"> {post.postText}</Text>                    
                 {post.postImage != null ? <Image src={post.postImage} maxWidth="200px" maxHeight="300px" marginTop="10px" marginBottom="10px" borderRadius="5%" /> : ""}
+                <HStack marginTop="5px">
+                    {showReply ? 
+                        <Button color="blue.500" leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
+                            Hide Replies ({replies.length})
+                        </Button> 
+                    
+                    :
+                        <Button color="blue.500" leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)} _focus={{}}>
+                            View Replies ({replies.length})
+                        </Button>
+                    }
+                    <Button color="blue.500" leftIcon={<BsHandThumbsUp/>} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
+                            Like
+                    </Button>  
+                </HStack>
+
+                    {!showReply ? "":
+                        <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="5px">
+                            {replies.map((reply, key) => {
+                                return (
+                                    <PostReplyCard
+                                        reply={reply}
+                                        quiz_id={quiz_id}
+                                        user_id={props.user_id}
+                                        key={key}
+                                        logged_in={props.logged_in}
+                                        handleDeleteReply={handleDeleteReply}
+    
+                                    />
+                                )
+                            })}
+                        </Flex>
+                    }
+
+                    {showReply && props.logged_in ? 
+                        <HStack paddingTop="5px" paddingBottom="10px">
+                            <Avatar src={props.player_icon} size="xs"/>
+                            <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
+                                size="xs" borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
+                            <Button isLoading={loadingReply} w="100px" colorScheme='blue' variant='solid' size="xs" marginLeft="20px" onClick={handleAddReply}>
+                                Reply
+                            </Button>
+                        </HStack>
+                    : ""}
             </Flex>
         </Flex>
     )

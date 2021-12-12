@@ -112,7 +112,8 @@ export default function CommentCard( props ) {
                                 <Button 
                                 size="xs" 
                                 variant='link' 
-                                colorScheme="black" 
+                                colorScheme="black"
+                                fontSize="60%"  
                                 onClick={() =>
                                     setDeleteConfirmation(false)
                                 }> 
@@ -123,6 +124,7 @@ export default function CommentCard( props ) {
                                 size="xs" 
                                 variant='link' 
                                 colorScheme="red"
+                                fontSize="60%" 
                                 onClick={() =>
                                     handleDeleteComment()
                                 }>  
@@ -138,7 +140,7 @@ export default function CommentCard( props ) {
                 <HStack>
                     {showReply ? 
                         <Button color="blue.500" leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
-                            Hide Replies
+                            Hide Replies ({ replies.length })
                         </Button> 
                     
                     :
@@ -149,7 +151,7 @@ export default function CommentCard( props ) {
                 </HStack>
 
                     {!showReply ? "":
-                        <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="20px">
+                        <Flex direction="column" spacing="15%" display="flex" flexWrap="wrap" marginBottom="5px">
                             {replies.map((reply, key) => {
                                 return (
                                     <ReplyCard
@@ -168,10 +170,10 @@ export default function CommentCard( props ) {
 
                     {showReply && props.logged_in ? 
                         <HStack paddingTop="5px" paddingBottom="10px">
-                            <Avatar src={props.player_icon} size="sm"/>
-                            <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
+                            <Avatar src={props.player_icon} size="xs"/>
+                            <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px" size="xs"
                                 borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
-                            <Button isLoading={loadingReply} w="100px" colorScheme='blue' variant='solid' size="sm" marginLeft="20px" onClick={handleAddReply}>
+                            <Button isLoading={loadingReply} w="100px" colorScheme='blue' variant='solid' size="xs" marginLeft="20px" onClick={handleAddReply}>
                                 Reply
                             </Button>
                         </HStack>

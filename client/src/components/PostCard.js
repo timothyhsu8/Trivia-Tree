@@ -105,7 +105,7 @@ export default function PostCard( props ) {
             {/* USER ICON */}
             <Flex ml={3} spacing="0.1" direction="column">
                 <Avatar src={post.user.iconImage} _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + post.user._id)}/>
-                <Center> <Text fontSize="10px" marginTop="5px">{post.numLikes} {post.numLikes == 1 ? 'Like' : 'Likes'} </Text> </Center>
+                <Center> <Text fontSize="10px" marg1inTop="5px">{post.numLikes} {post.numLikes == 1 ? 'Like' : 'Likes'} </Text> </Center>
             </Flex>
 
             {/* USER NAME */}

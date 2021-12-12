@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Text, Image, HStack, Button, Flex, Input, Avatar, Center} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Text, Image, HStack, Button, Flex, Input, Avatar, Center, Spinner} from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { BsTrash, BsFillHandThumbsUpFill, BsHandThumbsUp } from 'react-icons/bs';
@@ -20,18 +20,19 @@ export default function PostCard( props ) {
     if(post.user._id == props.user_id){
         usersPost = true;
     }
-    for(let i = 0; i < props.post.likedBy.length; i++){
-        if(props.post.likedBy[i]._id == props.user_id){
-            console.log("HERE")
-            likedBy = true;
-            break;
-        }
-    }
     const [AddPostReply] = useMutation(mutations.ADD_POST_REPLY);
     const [DeletePostReply] = useMutation(mutations.DELETE_POST_REPLY);
 
-    const [LikePost] = useMutation(mutations.LIKE_POST);
-    const [UnlikePost] = useMutation(mutations.UNLIKE_POST);
+    const [LikePost, {loading: likeLoading }] = useMutation(mutations.LIKE_POST, {
+        onCompleted() {
+            props.refetch();
+        }
+    });
+    const [UnlikePost, {loading: unlikeLoading }] = useMutation(mutations.UNLIKE_POST, {
+        onCompleted() {
+            props.refetch();
+        }
+    });
 
     const [reply, setReply] = useState('');
     const handleReplyChange = (event) => setReply(event.target.value);
@@ -39,7 +40,24 @@ export default function PostCard( props ) {
     const[deleteConfirmation, setDeleteConfirmation] = useState(false)
     const[showReply, setShowReply] = useState(false)
     const [loadingReply, setLoadingReply] = useState(false);
-    const [isLiked, setIsLiked] = useState(likedBy);
+    const [isLiked, setIsLiked] = useState(false);
+    const [processing, setProcessing] = useState(false);
+
+    useEffect(() => {
+        let found = false;
+        for(let i = 0; i < props.post.likedBy.length; i++){
+            if(props.post.likedBy[i]._id === props.user_id){
+                console.log("HERE")
+                setIsLiked(true);
+                found = true;
+                break;
+            }
+        } 
+        if (!found) {
+            setIsLiked(false);
+        }
+        setProcessing(false);
+    }, [props.post.numLikes])
 
     function handleDeletePost() {
 
@@ -73,18 +91,26 @@ export default function PostCard( props ) {
         const {data} = await LikePost({ variables: {
             platform_id: props.platform_id, user_id: props.user_id, post_id: post_id
         }});
-        props.refetch();
-        setIsLiked(true);
     }
 
     async function handleUnlikePost(){
         const {data} = await UnlikePost({ variables: {
             platform_id: props.platform_id, user_id: props.user_id, post_id: post_id
         }});
-        props.refetch();
-        setIsLiked(false);
     }
 
+    function toggleLikePost() {
+        if (!likeLoading && !unlikeLoading && !processing) {
+            setProcessing(true);
+            if (isLiked) {
+                handleUnlikePost();
+            } else {
+                handleLikePost();
+            }
+        } else {
+            return;
+        }
+    }
 
     return (
 
@@ -172,15 +198,16 @@ export default function PostCard( props ) {
                             View Replies ({replies.length})
                         </Button>
                     }
-                    { !isLiked ? 
-                    <Button leftIcon={<BsHandThumbsUp/>} size="xs" variant="ghost" onClick={handleLikePost}  _focus={{}}>
+                    {likeLoading || unlikeLoading || processing ? <Spinner position='relative' left='23px' size='xs'></Spinner> :
+                    ( !isLiked ? 
+                    <Button leftIcon={<BsHandThumbsUp/>} size="xs" variant="ghost" onClick={() => toggleLikePost()}  _focus={{}}>
                         Like
                     </Button>
                     :
-                    <Button color="blue.500" leftIcon={<BsFillHandThumbsUpFill/>} size="xs" variant="ghost" onClick={handleUnlikePost}  _focus={{}}>
+                    <Button color="blue.500" leftIcon={<BsFillHandThumbsUpFill/>} size="xs" variant="ghost" onClick={() => toggleLikePost()}  _focus={{}}>
                         Like
                     </Button>
-                    }    
+                    )}
                 </HStack>
 
                     {!showReply ? "":

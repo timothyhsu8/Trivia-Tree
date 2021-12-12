@@ -1,6 +1,7 @@
 const Platform = require('../../models/Platform');
 const Playlist = require('../../models/Playlist')
 const Quiz = require('../../models/Quiz');
+const Post = require('../../models/Post')
 const User = require('../../models/User');
 const cloudinary = require('cloudinary').v2;
 
@@ -77,6 +78,13 @@ module.exports = {
                             path: 'platform',
                             model: 'Platform'
                         }
+                    }
+                })
+                .populate({
+                    path: 'posts',
+                    populate: {
+                        path: 'user',
+                        model: 'User'
                     }
                 })
                 .exec();
@@ -524,6 +532,33 @@ module.exports = {
             } catch (err) {
                 throw new Error(err);
             }
+        },
+        async addPost(_, { platform_id, user_id, postText, postImage}) {
+            const platform = await Platform.findById(platform_id);
+
+            imageUrl = null;
+
+            if(postImage != null) {
+                await cloudinary.uploader.upload(postImage, (error, result) => {
+                    if (error) {
+                        throw new Error('Could not upload image');
+                    }
+                    imageUrl = result.secure_url;
+                });
+            }
+
+            const newPost = new Post({
+                user: user_id,
+                comments: [],
+                postText: postText,
+                postImage: imageUrl
+            });
+
+            platform.posts.push(newPost)
+
+            platform.save();
+
+            return platform;
         }
 	}
 };

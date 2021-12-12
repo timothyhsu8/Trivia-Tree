@@ -17,6 +17,7 @@ module.exports = gql`
         description: String
         createdAt: String
         isPlatformOfTheDay: Boolean
+        posts: [Post]
     }
 
     input PlatformInput {
@@ -33,6 +34,23 @@ module.exports = gql`
         _id: ID!
         name: String!
         quizzes: [Quiz]
+    }
+
+    type Post {
+        _id: ID!
+        user: User
+        postText: String!
+        postImage: String
+        comments: [Comment!]
+        createdAt: String
+    }
+
+    type Comment {
+        _id: ID!
+        user: User
+        comment: String!
+        replies: [Reply!]
+        createdAt: String
     }
 
     input PlaylistInput {
@@ -63,5 +81,6 @@ module.exports = gql`
         removeQuizFromPlatform(platformId: ID!, quizId: ID!): Platform
         followPlatform(platformId: ID!, userId: ID!): User
         unfollowPlatform(platformId: ID!, userId: ID!): User
+        addPost(platform_id: ID!, user_id: ID!, postText: String!, postImage: String): Platform
     }
 `;

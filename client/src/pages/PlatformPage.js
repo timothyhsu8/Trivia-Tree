@@ -4,7 +4,7 @@ import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, T
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
 import { UPDATE_PLATFORM, ADD_QUIZ_TO_PLATFORM, DELETE_PLATFORM, FOLLOW_PLATFORM, UNFOLLOW_PLATFORM, ADD_QUIZ_TO_PLAYLIST, EDIT_PLAYLIST,
-    ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM } from '../cache/mutations';
+    ADD_PLAYLIST_TO_PLATFORM, REMOVE_PLAYLIST_FROM_PLATFORM, ADD_POST } from '../cache/mutations';
 import { useParams, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import QuizCard from "../components/QuizCard";
@@ -12,11 +12,12 @@ import { useState, createRef, useContext, useRef } from 'react';
 import '../styles/styles.css'
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
-import { BsArrowUp, BsArrowDown, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill, BsThreeDotsVertical, BsTrash, BsBoxArrowUp } from "react-icons/bs";
+import { BsArrowUp, BsArrowDown, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill, BsThreeDotsVertical, BsTrash, BsUpload, BsBoxArrowUp } from "react-icons/bs";
 import { MdForum, MdLogin } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
 import { AddIcon, EditIcon, CloseIcon } from '@chakra-ui/icons'
 import { useAlert } from 'react-alert';
+import PostCard from '../components/PostCard';
 
 export default function PlatformPage({}) {
     const { user } = useContext(AuthContext);
@@ -57,6 +58,22 @@ export default function PlatformPage({}) {
     const [description, setDescription] = useState(null)
     const hiddenIconInput = createRef(null);
     const hiddenImageInput = createRef(null);
+
+    //State variables for image posts
+    const [postImage, setPostImage] = useState(null);
+    const hiddenPostImageInput = createRef(null);
+
+    const [postText, setPostText] = useState('');
+    const handlePostTextChange = (event) => setPostText(event.target.value);
+
+    const [AddPost] = useMutation(ADD_POST, {
+        onCompleted() {
+            setIsLoading(false)
+            setPostImage(null);
+            setPostText('');
+            platform.refetch();
+        }
+    });
 
     // State variables for editing quizzes/playlists/deleting platform
     const [chosenQuiz, setChosenQuiz] = useState(null)
@@ -851,15 +868,42 @@ export default function PlatformPage({}) {
                     </Center>
                     : 
                     <Box marginTop="1%" w="100%" h="100%">
-                        <Text marginBottom="20px" borderBottom="1px" borderColor="gray.300" fontSize="22px">Posts</Text>
+                        <Text marginBottom="20px" borderBottom="1px" borderColor="gray.300" fontSize="22px">Posts ({platform.data.getPlatform.posts.length})</Text>
+                        
+                        {postImage == null ? "":
+                        <Flex direction="row" marginLeft="80px" marginBottom="10px">
+                            <Image src={postImage} maxWidth="200px" maxHeight="300px"/>
+                            <Button size="xs" colorScheme="gray" w="10px" h="20px" top="5px" right="30px" onClick={() => setPostImage(null)}> X</Button>
+                        </Flex>
+                        }
+
                         <Flex direction="row">
-                            <Avatar/>
+                            <input type='file' accept='image/*' style={{ display: 'none' }} ref={hiddenPostImageInput} onChange={(event) => updatePostImageInput(event)}/> 
+                            <IconButton colorScheme='blue' size="md" marginLeft="20px" borderRadius="50%" onClick={() => hiddenPostImageInput.current.click()}>
+                                <BsUpload/>
+                            </IconButton>
                             <Input variant='filled' placeholder='Add a public post...' marginLeft="20px" marginBottom="20px"
                                 _hover={{pointer:"cursor", bgColor:"gray.200"}}
-                                _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/>
-                            <Button w="140px" colorScheme='blue' size="md" marginLeft="20px">
+                                _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}
+                                value={postText}
+                                onChange={handlePostTextChange}/>
+                            <Button isLoading={isLoading} w="140px" colorScheme='blue' size="md" marginLeft="20px" onClick={handleAddPost}> {/*posts as actually comments on backend*/}
                                 Post
                             </Button>
+                        </Flex>
+                        <Flex direction='column' display='flex' flexWrap='wrap' marginLeft="60px">
+                                    {platform.data.getPlatform.posts.map((post, key) => {
+                                        return (
+                                            <PostCard
+                                                post={post}
+                                                logged_in={user !== 'NoUser'}
+                                                user_id={user === 'NoUser' ? null : user._id}
+                                                player_icon={user.iconImage}
+                                                refetch={platform.refetch}
+                                                key={post._id}
+                                            />
+                                        );
+                                    })}
                         </Flex>
                     </Box>
                 }
@@ -1218,6 +1262,22 @@ export default function PlatformPage({}) {
         }
     }
 
+    function updatePostImageInput(event) {
+        if (
+            event.target.files &&
+            event.target.files[0] &&
+            event.target.files[0].type.split('/')[0] === 'image'
+        ) {
+            let img = event.target.files[0];
+            let fr = new FileReader();
+            fr.readAsDataURL(img);
+            fr.onload = () => {
+                img = fr.result;
+                setPostImage(img);
+            };
+        }
+    }
+
 
     // Updates the banner without saving it to the database
     function updateBanner(event) {
@@ -1354,5 +1414,18 @@ export default function PlatformPage({}) {
                 },
             },
         })
+    }
+
+    async function handleAddPost() {
+        setIsLoading(true)
+        const { data } = await AddPost({
+            variables: {
+                platform_id: platformId,
+                user_id: user._id,
+                postText: postText,
+                postImage: postImage
+            }
+        });
+
     }
 }

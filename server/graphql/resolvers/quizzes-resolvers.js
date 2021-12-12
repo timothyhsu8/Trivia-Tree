@@ -168,27 +168,27 @@ module.exports = {
                 throw new Error('Quiz title cannot be blank');
             }
 
-            questions.forEach((question) => {
+            questions.forEach((question, index) => {
                 if (question.question.trim() === '') {
-                    throw new Error('A question cannot be blank');
+                    throw new Error(`A question cannot be blank (Question ${index+1})`);
                 }
 
                 question.answer.forEach((answer) => {
                     if (answer.trim() === '') {
-                        throw new Error('Each question must have an answer');
+                        throw new Error(`Each question must have an answer (Question ${index+1})`);
                     }
                 });
 
                 if (question.answerChoices.length <= 1) {
                     throw new Error(
-                        'A question must have at least two choices'
+                        `A question must have at least two choices (Question ${index+1})`
                     );
                 }
 
                 let answerMatch = false;
                 question.answerChoices.forEach((choice) => {
                     if (choice.trim() === '') {
-                        throw new Error('An answer choice cannot be blank');
+                        throw new Error(`An answer choice cannot be blank (Question ${index+1})`);
                     }
 
                     question.answer.forEach((answer) => {
@@ -199,7 +199,7 @@ module.exports = {
                 });
                 if (!answerMatch) {
                     throw new Error(
-                        'A question must have an answer choice that matches the answer'
+                        `A question must have an answer choice that matches the answer (Question ${index+1})`
                     );
                 }
 
@@ -208,7 +208,7 @@ module.exports = {
                     question.answerChoices.length
                 ) {
                     throw new Error(
-                        'A question cannot have answer choices that are the same'
+                        `A question cannot have answer choices that are the same (Question ${index+1})`
                     );
                 }
             });

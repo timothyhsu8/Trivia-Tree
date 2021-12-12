@@ -9,13 +9,14 @@ import UserResult from '../components/SearchResults/UserResult'
 import { useState } from 'react';
 import TimeField from "react-simple-timefield";
 import '../styles/styles.css'
+import { BsChevronDown } from "react-icons/bs";
 
 export default function SearchResultsPage() {
 
     const location = useLocation();
     let { searchType, searchText } = useParams();
 
-    const [sortType, setSortType] = useState("none")
+    const [sortType, setSortType] = useState("sort_newest")
     const [filters, setFilters] = useState( {
         minPlays: 0,
         minFavorites: 0,
@@ -30,6 +31,7 @@ export default function SearchResultsPage() {
     const [userData, setUserData] = useState(() => []);
     const [page, setPage] = useState(1);
     const [noMoreData, setNoMoreData] = useState(false);
+    const [loadingMoreResults, setLoadingMoreResults] = useState(false);
 
     // let search = location.state.search
     // let searchType = location.state.searchType
@@ -38,6 +40,7 @@ export default function SearchResultsPage() {
 
     const quizzes = useQuery(SEARCH_QUIZZES, { skip: (searchType !== 'All' && searchType !== 'Quizzes'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network',
         onCompleted({searchQuizzes: data}) {
+            setLoadingMoreResults(false)
             if (data.length < 10) {
                 setNoMoreData(true);
             }
@@ -52,6 +55,7 @@ export default function SearchResultsPage() {
     })
     const platforms = useQuery(SEARCH_PLATFORMS, { skip: (searchType !== 'All' && searchType !== 'Platforms'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network', 
         onCompleted({searchPlatforms: data}) {
+            setLoadingMoreResults(false)
             if (data.length < 10) {
                 setNoMoreData(true);
             }
@@ -69,6 +73,7 @@ export default function SearchResultsPage() {
     })
     const users = useQuery(SEARCH_USERS, { skip: (searchType !== 'All' && searchType !== 'Users'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network',
         onCompleted({searchUsers: data}) {
+            setLoadingMoreResults(false)
             if (data.length < 10) {
                 setNoMoreData(true);
             }
@@ -83,6 +88,8 @@ export default function SearchResultsPage() {
     })
 
     function increasePage() {
+        setLoadingMoreResults(true)
+
         setPage((prevPage) => {
             return prevPage + 1;
         });
@@ -398,9 +405,8 @@ export default function SearchResultsPage() {
                         <HStack>
                             <Text> Sort By: </Text>
                             <Select w="fit-content" mr="5%" borderColor="gray.300" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
-                                <option value="none"> None </option>
-                                <option value="sort_popular"> Popular </option>
                                 <option value="sort_newest">Newest</option>
+                                <option value="sort_popular"> Popular </option>
                                 <option value="sort_abc">Alphabetical [A-Z]</option>
                                 <option value="sort_random">Random</option>
                             </Select>
@@ -412,8 +418,8 @@ export default function SearchResultsPage() {
                     {renderSearchResults()}
                     {!noMoreData ?
                     <Center mt={5} pb={5}>
-                        <Button w='fit-content' colorScheme='blue' variant='solid'  h='40px' fontSize='20px' onClick={() => increasePage()}>
-                        Show More
+                        <Button leftIcon={<BsChevronDown/>} isLoading={loadingMoreResults} colorScheme='blue' variant='solid' size="lg" onClick={() => increasePage()} _focus={{outline:"none"}}>
+                            Show More
                         </Button>
                     </Center> : 
                     <Box pb={10}></Box>}

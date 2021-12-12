@@ -234,7 +234,7 @@ export default function Navbar() {
                                 {/* Rewards Button / Logout Button */}
                                 {logged_in === true ? 
                                     <Box>
-                                        <MenuItem icon={<BsGiftFill/>} iconSpacing="2" onClick={() => history.push('/rewardspage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem>
+                                        {/* <MenuItem icon={<BsGiftFill/>} iconSpacing="2" onClick={() => history.push('/rewardspage')} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> My Rewards</MenuItem> */}
                                         <a href={`${config.API_URL}/auth/logout`}>
                                             <MenuItem icon={<BsFillPersonLinesFill/>} iconSpacing="2" onClick={() => initialDark()} fontSize="18px" _hover={{bgColor:menu_bg_hover, textColor:"white"}}> Logout </MenuItem>
                                         </a>

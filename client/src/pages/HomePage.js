@@ -283,7 +283,7 @@ export default function Homepage() {
                     <Text fontSize="140%" ml="1%" fontWeight="medium"> Featured Platforms </Text>
                     {/* <Box w="13%" bgColor="gray.300" h="0.2vh"></Box> */}
                     <Grid mt="0.5%" ml="0.5%" mr="0.5%" templateColumns="repeat(auto-fill, minmax(325px, 1fr))">
-                        {platform_data.map((platform, key) => {
+                        {platform_data.slice(0).reverse().map((platform, key) => {
                             return <PlatformCard 
                                 platform={platform}
                                 margin="5%"

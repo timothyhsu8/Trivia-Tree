@@ -28,6 +28,7 @@ export default function QuizTakingPage({}) {
     const [finishedInit, setFinishedInit] = useState(false);
     const [finalizedQuestions, setFinalizedQuestions] = useState(() => []);
     const [isNormalSubmit, setNormalSubmit] = useState(false);
+    const [submissionLoading, setSubmissionLoading] = useState(false);
     
     //Dark mode styling
     const quizTimerBoxBG=useColorModeValue("gray.100", "gray.600")
@@ -471,12 +472,14 @@ export default function QuizTakingPage({}) {
                         {currentQuestionNumber == quiz.numQuestions && (quiz.quizInstant ? finalizedQuestions[currentQuestionNumber - 1] === true : true) ? 
                         <Center pt='20'>
                         <Button
+                            isLoading={submissionLoading}
                             w='20%'
                             h='7vh'
                             bgColor='red.500'
                             fontSize='1.3vw'
                             textColor='white'
                             onClick={() => {
+                                setSubmissionLoading(true)
                                 setNormalSubmit(true)
                                 submitQuiz()
                             }}
@@ -513,12 +516,14 @@ export default function QuizTakingPage({}) {
                         {/* </Center> */}
                         {currentQuestionNumber == quiz.numQuestions && quiz.quizInstant && !finalizedQuestions[currentQuestionNumber - 1] ? 
                             <Button
+                                isLoading={submissionLoading}
                                 w='20%'
                                 h='7vh'
                                 bgColor='red.500'
                                 fontSize='1.3vw'
                                 textColor='white'
                                 onClick={() => {
+                                    setSubmissionLoading(true)
                                     setNormalSubmit(true)
                                     submitQuiz()
                                 }}

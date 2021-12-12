@@ -57,7 +57,7 @@ export default function PlatformManagerPage() {
                 platform_data.length !== 0 ?
                     <Grid mt="0.5%" ml="5%" mr="5%" templateColumns="repeat(auto-fill, minmax(425px, 1fr))">
                         {
-                            platform_data.map((platform, key) => {
+                            platform_data.slice(0).reverse().map((platform, key) => {
                                 return (
                                     <Box 
                                         key={key}

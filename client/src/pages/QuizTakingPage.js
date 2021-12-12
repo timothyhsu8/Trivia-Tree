@@ -31,16 +31,19 @@ export default function QuizTakingPage({}) {
     const [submissionLoading, setSubmissionLoading] = useState(false);
     
     //Dark mode styling
-    const quizTimerBoxBG=useColorModeValue("gray.100", "gray.600")
-    const quizTimerSideBG=useColorModeValue("white", "gray.300")
+    const questionColor=useColorModeValue("gray.700", "gray.200")
+    const quizTimerBoxBG=useColorModeValue("gray.100", "gray.700")
+    const quizTimerSideBG=useColorModeValue("white", "gray.800")
     const authorTextColor=useColorModeValue("blue.600","blue.400")
-    const quizTimerTextColor=useColorModeValue("gray.700","gray.800")
+    const quizTimerTextColor=useColorModeValue("gray.700","gray.100")
     const highlightChosenQText=useColorModeValue("gray.200","gray.600")
     const whiteBlackText=useColorModeValue("white","white")
     const nonChosenQText=useColorModeValue("black","white")
-    const notChosenQBG=useColorModeValue("gray.100","gray.500")
+    const notChosenQBG=useColorModeValue("gray.100","gray.700")
     const hoverAnswerBG=useColorModeValue("blue.100","blue.900")
-    const answerChosenBG=useColorModeValue("blue.100","blue.700")
+    const answerChosenBG=useColorModeValue("blue.100","blue.700"
+    
+    )
     useEffect(() => {
         if(quizTimer != -1){
             const interval = setInterval(() => {
@@ -433,7 +436,7 @@ export default function QuizTakingPage({}) {
                 <Box>
                     {/* QUESTION */}
                     <VStack>
-                        <Text pt='50' fontSize="240%" fontWeight="medium" textColor="gray.700" textAlign="center" pl={17} pr={17}>
+                        <Text pt='50' fontSize="240%" fontWeight="medium" textColor={questionColor} textAlign="center" pl={17} pr={17}>
                             {question}
                         </Text>
 
@@ -478,15 +481,13 @@ export default function QuizTakingPage({}) {
                             isLoading={submissionLoading}
                             w='20%'
                             h='7vh'
-                            bgColor='red.500'
+                            colorScheme="red"
                             fontSize='1.3vw'
-                            textColor='white'
                             onClick={() => {
                                 setSubmissionLoading(true)
                                 setNormalSubmit(true)
                                 submitQuiz()
                             }}
-                            _hover={{ bg: "red.600" }}
                         >
                             Submit Quiz
                         </Button>
@@ -498,9 +499,8 @@ export default function QuizTakingPage({}) {
                         <Button
                             w='20%'
                             h='7vh'
-                            bgColor='purple.600'
+                            colorScheme="purple"
                             fontSize='1.3vw'
-                            textColor='white'
                             onClick={() => {
                                 if (quiz.quizInstant) {
                                     if (finalizedQuestions[currentQuestionNumber - 1] === true) {
@@ -512,7 +512,6 @@ export default function QuizTakingPage({}) {
                                     setCurrentQuestionNumber(currentQuestionNumber+1)
                                 }
                             }}
-                            _hover={{ bg: "purple.800" }}
                         >
                             {!quiz.quizInstant ? ('Next Question') : finalizedQuestions[currentQuestionNumber - 1] === true ? 'Next Question' : 'Finalize Question'}
                         </Button>
@@ -522,7 +521,7 @@ export default function QuizTakingPage({}) {
                                 isLoading={submissionLoading}
                                 w='20%'
                                 h='7vh'
-                                bgColor='red.500'
+                                colorScheme="red"
                                 fontSize='1.3vw'
                                 textColor='white'
                                 onClick={() => {
@@ -530,7 +529,6 @@ export default function QuizTakingPage({}) {
                                     setNormalSubmit(true)
                                     submitQuiz()
                                 }}
-                                _hover={{ bg: "red.600" }}
                             >
                                 Submit Quiz
                             </Button>

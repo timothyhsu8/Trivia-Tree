@@ -34,6 +34,9 @@ export default function SearchResultsPage() {
     const [noMoreData, setNoMoreData] = useState(false);
     const [loadingMoreResults, setLoadingMoreResults] = useState(false);
 
+    // Dark Mode Colors
+    const inputBgColor = useColorModeValue("white", "#1a202c")
+
     // let search = location.state.search
     // let searchType = location.state.searchType
     let search = searchText === undefined ? '' : searchText;
@@ -120,9 +123,6 @@ export default function SearchResultsPage() {
 
     const loading = quizzes.loading || platforms.loading || users.loading
     const error = quizzes.error || platforms.error || users.error
-
-    //Dark mode styling
-    //const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
 
     // Loading Screen
     if (loading && !isInitQueryDone) {
@@ -373,7 +373,7 @@ export default function SearchResultsPage() {
                         {/* Timer */}
                         <VStack spacing={1} w="100%">
                             <Text fontSize="100%"> Minimum Timer </Text>
-                            <TimeField name="minTimer" showSeconds style={{padding:"4px", width:"75%", height:"40px", border:"1px solid", borderRadius:"5px", borderColor:"#cfcfcf", textAlign:"center" }}/>
+                            <TimeField name="minTimer" showSeconds style={{padding:"4px", width:"75%", height:"40px", border:"1px solid", backgroundColor:inputBgColor, borderRadius:"5px", borderColor:"#cfcfcf", textAlign:"center" }}/>
                         </VStack>
 
                         {/* Platform Label */}

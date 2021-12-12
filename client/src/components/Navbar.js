@@ -23,6 +23,13 @@ export default function Navbar() {
     const [chosenPlatformName, setChosenPlatformName] = useState("Untitled Platform")
     const maxPlatformName = 35
 
+    const bgColor = useColorModeValue("#751616", "purple.900")
+    const bgHover = useColorModeValue("red.600", "purple.700")
+    const shopColor = useColorModeValue("yellow", "purple")
+    const searchColor = useColorModeValue("yellow.500", "blue.600")
+    const searchHover = useColorModeValue("yellow.400", "blue.500")
+
+    
     let history = useHistory();
     let logged_in = false
     let categories = ["Quizzes", "Platforms", "Users"]
@@ -121,7 +128,7 @@ export default function Navbar() {
     
 
     return(
-        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="#751616" boxShadow="md">
+        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor={bgColor} boxShadow="md">
             <Grid h="100%" templateColumns="2fr 3fr 2fr" pos="relative">
                 {/* RETURN TO HOMEPAGE */}
                 <Box display="flex" flexDirection="column" justifyContent="center">
@@ -168,9 +175,9 @@ export default function Navbar() {
                     {/* SEARCH BUTTON */}
                     <Button
                         h='45px'
-                        _hover={{ bgColor: 'yellow.400' }}
+                        _hover={{ bgColor: searchHover }}
                         borderRadius='0px 5px 5px 0px'
-                        bgColor='yellow.500'
+                        bgColor={searchColor}
                         onClick={search}
                         _focus={{boxShadow:"none"}}
                     >
@@ -180,6 +187,7 @@ export default function Navbar() {
 
                 {/* RIGHT SIDE */}
                 <HStack overflow="hidden">
+                    <IconButton icon={<BsCollectionFill/>} onClick={() => toggleColorMode()} />
                     <Box w='5%' />
                     {/* CATEGORIES */}
                     {/* <Link to='/categorypage'>
@@ -193,7 +201,7 @@ export default function Navbar() {
                     
                     {/* SHOP BUTTON */}
                     <Button 
-                        colorScheme="yellow"
+                        colorScheme={shopColor}
                         leftIcon={<BsFillCartFill />} 
                         onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} 
                         _focus={{outline:"none"}}
@@ -222,7 +230,7 @@ export default function Navbar() {
 
                     {/* DROPDOWN MENU */}
                     <Menu>
-                        <MenuButton as={IconButton} bgColor="#751616" _hover={{bgColor:'red.600'}} _active={{bgColor:'red.600'}} borderRadius="0" icon={<HamburgerIcon boxSize={5} color="white" />} w="45px" h="55px" _focus={{outline:"none"}}/>
+                        <MenuButton as={IconButton} bgColor={bgColor} _hover={{bgColor:bgHover}} _active={{bgColor:bgHover}} borderRadius="0" icon={<HamburgerIcon boxSize={5} color="white" />} w="45px" h="55px" _focus={{outline:"none"}}/>
                             <MenuList boxShadow='lg'>
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (

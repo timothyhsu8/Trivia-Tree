@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Flex, Text, Image, Icon, VStack, HStack, Avatar } from '@chakra-ui/react';
+import { Box, Flex, Text, Image, Icon, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
 import defaultIcon from '../images/defaultquiz.jpeg';
 import { BsFillFileEarmarkTextFill, BsFillPersonFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
@@ -9,6 +9,8 @@ import '../styles/styles.css';
 export default function PlatformCard(props) {
     let history = useHistory();
     const [hovering, setHovering] = useState(false);
+
+    const bgColor = useColorModeValue("gray.700", "gray.900")
 
     const platform = props.platform;
     const width = props.width;
@@ -94,7 +96,7 @@ export default function PlatformCard(props) {
                     pos='relative'
                     h={img_height}
                     borderBottomRadius='10'
-                    bgColor='gray.800'
+                    bgColor={bgColor}
                     overflow='hidden'
                 >
                     {/* PLATFORM NAME / ICON */}

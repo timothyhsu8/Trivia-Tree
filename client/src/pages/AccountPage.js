@@ -433,7 +433,7 @@ export default function AccountPage(props) {
     //Dark mode styling
     const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
     const platformsButtonBG=useColorModeValue('white', 'gray.700')
-    const accountButtonsBG=useColorModeValue('white', 'rgba(0, 0, 0, 0)')
+    const borderColor=useColorModeValue('gray.200', "gray.600")
     const mainBG=useColorModeValue('rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.9)')
     const accountButtonsText=useColorModeValue('blue.500', 'light blue')
     const accountButtonsText2=useColorModeValue('gray.700', 'white')
@@ -441,6 +441,7 @@ export default function AccountPage(props) {
     const basicTextColor=useColorModeValue('white', 'black')
     const cancelButtonBG=useColorModeValue('gray.500', 'gray.500')
     const selectButtonBG=useColorModeValue('blue.500', 'blue.500')
+    const menuTextColor=useColorModeValue('gray.600', 'gray.100')
 
     // Loading Screen - Wait for userData and user
     if ((loading || !user) && !firstQueryDone) {
@@ -1085,7 +1086,7 @@ export default function AccountPage(props) {
 
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} paddingBottom={5} border="1px" borderColor="gray.200" borderRadius='5'>
+                <Box bgColor={platformsButtonBG} paddingBottom={5} border="1px" borderColor={borderColor} borderRadius='5'>
                     <Flex ml={4} mt={3}>
                         <Box display="flex" flexDirection="column" justifyContent="center">
                             <Text fontSize='120%' fontWeight='medium'>
@@ -1095,7 +1096,7 @@ export default function AccountPage(props) {
                         <Spacer />
                         <Menu>
                             <MenuButton
-                                textColor="gray.600"
+                                textColor={menuTextColor}
                                 variant="none"
                                 mr={2}
                                 as={Button}
@@ -1143,7 +1144,7 @@ export default function AccountPage(props) {
 
         return (
             <Box>
-                <Box bgColor={platformsButtonBG} paddingBottom={5} borderRadius='5' border="1px" borderColor="gray.200">
+                <Box bgColor={platformsButtonBG} paddingBottom={5} borderRadius='5' border="1px" borderColor={borderColor}>
                     <Flex ml={4} mt={3}>
                         <Box display="flex" flexDirection="column" justifyContent="center">
                             <Text fontSize='120%' fontWeight='medium' whiteSpace="nowrap">
@@ -1153,7 +1154,7 @@ export default function AccountPage(props) {
                         <Spacer />
                         <Menu>
                             <MenuButton
-                                textColor="gray.600"
+                                textColor={menuTextColor}
                                 variant="none"
                                 mr={2}
                                 as={Button}
@@ -1265,7 +1266,7 @@ export default function AccountPage(props) {
         return (
             <Box w="100%">
                 <Center>
-                    <Box w="50%" padding={5} borderRadius={5} minH="70vh" bgColor={platformsButtonBG} border="1px" borderColor="gray.300">
+                    <Box w="50%" padding={5} borderRadius={5} minH="70vh" bgColor={platformsButtonBG} border="1px" borderColor={borderColor}>
                         <Center>
                             <VStack mt={30}>
                                 <Avatar src={userData.iconImage} size="2xl" />
@@ -1288,41 +1289,7 @@ export default function AccountPage(props) {
                     </Box>
                 </Center>
             </Box>
-            // <Box>
-            //     <Text pl='1.5%' pt='1%' fontSize='120%' fontWeight='medium'>
-            //         Badges
-            //     </Text>
-            //     <Flex ml='1%' spacing='4%' display='flex' flexWrap='wrap'>
-            //         {badges.map((badge, key) => {
-            //             return (
-            //                 <Box key={key}>
-            //                     { renderBadgeIcon(badge) }
-            //                 </Box>
-            //             );
-            //         })}
-            //     </Flex>
-            // </Box>
         );
-    }
-
-    function renderBadgeIcon(badge) {
-        let badge_src = null
-
-        if (badge === "gold")
-            badge_src = gold_badge
-
-        if (badge === "silver")
-            badge_src = silver_badge
-
-        if (badge === "bronze")
-            badge_src = bronze_badge
-
-        return (
-            <VStack>
-                <Image w={120} h={120} src={badge_src} border="1px" borderColor="gray.100" boxShadow="md" bgColor="white" borderRadius={5} mt={5} ml={5} mr={5} />
-                <Text fontSize="105%" fontWeight="medium"> Quiz Master </Text>
-            </VStack>
-        )
     }
 
     function renderBackgroundPopover() {
@@ -1559,7 +1526,7 @@ export default function AccountPage(props) {
                 {
                     headerSections.map((section, key) => {
                         return (
-                            <Box className="disable-select" pos="relative" key={key} display="flex" flexDir="column" justifyContent="center">
+                            <Box className="disable-select" bgColor={platformsButtonBG} pos="relative" key={key} display="flex" flexDir="column" justifyContent="center">
                                 <Text
                                     key={key}
                                     w='100%'

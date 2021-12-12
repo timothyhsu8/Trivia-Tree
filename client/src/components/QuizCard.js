@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid, Button, Center,
+import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid, Button, Center, useColorModeValue,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -19,6 +19,9 @@ export default function QuizCard( props ) {
     
     const [hovering, setHovering] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+
+    // Dark Mode Colors
+    const hoverColor = useColorModeValue("gray.100", "gray.600")
 
     let quiz_data = props.quiz
     let quiz_title = quiz_data.title
@@ -109,8 +112,7 @@ export default function QuizCard( props ) {
             borderRadius="4%" 
             border={isEditing ? "1px":""}
             borderColor={isEditing ? "red":""}
-            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor:"gray.100", cursor:"pointer", transition:"0.15s linear"}} 
-            _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
+            _hover={isEditing ? {bgColor:"red.100", cursor:"pointer", transition:"background-color 0.15s linear"}:{bgColor: hoverColor, cursor:"pointer", transition:"0.15s linear"}} 
             transition="0.1s linear"
             onClick={isEditing ? ()=> quizToDelete():() => history.push('/prequizpage/' + quiz_data._id)}
             //color={disableClick ? 'white':'black'}

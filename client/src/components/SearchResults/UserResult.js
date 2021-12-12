@@ -1,8 +1,13 @@
-import { Box, Text, Image, HStack, Stack, Tag, TagLabel } from "@chakra-ui/react"
+import { Box, Text, Image, HStack, Stack, Tag, TagLabel, useColorModeValue } from "@chakra-ui/react"
 import quizImage from '../../images/defaultquiz.jpeg';
 import { Link } from 'react-router-dom';
 
 export default function UserResult( {user} ) {
+    const textColor = useColorModeValue("gray.600", "gray.300")
+    const hoverColor = useColorModeValue("gray.200", "gray.600")
+    const bgColor = useColorModeValue("white", "gray.700")
+    const borderColor = useColorModeValue("gray.300", "gray.500")
+
     return (
         <Link to={'/accountpage/' + user._id}>
             <HStack
@@ -11,10 +16,11 @@ export default function UserResult( {user} ) {
                 top="50%" 
                 spacing="1.5%"
                 borderBottom="1px" 
-                borderColor="gray.300" 
+                borderColor={borderColor}
                 dipslay="flex" 
                 alignItems="center" 
-                _hover={{bgColor:"gray.200", 
+                bgColor={bgColor}
+                _hover={{bgColor:hoverColor, 
                 cursor:"pointer", 
                 transition:"background-color 0.2s linear"}} 
                 transition="background-color 0.1s linear"

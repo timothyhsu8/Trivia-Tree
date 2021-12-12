@@ -268,6 +268,15 @@ export const UPDATE_DARK_MODE = gql`
     }
 `;
 
+export const ADD_POST = gql`
+mutation ($platform_id: ID!, $user_id: ID!, $postText: String!, $postImage: String) {
+    addPost(platform_id: $platform_id, user_id: $user_id, postText: $postText, postImage: $postImage) {
+        _id
+    }
+}
+`;
+
+
 
 
 

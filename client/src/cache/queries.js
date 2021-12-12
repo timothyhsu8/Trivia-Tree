@@ -350,6 +350,17 @@ export const GET_PLATFORM = gql`
                     numAttempts
                 }
             }
+            posts {
+                _id
+                user {
+                    _id
+                    displayName
+                    iconImage
+                }
+                postText
+                postImage
+                createdAt
+            }
         }
     }
 `;

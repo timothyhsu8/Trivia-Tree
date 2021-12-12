@@ -186,7 +186,7 @@ export default function SignUpPage({}) {
             </VStack>
             : ""}
 
-            {section == 3 ? 
+            {/* {section == 3 ? 
             <VStack position="relative" top="80px">
                 <Center borderBottom="1px" fontSize="3xl">Toggle Between Dark and Light Mode</Center>
                 <Center fontSize="lg">(Mode can be changed later in the settings)</Center>
@@ -213,9 +213,9 @@ export default function SignUpPage({}) {
                     </Button>
                 </HStack>
             </VStack>
-            : ""}
+            : ""} */}
 
-            {section == 4 ? 
+            {section == 3 ? 
             <VStack>
                 <Center borderBottom="1px" fontSize="5xl">Select Categories That Interest You</Center>
                 <Center fontSize="xl">(These will be used to recommend quizzes for you to take)</Center>
@@ -227,7 +227,7 @@ export default function SignUpPage({}) {
                     })}
                 </Center>
                 <HStack spacing="40px" position="relative" bottom="20px">
-                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(3)}}>
+                    <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={() => {setSection(2)}}>
                         Previous
                     </Button>
                     <Button position="relative" top="80px" w="140px" colorScheme='blue' size="lg" onClick={handleFinishSignup}>

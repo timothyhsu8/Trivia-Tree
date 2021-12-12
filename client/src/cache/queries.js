@@ -45,6 +45,52 @@ export const GET_FEATURED_QUIZZES = gql`
     }
 `;
 
+export const GET_NEWEST_QUIZZES = gql`
+    {
+        getNewestQuizzes {
+            _id
+            title
+            user {
+                _id
+                displayName
+                iconImage
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
+            isFeatured
+        }
+    }
+`;
+
+export const GET_BEST_QUIZZES = gql`
+    {
+        getBestQuizzes {
+            _id
+            title
+            user {
+                _id
+                displayName
+                iconImage
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
+            isFeatured
+        }
+    }
+`;
+
 export const GET_QUIZ = gql`
     query GetQuiz($quizId: ID!) {
         getQuiz(quizId: $quizId) {
@@ -117,7 +163,7 @@ export const GET_QUIZ_OF_THE_DAY = gql`
             numFavorites
             rating
             quizInstant
-            quizShuffled  
+            quizShuffled
         }
     }
 `;
@@ -214,6 +260,7 @@ export const GET_LEADERBOARD = gql`
                 iconImage
             }
             score
+            elapsedTime
         }
     }
 `;
@@ -301,7 +348,6 @@ export const GET_PLATFORM_OF_THE_DAY = gql`
         }
     }
 `;
-
 
 export const GET_PLATFORM = gql`
     query getPlatform($platformId: ID!) {
@@ -562,6 +608,17 @@ export const GET_SHOP_ITEMS = gql`
 
 export const GET_RATING = gql`
     query ($quizId: ID!, $userId: ID!) {
-        getRating(quizId: $quizId, userId: $userId) 
+        getRating(quizId: $quizId, userId: $userId)
+    }
+`;
+
+export const GET_USER_QUIZ_ATTEMPTS = gql`
+    query ($quizId: ID!, $userId: ID!) {
+        getUsersQuizAttempts(quizId: $quizId, userId: $userId) {
+            score
+            elapsedTime
+            createdAt
+            _id
+        }
     }
 `;

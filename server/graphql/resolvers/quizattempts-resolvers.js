@@ -19,6 +19,11 @@ module.exports = {
       const quizAttempts = await QuizAttempt.find({quiz:quiz, attemptNumber:1}).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).sort( { score: -1 } ).limit(5)
 
       return quizAttempts;
+    },
+
+    async getUsersQuizAttempts(_, { quizId, userId }, context) {
+      const quizAttempts = await QuizAttempt.find({ quiz: quizId, user: userId }).exec();
+      return quizAttempts;
     }
   },
   Mutation: {

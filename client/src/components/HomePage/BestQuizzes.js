@@ -2,7 +2,7 @@ import { React, useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/auth';
 import { Box, Text, Flex, Spinner, Center, Grid, Icon, Avatar, HStack, Stack } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES } from "../../cache/queries";
+import { GET_BEST_QUIZZES } from "../../cache/queries";
 import { useHistory } from 'react-router-dom';
 import QuizCard from '../QuizCard';
 import { StarIcon, ViewIcon } from '@chakra-ui/icons'
@@ -12,7 +12,7 @@ import '../../styles/styles.css'
 export default function BestQuizzes() {
     let history = useHistory();
     const { user } = useContext(AuthContext);
-    const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
+    const quizzes = useQuery(GET_BEST_QUIZZES, { fetchPolicy: 'cache-and-network' })
     const [initialLoad, setInitialLoad] = useState(false);
 
     const doneLoading = !quizzes.loading
@@ -45,7 +45,7 @@ export default function BestQuizzes() {
         return null;
     }
 
-    const quiz_data = [...quizzes.data.getQuizzes]
+    const quiz_data = [...quizzes.data.getBestQuizzes]
 
     // const new_quizzes = quiz_data.slice(0, 20).reverse()
     const popular_quizzes = quiz_data.sort((a, b) => {

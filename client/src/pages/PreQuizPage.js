@@ -5,13 +5,29 @@ import { useState, useContext } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import { ViewIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons';
-import { BsHeart, BsTrophy, BsPerson, BsHeartFill, BsShuffle, BsQuestionLg, BsListOl, BsFillPlayCircleFill, BsAlarm, BsFillFilterSquareFill, BsCheck2Square, BsChatSquareDotsFill } from 'react-icons/bs';
+import {
+    BsHeart,
+    BsTrophy,
+    BsPerson,
+    BsHeartFill,
+    BsShuffle,
+    BsCalendar2Event,
+    BsQuestionLg,
+    BsReverseLayoutTextSidebarReverse,
+    BsListOl,
+    BsFillPlayCircleFill,
+    BsAlarm,
+    BsFillFilterSquareFill,
+    BsCheck2Square,
+    BsChatSquareDotsFill,
+} from 'react-icons/bs';
 import { IoRibbonSharp } from 'react-icons/io5';
 import * as queries from '../cache/queries';
 import { AuthContext } from '../context/auth';
 import LeaderboardCard from '../components/LeaderboardEntryCard';
 import userImage from '../images/guest.png';
 import CommentCard from '../components/CommentCard';
+import AttemptEntryCard from '../components/AttemptEntryCard';
 
 export default function PreQuizPage({}) {
     const { user, refreshUserData } = useContext(AuthContext);
@@ -41,24 +57,35 @@ export default function PreQuizPage({}) {
     const [isFavorited, setIsFavorited] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
     const [isInitQueryDone, setInitQueryDone] = useState(false);
+    const [quizAttempts, setQuizAttempts] = useState(() => []);
 
     const [showInfo, setShowInfo] = useState(true);
     const onClickInfo = () => {
         setShowInfo(true);
         setShowLeaderboard(false);
         setShowComments(false);
+        setShowAttempts(false);
     };
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const onClickLeaderboard = () => {
         setShowInfo(false);
         setShowLeaderboard(true);
         setShowComments(false);
+        setShowAttempts(false);
     };
     const [showComments, setShowComments] = useState(false);
     const onClickComments = () => {
         setShowInfo(false);
         setShowLeaderboard(false);
         setShowComments(true);
+        setShowAttempts(false);
+    };
+    const [showAttempts, setShowAttempts] = useState(false);
+    const onClickAttempts = () => {
+        setShowInfo(false);
+        setShowLeaderboard(false);
+        setShowComments(false);
+        setShowAttempts(true);
     };
 
     const [AddComment] = useMutation(mutations.ADD_COMMENT);
@@ -110,7 +137,34 @@ export default function PreQuizPage({}) {
         },
     });
 
-    if ((loading || loading1) && !isInitQueryDone) {
+    const {
+        data: data2,
+        loading: loading2,
+        error: error2,
+    } = useQuery(
+        queries.GET_USER_QUIZ_ATTEMPTS,
+        !user || user === 'NoUser'
+            ? { skip: true }
+            : {
+                  variables: {
+                      quizId: quizId,
+                      userId: user._id,
+                  },
+                  fetchPolicy: 'network-only',
+                  onError(err) {
+                      console.log(JSON.stringify(err, null, 2));
+                  },
+                  onCompleted({ getUsersQuizAttempts }) {
+                      let data = [...getUsersQuizAttempts];
+                      data.sort((a, b) => {
+                        return (parseInt(b._id.substring(0, 8), 16) * 1000) - (parseInt(a._id.substring(0, 8), 16) * 1000)
+                      })
+                      setQuizAttempts(data);
+                  },
+              }
+    );
+
+    if ((loading || loading1 || loading2) && !isInitQueryDone && !user) {
         return (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -216,7 +270,7 @@ export default function PreQuizPage({}) {
     };
 
     async function handleAddComment() {
-        setLoadingComment(true)
+        setLoadingComment(true);
         const { data } = await AddComment({
             variables: {
                 quiz_id: quizId,
@@ -226,7 +280,7 @@ export default function PreQuizPage({}) {
         });
         setComment('');
         refetch();
-        setLoadingComment(false)
+        setLoadingComment(false);
     }
 
     async function handleDeleteComment(comment_id) {
@@ -262,6 +316,13 @@ export default function PreQuizPage({}) {
             isShowing: showComments,
             icon: BsChatSquareDotsFill,
             clickFunction: onClickComments,
+        },
+        {
+            text: 'Attempts',
+            page: '#attempts',
+            isShowing: showAttempts,
+            icon: BsReverseLayoutTextSidebarReverse,
+            clickFunction: onClickAttempts,
         },
     ];
 
@@ -333,6 +394,9 @@ export default function PreQuizPage({}) {
                         <Center>
                             <HStack mb={0} mt={12} mb={0}>
                                 {buttons.map((button, key) => {
+                                    if (button.page === '#attempts' && user && user === 'NoUser') {
+                                        return null;
+                                    }
                                     return (
                                         <Box
                                             key={key}
@@ -353,6 +417,7 @@ export default function PreQuizPage({}) {
                                             <a className='center button black' onClick={button.clickFunction}>
                                                 <Icon as={button.icon} pos='relative' boxSize={4} top={0.5} mr={2} />
                                                 {button.text} {button.page === '#comments' ? `(${quiz.comments.length})` : ''}
+                                                {button.page === '#attempts' ? `(${quizAttempts.length})` : ''}
                                             </a>
                                         </Box>
                                     );
@@ -511,6 +576,54 @@ export default function PreQuizPage({}) {
                         ) : (
                             ''
                         )}
+
+                        {showAttempts ? (
+                            <Center>
+                                <Box w='60%' minW='430px' mt='30px' overflow='hidden'>
+                                    <Box h='50px' bg='gray.800' color='white' lineHeight='2' position='relative' borderTopRadius={6}>
+                                        <Text className='leaderboard_title'>Attempts</Text>
+                                    </Box>
+                                    <Box borderBottomRadius='2%' position='relative' paddingTop='10px' border='1px' borderColor='gray.300'>
+                                        <Grid h={8} templateColumns='0.3fr 0.5fr 0.3fr' fontWeight='medium'>
+                                            <Box display='flex' flexDirection='column' justifyContent='center'>
+                                                <Center>
+                                                    <Text>
+                                                        <Icon as={BsCalendar2Event} pos='relative' top={-0.4} mr={2} />
+                                                        Date
+                                                    </Text>
+                                                </Center>
+                                            </Box>
+
+                                            <Box display='flex' flexDirection='column' justifyContent='center'>
+                                                <Center>
+                                                    <Text>
+                                                        <Icon as={BsAlarm} pos='relative' top={-0.4} mr={2} />
+                                                        Time
+                                                    </Text>
+                                                </Center>
+                                            </Box>
+
+                                            <Box display='flex' flexDirection='column' justifyContent='center'>
+                                                <Center>
+                                                    <Text>
+                                                        <Icon as={BsCheck2Square} pos='relative' top={-0.4} mr={2} />
+                                                        Score
+                                                    </Text>
+                                                </Center>
+                                            </Box>
+                                        </Grid>
+
+                                        <Box h='1px' mt={1} mb={1} bgColor='gray.300' />
+
+                                        {quizAttempts.map((entry, index) => {
+                                            return <AttemptEntryCard quizId={quizId} id={entry._id} time={entry.elapsedTime} score={entry.score} />;
+                                        })}
+                                    </Box>
+                                </Box>
+                            </Center>
+                        ) : (
+                            ''
+                        )}
                     </Box>
                 </Box>
 
@@ -538,12 +651,12 @@ export default function PreQuizPage({}) {
                     </Text>
 
                     {/* Start Quiz Button */}
-                    <Stack pos="relative" top='205px'>
-                        <Button w="fit-content" fontSize="24px" h="60px" colorScheme='blue' rightIcon={<BsFillPlayCircleFill />} size="lg" onClick={() => history.push('/quiztakingpage/' + quiz._id)}>
+                    <Stack pos='relative' top='205px'>
+                        <Button w='fit-content' fontSize='24px' h='60px' colorScheme='blue' rightIcon={<BsFillPlayCircleFill />} size='lg' onClick={() => history.push('/quiztakingpage/' + quiz._id)}>
                             Start Quiz
                         </Button>
                         {isOwner ? (
-                            <Button w="fit-content" fontSize="24px" h="60px" mt='15px' colorScheme='green' rightIcon={<EditIcon />}  size="lg" onClick={() => history.push('/editQuiz/' + quiz._id)}>
+                            <Button w='fit-content' fontSize='24px' h='60px' mt='15px' colorScheme='green' rightIcon={<EditIcon />} size='lg' onClick={() => history.push('/editQuiz/' + quiz._id)}>
                                 Edit Quiz
                             </Button>
                         ) : null}

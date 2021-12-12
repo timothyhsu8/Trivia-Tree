@@ -649,7 +649,7 @@ export default function AccountPage(props) {
                                 <PopoverTrigger>
                                     <Box w="100%">
                                         <Tooltip
-                                            label='Edit Platform Icon'
+                                            label='Edit Profile Icon'
                                             placement='top'
                                             fontSize='100%'
                                             bgColor={bannerEditBG}

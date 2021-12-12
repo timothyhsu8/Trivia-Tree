@@ -16,7 +16,7 @@ import {IoMdClock} from "react-icons/io"
 import { useQuery, useMutation } from '@apollo/client';
 import * as queries from '../cache/queries';
 import * as mutations from '../cache/mutations';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import PostQuizAnswersCard from '../components/PostQuizAnswersCard';
 import { StarIcon } from '@chakra-ui/icons'
 import { Rating, RatingView } from 'react-simple-star-rating'
@@ -25,6 +25,7 @@ import { BsAlarm, BsChatSquareDotsFill, BsCheck2, BsCheck2Square, BsFillFileText
 export default function PostQuizPage() {
     let history = useHistory();
     let {user} = useContext(AuthContext);
+    let location = useLocation();
     let logged_in = false;
     let quizScore = null; 
     let elapsedTime = null;
@@ -41,6 +42,7 @@ export default function PostQuizPage() {
     let quiz_recommendations = [];
     let user_id = null;
     let comments = null;
+    let quizTitle = null;
     let { quizId, quizAttemptId } = useParams();
 
     const [rating, setRating] = useState(0)
@@ -85,20 +87,44 @@ export default function PostQuizPage() {
         setSubbed(!subbed);
     };
 
+    const [isAttemptUser, setIsAttemptUser] = React.useState(false);
+    const [invalidUser, setInvalidUser] = React.useState(false);
+
     let quizAttempt = null; 
     let quiz = null; 
 
     const {data, error, loading} = useQuery(queries.GET_QUIZ_ATTEMPT, {
+        skip: !user,
         fetchPolicy: 'network-only',
         variables: { _id: quizAttemptId },
+        onCompleted({ getQuizAttempt }) {
+            if (!getQuizAttempt.user) {
+                if (location.state !== undefined && location.state.afterQuiz !== undefined) {
+                    console.log(location.state.afterQuiz);
+                    setIsAttemptUser(location.state.afterQuiz);
+                } else {
+                    setInvalidUser(true);
+                }
+            } else {
+                if (user === 'NoUser') {
+                    setInvalidUser(true);
+                } else if (getQuizAttempt.user._id === user._id) {
+                    setIsAttemptUser(true);
+                } else {
+                    setInvalidUser(true);
+                }
+            }
+        }
     });
 
     const {data:data1, error:error1, loading:loading1} = useQuery(queries.GET_LEADERBOARD, {
+        skip: !isAttemptUser,
         fetchPolicy: 'network-only',
         variables: { quiz_id: quizId },
     });
 
     const {data:data2, error:error2, loading:loading2, refetch} = useQuery(queries.GET_QUIZ, {
+        skip: !isAttemptUser,
         fetchPolicy: 'network-only',
         variables: { quizId: quizId },
         onCompleted(data) {
@@ -109,12 +135,13 @@ export default function PostQuizPage() {
     const whiteBlackText=useColorModeValue("white", "black")
 
     const {data:data3, loading:loading3} = useQuery(queries.GET_POST_RECOMMENDATIONS, {
+        skip: !isAttemptUser,
         fetchPolicy: 'catch-first', //does this stop it
         variables: { quiz_id: quizId },
     });
 
     const {data: data4, loading: loading4} = useQuery(queries.GET_RATING,
-        (!user || user === 'NoUser') ?
+        (!user || user === 'NoUser' || !isAttemptUser) ?
         {skip: true} : {
             fetchPolicy: 'network-only', //does this stop it
             variables: { quizId: quizId, userId: user._id},
@@ -179,7 +206,15 @@ export default function PostQuizPage() {
         }
     }
 
-    if (loading || loading1 || loading2 || loading3 || loading4 || !user) {
+    if (invalidUser) {
+        return (
+            <Center>
+                <Text fontSize="3vw" fontWeight="thin"> You cannot view this quiz attempt </Text>
+            </Center>
+        )
+    }
+
+    if (loading || loading1 || loading2 || loading3 || loading4 || !user || !isAttemptUser) {
         return  (
             <Center>
                 <Spinner marginTop='50px' size='xl' />
@@ -202,6 +237,7 @@ export default function PostQuizPage() {
         quizAttempt = data.getQuizAttempt
         quiz = quizAttempt.quiz
         quizScore = quizAttempt.score;
+        quizTitle = quiz.title;
         if(quizAttempt.user != null){
             logged_in=true;
             player_icon = quizAttempt.user.iconImage;
@@ -215,6 +251,7 @@ export default function PostQuizPage() {
         creator = quiz.user.displayName;
         answerChoices = quizAttempt.answerChoices;
         coinsEarned = quizAttempt.coinsEarned;
+
         // console.log(quizAttempt);
         // console.log(quiz);
         // console.log(answerChoices)
@@ -271,8 +308,6 @@ export default function PostQuizPage() {
         }});
         refetch();
     }
-
-    let quizTitle = quiz.title;
 
     return(
         <Box>    

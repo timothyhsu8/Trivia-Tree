@@ -110,7 +110,10 @@ export default function QuizTakingPage({}) {
             setQuizAttemptID(quizAttempt._id);
             setQuizDone(true);
             history.push({
-                pathname: '/postquizpage/' + quizID + '/' + quizAttempt._id
+                pathname: '/postquizpage/' + quizID + '/' + quizAttempt._id,
+                state: {
+                    afterQuiz: true
+                }
             });
         }
 

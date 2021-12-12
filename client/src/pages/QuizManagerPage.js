@@ -156,7 +156,7 @@ export default function QuizManagerPage() {
                             userData.quizzesMade.slice(0).reverse().map((quiz, key) => {
                                 return (
                                     <Box 
-                                        key={key}
+                                        key={quiz._id}
                                         w="90%" 
                                         padding={4}
                                         mt={5} 

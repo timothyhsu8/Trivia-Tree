@@ -57,6 +57,16 @@ export default function Navbar() {
         setChosenPlatformName("Untitled Platform")
     }
 
+    function getPlaceholderText() {
+        if (searchType === 'Quizzes') {
+            return 'Search for a quiz...'
+        } else if (searchType === 'Platforms') {
+            return 'Search for a platform...'
+        } else {
+            return 'Search for a user...'
+        }
+    }
+
     // Checks if user is logged in
     if (user !== null && user !== "NoUser"){
         logged_in = true
@@ -149,7 +159,7 @@ export default function Navbar() {
                         onChange={(e) => setSearchText(e.target.value)} 
                         fontSize="17px" 
                         borderRadius="0px" 
-                        placeholder="Search for a quiz..." 
+                        placeholder={getPlaceholderText()} 
                         bgColor="white"
                         color="black"
                         _focus={{boxShadow:"none"}}

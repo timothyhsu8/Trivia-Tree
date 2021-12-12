@@ -93,6 +93,9 @@ module.exports = {
                             path: 'user',
                             model: 'User'
                         }
+                    },
+                    {
+                        path: 'likedBy'
                     }]
                 })
                 .exec();
@@ -628,6 +631,51 @@ module.exports = {
             platform.save();
 
             return platform;
+        },
+        async likePost(_, { platform_id, user_id, post_id }) {
+            const platform = await Platform.findById(platform_id);
+
+            let posts = platform.posts;
+
+            for(let i = 0; i < posts.length; i++){
+                if(posts[i]._id == post_id){
+                    posts[i].numLikes = posts[i].numLikes + 1; 
+                    posts[i].likedBy.push(user_id);
+                    break;
+                }
+            }
+
+            platform.posts = posts
+
+            platform.save();
+
+            return platform;
+        },
+        async unlikePost(_, { platform_id, user_id, post_id }) {
+            const platform = await Platform.findById(platform_id);
+
+            let posts = platform.posts;
+
+            for(let i = 0; i < posts.length; i++){
+                if(posts[i]._id == post_id){
+                    posts[i].numLikes = posts[i].numLikes - 1; 
+                    for(let j = 0; j < posts[i].likedBy.length; j++){
+                        if(posts[i].likedBy[j] == user_id){
+                            posts[i].likedBy.splice(j,1);
+                            break;
+                        }
+                        break;
+                    }
+                    break;
+                }
+            }
+
+            platform.posts = posts
+
+            platform.save();
+
+            return platform;
         }
+
 	}
 };

@@ -899,7 +899,7 @@ export default function PlatformPage({}) {
                             </Button>
                         </Flex>
                         <Flex direction='column' display='flex' flexWrap='wrap' marginLeft="60px">
-                                    {platform.data.getPlatform.posts.map((post, key) => {
+                                    {reverseArr(platform.data.getPlatform.posts).map((post, key) => {
                                         return (
                                             <PostCard
                                                 post={post}
@@ -1457,4 +1457,13 @@ export default function PlatformPage({}) {
 
 
     }
+
+    function reverseArr(input) {
+        var ret = new Array();
+        for (var i = input.length - 1; i >= 0; i--) {
+            ret.push(input[i]);
+        }
+        return ret;
+    }
+    
 }

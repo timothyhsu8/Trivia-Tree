@@ -300,6 +300,23 @@ mutation ($platform_id: ID!, $user_id: ID!, $post_id: ID!, $reply_id: ID!) {
 }
 `;
 
+export const LIKE_POST = gql`
+mutation ($platform_id: ID!, $user_id: ID!, $post_id: ID!) {
+    likePost(platform_id: $platform_id, user_id: $user_id, post_id: $post_id) {
+        _id
+    }
+}
+`;
+
+export const UNLIKE_POST = gql`
+mutation ($platform_id: ID!, $user_id: ID!, $post_id: ID!) {
+    unlikePost(platform_id: $platform_id, user_id: $user_id, post_id: $post_id) {
+        _id
+    }
+}
+`;
+
+
 
 
 

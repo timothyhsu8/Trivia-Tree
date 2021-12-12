@@ -11,6 +11,7 @@ import PostReplyCard from './PostReplyCard.js'
 export default function PostCard( props ) {    
     let history = useHistory();
     let post = props.post
+    let likedBy = false;
     let post_id = props.post._id
     let replies = props.post.replies;
     let timeAgo = getTimeAgo(props.post.createdAt);
@@ -19,9 +20,18 @@ export default function PostCard( props ) {
     if(post.user._id == props.user_id){
         usersPost = true;
     }
-
+    for(let i = 0; i < props.post.likedBy.length; i++){
+        if(props.post.likedBy[i]._id == props.user_id){
+            console.log("HERE")
+            likedBy = true;
+            break;
+        }
+    }
     const [AddPostReply] = useMutation(mutations.ADD_POST_REPLY);
     const [DeletePostReply] = useMutation(mutations.DELETE_POST_REPLY);
+
+    const [LikePost] = useMutation(mutations.LIKE_POST);
+    const [UnlikePost] = useMutation(mutations.UNLIKE_POST);
 
     const [reply, setReply] = useState('');
     const handleReplyChange = (event) => setReply(event.target.value);
@@ -29,6 +39,7 @@ export default function PostCard( props ) {
     const[deleteConfirmation, setDeleteConfirmation] = useState(false)
     const[showReply, setShowReply] = useState(false)
     const [loadingReply, setLoadingReply] = useState(false);
+    const [isLiked, setIsLiked] = useState(likedBy);
 
     function handleDeletePost() {
 
@@ -58,6 +69,22 @@ export default function PostCard( props ) {
 
     }
 
+    async function handleLikePost(){
+        const {data} = await LikePost({ variables: {
+            platform_id: props.platform_id, user_id: props.user_id, post_id: post_id
+        }});
+        props.refetch();
+        setIsLiked(true);
+    }
+
+    async function handleUnlikePost(){
+        const {data} = await UnlikePost({ variables: {
+            platform_id: props.platform_id, user_id: props.user_id, post_id: post_id
+        }});
+        props.refetch();
+        setIsLiked(false);
+    }
+
 
     return (
 
@@ -78,7 +105,7 @@ export default function PostCard( props ) {
             {/* USER ICON */}
             <Flex ml={3} spacing="0.1" direction="column">
                 <Avatar src={post.user.iconImage} _hover={{cursor:"pointer"}} onClick={() => history.push('/accountpage/' + post.user._id)}/>
-                <Center> <Text fontSize="10px" marginTop="5px">0 Likes</Text> </Center>
+                <Center> <Text fontSize="10px" marginTop="5px">{post.numLikes} {post.numLikes == 1 ? 'Like' : 'Likes'} </Text> </Center>
             </Flex>
 
             {/* USER NAME */}
@@ -136,18 +163,24 @@ export default function PostCard( props ) {
                 {post.postImage != null ? <Image src={post.postImage} maxWidth="200px" maxHeight="300px" marginTop="10px" marginBottom="10px" borderRadius="5%" /> : ""}
                 <HStack marginTop="5px">
                     {showReply ? 
-                        <Button color="blue.500" leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
+                        <Button leftIcon={<ArrowDownIcon />} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
                             Hide Replies ({replies.length})
                         </Button> 
                     
                     :
-                        <Button color="blue.500" leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)} _focus={{}}>
+                        <Button leftIcon={<ArrowForwardIcon />} size="xs" variant="ghost" onClick={() => setShowReply(true)} _focus={{}}>
                             View Replies ({replies.length})
                         </Button>
                     }
-                    <Button color="blue.500" leftIcon={<BsHandThumbsUp/>} size="xs" variant="ghost" onClick={() => setShowReply(false)}  _focus={{}}>
-                            Like
-                    </Button>  
+                    { !isLiked ? 
+                    <Button leftIcon={<BsHandThumbsUp/>} size="xs" variant="ghost" onClick={handleLikePost}  _focus={{}}>
+                        Like
+                    </Button>
+                    :
+                    <Button color="blue.500" leftIcon={<BsFillHandThumbsUpFill/>} size="xs" variant="ghost" onClick={handleUnlikePost}  _focus={{}}>
+                        Like
+                    </Button>
+                    }    
                 </HStack>
 
                     {!showReply ? "":

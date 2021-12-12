@@ -43,6 +43,8 @@ module.exports = gql`
         postImage: String
         replies: [Reply!]
         createdAt: String
+        numLikes: Int
+        likedBy: [User]
     }
 
     type Comment {
@@ -85,5 +87,7 @@ module.exports = gql`
         deletePost(platform_id: ID!, user_id: ID!, post_id: ID!): Platform
         addPostReply(platform_id: ID!, user_id: ID!, post_id: ID!, reply: String!): Platform
         deletePostReply(platform_id: ID!, user_id: ID!, post_id: ID!, reply_id: ID!) : Platform
+        likePost(platform_id: ID!, user_id: ID!, post_id: ID!) : Platform
+        unlikePost(platform_id: ID!, user_id: ID!, post_id: ID!) : Platform
     }
 `;

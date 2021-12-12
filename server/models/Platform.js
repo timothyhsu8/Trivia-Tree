@@ -57,6 +57,14 @@ const postSchema = new Schema({
     },
     postImage: {
         type: String
+    },
+    numLikes: {
+        type: Number,
+        default: 0
+    },
+    likedBy: {
+        type: [Schema.Types.ObjectId],
+        ref: 'User'
     }
 }, { timestamps: true });
 

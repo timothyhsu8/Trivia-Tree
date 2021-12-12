@@ -417,6 +417,10 @@ export const GET_PLATFORM = gql`
                 postText
                 postImage
                 createdAt
+                numLikes
+                likedBy {
+                    _id
+                }
             }
         }
     }

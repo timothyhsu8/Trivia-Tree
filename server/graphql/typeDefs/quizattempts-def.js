@@ -13,6 +13,7 @@ module.exports = gql`
         attemptNumber: Int
         coinsEarned: Int
         comments: Comment
+        createdAt: String
     }
 
     input QuizAttemptInput {
@@ -25,6 +26,7 @@ module.exports = gql`
     extend type Query {
         getQuizAttempt(_id: ID!): QuizAttempt
         getLeaderboard(quiz_id: ID!): [QuizAttempt]
+        getUsersQuizAttempts(quizId: ID!, userId: ID!): [QuizAttempt]
     }
 
     extend type Mutation {

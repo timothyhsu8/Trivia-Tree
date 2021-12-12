@@ -32,7 +32,7 @@ export default function LeaderboardEntryCard(props) {
 
                 <Box display="flex" flexDirection="column" justifyContent="center">
                     <Center>
-                        <Text color={whiteBlackText} > 00:00:24 </Text>
+                        <Text color={whiteBlackText} > {props.entry.elapsedTime} </Text>
                     </Center>
                 </Box>
 

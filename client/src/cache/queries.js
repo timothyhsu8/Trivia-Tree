@@ -117,7 +117,7 @@ export const GET_QUIZ_OF_THE_DAY = gql`
             numFavorites
             rating
             quizInstant
-            quizShuffled  
+            quizShuffled
         }
     }
 `;
@@ -214,6 +214,7 @@ export const GET_LEADERBOARD = gql`
                 iconImage
             }
             score
+            elapsedTime
         }
     }
 `;
@@ -301,7 +302,6 @@ export const GET_PLATFORM_OF_THE_DAY = gql`
         }
     }
 `;
-
 
 export const GET_PLATFORM = gql`
     query getPlatform($platformId: ID!) {
@@ -552,6 +552,17 @@ export const GET_SHOP_ITEMS = gql`
 
 export const GET_RATING = gql`
     query ($quizId: ID!, $userId: ID!) {
-        getRating(quizId: $quizId, userId: $userId) 
+        getRating(quizId: $quizId, userId: $userId)
+    }
+`;
+
+export const GET_USER_QUIZ_ATTEMPTS = gql`
+    query ($quizId: ID!, $userId: ID!) {
+        getUsersQuizAttempts(quizId: $quizId, userId: $userId) {
+            score
+            elapsedTime
+            createdAt
+            _id
+        }
     }
 `;

@@ -60,7 +60,7 @@ export default function PlatformManagerPage() {
                             platform_data.slice(0).reverse().map((platform, key) => {
                                 return (
                                     <Box 
-                                        key={key}
+                                        key={platform._id}
                                         w="90%" 
                                         mt={5} 
                                         borderRadius={10} 

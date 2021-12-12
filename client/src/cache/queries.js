@@ -45,6 +45,52 @@ export const GET_FEATURED_QUIZZES = gql`
     }
 `;
 
+export const GET_NEWEST_QUIZZES = gql`
+    {
+        getNewestQuizzes {
+            _id
+            title
+            user {
+                _id
+                displayName
+                iconImage
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
+            isFeatured
+        }
+    }
+`;
+
+export const GET_BEST_QUIZZES = gql`
+    {
+        getBestQuizzes {
+            _id
+            title
+            user {
+                _id
+                displayName
+                iconImage
+            }
+            icon
+            description
+            category
+            quizTimer
+            numAttempts
+            numFavorites
+            numRatings
+            rating
+            isFeatured
+        }
+    }
+`;
+
 export const GET_QUIZ = gql`
     query GetQuiz($quizId: ID!) {
         getQuiz(quizId: $quizId) {

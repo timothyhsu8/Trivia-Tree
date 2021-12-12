@@ -2,7 +2,7 @@ import { React, useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth';
 import { Box, Text, Flex, Spinner, Center, Grid, Icon, Avatar, HStack, Stack } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
-import { GET_QUIZZES } from "../../cache/queries";
+import { GET_NEWEST_QUIZZES } from "../../cache/queries";
 import { useHistory } from 'react-router-dom';
 import QuizCard from '../QuizCard';
 import { StarIcon, ViewIcon } from '@chakra-ui/icons'
@@ -12,7 +12,7 @@ import '../../styles/styles.css'
 export default function NewQuizzes() {
     let history = useHistory();
     const { user } = useContext(AuthContext);
-    const quizzes = useQuery(GET_QUIZZES, { fetchPolicy: 'cache-and-network' })
+    const quizzes = useQuery(GET_NEWEST_QUIZZES, { fetchPolicy: 'cache-and-network' })
     const [initialLoad, setInitialLoad] = useState(false);
 
     const doneLoading = !quizzes.loading
@@ -45,10 +45,10 @@ export default function NewQuizzes() {
         return null;
     }
 
-    const quiz_data = quizzes.data.getQuizzes
+    const quiz_data = quizzes.data.getNewestQuizzes
 
-    // const new_quizzes = quiz_data.slice(0, 20).reverse()
-    const new_quizzes = quiz_data.slice(0).reverse()
+    const new_quizzes = quiz_data.slice(0, 20)
+    // const new_quizzes = quiz_data.slice(0).reverse()
     const first_three = new_quizzes.slice(0, 3)
     return (
         <Box mt="1%" ml="2%" mr="2%">

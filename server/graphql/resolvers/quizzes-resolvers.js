@@ -40,6 +40,22 @@ module.exports = {
                 throw new Error(err);
             }
         },
+        async getNewestQuizzes() {
+            try {
+                const quizzes = await Quiz.find({}).sort({createdAt: -1}).limit(20).populate('user').exec();
+                return quizzes;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+        async getBestQuizzes() {
+            try {
+                const quizzes = await Quiz.find({}).sort({numAttempts: -1}).limit(20).populate('user').exec();
+                return quizzes;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
         async getQuiz(_, { quizId }) {
             try {
                 const quiz = await Quiz.findById(quizId)

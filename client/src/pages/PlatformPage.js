@@ -12,10 +12,10 @@ import { useState, createRef, useContext, useRef } from 'react';
 import '../styles/styles.css'
 import SelectQuizCard from "../components/SelectQuizCard"
 import UserCard from "../components/UserCard"
-import { BsArrowUp, BsArrowDown, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill, BsThreeDotsVertical, BsTrash } from "react-icons/bs";
+import { BsArrowUp, BsArrowDown, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsFillInfoCircleFill, BsFillPersonFill, BsThreeDotsVertical, BsTrash, BsBoxArrowUp } from "react-icons/bs";
 import { MdForum, MdLogin } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { AddIcon, EditIcon, CloseIcon } from '@chakra-ui/icons'
 import { useAlert } from 'react-alert';
 
 export default function PlatformPage({}) {
@@ -82,13 +82,20 @@ export default function PlatformPage({}) {
             type: null
         })
 
+    const [isLoading, setIsLoading] = useState(null)
 
     // Sends the updated platform information to the database
     const [updatePlatform] = useMutation(UPDATE_PLATFORM, {
         onCompleted() {
             platform.refetch()
+
+            setEditName(false)
+            setEditDescription(false)
+            setUnsavedChanges(false)
+            setIsLoading(null)
         },
         onError(err) {
+            setIsLoading(null)
             console.log(JSON.stringify(err, null, 2));
         },
     });
@@ -97,8 +104,14 @@ export default function PlatformPage({}) {
     const [addQuizToPlatform] = useMutation(ADD_QUIZ_TO_PLATFORM, {
         onCompleted() {
             platform.refetch()
+
+            setIsAddingQuiz( { adding: false, type: null })
+            setChosenQuiz(null)
+            setChosenPlaylist(null)
+            setIsLoading(null)
         },
         onError(err) {
+            setIsLoading(null)
             console.log(JSON.stringify(err, null, 2));
         },
     })
@@ -106,8 +119,14 @@ export default function PlatformPage({}) {
     const [addQuizToPlaylist] = useMutation(ADD_QUIZ_TO_PLAYLIST, {
         onCompleted() {
             platform.refetch()
+
+            setIsAddingQuiz( { adding: false, type: null })
+            setChosenQuiz(null)
+            setChosenPlaylist(null)
+            setIsLoading(null)
         },
         onError(err) {
+            setIsLoading(null)
             console.log(JSON.stringify(err, null, 2));
         },
     })
@@ -133,8 +152,17 @@ export default function PlatformPage({}) {
     const [addPlaylistToPlatform] = useMutation(ADD_PLAYLIST_TO_PLATFORM, {
         onCompleted() {
             platform.refetch()
+            
+            setIsLoading(null)
+            setChosenPlaylistName("")
+            setCreatingPlaylist({
+                creating: false,
+                type: null,
+                playlistId: null
+            })
         },
         onError(err) {
+            setIsLoading(null)
             console.log(err);
         },
     });
@@ -142,8 +170,15 @@ export default function PlatformPage({}) {
     const [removePlaylistFromPlatform] = useMutation(REMOVE_PLAYLIST_FROM_PLATFORM, {
         onCompleted() {
             platform.refetch()
+            setDeleteConfirmation({
+                deleting: false,
+                type: null,
+                playlistId: null
+            })
+            setIsLoading(null)
         },
         onError(err) {
+            setIsLoading(null)
             console.log(err);
         },
     });
@@ -152,8 +187,15 @@ export default function PlatformPage({}) {
     const [editPlaylist] = useMutation(EDIT_PLAYLIST, {
         onCompleted() {
             platform.refetch()
+            setCreatingPlaylist({
+                creating: false,
+                type: null,
+                playlistId: null
+            })
+            setIsLoading(null)
         },
         onError(err) {
+            setIsLoading(null)
             console.log(JSON.stringify(err, null, 2));
         },
     });
@@ -162,15 +204,23 @@ export default function PlatformPage({}) {
     // Deletes platform
     const [deletePlatform] = useMutation(DELETE_PLATFORM, {
         onCompleted() {
+            setIsLoading(null)
+            setDeleteConfirmation({
+                deleting: false,
+                type: null,
+                playlistId: null
+            })
             history.push('/');
         },
         onError(err) {
+            setIsLoading(null)
             console.log(JSON.stringify(err, null, 2));
         },
     });
 
     // Button event to delete a platform
     function handleDelete() {
+        setIsLoading(true)
         if (deleteConfirmation.type === "platform") {
             deletePlatform({
                 variables: {
@@ -187,12 +237,6 @@ export default function PlatformPage({}) {
                 }
             })
         }
-
-        setDeleteConfirmation({
-            deleting: false,
-            type: null,
-            playlistId: null
-        })
     }
 
     // Checks if user is logged in or not
@@ -435,6 +479,7 @@ export default function PlatformPage({}) {
                                             <Text float="right" fontSize="90%" color={ name.length === maxPlatformName ? "red.500" : "gray.800" }> { name.length }/{ maxPlatformName } </Text>
                                         </Box>
                                         <Button 
+                                            isLoading={isLoading}
                                             mt="1%" 
                                             ml="1.5%" 
                                             float="right" 
@@ -446,7 +491,6 @@ export default function PlatformPage({}) {
                                             onClick={
                                                 () => {
                                                     handleUpdatePlatform()
-                                                    setEditName(false)
                                                 }
                                             }
                                         >
@@ -644,6 +688,7 @@ export default function PlatformPage({}) {
                                         </Text>
                                     </Box>
                                     <Button 
+                                        isLoading={isLoading}
                                         mt="1%" 
                                         ml="1.5%" 
                                         float="right" 
@@ -655,7 +700,6 @@ export default function PlatformPage({}) {
                                         onClick={
                                             () => {
                                                 handleUpdatePlatform()
-                                                setEditDescription(false)
                                             }
                                         }
                                     >
@@ -894,6 +938,7 @@ export default function PlatformPage({}) {
                             Cancel
                         </Button>
                         <Button 
+                            isLoading={isLoading}
                             colorScheme="blue"  
                             ml={3} 
                             bgColor={name.trim() !== "" ? "" : "gray.400"}
@@ -992,7 +1037,7 @@ export default function PlatformPage({}) {
                                 >
                                     Cancel
                                 </Button>
-                                <Button colorScheme="red" onClick={() => handleDelete()} ml={3} _focus={{border:"none"}}>
+                                <Button isLoading={isLoading} colorScheme="red" onClick={() => handleDelete()} ml={3} _focus={{border:"none"}}>
                                     Delete
                                 </Button>
                                 </AlertDialogFooter>
@@ -1042,7 +1087,7 @@ export default function PlatformPage({}) {
                             </Button>
 
                             {/* Finish selecting a quiz */}
-                            <Button size="lg" textColor="white" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
+                            <Button isLoading={isLoading} size="lg" textColor="white" pt="1.3%" pb="1.3%" pl="1.5%" pr="1.5%"
                                 bgColor={chosenQuiz !== null ? "blue.400" : "gray.400"} 
                                 _hover={{bgColor: chosenQuiz !== null ? "blue.300" : "gray.400"}}
                                 _active={{bgColor: chosenQuiz !== null ? "blue.200" : "gray.400"}}
@@ -1106,6 +1151,7 @@ export default function PlatformPage({}) {
                     <Center>
                         <HStack position="absolute" top="50%" transform="translateY(-50%)">
                             <Button 
+                                leftIcon={<CloseIcon />}
                                 minW="100px"
                                 pl="35px" 
                                 pr="35px" 
@@ -1124,6 +1170,8 @@ export default function PlatformPage({}) {
                             </Button>
 
                             <Button 
+                                isLoading={isLoading}
+                                leftIcon={<BsBoxArrowUp />}
                                 minW="100px"
                                 pl="35px" 
                                 pr="35px" 
@@ -1201,6 +1249,7 @@ export default function PlatformPage({}) {
 
     // Send updated platform information to the database
     function handleUpdatePlatform() {
+        setIsLoading(true)
         let new_icon, new_banner
         iconChanged ? ( new_icon = icon ) : ( new_icon = "NoChange" )
         bannerChanged ? ( new_banner = banner ) : ( new_banner = "NoChange" )
@@ -1216,8 +1265,6 @@ export default function PlatformPage({}) {
                 },
             },
         })
-
-        setUnsavedChanges(false)
     }
 
 
@@ -1234,7 +1281,8 @@ export default function PlatformPage({}) {
                         setChosenPlaylist(null)
                         return
                     }
-                    
+                
+                setIsLoading(true)
                 addQuizToPlatform({
                     variables: {
                         platformId: platform_data._id,
@@ -1253,7 +1301,8 @@ export default function PlatformPage({}) {
                         setChosenPlaylist(null)
                         return
                     }
-
+                
+                setIsLoading(true)
                 addQuizToPlaylist({
                     variables: {
                         platformId: platform_data._id,
@@ -1263,9 +1312,6 @@ export default function PlatformPage({}) {
                 })
             }
         }
-        setIsAddingQuiz( { adding: false, type: null })
-        setChosenQuiz(null)
-        setChosenPlaylist(null)
     }
 
 
@@ -1283,6 +1329,8 @@ export default function PlatformPage({}) {
                 })
                 return
             }
+        
+        setIsLoading(true)
 
         // Playlist added successfully
         addPlaylistToPlatform({
@@ -1291,16 +1339,10 @@ export default function PlatformPage({}) {
                 playlistName: chosenPlaylistName
             }
         })
-
-        setChosenPlaylistName("")
-        setCreatingPlaylist({
-            creating: false,
-            type: null,
-            playlistId: null
-        })
     }
 
     function handleEditPlaylist(playlistId, moveUp, moveDown, newName) {
+        setIsLoading(true)
         editPlaylist({
             variables: {
                 playlistInput: {
@@ -1311,11 +1353,6 @@ export default function PlatformPage({}) {
                     moveDown: moveDown
                 },
             },
-        })
-        setCreatingPlaylist({
-            creating: false,
-            type: null,
-            playlistId: null
         })
     }
 }

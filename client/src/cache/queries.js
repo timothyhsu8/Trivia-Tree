@@ -175,8 +175,8 @@ export const GET_QUIZ_ATTEMPT = gql`
 `;
 
 export const SEARCH_QUIZZES = gql`
-    query Query($searchText: String!, $page: Int!) {
-        searchQuizzes(searchText: $searchText, page: $page) {
+    query Query($searchText: String!, $page: Int!, $sortType: String) {
+        searchQuizzes(searchText: $searchText, page: $page, sortType: $sortType) {
             _id
             title
             description
@@ -356,8 +356,8 @@ export const GET_PLATFORM = gql`
 `;
 
 export const SEARCH_PLATFORMS = gql`
-    query searchPlatform($searchText: String!, $page: Int!) {
-        searchPlatforms(searchText: $searchText, page: $page) {
+    query searchPlatform($searchText: String!, $page: Int!, $sortType: String) {
+        searchPlatforms(searchText: $searchText, page: $page, sortType: $sortType) {
             _id
             name
             iconImage
@@ -515,8 +515,8 @@ export const GET_USER = gql`
 `;
 
 export const SEARCH_USERS = gql`
-    query searchUsers($searchText: String!, $page: Int!) {
-        searchUsers(searchText: $searchText, page: $page) {
+    query searchUsers($searchText: String!, $page: Int!, $sortType: String) {
+        searchUsers(searchText: $searchText, page: $page, sortType: $sortType) {
             _id
             displayName
             iconImage

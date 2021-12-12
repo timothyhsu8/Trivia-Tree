@@ -18,6 +18,7 @@ export default function QuizCard( props ) {
     let history = useHistory();
     
     const [hovering, setHovering] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     let quiz_data = props.quiz
     let quiz_title = quiz_data.title
@@ -66,6 +67,7 @@ export default function QuizCard( props ) {
 
     // Call function to remove quiz from a platform
     function handleRemoveQuizFromPlatform() {
+        setIsLoading(true)
         removeQuizFromPlatform({
             variables: {
                 platformId: props.platform_id,
@@ -76,6 +78,7 @@ export default function QuizCard( props ) {
 
     // Call function to remove quiz from a playlist
     function handleRemoveQuizFromPlaylist() {
+        setIsLoading(true)
         removeQuizFromPlaylist({
             variables: {
                 platformId: props.platform_id,
@@ -196,6 +199,7 @@ export default function QuizCard( props ) {
                                 <PopoverFooter>
                                     <Center>
                                         <Button colorScheme="red" 
+                                            isLoading={isLoading}
                                             onClick={() => props.from_playlist ? handleRemoveQuizFromPlaylist() : handleRemoveQuizFromPlatform()}
                                         > 
                                             Yes, remove it 

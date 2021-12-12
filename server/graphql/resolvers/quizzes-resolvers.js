@@ -68,11 +68,19 @@ module.exports = {
                 throw new Error(err);
             }
         },
-        async searchQuizzes(_, { searchText, page }) {
+        async searchQuizzes(_, { searchText, page, sortType }) {
             try {
+                let sort = null
+                if (sortType === "sort_newest" || sortType === undefined)
+                    sort = { createdAt: -1 }
+                if (sortType === "sort_popular")
+                    sort = { numAttempts: -1 }
+                if (sortType === "sort_abc")
+                    sort = { title: 1 }
+
                 const quizzes = await Quiz.paginate({
                     title: { $regex: searchText, $options: 'i' },
-                }, { page: page, limit: 10, populate: 'user' })
+                }, { page: page, limit: 10, sort: sort, populate: 'user' })
                 return quizzes.docs;
             } catch (err) {
                 throw new Error(err);
@@ -349,26 +357,26 @@ module.exports = {
                 throw new Error('Quiz title cannot be blank');
             }
 
-            const valid = questions.forEach((question) => {
+            const valid = questions.forEach((question, index) => {
                 if (question.question.trim() === '') {
-                    throw new Error('A question cannot be blank');
+                    throw new Error(`A question cannot be blank (Question ${index+1})`);
                 }
                 let answerMatch = false;
 
                 question.answer.forEach((answer) => {
                     if (answer.trim() === '') {
-                        throw new Error('Each question must have an answer');
+                        throw new Error(`Each question must have an answer (Question ${index+1})`);
                     }
                 });
 
                 if (question.answerChoices.length <= 1) {
                     throw new Error(
-                        'A question must have at least two choices'
+                        `A question must have at least two choices (Question ${index+1})`
                     );
                 }
                 question.answerChoices.forEach((choice) => {
                     if (choice.trim() === '') {
-                        throw new Error('An answer choice cannot be blank');
+                        throw new Error(`An answer choice cannot be blank (Question ${index+1})`);
                     }
 
                     question.answer.forEach((answer) => {
@@ -379,7 +387,7 @@ module.exports = {
                 });
                 if (!answerMatch) {
                     throw new Error(
-                        'A question must have an answer choice that matches the answer'
+                        `A question must have an answer choice that matches the answer (Question ${index+1})`
                     );
                 }
 
@@ -388,7 +396,7 @@ module.exports = {
                     question.answerChoices.length
                 ) {
                     throw new Error(
-                        'A question cannot have answer choices that are the same'
+                        `A question cannot have answer choices that are the same (Question ${index+1})`
                     );
                 }
             });

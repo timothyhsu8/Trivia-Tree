@@ -106,12 +106,19 @@ module.exports = {
                 .exec();
             return user;
         },
-        async searchUsers(_, { searchText, page }) {
-            console.log(searchText);
+        async searchUsers(_, { searchText, page, sortType }) {
+            let sort = null
+            if (sortType === "sort_newest" || sortType === undefined)
+                sort = { createdAt: -1 }
+            if (sortType === "sort_popular")
+                sort = { createdAt: -1 }
+            if (sortType === "sort_abc")
+                sort = { displayName: 1 }
+
             try {
                 const users = await User.paginate({
                     displayName: { $regex: searchText, $options: 'i' },
-                }, { page: page, limit: 10 });
+                }, { page: page, limit: 10, sort: sort });
                 return users.docs;
             } catch (err) {
                 throw new Error(err);

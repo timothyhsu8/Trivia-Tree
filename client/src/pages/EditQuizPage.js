@@ -61,6 +61,8 @@ function EditQuizPage(props) {
     const [timeType, setTimeType] = useState('Quiz');
     const [quizTimer, setQuizTimer] = useState('10:00:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [loadingButton, setLoadingButton] = useState(false);
 
     function handleScrollAction(id) {
         let targetEle = refs[id].current;
@@ -276,14 +278,19 @@ function EditQuizPage(props) {
             },
         },
         onCompleted() {
+            setLoadingButton(false)
+            setErrorMessage(null)
             setShowQuizUpdated(true)
         },
         onError(err) {
+            setLoadingButton(false)
+            setErrorMessage(err.toString())
             console.log(JSON.stringify(err, null, 2));
         },
     });
 
     function handleUpdateQuiz() {
+        setLoadingButton(true)
         let modifiedQuizQuestions = quizQuestions.map((question) => {
             return { ...question };
         });
@@ -797,16 +804,22 @@ function EditQuizPage(props) {
                         </Box>
 
                         <Center>
-                            <Button
-                                leftIcon={<BsFillFileEarmarkTextFill/>}
-                                mt={10}
-                                colorScheme='purple'
-                                size='lg'
-                                _focus={{ outline: 'none' }}
-                                onClick={() => handleUpdateQuiz()}
-                            >
-                                Save Changes
-                            </Button>
+                            <VStack w="90%">
+                                <Button
+                                    isLoading={loadingButton}
+                                    leftIcon={<BsFillFileEarmarkTextFill/>}
+                                    mt={10}
+                                    colorScheme='purple'
+                                    size='lg'
+                                    _focus={{ outline: 'none' }}
+                                    onClick={() => handleUpdateQuiz()}
+                                >
+                                    Save Changes
+                                </Button>
+                                <Text textAlign="center" textColor="red.500" fontWeight="medium">
+                                    { errorMessage }
+                                </Text>
+                            </VStack>
                         </Center>
                     </Box>
                 </div>

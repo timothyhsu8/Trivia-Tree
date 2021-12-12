@@ -91,10 +91,18 @@ module.exports = {
             }
         },
 
-        async searchPlatforms(_, { searchText, page }) {
+        async searchPlatforms(_, { searchText, page, sortType }) {
             try {
+                let sort = null
+                if (sortType === "sort_newest" || sortType === undefined)
+                    sort = { createdAt: -1 }
+                if (sortType === "sort_popular")
+                    sort = { createdAt: -1 }
+                if (sortType === "sort_abc")
+                    sort = { name: 1 }
+
                 const platforms = await Platform.paginate({name: { "$regex": searchText, "$options": "i"}},
-                {page: page, limit: 10, populate: 'user'});
+                {page: page, limit: 10, sort: sort, populate: 'user'});
                 return platforms.docs;
             } catch (err) {
                 throw new Error(err);

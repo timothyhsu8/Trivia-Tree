@@ -58,8 +58,8 @@ import PlatformCard from '../components/PlatformCard';
 import AddQuizCard from '../components/AddQuizCard';
 import SelectQuizCard from '../components/SelectQuizCard';
 import SelectPlatformCard from '../components/SelectPlatformCard';
-import { BsBookmarkStarFill, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsJustify, BsJustifyLeft, BsPersonCircle } from 'react-icons/bs';
-import { ChevronDownIcon, AddIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { BsBookmarkStarFill, BsBoxArrowUp, BsFillFileEarmarkTextFill, BsFillHouseDoorFill, BsInfoCircleFill, BsJustify, BsJustifyLeft, BsPersonCircle } from 'react-icons/bs';
+import { ChevronDownIcon, AddIcon, EditIcon, ArrowBackIcon, CloseIcon } from '@chakra-ui/icons';
 import { useAlert } from 'react-alert';
 import gold_badge from '../images/gold_badge.png'
 import silver_badge from '../images/silver_badge.png'
@@ -90,6 +90,7 @@ export default function AccountPage(props) {
     const [userTitle, setUserTitle] = React.useState('');
     const [pfp_src, setPFP] = useState(''); //String path
     const [banner_src, setBanner] = useState(''); //String path
+    const [loadingSavedChanges, setLoadingSavedChanges] = useState(false);
     const [bannerEffectPreview, setBannerEffectPreview] = useState(
         {
             name: "No Banner Effect",
@@ -396,6 +397,7 @@ export default function AccountPage(props) {
             },
         },
         onCompleted() {
+            setLoadingSavedChanges(false)
             profileImg = 'Same Image';
             bannerImg = 'Same Image';
             // toggleEditPage(false);
@@ -405,11 +407,13 @@ export default function AccountPage(props) {
             refreshUserData();
         },
         onError(err) {
+            setLoadingSavedChanges(false)
             console.log(JSON.stringify(err, null, 2));
         },
     });
 
     function handleUpdateUser() {
+        setLoadingSavedChanges(true)
         updateUser({
             variables: {
                 userInput: {
@@ -534,9 +538,9 @@ export default function AccountPage(props) {
             icon: BsFillFileEarmarkTextFill
         },
         {
-            pageName: "Badges",
+            pageName: "About",
             pageId: 'badges',
-            icon: BsBookmarkStarFill,
+            icon: BsInfoCircleFill,
         }
     ]
 
@@ -1641,6 +1645,7 @@ export default function AccountPage(props) {
                         >
                             <Button
                                 minW='100px'
+                                leftIcon={<CloseIcon />}
                                 pl='35px'
                                 pr='35px'
                                 pt='25px'
@@ -1658,6 +1663,8 @@ export default function AccountPage(props) {
                             </Button>
 
                             <Button
+                                isLoading={loadingSavedChanges}
+                                leftIcon={<BsBoxArrowUp />}
                                 minW='100px'
                                 pl='35px'
                                 pr='35px'
@@ -1678,7 +1685,6 @@ export default function AccountPage(props) {
                     </Center>
                 </Box>
             ) : null}
-            {/* {renderPage()} */}
         </Box>
     );
 }

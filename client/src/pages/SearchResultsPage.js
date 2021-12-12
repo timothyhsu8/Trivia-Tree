@@ -17,6 +17,7 @@ export default function SearchResultsPage() {
     let { searchType, searchText } = useParams();
 
     const [sortType, setSortType] = useState("sort_newest")
+    const [resetResults, setResetResults] = useState(false)
     const [filters, setFilters] = useState( {
         minPlays: 0,
         minFavorites: 0,
@@ -38,13 +39,18 @@ export default function SearchResultsPage() {
     let search = searchText === undefined ? '' : searchText;
     let search_text = 'Search Results for "' + search + '"'
 
-    const quizzes = useQuery(SEARCH_QUIZZES, { skip: (searchType !== 'All' && searchType !== 'Quizzes'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network',
+    const quizzes = useQuery(SEARCH_QUIZZES, { skip: (searchType !== 'All' && searchType !== 'Quizzes'), variables: { searchText: search, page: page, sortType: sortType }, fetchPolicy: 'cache-and-network',
         onCompleted({searchQuizzes: data}) {
             setLoadingMoreResults(false)
             if (data.length < 10) {
                 setNoMoreData(true);
             }
             setQuizData((prevQuizData) => {
+                if (resetResults){
+                    setResetResults(false)
+                    return data
+                }
+
                 let temp = [...prevQuizData];
                 return temp.concat(data);
             });
@@ -53,13 +59,18 @@ export default function SearchResultsPage() {
             }
         }
     })
-    const platforms = useQuery(SEARCH_PLATFORMS, { skip: (searchType !== 'All' && searchType !== 'Platforms'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network', 
+    const platforms = useQuery(SEARCH_PLATFORMS, { skip: (searchType !== 'All' && searchType !== 'Platforms'), variables: { searchText: search, page: page, sortType: sortType }, fetchPolicy: 'cache-and-network', 
         onCompleted({searchPlatforms: data}) {
             setLoadingMoreResults(false)
             if (data.length < 10) {
                 setNoMoreData(true);
             }
             setPlatformData((prevPlatformData) => {
+                if (resetResults){
+                    setResetResults(false)
+                    return data
+                }
+
                 let temp = [...prevPlatformData];
                 return temp.concat(data);
             });
@@ -71,13 +82,18 @@ export default function SearchResultsPage() {
             console.log(JSON.stringify(err, null, 2));
         }
     })
-    const users = useQuery(SEARCH_USERS, { skip: (searchType !== 'All' && searchType !== 'Users'), variables: { searchText: search, page: page }, fetchPolicy: 'cache-and-network',
+    const users = useQuery(SEARCH_USERS, { skip: (searchType !== 'All' && searchType !== 'Users'), variables: { searchText: search, page: page, sortType: sortType }, fetchPolicy: 'cache-and-network',
         onCompleted({searchUsers: data}) {
             setLoadingMoreResults(false)
             if (data.length < 10) {
                 setNoMoreData(true);
             }
             setUserData((prevUserData) => {
+                if (resetResults){
+                    setResetResults(false)
+                    return data
+                }
+
                 let temp = [...prevUserData];
                 return temp.concat(data);
             });
@@ -135,10 +151,6 @@ export default function SearchResultsPage() {
         );
     }
 
-    // const quiz_data = quizzes ? quizzes.data.searchQuizzes: [];
-    // const platform_data = platforms.data ? platforms.data.searchPlatforms : [];
-    // const user_data = users.data ? users.data.searchUsers : [];
-    
     // Doing the actual filtering work
     let filtered_quiz_data = quizData.filter((quiz) => {
         return (quiz.numAttempts >= filters.minPlays) && (quiz.numFavorites >= filters.minFavorites) && (quiz.quizTimer >= filters.minTimer)
@@ -150,7 +162,7 @@ export default function SearchResultsPage() {
 
     // Gather all search results
     let search_results = getSearchResults(searchType, filtered_quiz_data, filtered_platform_data, userData)
-    search_results = sortSearchResults(search_results, sortType)
+    // search_results = sortSearchResults(search_results, sortType)
 
     // Puts the correct data into the search results array (Depending on if the user serached for quizzes, platforms, users, or all)
     function getSearchResults(searchType, quiz_data, platform_data, user_data) {
@@ -265,6 +277,14 @@ export default function SearchResultsPage() {
 
     // Render search results to the user
     function renderSearchResults(){
+        // Spinner loading if filter has been changes
+        if (resetResults)
+            return (
+                <Center>
+                    <Spinner marginTop='50px' size='xl' />
+                </Center>
+            )
+
         // No quizzes found
         if (search_results.length === 0)
             return (
@@ -404,11 +424,15 @@ export default function SearchResultsPage() {
                         
                         <HStack>
                             <Text> Sort By: </Text>
-                            <Select w="fit-content" mr="5%" borderColor="gray.300" borderRadius="10px" onChange={(e) => setSortType(e.target.value)}> 
+                            <Select w="fit-content" mr="5%" borderColor="gray.300" borderRadius="10px" onChange={(e) =>  {
+                                setSortType(e.target.value)
+                                setPage(1) 
+                                setResetResults(true)
+                                setNoMoreData(false)
+                                }}> 
                                 <option value="sort_newest">Newest</option>
                                 <option value="sort_popular"> Popular </option>
                                 <option value="sort_abc">Alphabetical [A-Z]</option>
-                                <option value="sort_random">Random</option>
                             </Select>
                         </HStack>
                     </Grid>
@@ -416,7 +440,7 @@ export default function SearchResultsPage() {
 
                     {/* ALL SEARCH RESULTS */}
                     {renderSearchResults()}
-                    {!noMoreData ?
+                    {!noMoreData && !resetResults ?
                     <Center mt={5} pb={5}>
                         <Button leftIcon={<BsChevronDown/>} isLoading={loadingMoreResults} colorScheme='blue' variant='solid' size="lg" onClick={() => increasePage()} _focus={{outline:"none"}}>
                             Show More

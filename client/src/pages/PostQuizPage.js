@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
-import { Box, Flex, Center, Text, Stack, VStack, Button, Image, Avatar, Icon, useColorModeValue, Input, HStack, Grid } from "@chakra-ui/react"
+import { Box, Flex, Center, Text, Stack, VStack, Button, Image, Avatar, Icon, useColorModeValue, Input, HStack, Grid, Spinner } from "@chakra-ui/react"
 import { Link, useHistory } from 'react-router-dom';
 import userImage from '../images/guest.png';
 import '../styles/postpage.css';
@@ -56,6 +56,7 @@ export default function PostQuizPage() {
 
     const [AddComment] = useMutation(mutations.ADD_COMMENT);
     const [DeleteComment] = useMutation(mutations.DELETE_COMMENT);
+    const [loadingComment, setLoadingComment] = useState(false);
     const [comment, setComment] = React.useState('');
     const handleCommentChange = (event) => setComment(event.target.value);
 
@@ -178,28 +179,12 @@ export default function PostQuizPage() {
         }
     }
 
-    if (!user) {
-        return <div></div>;
-    }
-
-    if (loading) {
-        return <div></div>;
-    }
-
-    if (loading1) {
-        return <div></div>;
-    }
-
-    if (loading2) {
-        return <div></div>;
-    }
-
-    if (loading3) {
-        return <div></div>;
-    }
-
-    if (loading4) {
-        return <div></div>;
+    if (loading || loading1 || loading2 || loading3 || loading4 || !user) {
+        return  (
+            <Center>
+                <Spinner marginTop='50px' size='xl' />
+            </Center>
+        )
     }
 
     if (error || error1 || error2) {
@@ -270,12 +255,13 @@ export default function PostQuizPage() {
     }
 
     async function handleAddComment(){
-        // console.log(comment);
+        setLoadingComment(true)
         const {data} = await AddComment({ variables: {
             quiz_id: quizId, user_id: user._id, comment: comment
         }});
         setComment("");
         refetch();
+        setLoadingComment(false)
     }
 
     async function handleDeleteComment(comment_id){
@@ -451,7 +437,7 @@ export default function PostQuizPage() {
                                         <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"
                                             _hover={{pointer:"cursor", bgColor:"gray.200"}}
                                             _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/>
-                                        <Button w="140px" colorScheme='blue' size="md" marginLeft="20px" onClick={handleAddComment}>
+                                        <Button isLoading={loadingComment} w="140px" colorScheme='blue' size="md" marginLeft="20px" onClick={handleAddComment}>
                                             Comment
                                         </Button>
                                     </Flex>

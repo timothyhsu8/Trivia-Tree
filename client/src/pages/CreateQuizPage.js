@@ -61,6 +61,8 @@ function CreateQuizPage(props) {
     const [timeType, setTimeType] = useState('Quiz');
     const [quizTimer, setQuizTimer] = useState('00:05:00');
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
+    const [loadingButton, setLoadingButton] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
         refs = {};
@@ -283,14 +285,19 @@ function CreateQuizPage(props) {
             },
         },
         onCompleted() {
+            setErrorMessage(null)
+            setLoadingButton(false)
             setShowQuizSubmitted(true)
         },
         onError(err) {
+            setLoadingButton(false)
+            setErrorMessage(err.toString())
             console.log(JSON.stringify(err, null, 2));
         },
     });
 
     function handleCreateQuiz() {
+        setLoadingButton(true)
         let modifiedQuizQuestions = quizQuestions.map((question) => {
             return { ...question };
         });
@@ -526,7 +533,7 @@ function CreateQuizPage(props) {
                 {/* Right Sidebar */}
                 <div className='rightSidebar'>
                     <Box position='sticky' top='70px'>
-                        <HStack
+                        {/* <HStack
                             display='flex'
                             flexDirection='column'
                             direction='row'
@@ -549,10 +556,10 @@ function CreateQuizPage(props) {
                                     </option>
                                 </Select>
                             </HStack>
-                        </HStack>
+                        </HStack> */}
 
                         {/* Quiz Icon */}
-                        <VStack marginTop='20px'>
+                        <VStack marginTop='15px'>
                             <Text fontSize='110%' textColor="gray.600" fontWeight="medium">Quiz Icon</Text>
                             <img
                                 style={{
@@ -728,16 +735,23 @@ function CreateQuizPage(props) {
                         </Box>
 
                         <Center>
-                            <Button
-                                leftIcon={<BsFillFileEarmarkTextFill/>}
-                                mt={10}
-                                colorScheme='purple'
-                                size='lg'
-                                _focus={{ outline: 'none' }}
-                                onClick={() => handleCreateQuiz()}
-                            >
-                                Create Quiz
-                            </Button>
+                            <VStack w="90%">
+                                <Button
+                                    isLoading={loadingButton}
+                                    leftIcon={<BsFillFileEarmarkTextFill/>}
+                                    mt={10}
+                                    colorScheme='purple'
+                                    size='lg'
+                                    _focus={{ outline: 'none' }}
+                                    onClick={() => handleCreateQuiz()}
+                                >
+                                    Create Quiz
+                                </Button>
+
+                                <Text textAlign="center" textColor="red.500" fontWeight="medium">
+                                    { errorMessage }
+                                </Text>
+                            </VStack>
                         </Center>
                     </Box>
                 </div>

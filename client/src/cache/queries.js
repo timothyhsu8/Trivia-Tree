@@ -209,6 +209,7 @@ export const GET_LEADERBOARD = gql`
         getLeaderboard(quiz_id: $quiz_id) {
             _id
             user {
+                _id
                 displayName
                 iconImage
             }

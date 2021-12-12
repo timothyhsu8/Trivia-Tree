@@ -1,13 +1,13 @@
 import { Box, Grid, Text, Image, Icon, Center, Stack, Tag, TagLabel, HStack } from "@chakra-ui/react"
 import { StarIcon, ViewIcon, CalendarIcon } from '@chakra-ui/icons'
-import quizImage from '../../images/defaultquiz.jpeg';
+import { useHistory } from 'react-router-dom';
 import { BsHeartFill, BsFillAlarmFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
 export default function QuizResult( {quiz} ) {
+    let history = useHistory();
 
     return (
-        <Link to={'/prequizpage/' + quiz._id}>
             <Grid 
                 pt={2}
                 pb={2}
@@ -22,6 +22,7 @@ export default function QuizResult( {quiz} ) {
                 transition:"background-color 0.2s linear"}} 
                 transition="background-color 0.1s linear"
                 overflow="hidden"
+                onClick={() => { history.push('/prequizpage/' + quiz._id) }}
             >
                 {/* QUIZ ICON */}
                 <Center>
@@ -67,14 +68,25 @@ export default function QuizResult( {quiz} ) {
                 {/* CREATOR */}
                 <Center>
                     <HStack w="100%">
-                        <Box className='squareimage_container' w="10%" minW="20px" ml="2.8%"> 
+                        <Box className='squareimage_container' w="10%" minW="20px" ml="2.8%" 
+                                onClick={(event) => { 
+                                history.push('/accountpage/' + quiz.user._id)
+                                event.stopPropagation()
+                            }}> 
                             <Image className="squareimage" src={quiz.user.iconImage} objectFit="cover" borderRadius="50%"></Image>
                         </Box>
-                        <Text top="50%" fontSize="1.8vh" color="blue.500"> {quiz.user.displayName} </Text> 
+                        <Text top="50%" fontSize="100%" color="blue.500"
+                            _hover={{textColor:"purple.300"}}
+                            onClick={(event) => { 
+                                history.push('/accountpage/' + quiz.user._id)
+                                event.stopPropagation()
+                            }}
+                            > 
+                            {quiz.user.displayName} 
+                        </Text> 
                     </HStack>
                 </Center>
             </Grid>
-        </Link>
     )
 
     

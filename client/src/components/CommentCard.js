@@ -28,6 +28,7 @@ export default function CommentCard( props ) {
     const[showReply, setShowReply] = useState(false)
 
     const [reply, setReply] = useState('');
+    const [loadingReply, setLoadingReply] = useState(false);
     const handleReplyChange = (event) => setReply(event.target.value);
 
     function handleDeleteComment() {
@@ -36,12 +37,13 @@ export default function CommentCard( props ) {
     }
 
     async function handleAddReply(){
-        console.log(reply);
+        setLoadingReply(true)
         const {data} = await AddReply({ variables: {
             quiz_id: quiz_id, user_id: props.user_id, comment_id: comment_id, reply:reply
         }});
         setReply("");
         props.refetch();
+        setLoadingReply(false)
     }
 
     async function handleDeleteReply(reply_id){
@@ -169,7 +171,7 @@ export default function CommentCard( props ) {
                             <Avatar src={props.player_icon} size="sm"/>
                             <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
                                 borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
-                            <Button w="100px" colorScheme='blue' variant='solid' size="sm" marginLeft="20px" onClick={handleAddReply}>
+                            <Button isLoading={loadingReply} w="100px" colorScheme='blue' variant='solid' size="sm" marginLeft="20px" onClick={handleAddReply}>
                                 Reply
                             </Button>
                         </HStack>

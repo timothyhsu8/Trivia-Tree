@@ -63,6 +63,7 @@ export default function PreQuizPage({}) {
 
     const [AddComment] = useMutation(mutations.ADD_COMMENT);
     const [DeleteComment] = useMutation(mutations.DELETE_COMMENT);
+    const [loadingComment, setLoadingComment] = useState(false);
     const [comment, setComment] = useState('');
     const handleCommentChange = (event) => setComment(event.target.value);
 
@@ -215,7 +216,7 @@ export default function PreQuizPage({}) {
     };
 
     async function handleAddComment() {
-        // console.log(comment);
+        setLoadingComment(true)
         const { data } = await AddComment({
             variables: {
                 quiz_id: quizId,
@@ -225,6 +226,7 @@ export default function PreQuizPage({}) {
         });
         setComment('');
         refetch();
+        setLoadingComment(false)
     }
 
     async function handleDeleteComment(comment_id) {
@@ -269,7 +271,7 @@ export default function PreQuizPage({}) {
                 {' '}
                 Back{' '}
             </Button>
-            <Grid templateColumns='1fr 0.3fr' mt='50px'>
+            <Grid templateColumns='1fr 0.3fr' mt='20px'>
                 {/* Left Side */}
                 <Box paddingBottom='75px'>
                     <Box>
@@ -481,7 +483,7 @@ export default function PreQuizPage({}) {
                                             _hover={{ pointer: 'cursor', bgColor: 'gray.200' }}
                                             _focus={{ bgColor: 'white', border: '1px', borderColor: 'blue.400' }}
                                         />
-                                        <Button w='140px' colorScheme='blue' size='md' marginLeft='20px' onClick={handleAddComment}>
+                                        <Button isLoading={loadingComment} w='140px' colorScheme='blue' size='md' marginLeft='20px' onClick={handleAddComment}>
                                             Comment
                                         </Button>
                                     </Flex>
@@ -526,22 +528,22 @@ export default function PreQuizPage({}) {
                             </Text>
                         </Stack>
                     </HStack>
-                    <Text fontSize='140%' ml='10px' top='30px' position='relative'>
+                    <Text fontSize='120%' ml='10px' top='30px' position='relative'>
                         {' '}
                         <Icon as={ViewIcon} color='blue.400' /> {numAttempts} Plays
                     </Text>
-                    <Text fontSize='140%' ml='10px' top='40px' position='relative'>
+                    <Text fontSize='120%' ml='10px' top='40px' position='relative'>
                         {' '}
                         <Icon as={BsHeartFill} color='red.400' /> {numFavorites} Favorites
                     </Text>
 
                     {/* Start Quiz Button */}
-                    <Stack>
-                        <Button w='fit-content' colorScheme='blue' rightIcon={<BsFillPlayCircleFill />} variant='solid' position='relative' top='205px' h='60px' fontSize='25px' onClick={() => history.push('/quiztakingpage/' + quiz._id)}>
+                    <Stack pos="relative" top='205px'>
+                        <Button w="fit-content" fontSize="24px" h="60px" colorScheme='blue' rightIcon={<BsFillPlayCircleFill />} size="lg" onClick={() => history.push('/quiztakingpage/' + quiz._id)}>
                             Start Quiz
                         </Button>
                         {isOwner ? (
-                            <Button mt='15px' w='fit-content' colorScheme='green' rightIcon={<EditIcon />} variant='solid' position='relative' top='205px' h='60px' fontSize='25px' onClick={() => history.push('/editQuiz/' + quiz._id)}>
+                            <Button w="fit-content" fontSize="24px" h="60px" mt='15px' colorScheme='green' rightIcon={<EditIcon />}  size="lg" onClick={() => history.push('/editQuiz/' + quiz._id)}>
                                 Edit Quiz
                             </Button>
                         ) : null}

@@ -29,6 +29,8 @@ export default function SettingsPage(props) {
     const [darkMode, setDarkMode] = useState("");
     const [iconImage, setIconImage] = useState("");
     const [initDone, setInitDone] = useState(false);
+    const [buttonLoading, setButtonLoading] = useState(false)
+
     const [updateSettings] = useMutation(mutations.UPDATE_SETTINGS, {
         context:{
             headers: {
@@ -36,6 +38,7 @@ export default function SettingsPage(props) {
             }
         },
         onCompleted() {
+            setButtonLoading(false);
             refreshUserData();
             // history.go(0)
         },
@@ -45,6 +48,7 @@ export default function SettingsPage(props) {
     });
     const [deleteUser] = useMutation(mutations.DELETE_USER, {
         onCompleted() {
+            setButtonLoading(false);
             refreshUserData();
             if(colorMode=="dark"){
                 toggleColorMode();
@@ -77,6 +81,7 @@ export default function SettingsPage(props) {
     }, [user]);
 
     async function saveChanges() {
+        setButtonLoading(true)
         const { data } = await updateSettings({ variables: {settingInput:{userId:user._id, displayName:displayName, iconImage:iconImage, darkMode:darkMode}}});
         initialDark()
         return;
@@ -261,7 +266,7 @@ export default function SettingsPage(props) {
                         </HStack>
 
                         <Box display="flex" flexDirection="column" justifyContent="center">
-                            <Button w="fit-content" colorScheme="blue" onClick={saveChanges}> Save Changes </Button>
+                            <Button isLoading={buttonLoading} w="fit-content" colorScheme="blue" onClick={saveChanges}> Save Changes </Button>
                         </Box>
                     </Grid>
                 </Grid>

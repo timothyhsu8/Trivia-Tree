@@ -33,6 +33,7 @@ export default function QuizManagerPage() {
     const { user } = useContext(AuthContext);
     let history = useHistory();
 
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const [firstQueryDone, setFirstQueryDone] = useState(false);
     const {
         loading,
@@ -57,13 +58,16 @@ export default function QuizManagerPage() {
     const [deleteQuiz] = useMutation(DELETE_QUIZ, {
         onCompleted() {
             refetch();
+            setDeleteLoading(false)
         },
         onError(err) {
+            setDeleteLoading(false)
             console.log(JSON.stringify(err, null, 2));
         },
     });
 
     function handleDeleteQuiz(quizId) {
+        setDeleteLoading(true)
         deleteQuiz({
             variables: {
                 quizId,
@@ -84,7 +88,7 @@ export default function QuizManagerPage() {
                     </PopoverBody>
                     <PopoverFooter>
                         <Center>
-                            <Button colorScheme="red" onClick={() => handleDeleteQuiz(quiz._id)}> Yes, Delete It </Button>
+                            <Button isLoading={deleteLoading} colorScheme="red" onClick={() => handleDeleteQuiz(quiz._id)}> Yes, Delete It </Button>
                         </Center>
                     </PopoverFooter>
                 </PopoverContent>
@@ -141,7 +145,7 @@ export default function QuizManagerPage() {
                 _active={{backgroundColor: 'cyan.700'}}
                 size="lg"
             >
-                    Create Quiz
+                Create Quiz
             </Button>
 
             {/* PLATFORM CARDS */}
@@ -149,7 +153,7 @@ export default function QuizManagerPage() {
                 userData.quizzesMade.length !== 0 ?
                     <Grid mt="0.5%" ml="5%" mr="5%" justifyItems='center' rowGap='3%' templateColumns="repeat(auto-fill, minmax(300px, 1fr))">
                         {
-                            userData.quizzesMade.map((quiz, key) => {
+                            userData.quizzesMade.slice(0).reverse().map((quiz, key) => {
                                 return (
                                     <Box 
                                         key={key}

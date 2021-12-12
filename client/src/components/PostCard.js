@@ -15,8 +15,6 @@ export default function PostCard( props ) {
     let timeAgo = getTimeAgo(props.post.createdAt);
     let usersPost = false;
     let quiz_id = props.quiz_id
-    console.log(props.user_id)
-    console.log(post.user._id)
     if(post.user._id == props.user_id){
         usersPost = true;
     }
@@ -27,20 +25,14 @@ export default function PostCard( props ) {
 
     const[deleteConfirmation, setDeleteConfirmation] = useState(false)
 
+    function handleDeletePost() {
+
+        props.handleDeletePost(props.post._id)
+
+    }
+
 
     return (
-        // <Box
-        // width="60vw"
-        // height="auto"
-        // marginBottom="10px"
-        // paddingTop="20px"
-        // paddingLeft="15px"
-        // paddingRight="15px"
-        // bg="white"
-        // justifyContent="center"
-        // >
-        //     <Text as="b" fontSize="2.5vw">{comment.comment}</Text> 
-        // </Box>
 
         <Flex
             direction="row"
@@ -68,7 +60,7 @@ export default function PostCard( props ) {
                     <Text w="fit-content" fontSize="10px">
                         {timeAgo}
                     </Text>
-                    {usersPost ? 
+                    {usersPost || props.is_owner ? 
                     <HStack>
                         <BsTrash
                             className='trashCan'
@@ -96,7 +88,10 @@ export default function PostCard( props ) {
                                 <Button 
                                 size="xs" 
                                 variant='link' 
-                                colorScheme="red">  
+                                colorScheme="red"
+                                onClick={() =>
+                                    handleDeletePost()
+                                }>  
                                 Delete Post
                                 </Button>
                                 

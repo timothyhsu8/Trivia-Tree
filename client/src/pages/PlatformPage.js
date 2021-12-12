@@ -899,6 +899,8 @@ export default function PlatformPage({}) {
                                                 logged_in={user !== 'NoUser'}
                                                 user_id={user === 'NoUser' ? null : user._id}
                                                 player_icon={user.iconImage}
+                                                handleDeletePost={handleDeletePost}
+                                                is_owner={is_owner}
                                                 refetch={platform.refetch}
                                                 key={post._id}
                                             />
@@ -1418,6 +1420,10 @@ export default function PlatformPage({}) {
 
     async function handleAddPost() {
         setIsLoading(true)
+
+        setPostImage(null);
+        setPostText('');
+
         const { data } = await AddPost({
             variables: {
                 platform_id: platformId,
@@ -1426,6 +1432,25 @@ export default function PlatformPage({}) {
                 postImage: postImage
             }
         });
+
+        platform.refetch();
+
+    }
+
+    async function handleDeletePost(post_id) {
+        // setIsLoading(true)
+        console.log(post_id);
+
+        // const { data } = await AddPost({
+        //     variables: {
+        //         platform_id: platformId,
+        //         user_id: user._id,
+        //         postText: postText,
+        //         postImage: postImage
+        //     }
+        // });
+
+        // platform.refetch();
 
     }
 }

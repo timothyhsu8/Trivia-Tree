@@ -1,6 +1,6 @@
 import { React, useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth';
-import { Box, Text, Flex, Spinner, Center, Grid, Icon, Avatar, HStack, Stack } from '@chakra-ui/react';
+import { Box, Text, Flex, Spinner, Center, Grid, Icon, Avatar, HStack, Stack, useColorModeValue } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
 import { GET_NEWEST_QUIZZES } from "../../cache/queries";
 import { useHistory } from 'react-router-dom';
@@ -14,6 +14,10 @@ export default function NewQuizzes() {
     const { user } = useContext(AuthContext);
     const quizzes = useQuery(GET_NEWEST_QUIZZES, { fetchPolicy: 'cache-and-network' })
     const [initialLoad, setInitialLoad] = useState(false);
+
+    const borderColor = useColorModeValue("gray.200", "gray.500")
+    const bgColor = useColorModeValue("white", "gray.700")
+    const hoverColor = useColorModeValue("gray.100", "gray.600")
 
     const doneLoading = !quizzes.loading
     const error = quizzes.error
@@ -88,8 +92,8 @@ export default function NewQuizzes() {
      // Larger quiz cards for the first 2 or 3 new quizzes (or best quizzes or whatever)
      function renderLargeQuizCard(quiz) {
         return (
-            <Box w="30%" minW={400} bgColor="white" borderRadius={10} border="1px" borderColor="gray.200" boxShadow="md" padding={5} overflow="hidden"
-                _hover={{bgColor:"gray.100", transition:".15s linear", cursor:"pointer"}}
+            <Box w="30%" minW={400} bgColor={bgColor} borderRadius={10} border="1px" borderColor={borderColor} boxShadow="md" padding={5} overflow="hidden"
+                _hover={{bgColor:hoverColor, transition:".15s linear", cursor:"pointer"}}
                 transition=".15s linear"    
                 onClick={() => history.push('/prequizpage/' + quiz._id)}
             >

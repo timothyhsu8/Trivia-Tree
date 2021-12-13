@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, Image, HStack, Button, Flex, Input, Avatar, Center, Spinner} from '@chakra-ui/react';
+import { Text, Image, HStack, Button, Flex, Input, Avatar, Center, Spinner, useColorModeValue} from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { BsTrash, BsFillHandThumbsUpFill, BsHandThumbsUp } from 'react-icons/bs';
@@ -36,6 +36,9 @@ export default function PostCard( props ) {
 
     const [reply, setReply] = useState('');
     const handleReplyChange = (event) => setReply(event.target.value);
+
+    const hoverCommentBgColor = useColorModeValue("gray.200", "gray.600")
+    const activeCommentBgColor = useColorModeValue("white", "gray.700")
 
     const[deleteConfirmation, setDeleteConfirmation] = useState(false)
     const[showReply, setShowReply] = useState(false)
@@ -232,7 +235,7 @@ export default function PostCard( props ) {
                         <HStack paddingTop="5px" paddingBottom="10px">
                             <Avatar src={props.player_icon} size="xs"/>
                             <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px"
-                                size="xs" borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
+                                size="xs" borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:activeCommentBgColor }}/>
                             <Button isLoading={loadingReply} w="100px" colorScheme='blue' variant='solid' size="xs" marginLeft="20px" onClick={handleAddReply}>
                                 Reply
                             </Button>

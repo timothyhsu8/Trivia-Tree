@@ -1,14 +1,18 @@
-import { Box, VStack, Text, Image, Spacer, Flex, HStack, Avatar } from '@chakra-ui/react'
+import { Box, VStack, Text, Image, Spacer, Flex, HStack, Avatar, useColorModeValue } from '@chakra-ui/react'
 import coin from '../../images/coin.png'
 import '../../styles/styles.css'
 
 export default function ShopItemCard( props ) {
+    
     const itemData = props.item
     const isOwned = props.isOwned
+
+    const bgColor = useColorModeValue("white", "gray.700")
 
     return (
         <VStack 
             pos="relative"
+            bgColor={bgColor}
             w="82%"
             mt={5}
             spacing={0}

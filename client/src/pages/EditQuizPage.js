@@ -20,7 +20,8 @@ import {
     AlertDialogContent,
     AlertDialogBody, 
     AlertDialogFooter,
-    AlertDialogHeader
+    AlertDialogHeader,
+    useColorModeValue
 } from '@chakra-ui/react';
 import TimeField from 'react-simple-timefield';
 import { AuthContext } from '../context/auth';
@@ -63,6 +64,10 @@ function EditQuizPage(props) {
     const [questionTimer, setQuestionTimer] = useState('00:00:00');
     const [errorMessage, setErrorMessage] = useState(null);
     const [loadingButton, setLoadingButton] = useState(false);
+
+    // Dark mode styling
+    const textColorLighter = useColorModeValue("gray.600", "white")
+    const hoverColor = useColorModeValue("gray.100", "gray.700")
 
     function handleScrollAction(id) {
         let targetEle = refs[id].current;
@@ -471,7 +476,7 @@ function EditQuizPage(props) {
                         borderColor="gray.200"
                     >
                         <Center>
-                            <Text marginLeft='10px' fontSize='120%' fontWeight="medium" textColor="gray.600">
+                            <Text marginLeft='10px' fontSize='120%' fontWeight="medium" textColor={textColorLighter}>
                                 Jump To Question:
                             </Text>
                         </Center>
@@ -489,7 +494,7 @@ function EditQuizPage(props) {
                                         cursor='pointer'
                                         onClick={() => handleScrollAction(item.id)}
                                     >
-                                        <Text fontWeight="medium" textColor="gray.700">
+                                        <Text fontWeight="medium" textColor={textColorLighter}>
                                             <Icon as={ChevronRightIcon} pos="relative" top="-1.1px" mr="2px"/>
                                              Question #{index + 1} 
                                         </Text>
@@ -512,14 +517,14 @@ function EditQuizPage(props) {
                             variant='flushed'
                             borderColor='gray.400'
                             borderBottomWidth='1px'
-                            _hover={{bgColor: 'gray.100'}}
-                            _focus={{ borderColor: 'blue.500', bgColor:"gray.100" }}
+                            _hover={{bgColor: hoverColor}}
+                            _focus={{ borderColor: 'blue.500', bgColor:hoverColor }}
                             fontSize='140%'
                             height='fit-content'
                             width='80%'
                             overflowWrap="break-word"
                         />
-                        <Text fontSize="90%" textColor="gray.600" fontWeight="medium">Quiz Title</Text>
+                        <Text fontSize="90%" textColor={textColorLighter} fontWeight="medium">Quiz Title</Text>
                     </Stack>
                     <Stack spacing="1px">
                         <Textarea
@@ -536,7 +541,7 @@ function EditQuizPage(props) {
                             marginTop='30px'
                             width='80%'
                         />
-                        <Text fontSize="90%" textColor="gray.600" fontWeight="medium">Quiz Description</Text>
+                        <Text fontSize="90%" textColor={textColorLighter}  fontWeight="medium">Quiz Description</Text>
                     </Stack>
                     <HStack mt='20px'>
                         <Text fontSize="100%" fontWeight="medium">
@@ -637,7 +642,7 @@ function EditQuizPage(props) {
 
                         {/* Quiz Icon */}
                         <VStack marginTop='20px'>
-                            <Text fontSize='110%' textColor="gray.600" fontWeight="medium">Quiz Icon</Text>
+                            <Text fontSize='110%' textColor={textColorLighter}  fontWeight="medium">Quiz Icon</Text>
                             <img
                                 style={{
                                     objectFit: 'cover',
@@ -657,7 +662,7 @@ function EditQuizPage(props) {
                                 leftIcon={<BsFillImageFill />}
                                 variant="outline"
                                 borderColor="gray.300"
-                                textColor="gray.700"
+                                textColor={textColorLighter} 
                                 _focus={{ outline: 'none' }}
                                 marginTop='10px'
                                 onClick={() => hiddenImageInput.current.click()}

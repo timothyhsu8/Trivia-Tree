@@ -1,6 +1,6 @@
 import { React, useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/auth';
-import { Box, Text, Flex, Spinner, Center, Grid, useColorMode, Image, Icon, Avatar, HStack, VStack, Stack } from '@chakra-ui/react';
+import { Box, Text, Flex, Spinner, Center, Grid, useColorMode, Image, Icon, Avatar, HStack, VStack, Stack, useColorModeValue } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_FEATURED_QUIZZES, GET_PLATFORMS, GET_USER, GET_USER_RECOMMENDATIONS, GET_QUIZ_OF_THE_DAY, GET_PLATFORM_OF_THE_DAY } from "../cache/queries";
 import { useHistory } from 'react-router-dom';
@@ -38,6 +38,14 @@ export default function Homepage() {
         }
     ]
     const [initialLoad, setInitialLoad] = useState(false);
+
+    // Dark mode styling
+    const borderColor = useColorModeValue("gray.200", "gray.500")
+    const bgColor = useColorModeValue("gray.100", "gray.700")
+    const headerColor = useColorModeValue("gray.100", "gray.800")
+    const hoverColor = useColorModeValue("gray.100", "gray.600")
+    const selectedTextColor = useColorModeValue("gray.900", "white")
+    const textColor = useColorModeValue("gray.600", "gray.100")
 
     // Fetch quiz/platform data from the backend
     const featuredQuizzes = useQuery(GET_FEATURED_QUIZZES, { fetchPolicy: 'cache-and-network' })
@@ -165,7 +173,7 @@ export default function Homepage() {
         <Box>
             {/* HEADER */}
             <Center>
-                <Grid w="100%" minW="800px" templateColumns="1fr 1fr 1fr 1fr" boxShadow="md" bgColor="gray.100"> 
+                <Grid w="100%" minW="800px" templateColumns="1fr 1fr 1fr 1fr" boxShadow="md" bgColor={headerColor}> 
                     {header_sections.map((section, key) => {
                         return (
                             <Box h="55px" key={key}>
@@ -173,7 +181,7 @@ export default function Homepage() {
                                     <Text 
                                         className="disable-select"
                                         fontSize="125%" 
-                                        textColor={section.pageName === currentSection ? "gray.900" : "gray.400" }
+                                        textColor={section.pageName === currentSection ? selectedTextColor : "gray.400" }
                                         textAlign="center"
                                         _hover={{ cursor:"pointer", textColor:"gray.600", transition:"0.15s linear" }}
                                         transition="0.1s linear"
@@ -266,7 +274,7 @@ export default function Homepage() {
                         </Flex>
                         : 
                         <Center>
-                            <Text fontSize="140%" mt={30} mb={10} textColor="gray.600"> 
+                            <Text fontSize="140%" mt={30} mb={10} textColor={textColor}> 
                                 <Icon as={BsLockFill} pos="relative" mr={2} top="-4px" />
                                 You must be logged in to view recommendations 
                             </Text>
@@ -302,7 +310,7 @@ export default function Homepage() {
         if (userId === null) {
             return (
                 <Center>
-                    <Text fontSize="140%" mt={30} mb={10} textColor="gray.600"> 
+                    <Text fontSize="140%" mt={30} mb={10} textColor={textColor}> 
                         <Icon as={BsLockFill} pos="relative" mr={2} top="-4px" />
                         You must be logged in to view favorited quizzes
                     </Text>
@@ -370,8 +378,8 @@ export default function Homepage() {
                         </Text>
                     </Box>
                 </Center>
-                <Box w='100%' bgColor="white" borderRadius={5} border="1px" bgColor="gray.100" borderColor="gray.200" boxShadow="md" padding={5}
-                    _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}}
+                <Box w='100%' bgColor="white" borderRadius={5} border="1px" bgColor={bgColor} borderColor={borderColor} boxShadow="md" padding={5}
+                    _hover={{bgColor:hoverColor, transition:".15s linear", cursor:"pointer"}}
                     onClick={() => history.push('/prequizpage/' + quiz._id)}
                     transition=".15s linear"    
                 >
@@ -419,8 +427,8 @@ export default function Homepage() {
                         </Text>
                     </Box>
                 </Center>
-                <Box w='100%' bgColor="white" borderRadius={5} border="1px" bgColor="gray.100" borderColor="gray.200" boxShadow="md" padding={5}
-                    _hover={{bgColor:"gray.200", transition:".15s linear", cursor:"pointer"}}
+                <Box w='100%' borderRadius={5} border="1px" bgColor={bgColor} borderColor={borderColor} boxShadow="md" padding={5}
+                    _hover={{bgColor:hoverColor, transition:".15s linear", cursor:"pointer"}}
                     onClick={() => history.push('/platformpage/' + platform._id)}
                     transition=".15s linear"    
                 >

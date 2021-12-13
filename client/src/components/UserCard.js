@@ -1,4 +1,4 @@
-import { Box, Text, Image, VStack, Tooltip, HStack, Icon, Grid } from '@chakra-ui/react';
+import { Box, Text, Image, VStack, Tooltip, useColorModeValue } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import quizImage from '../images/defaultquiz.jpeg';
 import { ViewIcon } from '@chakra-ui/icons'
@@ -15,6 +15,8 @@ export default function UserCard( props ) {
     let title_fontsize = props.title_fontsize
     let icon_src = user_data.iconImage
 
+    const hoverColor = useColorModeValue("gray.100", "gray.600")
+
     return (
         <VStack 
             className="disable-select"
@@ -24,8 +26,7 @@ export default function UserCard( props ) {
             margin="0.5%" 
             spacing="2%" 
             borderRadius="4%" 
-            _hover={{bgColor:"blue.100", cursor:"pointer", transition:"background-color 0.15s linear"}} 
-            _active={{bgColor:"gray.200",  transition:"background-color 0.1s linear"}}
+            _hover={{bgColor:hoverColor, cursor:"pointer", transition:"background-color 0.15s linear"}} 
             transition="background-color 0.1s linear"
             onClick={() => history.push('/accountpage/' + user_data._id)}
         >

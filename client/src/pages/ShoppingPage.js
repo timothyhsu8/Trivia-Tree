@@ -168,9 +168,7 @@ export default function ShoppingPage() {
                                 </HStack>
 
                                 <ButtonGroup mt="6%" spacing={10}>
-                                    <Button size="lg" colorScheme="gray" bgColor="gray.200" 
-                                        _hover={{bgColor: "gray.300"}}
-                                        _active={{bgColor: "gray.400"}}
+                                    <Button size="lg" colorScheme="gray"
                                         _focus={{border:"none"}}
                                         onClick={() => setShowPurchaseScreen(!showPurchaseScreen)}
                                     > 

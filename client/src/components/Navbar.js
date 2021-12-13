@@ -28,6 +28,7 @@ export default function Navbar() {
     const shopColor = useColorModeValue("yellow", "purple")
     const searchColor = useColorModeValue("yellow.500", "blue.600")
     const searchHover = useColorModeValue("yellow.400", "blue.500")
+    const searchbarBg = useColorModeValue("white", "gray.700")
 
     
     let history = useHistory();
@@ -155,7 +156,7 @@ export default function Navbar() {
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" color="black" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
+                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" bgColor={searchbarBg} _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>;
                         })}
@@ -167,7 +168,7 @@ export default function Navbar() {
                         fontSize="17px" 
                         borderRadius="0px" 
                         placeholder={getPlaceholderText()} 
-                        bgColor="white"
+                        bgColor={searchbarBg}
                         color="black"
                         _focus={{boxShadow:"none"}}
                     />

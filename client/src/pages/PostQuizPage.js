@@ -131,8 +131,12 @@ export default function PostQuizPage() {
             // console.log(data2);
         }
     });
+
     //Dark mode styling
-    const whiteBlackText=useColorModeValue("white", "black")
+    const hoverCommentBgColor = useColorModeValue("gray.200", "gray.600")
+    const activeCommentBgColor = useColorModeValue("white", "gray.700")
+    const quizStatsBgColor = useColorModeValue("#E3E3E3", "gray.500")
+    const recommendationsBg = useColorModeValue('gray.100', 'gray.700')
 
     const {data:data3, loading:loading3} = useQuery(queries.GET_POST_RECOMMENDATIONS, {
         skip: !isAttemptUser,
@@ -412,7 +416,7 @@ export default function PostQuizPage() {
                                     <Box
                                         width={["38vw","38vw","38vw","28vw"]}
                                         h='350px'
-                                        bg='#E3E3E3'
+                                        bg={quizStatsBgColor}
                                         borderRightRadius='20px'
                                     >
                                         <Box h="100%" display="flex" flexDirection="column" justifyContent="center">
@@ -470,8 +474,8 @@ export default function PostQuizPage() {
                                     <Flex direction="row">
                                         <Avatar src={user.iconImage}/>
                                         <Input value={comment} onChange={handleCommentChange} variant='filled' placeholder='Add a public comment...' marginLeft="20px" marginBottom="20px"
-                                            _hover={{pointer:"cursor", bgColor:"gray.200"}}
-                                            _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/>
+                                            _hover={{pointer:"cursor", bgColor:hoverCommentBgColor}}
+                                            _focus={{bgColor:activeCommentBgColor, border:"1px", borderColor:"blue.400"}}/>
                                         <Button isLoading={loadingComment} w="140px" colorScheme='blue' size="md" marginLeft="20px" onClick={handleAddComment}>
                                             Comment
                                         </Button>
@@ -503,9 +507,9 @@ export default function PostQuizPage() {
                 <Box>
                     <Stack spacing={10}>
                         {/* Recommended Quizzes */}
-                        <Stack w="95%" bg='gray.100' borderRadius="2%" >
+                        <Stack w="95%" bg={recommendationsBg} borderRadius="2%" >
                             <Box mt="1%" ml="2%" mr="2%">
-                                <Text fontSize="125%" mt={2} ml="1%" fontWeight="medium" textColor="gray.700"> Recommended Quizzes </Text>
+                                <Text fontSize="125%" mt={2} ml="1%" fontWeight="medium"> Recommended Quizzes </Text>
                                 <Flex mt="0.5%" spacing="10%" display="flex" flexWrap="wrap" >
                                     {quiz_recommendations.map((quiz, key) => {
                                         return <QuizCard 
@@ -523,10 +527,8 @@ export default function PostQuizPage() {
                             <Button 
                                 w="100%" 
                                 h="40px" 
-                                color="white"
-                                bg='#165CAF' 
+                                colorScheme="blue"
                                 borderRadius='5px' 
-                                _hover={{bgColor:"#3780d7", cursor:"pointer", transition:"0.15s linear"}}
                                 onClick={() => history.push('/prequizpage/' + quiz._id)}
                             >
                                 Retry Quiz

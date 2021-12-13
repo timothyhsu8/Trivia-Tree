@@ -1,6 +1,6 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, Avatar,
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue, IconButton } from "@chakra-ui/react"
-import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { SearchIcon, HamburgerIcon, SunIcon } from '@chakra-ui/icons'
 import { BsCollectionFill, BsFillCartFill, BsFillFileEarmarkTextFill, BsFillGearFill, BsFillHouseDoorFill, BsFillPersonLinesFill, BsGiftFill, BsGridFill } from "react-icons/bs"
 import { config } from '../util/constants';
 import { useHistory } from 'react-router-dom';
@@ -26,6 +26,7 @@ export default function Navbar() {
     const bgColor = useColorModeValue("#751616", "purple.900")
     const bgHover = useColorModeValue("red.600", "purple.700")
     const shopColor = useColorModeValue("yellow", "purple")
+    const sunIconColor = useColorModeValue("orange", "blue")
     const searchColor = useColorModeValue("yellow.500", "blue.600")
     const searchHover = useColorModeValue("yellow.400", "blue.500")
     const searchbarBg = useColorModeValue("white", "gray.700")
@@ -169,7 +170,6 @@ export default function Navbar() {
                         borderRadius="0px" 
                         placeholder={getPlaceholderText()} 
                         bgColor={searchbarBg}
-                        color="black"
                         _focus={{boxShadow:"none"}}
                     />
 
@@ -187,9 +187,9 @@ export default function Navbar() {
                 </Grid>
 
                 {/* RIGHT SIDE */}
-                <HStack overflow="hidden">
-                    <IconButton icon={<BsCollectionFill/>} onClick={() => toggleColorMode()} />
+                <HStack >
                     <Box w='5%' />
+                    <IconButton icon={<SunIcon/>} colorScheme={sunIconColor} onClick={() => toggleColorMode()} _focus={{outline:"none"}} overflow="hidden" />
                     {/* CATEGORIES */}
                     {/* <Link to='/categorypage'>
                         <Text className="disable-select" fontSize='105%' color='white' fontWeight='medium'>
@@ -204,9 +204,10 @@ export default function Navbar() {
                     <Button 
                         colorScheme={shopColor}
                         leftIcon={<BsFillCartFill />} 
-                        onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} 
+                        onClick={() => history.push( logged_in ? "/shoppingpage" : "/loginpage")} 
                         _focus={{outline:"none"}}
                         borderRadius="40px"
+                        overflow="hidden"
                     >
                         Shop 
                     </Button>
@@ -216,14 +217,14 @@ export default function Navbar() {
                     
                     <div className="fadeshow2">
                     <HStack pr={10} spacing={1}>
-                        <Image src={coin} h="20px" w="20px" position="relative" top="1px"></Image>
+                        <Image src={coin} h="20px" w="20px" position="relative" top="1px" overflow="hidden"></Image>
                         <Text position="relative" color="white">{currency}</Text>
                     </HStack>
                     </div>
 
                     {/* USER NAME */}
                     <div className="fadeshow1">
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap" overflow="hidden"> {username} </Text> 
                     </div>
                     {/* PROFILE PICTURE */}
                     <Avatar src={pfp_src} border="1px solid white" boxSize={10} onClick={() => goToAccountPage()} _hover={{cursor:"pointer"}}/>

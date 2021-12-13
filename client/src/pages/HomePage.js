@@ -25,16 +25,16 @@ export default function Homepage() {
             icon: BsFillBookmarkHeartFill
         },
         {
+            pageName: "FOR YOU",
+            icon: StarIcon
+        },
+        {
             pageName: "NEW",
             icon: BsFillLightningFill
         },
         {
             pageName: "BEST",
             icon: BsFillTrophyFill
-        },
-        {
-            pageName: "FAVORITED",
-            icon: StarIcon
         }
     ]
     const [initialLoad, setInitialLoad] = useState(false);
@@ -43,7 +43,7 @@ export default function Homepage() {
     const borderColor = useColorModeValue("gray.200", "gray.500")
     const bgColor = useColorModeValue("gray.100", "gray.700")
     const headerColor = useColorModeValue("gray.100", "gray.800")
-    const hoverColor = useColorModeValue("gray.100", "gray.600")
+    const hoverColor = useColorModeValue("gray.200", "gray.600")
     const selectedTextColor = useColorModeValue("gray.900", "white")
     const textColor = useColorModeValue("gray.600", "gray.100")
 
@@ -224,7 +224,7 @@ export default function Homepage() {
 
     function renderSection() {
         if (currentSection === "FEATURED") return renderFeaturedSection()
-        if (currentSection === "FAVORITED") return renderFavoritedSection()
+        if (currentSection === "FOR YOU") return renderFavoritedSection()
         if (currentSection === "NEW") return <NewQuizzes />
         if (currentSection === "BEST") return <BestQuizzes />
     }
@@ -312,7 +312,7 @@ export default function Homepage() {
                 <Center>
                     <Text fontSize="140%" mt={30} mb={10} textColor={textColor}> 
                         <Icon as={BsLockFill} pos="relative" mr={2} top="-4px" />
-                        You must be logged in to view favorited quizzes
+                        You must be logged in to view For You
                     </Text>
                 </Center>
             )
@@ -321,47 +321,84 @@ export default function Homepage() {
         const favoritedQuizzes = userData.favoritedQuizzes.slice(0).reverse()
         const first_three = favoritedQuizzes.slice(0, 3)
 
-        if (favoritedQuizzes.length === 0) {
-            return (
-                <Center>
-                    <Text fontSize="140%" mt={45} mb={10} textColor="gray.600"> 
-                        You don't have any favorited quizzes!
-                    </Text>
-                </Center>
-            )
-        }
-
         return (
             <Box mt="1%" ml="2%" mr="2%">
                 <Text fontSize="140%" ml="1%" mb={2} fontWeight="medium"> Favorited Quizzes </Text>
                 {/* Gives first 3 quizzes a big card */}
-                <HStack pt={5} pb={5} spacing={4} borderRadius={5} justifyContent="center" boxShadow="lg" bgSize="cover" bgPos="center" bgImage={
-                            "linear-gradient(to bottom, rgba(245, 246, 252, 0), rgba(100, 0, 0, .5)), url('" +
-                            "https://res.cloudinary.com/dsry3cnco/image/upload/v1639197385/triva_tree_featured_afuxb3.png" +
-                            "')"
-                        }>
-                    {
-                        first_three.map((quiz, key) => {
-                            return (
-                                renderLargeQuizCard(quiz)   
-                            )
-                        })
-                    }
-                </HStack>
+                {
+                    favoritedQuizzes.length !== 0 ? 
+                    <Box>
+                        <HStack pt={5} pb={5} spacing={4} borderRadius={5} justifyContent="center" boxShadow="lg" bgSize="cover" bgPos="center" bgImage={
+                                    "linear-gradient(to bottom, rgba(245, 246, 252, 0), rgba(100, 0, 0, .5)), url('" +
+                                    "https://res.cloudinary.com/dsry3cnco/image/upload/v1639197385/triva_tree_featured_afuxb3.png" +
+                                    "')"
+                                }>
+                            {
+                                first_three.map((quiz, key) => {
+                                    return (
+                                        renderLargeQuizCard(quiz)   
+                                    )
+                                })
+                            }
+                        </HStack>
 
-                <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
-                    {favoritedQuizzes.slice(3).map((quiz, key) => {
-                        return <QuizCard 
-                            quiz={quiz} 
-                            width="7.3%" 
-                            title_fontsize="95%" 
-                            author_fontsize="85%" 
-                            include_author={true}
-                            char_limit={30} 
-                            key={key}
-                        />
-                    })}
-                </Flex>
+                        <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                            {favoritedQuizzes.slice(3).map((quiz, key) => {
+                                return <QuizCard 
+                                    quiz={quiz} 
+                                    width="7.3%" 
+                                    title_fontsize="95%" 
+                                    author_fontsize="85%" 
+                                    include_author={true}
+                                    char_limit={30} 
+                                    key={key}
+                                />
+                            })}
+                        </Flex>
+                    </Box>
+                    :
+                    <Center>
+                        <Text fontSize="140%" mt={45} mb={10} textColor={textColor}> 
+                            You don't have any favorited quizzes!
+                        </Text>
+                    </Center>
+                }
+
+
+                <Center> <Box w="95%" h="1px" bgColor="gray.300" /> </Center>
+
+                {/* Recommended Quizzes */}
+                <Box mt="1%" mr="2%">
+                    <Text fontSize="140%" ml="1%" fontWeight="medium"> 
+                        Recommended Quizzes 
+                    </Text>
+                    {
+                        userId !== null ?
+                        <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
+                            {recommendation_list.map((quiz, key) => {
+                                return <QuizCard 
+                                    quiz={quiz} 
+                                    width="7.3%" 
+                                    title_fontsize="95%" 
+                                    author_fontsize="85%" 
+                                    include_author={true}
+                                    char_limit={30} 
+                                    key={key}
+                                />
+                            })}
+                        </Flex>
+                        : 
+                        <Center>
+                            <Text fontSize="140%" mt={30} mb={10} textColor={textColor}> 
+                                <Icon as={BsLockFill} pos="relative" mr={2} top="-4px" />
+                                You must be logged in to view recommendations 
+                            </Text>
+                        </Center>
+                    }
+                    </Box>
+                    
+                    <Box mt="1%" ml="2%" mr="2%">
+                </Box>
             </Box>
         )
     }
@@ -464,8 +501,8 @@ export default function Homepage() {
     // Larger quiz cards for the first 2 or 3 new quizzes (or best quizzes or whatever)
     function renderLargeQuizCard(quiz) {
         return (
-            <Box w="30%" minW={400} bgColor="white" borderRadius={10} border="1px" borderColor="gray.200" boxShadow="md" padding={5} overflow="hidden"
-                _hover={{bgColor:"gray.100", transition:".15s linear", cursor:"pointer"}}
+            <Box w="30%" minW={400} bgColor={bgColor} borderRadius={10} border="1px" borderColor={borderColor} boxShadow="md" padding={5} overflow="hidden"
+                _hover={{bgColor:hoverColor, transition:".15s linear", cursor:"pointer"}}
                 transition=".15s linear"    
                 onClick={() => history.push('/prequizpage/' + quiz._id)}
             >

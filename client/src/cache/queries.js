@@ -31,6 +31,7 @@ export const GET_FEATURED_QUIZZES = gql`
             user {
                 _id
                 displayName
+                iconImage
             }
             icon
             description
@@ -547,6 +548,7 @@ export const GET_USER = gql`
                 icon
                 rating
                 user {
+                    iconImage
                     displayName
                 }
             }

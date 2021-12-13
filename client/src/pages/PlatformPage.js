@@ -45,6 +45,7 @@ export default function PlatformPage({}) {
     const blueText = useColorModeValue("blue.500", "blue.300")
     const hoverCommentBgColor = useColorModeValue("gray.200", "gray.600")
     const activeCommentBgColor = useColorModeValue("white", "gray.700")
+    const followButtonBgColor = useColorModeValue("gray.800", "purple.600")
 
 
     const loading = platform.loading
@@ -423,7 +424,7 @@ export default function PlatformPage({}) {
                                 :
                                 <Button 
                                     size="lg"
-                                    bgColor="gray.800" 
+                                    bgColor={followButtonBgColor}
                                     color="white"
                                     mt={4} 
                                     float="right"
@@ -867,7 +868,7 @@ export default function PlatformPage({}) {
                             Login To View Forum Page
                         </Button>
                         :
-                        <Button leftIcon={<FaLock/>} w="440px" size="lg" bgColor="gray.800" color="white" display={is_owner || !logged_in ? 'none':''} onClick={setFollowPlatform}                                     
+                        <Button leftIcon={<FaLock/>} w="440px" size="lg" bgColor={followButtonBgColor} color="white" display={is_owner || !logged_in ? 'none':''} onClick={setFollowPlatform}                                     
                                     _hover={{opacity:"85%"}} 
                                     _active={{opacity:"75%"}} 
                                     _focus={{boxShadow:"none"}}> 

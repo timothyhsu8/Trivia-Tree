@@ -451,6 +451,30 @@ module.exports = {
                         },
                     }
                 );
+                await Platform.updateMany(
+                    {
+                        posts: { $elemMatch: { user: user._id } },
+                    },
+                    {
+                        $pull: {
+                            posts: { user: user._id },
+                        },
+                    }
+                );
+                await Platform.updateMany(
+                    {
+                        posts: {
+                            $elemMatch: {
+                                replies: { $elemMatch: { user: user._id } },
+                            },
+                        },
+                    },
+                    {
+                        $pull: {
+                            'posts.$.replies': { user: user._id },
+                        },
+                    }
+                );
                 await Quiz.find({ ratings: { $elemMatch: { user: user._id } } }).then(function (quizess) {
                     quizess.forEach(async (quiz) => {
                         console.log(quiz);

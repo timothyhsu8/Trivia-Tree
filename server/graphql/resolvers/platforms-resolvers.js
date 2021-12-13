@@ -504,7 +504,7 @@ module.exports = {
                 })
 
                 
-                return platform;
+                return user;
             } catch (err) {
                 throw new Error(err);
             }
@@ -539,7 +539,7 @@ module.exports = {
     
                 user.save();
                 
-                return platform;
+                return user;
             } catch (err) {
                 throw new Error(err);
             }

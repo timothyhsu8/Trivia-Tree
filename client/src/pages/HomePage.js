@@ -25,16 +25,16 @@ export default function Homepage() {
             icon: BsFillBookmarkHeartFill
         },
         {
-            pageName: "FOR YOU",
-            icon: StarIcon
-        },
-        {
             pageName: "NEW",
             icon: BsFillLightningFill
         },
         {
             pageName: "BEST",
             icon: BsFillTrophyFill
+        },
+        {
+            pageName: "FOR YOU",
+            icon: StarIcon
         }
     ]
     const [initialLoad, setInitialLoad] = useState(false);

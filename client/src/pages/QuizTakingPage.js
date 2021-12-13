@@ -31,7 +31,7 @@ export default function QuizTakingPage({}) {
     const [submissionLoading, setSubmissionLoading] = useState(false);
     
     //Dark mode styling
-    const questionColor=useColorModeValue("gray.700", "gray.200")
+    const questionColor=useColorModeValue("gray.700", "white")
     const quizTimerBoxBG=useColorModeValue("gray.100", "gray.700")
     const quizTimerSideBG=useColorModeValue("white", "gray.800")
     const authorTextColor=useColorModeValue("blue.600","blue.400")

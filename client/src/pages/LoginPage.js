@@ -1,8 +1,11 @@
-import { Box, Grid, Text, Image, Center, Button } from '@chakra-ui/react';
+import { Box, Grid, Text, Image, Center, Button, useColorModeValue } from '@chakra-ui/react';
 import treeicon from '../images/triviatree_icon.png'
 import { config } from '../util/constants';
 
 export default function LoginPage({}) {
+
+    const bgColor = useColorModeValue("gray.200", "gray.600")
+
     return (
         <Box>
             <Grid templateColumns="2fr 3fr">
@@ -15,7 +18,7 @@ export default function LoginPage({}) {
                             takes quizzes 
                         </Text>
 
-                        <Box w="60%" mt="4%" padding="4%" borderRadius="10" bgColor="gray.200" boxShadow="lg">
+                        <Box w="60%" mt="4%" padding="4%" borderRadius="10" bgColor={bgColor} boxShadow="lg">
                             <Text fontSize="1.3vw"> 
                                 A site designed and             <br/> 
                                 developed with both quiz        <br/> 

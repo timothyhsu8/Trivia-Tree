@@ -237,15 +237,17 @@ export default function Homepage() {
                     <Text fontSize="140%" ml="1%" fontWeight="medium"> Featured Quizzes </Text>
                     <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                         {featured_quizzes.map((quiz, key) => {
-                            return <QuizCard 
-                                quiz={quiz} 
-                                width="7.3%" 
-                                title_fontsize="95%" 
-                                author_fontsize="85%" 
-                                include_author={true}
-                                char_limit={30} 
-                                key={key}
-                            />
+                            if (quiz !== null && quiz !== undefined) {
+                                return <QuizCard 
+                                    quiz={quiz} 
+                                    width="7.3%" 
+                                    title_fontsize="95%" 
+                                    author_fontsize="85%" 
+                                    include_author={true}
+                                    char_limit={30} 
+                                    key={key}
+                                />
+                            }
                         })}
                     </Flex>
                 </Box>
@@ -261,15 +263,17 @@ export default function Homepage() {
                         userId !== null ?
                         <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                             {recommendation_list.map((quiz, key) => {
-                                return <QuizCard 
-                                    quiz={quiz} 
-                                    width="7.3%" 
-                                    title_fontsize="95%" 
-                                    author_fontsize="85%" 
-                                    include_author={true}
-                                    char_limit={30} 
-                                    key={key}
-                                />
+                                if (quiz !== null && quiz !== undefined) {
+                                    return <QuizCard 
+                                        quiz={quiz} 
+                                        width="7.3%" 
+                                        title_fontsize="95%" 
+                                        author_fontsize="85%" 
+                                        include_author={true}
+                                        char_limit={30} 
+                                        key={key}
+                                    />
+                                }
                             })}
                         </Flex>
                         : 
@@ -344,15 +348,17 @@ export default function Homepage() {
 
                         <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                             {favoritedQuizzes.slice(3).map((quiz, key) => {
-                                return <QuizCard 
-                                    quiz={quiz} 
-                                    width="7.3%" 
-                                    title_fontsize="95%" 
-                                    author_fontsize="85%" 
-                                    include_author={true}
-                                    char_limit={30} 
-                                    key={key}
-                                />
+                                if (quiz !== null && quiz !== undefined) {
+                                    return <QuizCard 
+                                        quiz={quiz} 
+                                        width="7.3%" 
+                                        title_fontsize="95%" 
+                                        author_fontsize="85%" 
+                                        include_author={true}
+                                        char_limit={30} 
+                                        key={key}
+                                    />
+                                }
                             })}
                         </Flex>
                     </Box>
@@ -376,15 +382,17 @@ export default function Homepage() {
                         userId !== null ?
                         <Flex mt="0.5%" spacing="3%" display="flex" flexWrap="wrap" >
                             {recommendation_list.map((quiz, key) => {
-                                return <QuizCard 
-                                    quiz={quiz} 
-                                    width="7.3%" 
-                                    title_fontsize="95%" 
-                                    author_fontsize="85%" 
-                                    include_author={true}
-                                    char_limit={30} 
-                                    key={key}
-                                />
+                                if (quiz !== null && quiz !== undefined) {
+                                    return <QuizCard 
+                                        quiz={quiz} 
+                                        width="7.3%" 
+                                        title_fontsize="95%" 
+                                        author_fontsize="85%" 
+                                        include_author={true}
+                                        char_limit={30} 
+                                        key={key}
+                                    />
+                                }
                             })}
                         </Flex>
                         : 

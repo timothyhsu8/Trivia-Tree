@@ -144,7 +144,7 @@ export default function Homepage() {
     }
 
     const platform_data = platforms.data.getPlatforms
-    const featured_quizzes = featuredQuizzes.data.getFeaturedQuizzes
+    const featured_quizzes = featuredQuizzes.data.getFeaturedQuizzes.slice(0, 12)
 
     recommendation_list = userRecommendations;
     if (recommendation_list === undefined)
@@ -210,8 +210,8 @@ export default function Homepage() {
                             "')"
                         }>
                         <HStack spacing={200}>
-                        { renderQuizOfTheDay() }
-                        { renderPlatformOfTheDay() }
+                        { quizOfTheDay_data !== undefined ? renderQuizOfTheDay() : null }
+                        { platformOfTheDay_data !== undefined ? renderPlatformOfTheDay() : null }
                         </HStack>
                     </Box>
                 : ""

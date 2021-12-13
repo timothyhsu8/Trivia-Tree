@@ -144,7 +144,7 @@ export default function Homepage() {
     }
 
     const platform_data = platforms.data.getPlatforms
-    const featured_quizzes = featuredQuizzes.data.getFeaturedQuizzes
+    const featured_quizzes = featuredQuizzes.data.getFeaturedQuizzes.slice(0, 12)
 
     recommendation_list = userRecommendations;
     if (recommendation_list === undefined)

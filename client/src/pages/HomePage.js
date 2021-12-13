@@ -311,7 +311,7 @@ export default function Homepage() {
     }
 
     function renderFavoritedSection() {
-        if (userId === null) {
+        if (userId === null || userData === undefined) {
             return (
                 <Center>
                     <Text fontSize="140%" mt={30} mb={10} textColor={textColor}> 

@@ -216,8 +216,8 @@ export default function Navbar() {
                     <Spacer />
                     
                     <div className="fadeshow2">
-                    <HStack pr={10} spacing={1}>
-                        <Image src={coin} h="20px" w="20px" position="relative" top="1px" overflow="hidden"></Image>
+                    <HStack pr={10} spacing={1} overflow="hidden">
+                        <Image src={coin} h="20px" w="20px" minH="20px" minW="20px" position="relative" top="1px"></Image>
                         <Text position="relative" color="white">{currency}</Text>
                     </HStack>
                     </div>

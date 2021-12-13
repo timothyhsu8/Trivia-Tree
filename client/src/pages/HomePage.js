@@ -210,8 +210,8 @@ export default function Homepage() {
                             "')"
                         }>
                         <HStack spacing={200}>
-                        { renderQuizOfTheDay() }
-                        { renderPlatformOfTheDay() }
+                        { quizOfTheDay_data !== undefined ? renderQuizOfTheDay() : null }
+                        { platformOfTheDay_data !== undefined ? renderPlatformOfTheDay() : null }
                         </HStack>
                     </Box>
                 : ""

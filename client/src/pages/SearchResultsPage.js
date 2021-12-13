@@ -6,7 +6,7 @@ import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries
 import QuizResult from '../components/SearchResults/QuizResult'
 import PlatformResult from '../components/SearchResults/PlatformResult'
 import UserResult from '../components/SearchResults/UserResult'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TimeField from "react-simple-timefield";
 import '../styles/styles.css'
 import { BsChevronDown } from "react-icons/bs";
@@ -34,6 +34,11 @@ export default function SearchResultsPage() {
     const [noMoreData, setNoMoreData] = useState(false);
     const [loadingMoreResults, setLoadingMoreResults] = useState(false);
 
+    // Only runs once when the page is first loaded
+    useEffect(() => {
+        setPage(1)
+    }, [])
+    
     // Dark Mode Colors
     const inputBgColor = useColorModeValue("white", "#1a202c")
 

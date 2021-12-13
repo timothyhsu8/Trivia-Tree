@@ -187,9 +187,9 @@ export default function Navbar() {
                 </Grid>
 
                 {/* RIGHT SIDE */}
-                <HStack overflow="hidden">
+                <HStack >
                     <Box w='5%' />
-                    <IconButton icon={<SunIcon/>} colorScheme={sunIconColor} onClick={() => toggleColorMode()} _focus={{outline:"none"}} />
+                    <IconButton icon={<SunIcon/>} colorScheme={sunIconColor} onClick={() => toggleColorMode()} _focus={{outline:"none"}} overflow="hidden" />
                     {/* CATEGORIES */}
                     {/* <Link to='/categorypage'>
                         <Text className="disable-select" fontSize='105%' color='white' fontWeight='medium'>
@@ -207,6 +207,7 @@ export default function Navbar() {
                         onClick={() => history.push( logged_in ? "/shoppingpage" : "/loginpage")} 
                         _focus={{outline:"none"}}
                         borderRadius="40px"
+                        overflow="hidden"
                     >
                         Shop 
                     </Button>
@@ -216,14 +217,14 @@ export default function Navbar() {
                     
                     <div className="fadeshow2">
                     <HStack pr={10} spacing={1}>
-                        <Image src={coin} h="20px" w="20px" position="relative" top="1px"></Image>
+                        <Image src={coin} h="20px" w="20px" position="relative" top="1px" overflow="hidden"></Image>
                         <Text position="relative" color="white">{currency}</Text>
                     </HStack>
                     </div>
 
                     {/* USER NAME */}
                     <div className="fadeshow1">
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap" overflow="hidden"> {username} </Text> 
                     </div>
                     {/* PROFILE PICTURE */}
                     <Avatar src={pfp_src} border="1px solid white" boxSize={10} onClick={() => goToAccountPage()} _hover={{cursor:"pointer"}}/>

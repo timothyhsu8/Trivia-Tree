@@ -51,6 +51,8 @@ export default function QuizCard( props ) {
     // Removes this quiz from a platform
     const [removeQuizFromPlatform] = useMutation(REMOVE_QUIZ_FROM_PLATFORM, {
         onCompleted() {
+            setIsLoading(false)
+            setHovering(false)
             props.onDelete()
         },
         onError(err) {
@@ -60,6 +62,8 @@ export default function QuizCard( props ) {
 
     const [removeQuizFromPlaylist] = useMutation(REMOVE_QUIZ_FROM_PLAYLIST, {
         onCompleted() {
+            setIsLoading(false)
+            setHovering(false)
             props.onDelete()
         },
         onError(err) {

@@ -24,7 +24,7 @@ import { BsAlarm, BsChatSquareDotsFill, BsCheck2, BsCheck2Square, BsFillFileText
 
 export default function PostQuizPage() {
     let history = useHistory();
-    let {user} = useContext(AuthContext);
+    let {user, refreshUserData } = useContext(AuthContext);
     let location = useLocation();
     let logged_in = false;
     let quizScore = null; 
@@ -109,6 +109,7 @@ export default function PostQuizPage() {
                 if (user === 'NoUser') {
                     setInvalidUser(true);
                 } else if (getQuizAttempt.user._id === user._id) {
+                    refreshUserData();
                     setIsAttemptUser(true);
                 } else {
                     setInvalidUser(true);

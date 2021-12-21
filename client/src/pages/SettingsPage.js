@@ -18,9 +18,9 @@ import { subscribe } from 'graphql';
 import '../styles/postpage.css';
 import { BsFillTrashFill } from 'react-icons/bs';
 
+let profileImg = 'Same Image';
 export default function SettingsPage(props) {
     const { user, refreshUserData } = useContext(AuthContext);
-    let profileImg = 'Same Image';
 
     let history = useHistory();
 

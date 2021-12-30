@@ -10,8 +10,8 @@ create platforms which are customizable pages used to present quizzes they gener
 
 Trivia Tree differs from other quizzing sites by providing user leaderboards, a reward system for good performance, 
 platform customization, and allowing users to see their relative performance compared to  other quiztakers. It also 
-offers a simple to use, modernized user interface. Additionally, organizations, influencers, and users that are popular 
-among the community will have the distinction of being verified by the site.
+offers a simple to use, modernized user interface. Additionally, a recommendation system has been implemented to give
+users quiz recommendations based on previous quizzes taken. 
 
 ## Features
 

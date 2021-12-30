@@ -1,5 +1,8 @@
 # Trivia-Tree
 
+## Deployed Heroku Link: https://triviatree.herokuapp.com/
+
+## Summary
 Trivia Tree provides a service for people to test their knowledge on an endless variety of different 
 subjects through quizzes. Users can also create their own quizzes to test other users on the website, 
 contributing to the growing collection of trivia for all types of topics. More importantly, users can 
@@ -71,6 +74,38 @@ Users will be able to switch between light mode and dark mode upon account creat
 which will temporarily switch between light mode and dark mode per session
 
 ![Imgur Image](https://i.imgur.com/qcPdKQT.png)
+
+## Technology Stack
+	[React] - front-end library to create our user interface using functional components and hooks to 
+	manipulate state information 
+  
+	[React-Router] - used to develop single page web applications by allowing switching between
+	routes specified by the url. Users can redirect to different react components while saving state
+	information
+  
+	[Chakra UI]  - front-end styling library to create simple, modular, and accessible components 
+	using React 
+  
+  	[Node.JS] - Backend runtime environment for running a web server
+    
+	[Express] - Web application framework for Node that handles routing and http requests
+  
+	[Apollo] - Used for making API calls to the backend
+  
+	[GraphQL] - Data query language and manipulation language where all desired data can be found 
+	with one query
+  
+	[Mongoose] - object data modeling library for MongoDB that is used to model your data using
+	schemas 
+  
+	[MongoDB Atlas] - cloud-based NoSQL database that stores data in documents that employ a format
+	similar to JSON
+  
+	[Passport] - a middleware for Node that takes care of authentication requests from an OAuth 
+	provider such as Google or facebook
+  
+  	[Cloudinary] - cloud based API used to store images into the backend as links stored in MongoDB
+
 
 
 

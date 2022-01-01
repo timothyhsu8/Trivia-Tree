@@ -18,9 +18,9 @@ import { subscribe } from 'graphql';
 import '../styles/postpage.css';
 import { BsFillTrashFill } from 'react-icons/bs';
 
+let profileImg = 'Same Image';
 export default function SettingsPage(props) {
     const { user, refreshUserData } = useContext(AuthContext);
-    let profileImg = 'Same Image';
 
     let history = useHistory();
 
@@ -200,6 +200,7 @@ export default function SettingsPage(props) {
                     {/* Left Section */}
                     <Grid h={500} templateRows="1fr 1fr 1fr 1fr 1fr">  
                         {/* Display Name */}
+                        <Text fontSize="30px" display="flex" flexDirection="column" justifyContent="center"> Settings </Text>
                         <Text display="flex" flexDirection="column" justifyContent="center"> Display Name: </Text>
 
                         {/* Email */}
@@ -218,6 +219,8 @@ export default function SettingsPage(props) {
 
                     {/* Right Section */}
                     <Grid h={500} templateRows="1fr 1fr 1fr 1fr 1fr">
+                        <Text fontSize="20px" display="flex" flexDirection="column" justifyContent="center">Change them here</Text>
+                        
                         {/* Display Name */}
                         <Box display="flex" flexDirection="column" justifyContent="center">
                             <Input

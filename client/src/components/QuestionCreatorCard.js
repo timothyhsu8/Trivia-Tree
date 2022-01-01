@@ -6,6 +6,7 @@ import {
     HStack,
     Box,
     Select,
+    useColorModeValue
 } from '@chakra-ui/react';
 import { BsTrash } from 'react-icons/bs';
 import { AddIcon } from '@chakra-ui/icons';
@@ -21,8 +22,12 @@ function QuestionCreatorCard({
     removeAnswerChoice,
     updateAnswer,
     questionRef,
-}) {
-    
+}) 
+{
+    // Dark mode styling
+    const hoverColor = useColorModeValue("gray.100", "gray.700")
+    const correctAnswerColor = useColorModeValue("green.100", "purple.600")
+
     return (
         <Box
             mr={10}
@@ -82,8 +87,8 @@ function QuestionCreatorCard({
                 borderColor="gray.400"
                 padding={2}
                 variant="flushed"
-                _focus={{ borderColor: 'blue.500', bgColor:"gray.100" }}
-                _hover={{ borderColor: 'blue.500', bgColor:"gray.100" }}
+                _focus={{ borderColor: 'blue.500', bgColor: hoverColor }}
+                _hover={{ borderColor: 'blue.500', bgColor: hoverColor }}
                 fontSize='110%'
                 width='90%'
             />
@@ -100,7 +105,7 @@ function QuestionCreatorCard({
                             background={
                                 answerChoice.answer &&
                                 answerChoice.choice.trim() !== ''
-                                    ? 'green.100'
+                                    ? correctAnswerColor
                                     : 'transparent'
                             }
                             size='xs'
@@ -125,7 +130,7 @@ function QuestionCreatorCard({
                             backgroundColor={
                                 answerChoice.answer &&
                                 answerChoice.choice.trim() !== ''
-                                    ? 'green.100'
+                                    ? correctAnswerColor
                                     : 'transparent'
                             }
                             // borderRadius='10px'
@@ -134,11 +139,11 @@ function QuestionCreatorCard({
                             borderColor='gray.400'
                             borderBottomWidth='1px'
                             _hover={{
-                                bgColor: "gray.100"
+                                bgColor: hoverColor
                             }}
                             _focus={{
                                 borderColor: 'blue.500',
-                                bgColor: "gray.100"
+                                bgColor: hoverColor
                             }}
                             fontSize='100%'
                             height='fit-content'

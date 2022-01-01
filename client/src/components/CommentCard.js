@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, Image, HStack, Button, Flex, Input, Avatar } from '@chakra-ui/react';
+import { Text, Image, HStack, Button, Flex, Input, Avatar, useColorModeValue } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { BsTrash } from 'react-icons/bs';
@@ -30,6 +30,8 @@ export default function CommentCard( props ) {
     const [reply, setReply] = useState('');
     const [loadingReply, setLoadingReply] = useState(false);
     const handleReplyChange = (event) => setReply(event.target.value);
+
+    const activeBgColor = useColorModeValue("white", "gray.700")
 
     function handleDeleteComment() {
         setDeleteConfirmation(false)
@@ -172,7 +174,7 @@ export default function CommentCard( props ) {
                         <HStack paddingTop="5px" paddingBottom="10px">
                             <Avatar src={props.player_icon} size="xs"/>
                             <Input value={reply} onChange={handleReplyChange} variant='filled' placeholder='Reply to the comment...' marginLeft="20px" marginBottom="20px" size="xs"
-                                borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:"white" }}/>
+                                borderRadius={5} _focus={{ border:"1px", borderColor:"blue.400", bgColor:activeBgColor }}/>
                             <Button isLoading={loadingReply} w="100px" colorScheme='blue' variant='solid' size="xs" marginLeft="20px" onClick={handleAddReply}>
                                 Reply
                             </Button>

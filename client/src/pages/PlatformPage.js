@@ -1,5 +1,5 @@
 import { Box, Text, Grid, VStack, Button, Image, Center, Spinner, Flex, Input, Tooltip, HStack, Textarea, Icon, Select, Tag, TagLeftIcon, TagLabel,
-    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter,
+    AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorModeValue,
     Menu, MenuButton, IconButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_PLATFORM } from "../cache/queries";
@@ -40,6 +40,12 @@ export default function PlatformPage({}) {
             }
         }         
     } })
+
+    // Dark mode styling
+    const blueText = useColorModeValue("blue.500", "blue.300")
+    const hoverCommentBgColor = useColorModeValue("gray.200", "gray.600")
+    const activeCommentBgColor = useColorModeValue("white", "gray.700")
+    const followButtonBgColor = useColorModeValue("gray.800", "purple.600")
 
 
     const loading = platform.loading
@@ -242,6 +248,11 @@ export default function PlatformPage({}) {
         },
     });
 
+    function refetchAndEndLoad() {
+        platform.refetch()
+        setIsLoading(false)
+    }
+
     // Button event to delete a platform
     function handleDelete() {
         setIsLoading(true)
@@ -418,7 +429,7 @@ export default function PlatformPage({}) {
                                 :
                                 <Button 
                                     size="lg"
-                                    bgColor="gray.800" 
+                                    bgColor={followButtonBgColor}
                                     color="white"
                                     mt={4} 
                                     float="right"
@@ -610,7 +621,7 @@ export default function PlatformPage({}) {
                                             key={key}
                                             is_owner={is_owner}
                                             platform_id={platform_data._id}
-                                            onDelete={platform.refetch}
+                                            onDelete={refetchAndEndLoad}
                                         />
                                     })}
                                 </Flex>
@@ -760,10 +771,7 @@ export default function PlatformPage({}) {
                         is_owner ?
                         <Button 
                             mt="5%" 
-                            bgColor="red.600" 
-                            textColor="white" 
-                            _hover={{bgColor:"red.500"}} 
-                            _active={{bgColor:"red.400"}}
+                            colorScheme="red"
                             _focus={{border:"none"}} 
                             onClick={() => setDeleteConfirmation({
                                 deleting: true,
@@ -811,12 +819,12 @@ export default function PlatformPage({}) {
                 {/* ADD QUIZ TO PLATFORM BUTTON */}
                 <Box borderBottom="1px solid" borderColor="gray.300">
                     <HStack padding={2}>
-                        <Text> Sort By: </Text>
+                        {/* <Text> Sort By: </Text>
                         <Select w="fit-content" size="md" variant="outline">
                             <option value="none"> Newest </option>
                             <option value="popular"> Most Popular </option>
                             <option value="sort_abc">Alphabetical [A-Z]</option>
-                        </Select>
+                        </Select> */}
                         {is_owner ? 
                             <Tag className="disable-select" float="right" mr={2} variant="subtle" colorScheme="orange"
                                 _hover={{cursor:"pointer", opacity:"85%"}}
@@ -842,7 +850,9 @@ export default function PlatformPage({}) {
                                 key={key}
                                 is_owner={is_owner}
                                 platform_id={platform_data._id}
-                                onDelete={platform.refetch}
+                                onDelete={
+                                    refetchAndEndLoad
+                                }
                             />
                         );
                     })}
@@ -865,7 +875,7 @@ export default function PlatformPage({}) {
                             Login To View Forum Page
                         </Button>
                         :
-                        <Button leftIcon={<FaLock/>} w="440px" size="lg" bgColor="gray.800" color="white" display={is_owner || !logged_in ? 'none':''} onClick={setFollowPlatform}                                     
+                        <Button leftIcon={<FaLock/>} w="440px" size="lg" bgColor={followButtonBgColor} color="white" display={is_owner || !logged_in ? 'none':''} onClick={setFollowPlatform}                                     
                                     _hover={{opacity:"85%"}} 
                                     _active={{opacity:"75%"}} 
                                     _focus={{boxShadow:"none"}}> 
@@ -890,8 +900,8 @@ export default function PlatformPage({}) {
                                 <BsUpload/>
                             </IconButton>
                             <Input variant='filled' placeholder='Add a public post...' marginLeft="20px" marginBottom="20px"
-                                _hover={{pointer:"cursor", bgColor:"gray.200"}}
-                                _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}
+                                _hover={{pointer:"cursor", bgColor:hoverCommentBgColor}}
+                                _focus={{bgColor:activeCommentBgColor, border:"1px", borderColor:"blue.400"}}
                                 value={postText}
                                 onChange={handlePostTextChange}/>
                             <Button isLoading={isLoading} w="140px" colorScheme='blue' size="md" marginLeft="20px" onClick={handleAddPost}> {/*posts as actually comments on backend*/}
@@ -1163,33 +1173,47 @@ export default function PlatformPage({}) {
                     {/* HEADER BUTTONS */}
                     <Grid w="100%" h="6vh" minH="50px" templateColumns="1fr 1fr 1fr 1fr 1fr" justifyContent="center" alignItems="center"> 
 
-                        <Text 
-                            className="disable-select" 
-                            fontSize="125%" textColor={page === "Platform" ? "blue.500" : "gray.1000" } 
-                            textAlign="center" 
-                            _hover={{ cursor:"pointer", textColor: page === "Platform" ? "blue.500" : "gray.500", transition:"0.15s linear" }} 
-                            transition="0.1s linear" 
-                            onClick={() => setPage('Platform')} 
-                            whiteSpace="nowrap"
-                        >
-                            <Icon as={BsFillHouseDoorFill} pos="relative" top={-0.5}  mr={2} />
-                            {platform_data.name}
-                        </Text>
+                        <Box h="100%" pos="relative">
+                            <Box h="100%" display="flex" flexDirection="column" justifyContent="center">
+                                <Text 
+                                    className="disable-select" 
+                                    fontSize="125%" textColor={page === "Platform" ? blueText : "gray.1000" } 
+                                    textAlign="center" 
+                                    _hover={{ cursor:"pointer", textColor: page === "Platform" ? blueText : "gray.500", transition:"0.15s linear" }} 
+                                    transition="0.1s linear" 
+                                    onClick={() => setPage('Platform')} 
+                                    whiteSpace="nowrap"
+                                >
+                                    <Icon as={BsFillHouseDoorFill} pos="relative" top={-0.5}  mr={2} />
+                                    {platform_data.name}
+                                </Text>
+                            </Box>
+                            <Center>
+                                <Box pos="absolute" bottom="0px" w="75%" h="3px" bgColor={page === "Platform" ? blueText : "" }  transition="0.15s linear"/>
+                            </Center>
+                        </Box>
 
                         {header_sections.map((section, key) => {
                             return (
-                                <Text key={key} 
-                                    className="disable-select" 
-                                    fontSize="125%" 
-                                    textColor={page === section.name ? "blue.500" : "gray.1000" } 
-                                    textAlign="center" 
-                                    _hover={{ cursor:"pointer", textColor: page === section.name ? "blue.500" : "gray.500", transition:"0.15s linear" }} 
-                                    transition="0.1s linear" onClick={() => setPage(section.name)} 
-                                    whiteSpace="nowrap"
-                                    >
-                                    <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
-                                    {  section.name !== "Followers" ? section.name : "Followers (" + platform_data.followers.length + ")"}
-                                </Text>
+                                <Box h="100%" pos="relative">
+                                    <Box h="100%" display="flex" flexDirection="column" justifyContent="center">
+                                        <Text key={key} 
+                                            className="disable-select" 
+                                            fontSize="125%" 
+                                            textColor={page === section.name ? blueText : "gray.1000" } 
+                                            textAlign="center" 
+                                            _hover={{ cursor:"pointer", textColor: page === section.name ? blueText : "gray.500", transition:"0.15s linear" }} 
+                                            transition="0.1s linear" onClick={() => setPage(section.name)} 
+                                            whiteSpace="nowrap"
+                                        >
+                                            <Icon as={section.icon} pos="relative" top={-0.5}  mr={2} />
+                                            {  section.name !== "Followers" ? section.name : "Followers (" + platform_data.followers.length + ")"}
+                                        </Text>
+                                    </Box>
+                                    <Center>
+                                        <Box pos="absolute" bottom="0px" w="75%" h="3px" bgColor={page === section.name ? blueText : "" }  transition="0.15s linear"/>
+                                    </Center>
+                                </Box>
                             )
                         })}
                        

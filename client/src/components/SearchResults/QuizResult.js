@@ -1,11 +1,14 @@
-import { Box, Grid, Text, Image, Icon, Center, Stack, Tag, TagLabel, HStack } from "@chakra-ui/react"
+import { Box, Grid, Text, Image, Icon, Center, Stack, Tag, TagLabel, HStack, useColorModeValue } from "@chakra-ui/react"
 import { StarIcon, ViewIcon, CalendarIcon } from '@chakra-ui/icons'
 import { useHistory } from 'react-router-dom';
 import { BsHeartFill, BsFillAlarmFill } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
 
 export default function QuizResult( {quiz} ) {
     let history = useHistory();
+    const textColor = useColorModeValue("gray.600", "gray.300")
+    const hoverColor = useColorModeValue("gray.200", "gray.600")
+    const bgColor = useColorModeValue("white", "gray.700")
+    const borderColor = useColorModeValue("gray.300", "gray.500")
 
     return (
             <Grid 
@@ -14,10 +17,11 @@ export default function QuizResult( {quiz} ) {
                 minH="80px"
                 templateColumns="1.5fr 9fr 2fr 3fr" 
                 borderBottom="1px" 
-                borderColor="gray.300" 
+                bgColor={bgColor}
+                borderColor={borderColor}
                 dipslay="flex" 
                 alignItems="center" 
-                _hover={{bgColor:"gray.200", 
+                _hover={{bgColor: hoverColor, 
                 cursor:"pointer", 
                 transition:"background-color 0.2s linear"}} 
                 transition="background-color 0.1s linear"
@@ -35,23 +39,23 @@ export default function QuizResult( {quiz} ) {
                 <Stack spacing="1">
                     <Stack spacing="0">
                         <Text fontSize="120%" fontWeight="medium"> {quiz.title} </Text>
-                        <Text fontSize="95%" textColor="gray.600"> {quiz.description} </Text>
+                        <Text fontSize="95%" textColor={textColor}> {quiz.description} </Text>
                     </Stack>
                     <HStack>
                         <Tag w="fit-content" size="sm" variant="outline" colorScheme="blue">
                             <TagLabel> Quiz </TagLabel>
                         </Tag>
 
-                        <Text textColor="gray.600" fontSize="95%"> 
+                        <Text textColor={textColor} fontSize="95%"> 
                             <Icon as={ViewIcon} color="blue.400"/> { quiz.numAttempts !== 1 ? quiz.numAttempts + " Plays" : "1 Play" }  
                         </Text>
-                        <Text textColor="gray.600" fontSize="95%"> 
+                        <Text textColor={textColor} fontSize="95%"> 
                             <Icon as={BsHeartFill} color="red.300"/> { quiz.numFavorites !== 1 ? quiz.numFavorites + " Favorites" : "1 Favorite" }
                         </Text>
-                        <Text textColor="gray.600" fontSize="95%"> 
+                        <Text textColor={textColor} fontSize="95%"> 
                             <Icon as={BsFillAlarmFill} color="purple.400"/> {converTimeToText(quiz.quizTimer)}
                         </Text>
-                        <Text textColor="gray.600" fontSize="95%">
+                        <Text textColor={textColor} fontSize="95%">
                             <Icon as={CalendarIcon} color="grey.400"/> {getTimeAgo(new Date(parseInt(quiz.createdAt)))}
                         </Text>
                     </HStack>

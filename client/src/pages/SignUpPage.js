@@ -20,6 +20,7 @@ export default function SignUpPage({}) {
     const [categoriesSelected, setCategoriesSelected] = useState([]);
     const [pulledData, setPulledData] = useState(false);
 
+    const bgColor = useColorModeValue("#E3E3E3", "gray.600")
 
     const { colorMode, toggleColorMode } = useColorMode()
     function initialDark(){
@@ -30,7 +31,7 @@ export default function SignUpPage({}) {
             toggleColorMode()
         }
     }
-
+    
     let profileImg = 'Same Image';
 
     const hiddenImageInput = createRef(null);
@@ -139,8 +140,9 @@ export default function SignUpPage({}) {
                 <Center borderBottom="1px" fontSize="5xl">Choose A Display Name</Center>
                 <Center fontSize="xl">(Display names can be changed later in the settings)</Center>
                 <Center position="relative" top="40px">
-                    <Box borderRadius="10px" bgColor="#E3E3E3" w="600px" h="180px">
+                    <Box borderRadius="10px" bgColor={bgColor} w="600px" h="180px">
                     <Center><Input value={displayName} onChange={handleDisplayNameChange} marginTop="65px" variant='filled' placeholder='Choose a display name...' w="80%" textColor="black"
+                        bgColor="gray.100"
                         _hover={{pointer:"cursor", bgColor:"gray.200"}}
                         _focus={{bgColor:"white", border:"1px", borderColor:"blue.400"}}/></Center>
                     </Box>
@@ -186,7 +188,7 @@ export default function SignUpPage({}) {
             </VStack>
             : ""}
 
-            {/* {section == 3 ? 
+            {section == 3 ? 
             <VStack position="relative" top="80px">
                 <Center borderBottom="1px" fontSize="3xl">Toggle Between Dark and Light Mode</Center>
                 <Center fontSize="lg">(Mode can be changed later in the settings)</Center>
@@ -213,9 +215,9 @@ export default function SignUpPage({}) {
                     </Button>
                 </HStack>
             </VStack>
-            : ""} */}
+            : ""}
 
-            {section == 3 ? 
+            {section == 4 ? 
             <VStack>
                 <Center borderBottom="1px" fontSize="5xl">Select Categories That Interest You</Center>
                 <Center fontSize="xl">(These will be used to recommend quizzes for you to take)</Center>

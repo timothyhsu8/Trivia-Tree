@@ -18,7 +18,8 @@ import {
     PopoverFooter,
     HStack,
     Icon,
-    IconButton
+    IconButton,
+    useColorModeValue
 } from '@chakra-ui/react';
 import { GET_USER } from '../cache/queries';
 import { useQuery, useMutation, gql } from '@apollo/client';
@@ -32,6 +33,11 @@ import { GrScorecard } from 'react-icons/gr';
 export default function QuizManagerPage() {
     const { user } = useContext(AuthContext);
     let history = useHistory();
+
+    // Dark mode styling
+    const bgColor = useColorModeValue("white", "gray.700")
+    const borderColor = useColorModeValue("gray.200", "gray.600")
+    const textColor = useColorModeValue("gray.800", "white")
 
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [firstQueryDone, setFirstQueryDone] = useState(false);
@@ -130,7 +136,7 @@ export default function QuizManagerPage() {
     return (
         <Box >
             <Center> 
-                <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Quizzes </Text>
+                <Text mt="1%" fontSize="250%" fontWeight="medium" color={textColor}> Your Quizzes </Text>
             </Center>
             
             <Button 
@@ -156,6 +162,7 @@ export default function QuizManagerPage() {
                             userData.quizzesMade.slice(0).reverse().map((quiz, key) => {
                                 return (
                                     <Box 
+                                        bgColor={bgColor}
                                         key={quiz._id}
                                         w="90%" 
                                         padding={4}
@@ -164,7 +171,7 @@ export default function QuizManagerPage() {
                                         boxShadow="md" 
                                         transition=".1s linear"
                                         border="1px"
-                                        borderColor="gray.200"
+                                        borderColor={borderColor}
                                     >
                                         <VStack>
                                             {/* Quiz Image */}
@@ -173,7 +180,7 @@ export default function QuizManagerPage() {
                                             </Center>
 
                                             {/* Quiz Name */}
-                                            <Text fontWeight="medium" fontSize="120%" textColor="gray.800" wordBreak="break-word" textAlign="center"> {quiz.title} </Text>
+                                            <Text fontWeight="medium" fontSize="120%" textColor={textColor} wordBreak="break-word" textAlign="center"> {quiz.title} </Text>
                                             
                                             {/* Attempts */}
                                             <HStack spacing={4}>

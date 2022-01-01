@@ -426,6 +426,16 @@ module.exports = {
                         );
                     });
                 });
+                await Platform.updateMany(
+                    {
+                        posts: { $elemMatch: { user: user._id } },
+                    },
+                    {
+                        $pull: {
+                            posts: { user: user._id },
+                        },
+                    }
+                );
                 await Platform.deleteMany({ user: user._id });
                 await Quiz.updateMany(
                     {
@@ -448,6 +458,30 @@ module.exports = {
                     {
                         $pull: {
                             'comments.$.replies': { user: user._id },
+                        },
+                    }
+                );
+                await Platform.updateMany(
+                    {
+                        posts: { $elemMatch: { user: user._id } },
+                    },
+                    {
+                        $pull: {
+                            posts: { user: user._id },
+                        },
+                    }
+                );
+                await Platform.updateMany(
+                    {
+                        posts: {
+                            $elemMatch: {
+                                replies: { $elemMatch: { user: user._id } },
+                            },
+                        },
+                    },
+                    {
+                        $pull: {
+                            'posts.$.replies': { user: user._id },
                         },
                     }
                 );

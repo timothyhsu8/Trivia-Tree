@@ -6,7 +6,7 @@ import { SEARCH_QUIZZES, SEARCH_PLATFORMS, SEARCH_USERS } from "../cache/queries
 import QuizResult from '../components/SearchResults/QuizResult'
 import PlatformResult from '../components/SearchResults/PlatformResult'
 import UserResult from '../components/SearchResults/UserResult'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TimeField from "react-simple-timefield";
 import '../styles/styles.css'
 import { BsChevronDown } from "react-icons/bs";
@@ -33,6 +33,14 @@ export default function SearchResultsPage() {
     const [page, setPage] = useState(1);
     const [noMoreData, setNoMoreData] = useState(false);
     const [loadingMoreResults, setLoadingMoreResults] = useState(false);
+
+    // Only runs once when the page is first loaded
+    useEffect(() => {
+        setPage(1)
+    }, [])
+    
+    // Dark Mode Colors
+    const inputBgColor = useColorModeValue("white", "#1a202c")
 
     // let search = location.state.search
     // let searchType = location.state.searchType
@@ -120,9 +128,6 @@ export default function SearchResultsPage() {
 
     const loading = quizzes.loading || platforms.loading || users.loading
     const error = quizzes.error || platforms.error || users.error
-
-    //Dark mode styling
-    //const bannerEditBG=useColorModeValue('gray.800', 'gray.200')
 
     // Loading Screen
     if (loading && !isInitQueryDone) {
@@ -373,7 +378,7 @@ export default function SearchResultsPage() {
                         {/* Timer */}
                         <VStack spacing={1} w="100%">
                             <Text fontSize="100%"> Minimum Timer </Text>
-                            <TimeField name="minTimer" showSeconds style={{padding:"4px", width:"75%", height:"40px", border:"1px solid", borderRadius:"5px", borderColor:"#cfcfcf", textAlign:"center" }}/>
+                            <TimeField name="minTimer" showSeconds style={{padding:"4px", width:"75%", height:"40px", border:"1px solid", backgroundColor:inputBgColor, borderRadius:"5px", borderColor:"#cfcfcf", textAlign:"center" }}/>
                         </VStack>
 
                         {/* Platform Label */}

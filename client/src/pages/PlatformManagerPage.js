@@ -1,7 +1,6 @@
-import { Box, Grid, Icon, Text, VStack, HStack, Image, Center, Spinner, Button } from '@chakra-ui/react';
+import { Box, Grid, Icon, Text, VStack, HStack, Image, Center, Spinner, useColorModeValue } from '@chakra-ui/react';
 import { GET_USER } from '../cache/queries';
 import { useQuery } from '@apollo/client';
-import { ArrowBackIcon } from '@chakra-ui/icons';
 import { BsFillFileEarmarkTextFill, BsFillPersonFill } from 'react-icons/bs';
 import { AuthContext } from '../context/auth';
 import { useContext } from 'react';
@@ -12,6 +11,9 @@ export default function PlatformManagerPage() {
     const { user } = useContext(AuthContext);
     let { userId } = useParams();
     let history = useHistory();
+
+    const bgColor = useColorModeValue("white", "gray.700")
+    const textColor = useColorModeValue("gray.800", "white")
 
     // Get User data (contains platform information)
     const { loading, error, data: { getUser: userData } = {}} = 
@@ -49,7 +51,7 @@ export default function PlatformManagerPage() {
     return (
         <Box>
             <Center> 
-                <Text mt="1%" fontSize="250%" fontWeight="medium" color="gray.700"> Your Platforms </Text>
+                <Text mt="1%" fontSize="250%" fontWeight="medium" color={textColor}> Your Platforms </Text>
             </Center>
             
             {/* PLATFORM CARDS */}
@@ -64,6 +66,7 @@ export default function PlatformManagerPage() {
                                         w="90%" 
                                         mt={5} 
                                         borderRadius={10} 
+                                        bgColor={bgColor}
                                         boxShadow="lg" 
                                         transition=".1s linear"
                                         _hover={{cursor:"pointer", opacity:"85%", transition:".15s linear"}} 

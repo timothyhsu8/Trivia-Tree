@@ -1,6 +1,6 @@
 import { Box, Input, Grid, Text, Select, Button, Icon, HStack, Image, Spacer, Menu, MenuButton, MenuList, MenuItem, Flex, Avatar,
     AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useColorMode, useColorModeValue, IconButton } from "@chakra-ui/react"
-import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { SearchIcon, HamburgerIcon, SunIcon } from '@chakra-ui/icons'
 import { BsCollectionFill, BsFillCartFill, BsFillFileEarmarkTextFill, BsFillGearFill, BsFillHouseDoorFill, BsFillPersonLinesFill, BsGiftFill, BsGridFill } from "react-icons/bs"
 import { config } from '../util/constants';
 import { useHistory } from 'react-router-dom';
@@ -23,6 +23,15 @@ export default function Navbar() {
     const [chosenPlatformName, setChosenPlatformName] = useState("Untitled Platform")
     const maxPlatformName = 35
 
+    const bgColor = useColorModeValue("#751616", "purple.900")
+    const bgHover = useColorModeValue("red.600", "purple.700")
+    const shopColor = useColorModeValue("yellow", "purple")
+    const sunIconColor = useColorModeValue("orange", "blue")
+    const searchColor = useColorModeValue("yellow.500", "blue.600")
+    const searchHover = useColorModeValue("yellow.400", "blue.500")
+    const searchbarBg = useColorModeValue("white", "gray.700")
+
+    
     let history = useHistory();
     let logged_in = false
     let categories = ["Quizzes", "Platforms", "Users"]
@@ -121,7 +130,7 @@ export default function Navbar() {
     
 
     return(
-        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor="#751616" boxShadow="md">
+        <Box w="100%" h={55} position='sticky' top='0' zIndex='99' bgColor={bgColor} boxShadow="md">
             <Grid h="100%" templateColumns="2fr 3fr 2fr" pos="relative">
                 {/* RETURN TO HOMEPAGE */}
                 <Box display="flex" flexDirection="column" justifyContent="center">
@@ -148,7 +157,7 @@ export default function Navbar() {
                     templateColumns='3fr 12fr 1fr'
                 >
                     {/* SEARCH CATEGORIES */}
-                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" color="black" bgColor="white" _focus={{boxShadow:"none"}} overflow="hidden"> 
+                    <Select h="45px" value={searchType} onChange={(event) => setSearchType(event.target.value)} borderRadius="5px 0px 0px 5px" bgColor={searchbarBg} _focus={{boxShadow:"none"}} overflow="hidden"> 
                         {categories.map((category, index) => {
                             return <option key={index}> {category} </option>;
                         })}
@@ -160,17 +169,16 @@ export default function Navbar() {
                         fontSize="17px" 
                         borderRadius="0px" 
                         placeholder={getPlaceholderText()} 
-                        bgColor="white"
-                        color="black"
+                        bgColor={searchbarBg}
                         _focus={{boxShadow:"none"}}
                     />
 
                     {/* SEARCH BUTTON */}
                     <Button
                         h='45px'
-                        _hover={{ bgColor: 'yellow.400' }}
+                        _hover={{ bgColor: searchHover }}
                         borderRadius='0px 5px 5px 0px'
-                        bgColor='yellow.500'
+                        bgColor={searchColor}
                         onClick={search}
                         _focus={{boxShadow:"none"}}
                     >
@@ -179,8 +187,9 @@ export default function Navbar() {
                 </Grid>
 
                 {/* RIGHT SIDE */}
-                <HStack overflow="hidden">
+                <HStack >
                     <Box w='5%' />
+                    <IconButton icon={<SunIcon/>} colorScheme={sunIconColor} onClick={() => toggleColorMode()} _focus={{outline:"none"}} overflow="hidden" />
                     {/* CATEGORIES */}
                     {/* <Link to='/categorypage'>
                         <Text className="disable-select" fontSize='105%' color='white' fontWeight='medium'>
@@ -193,11 +202,12 @@ export default function Navbar() {
                     
                     {/* SHOP BUTTON */}
                     <Button 
-                        colorScheme="yellow"
+                        colorScheme={shopColor}
                         leftIcon={<BsFillCartFill />} 
-                        onClick={() => history.push( logged_in ? "/shoppingpage" : "loginpage")} 
+                        onClick={() => history.push( logged_in ? "/shoppingpage" : "/loginpage")} 
                         _focus={{outline:"none"}}
                         borderRadius="40px"
+                        overflow="hidden"
                     >
                         Shop 
                     </Button>
@@ -206,15 +216,15 @@ export default function Navbar() {
                     <Spacer />
                     
                     <div className="fadeshow2">
-                    <HStack pr={10} spacing={1}>
-                        <Image src={coin} h="20px" w="20px" position="relative" top="1px"></Image>
+                    <HStack pr={10} spacing={1} overflow="hidden">
+                        <Image src={coin} h="20px" w="20px" minH="20px" minW="20px" position="relative" top="1px"></Image>
                         <Text position="relative" color="white">{currency}</Text>
                     </HStack>
                     </div>
 
                     {/* USER NAME */}
                     <div className="fadeshow1">
-                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap"> {username} </Text> 
+                    <Text className="disable-select" onClick={() => goToAccountPage()} fontSize="100%" color="white" _hover={{cursor:"pointer"}} whiteSpace="nowrap" overflow="hidden"> {username} </Text> 
                     </div>
                     {/* PROFILE PICTURE */}
                     <Avatar src={pfp_src} border="1px solid white" boxSize={10} onClick={() => goToAccountPage()} _hover={{cursor:"pointer"}}/>
@@ -222,7 +232,7 @@ export default function Navbar() {
 
                     {/* DROPDOWN MENU */}
                     <Menu>
-                        <MenuButton as={IconButton} bgColor="#751616" _hover={{bgColor:'red.600'}} _active={{bgColor:'red.600'}} borderRadius="0" icon={<HamburgerIcon boxSize={5} color="white" />} w="45px" h="55px" _focus={{outline:"none"}}/>
+                        <MenuButton as={IconButton} bgColor={bgColor} _hover={{bgColor:bgHover}} _active={{bgColor:bgHover}} borderRadius="0" icon={<HamburgerIcon boxSize={5} color="white" />} w="45px" h="55px" _focus={{outline:"none"}}/>
                             <MenuList boxShadow='lg'>
                                 {/* Create Quiz / Create Platform / Quiz Manager / Platform Manager Buttons */}
                                 {logged_in === true ? (

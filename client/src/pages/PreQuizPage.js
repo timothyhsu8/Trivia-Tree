@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Text, Grid, Button, Center, Image, GridItem, Input, Icon, Avatar, Stack, Spinner } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, Grid, Button, Center, Image, GridItem, Input, Icon, Avatar, Stack, Spinner, useColorModeValue } from '@chakra-ui/react';
 import { useQuery, useMutation } from '@apollo/client';
 import * as mutations from '../cache/mutations';
 import { useState, useContext } from 'react';
@@ -93,6 +93,9 @@ export default function PreQuizPage({}) {
     const [loadingComment, setLoadingComment] = useState(false);
     const [comment, setComment] = useState('');
     const handleCommentChange = (event) => setComment(event.target.value);
+
+    const hoverCommentBgColor = useColorModeValue("gray.200", "gray.600")
+    const activeCommentBgColor = useColorModeValue("white", "gray.700")
 
     let quiz = null;
     let iconSize = '50px';
@@ -545,8 +548,8 @@ export default function PreQuizPage({}) {
                                             placeholder='Add a public comment...'
                                             marginLeft='20px'
                                             marginBottom='20px'
-                                            _hover={{ pointer: 'cursor', bgColor: 'gray.200' }}
-                                            _focus={{ bgColor: 'white', border: '1px', borderColor: 'blue.400' }}
+                                            _hover={{ pointer: 'cursor', bgColor: hoverCommentBgColor }}
+                                            _focus={{ bgColor: activeCommentBgColor, border: '1px', borderColor: 'blue.400' }}
                                         />
                                         <Button isLoading={loadingComment} w='140px' colorScheme='blue' size='md' marginLeft='20px' onClick={handleAddComment}>
                                             Comment

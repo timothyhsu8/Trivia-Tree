@@ -22,7 +22,7 @@ export default function LeaderboardEntryCard(props) {
                     <HStack spacing={3}>
                         <Avatar src={props.entry.user.iconImage} size="sm" _hover={{cursor:"pointer"}} 
                             onClick={() => { history.push('/accountpage/' + props.entry.user._id) }} />  
-                        <Text color={whiteBlackText} whiteSpace="nowrap" fontWeight="medium"
+                        <Text color={whiteBlackText} whiteSpace="nowrap" fontWeight="medium" fontSize="10px"
                             _hover={{cursor:"pointer"}} 
                             onClick={() => { history.push('/accountpage/' + props.entry.user._id) }}> 
                             {props.entry.user.displayName} 

@@ -16,7 +16,7 @@ module.exports = {
 
     async getLeaderboard(_, {quiz_id}) {
       const quiz = await Quiz.findById(quiz_id).exec();
-      const quizAttempts = await QuizAttempt.find({quiz:quiz, attemptNumber:1}).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).sort( { score: -1 } ).limit(5)
+      const quizAttempts = await QuizAttempt.find({quiz:quiz, attemptNumber:1}).populate({path:'quiz', populate:{path:'user'}}).populate({path: 'user'}).sort( { score: -1, elapsedTime: 1 } ).limit(5)
 
       return quizAttempts;
     },

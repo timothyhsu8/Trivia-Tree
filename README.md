@@ -1,6 +1,7 @@
 # Trivia-Tree
 
 ## Deployed Heroku Link: https://triviatree.herokuapp.com/
+### SRS Document Link: [Software Requirements Specification](https://github.com/tamzid-chowdhury/Trivia-Tree/blob/main/SRS%20Trivia%20Tree.pdf)
 
 ## Summary
 Trivia Tree provides a service for people to test their knowledge on an endless variety of different 

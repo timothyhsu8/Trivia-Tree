@@ -1,13 +1,15 @@
-# Trivia-Tree
+<p align="center">
+  <img src="https://res.cloudinary.com/dsry3cnco/image/upload/v1642171587/trivia_tree_logo_background_i46u3l.png" alt="Trivia Tree Logo"/>
+</p>
 
-## Deployed Heroku Link: https://triviatree.herokuapp.com/
+### Deployed Heroku Link: https://triviatree.herokuapp.com/
 ### SRS Document Link: [Software Requirements Specification](https://github.com/tamzid-chowdhury/Trivia-Tree/blob/main/SRS%20Trivia%20Tree.pdf)
 
-## Summary
-Trivia Tree provides a service for people to test their knowledge on an endless variety of different 
-subjects through quizzes. Users can also create their own quizzes to test other users on the website, 
-contributing to the growing collection of trivia for all types of topics. More importantly, users can 
-create platforms which are customizable pages used to present quizzes they generate relating to a specific topic.
+## Trivia Tree
+Trivia Tree is a quizzing website that allows users to test their knowledge on an endless variety of different 
+subjects. Users can take quizzes from other community members, or create their own to contribute 
+to the growing collection of trivia for all types of topics. Additionally, users can 
+create platforms which are customizable pages used to present quizzes relating to a specific topic.
 
 Trivia Tree differs from other quizzing sites by providing user leaderboards, a reward system for good performance, 
 platform customization, and allowing users to see their relative performance compared to  other quiztakers. It also 

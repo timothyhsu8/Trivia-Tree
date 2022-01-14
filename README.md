@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://res.cloudinary.com/dsry3cnco/image/upload/v1642171587/trivia_tree_logo_background_i46u3l.png" alt="Trivia Tree Logo"/>
+  <img width="90%" src="https://res.cloudinary.com/dsry3cnco/image/upload/v1642171587/trivia_tree_logo_background_i46u3l.png" alt="Trivia Tree Logo"/>
 </p>
 
 ### Deployed Heroku Link: https://triviatree.herokuapp.com/
